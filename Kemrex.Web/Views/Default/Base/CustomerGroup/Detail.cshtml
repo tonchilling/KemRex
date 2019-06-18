@@ -1,0 +1,79 @@
+﻿@using Kemrex.Core.Database.Models
+@using Kemrex.Web.Controllers.Base
+@using Kemrex.Web.Common.Models
+@model TblCustomerGroup
+@{
+    ViewBag.Title = "Index";
+    KemrexController kemrex = ((KemrexController)this.ViewContext.Controller);
+    Layout = kemrex.PathViewShared("_lyDefault");
+    WidgetAlertModel Alert = (WidgetAlertModel)ViewBag.Alert;
+}
+
+@section script {
+    <script type="text/javascript">
+        $(document).ready(function () {
+            window.setTimeout(function () {
+                $(".alert").fadeTo(1000, 0).slideUp(1000, function () {
+                    $(this).remove();
+                });
+            }, 5000);
+        });
+    </script>
+}
+
+<div class="page">
+    <div class="page-content container-fluid">
+        @if (ViewBag.Alert != null)
+        {
+            <div class="row">
+                <div class="col-12">
+                    @Html.Partial(kemrex.PathViewShared("_wgAlert"), Alert)
+                </div>
+            </div>
+        }
+        <div class="row">
+            <div class="col-12">
+                <div class="panel">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">
+                            @(Model.GroupId > 0 ? "แก้ไข" : "เพิ่ม")กลุ่ม
+                            <span class="panel-desc">รายละเอียดกลุ่มลูกค้า</span>
+                        </h3>
+                    </div>
+                    <form method="post" action="@Url.Action("Detail", "CustomerGroup")" enctype="multipart/form-data">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="GroupId" value="@Model.GroupId" />
+                        <div class="panel-body">
+                            <div class="row">
+                                <div class="col-md-6 col-sm-12">
+                                    <div class="form-group">
+                                        <label for="GroupName" class="form-control-label">ชื่อกลุ่ม</label>
+                                        <input type="text" class="form-control" name="GroupName" value="@Model.GroupName" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-3 col-sm-6">
+                                    <div class="form-group">
+                                        <label for="GroupOrder" class="form-control-label">ลำดับการแสดงผล</label>
+                                        <input type="number" class="form-control" name="GroupOrder" value="@Model.GroupOrder" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="panel-footer">
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="form-group">
+                                        <button type="submit" class="btn btn-primary">บันทึก</button>&nbsp;
+                                        <a href="@Url.Action("Index", "CustomerGroup")" class="btn btn-default">ยกเลิก</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

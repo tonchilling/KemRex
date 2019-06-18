@@ -1,0 +1,59 @@
+[
+  {
+    "outputFileName": "themes/RemarkClassicBase/css/bootstrap.min.css",
+    "inputFiles": [
+      "themes/RemarkClassicBase/css/bootstrap.css"
+    ]
+  },
+  {
+    "outputFileName": "themes/RemarkClassicBase/css/bootstrap-extend.min.css",
+    "inputFiles": [
+      "themes/RemarkClassicBase/css/bootstrap-extend.css"
+    ]
+  },
+  {
+    "outputFileName": "themes/RemarkClassicBase/css/login.min.css",
+    "inputFiles": [
+      "themes/RemarkClassicBase/css/login.css"
+    ]
+  },
+  {
+    "outputFileName": "themes/RemarkClassicBase/js/Plugin/material.min.js",
+    "inputFiles": [
+      "themes/RemarkClassicBase/js/Plugin/material.js"
+    ]
+  },
+  {
+    "outputFileName": "themes/RemarkClassicBase/js/Plugin/menu.min.js",
+    "inputFiles": [
+      "themes/RemarkClassicBase/js/Plugin/menu.js"
+    ]
+  },
+  {
+    "outputFileName": "themes/RemarkClassicBase/js/Section/bundle.js",
+    "inputFiles": [
+      "themes/RemarkClassicBase/js/Section/GridMenu.js",
+      "themes/RemarkClassicBase/js/Section/Menubar.js",
+      "themes/RemarkClassicBase/js/Section/PageAside.js",
+      "themes/RemarkClassicBase/js/Section/Sidebar.js"
+    ]
+  },
+  {
+    "outputFileName": "themes/RemarkClassicBase/js/Section/bundle.min.js",
+    "inputFiles": [
+      "themes/RemarkClassicBase/js/Section/bundle.js"
+    ]
+  },
+  {
+    "outputFileName": "themes/RemarkClassicBase/libs/babel-external-helpers/babel-external-helpers.min.js",
+    "inputFiles": [
+      "themes/RemarkClassicBase/libs/babel-external-helpers/babel-external-helpers.js"
+    ]
+  },
+  {
+    "outputFileName": "themes/RemarkClassicBase/css/calendar.min.css",
+    "inputFiles": [
+      "themes/RemarkClassicBase/css/calendar.css"
+    ]
+  }
+]

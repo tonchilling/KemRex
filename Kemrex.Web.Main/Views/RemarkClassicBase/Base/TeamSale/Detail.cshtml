@@ -1,0 +1,174 @@
+﻿@using Kemrex.Core.Database.Models
+@using Kemrex.Web.Common.Controllers
+@using Kemrex.Core.Common.Helper
+@using Kemrex.Web.Common.Models
+@model TeamSale
+@{
+    KemrexController kemrex = ((KemrexController)this.ViewContext.Controller);
+    Layout = kemrex.PathViewShared("_lyDefault");
+    WidgetAlertModel AlertModel = (WidgetAlertModel)ViewBag.Alert;
+    List<SysAccount> optSale = (List<SysAccount>)ViewData["optSale"];
+}
+
+@section Scripts {
+    <script type="text/javascript">
+        $(document).ready(function () {
+            window.setTimeout(function () {
+                $(".alert").fadeTo(1000, 0).slideUp(1000, function () {
+                    $(this).remove();
+                });
+            }, 5000);
+
+            initPage();
+        });
+    </script>
+}
+
+<div class="page">
+    <div class="page-header">
+        <h1 class="page-title">ทีมขาย</h1>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="@kemrex.UrlAction(PathHelper.Home)">หน้าแรก</a></li>
+            <li class="breadcrumb-item"><a href="javascript:void(0)">ตั้งค่าพื้นฐาน</a></li>
+            <li class="breadcrumb-item"><a href="javascript:void(0)">ข้อมูลพนักงาน</a></li>
+            <li class="breadcrumb-item active"><a href="@kemrex.UrlAction(PathHelper.SaleTeam)">ทีมขาย</a></li>
+            <li class="breadcrumb-item active">@(Model.TeamId > 0 ? "แก้ไข" : "เพิ่ม")</li>
+        </ol>
+    </div>
+
+    <div class="page-content container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                @if (ViewBag.Alert != null)
+                {
+                    @Html.Partial(kemrex.PathViewShared("_wgAlert"), AlertModel)
+                }
+                <div class="panel">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">บัญชีผู้ใช้งาน</h3>
+                    </div>
+                    <form role="form" method="post" action="@kemrex.UrlAction(PathHelper.SaleTeamDetail)" enctype="multipart/form-data">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="teamId" value="@Model.TeamId" />
+                        <div class="panel-body">
+                            <div class="row">
+                                <div class="col-xs-12 col-sm-6">
+                                    <div class="form-group">
+                                        <label for="teamName" class="mandatory">ชื่อทีม</label>
+                                        <input type="text" class="form-control" name="teamName" value="@Model.TeamName" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-xs-12 col-sm-6">
+                                    <div class="form-group">
+                                        <label for="managerId" class="mandatory">หัวหน้าทีม</label>
+                                        <select name="managerId" class="form-control">
+                                            @if (Model.ManagerId > 0 && Model.Manager != null)
+                                            {
+                                                <option value="@Model.ManagerId" selected="selected">@Model.Manager.AccountName</option>
+                                            }
+                                            @foreach (SysAccount it in optSale)
+                                            {
+                                                <option value="@it.AccountId">@it.AccountName</option>
+                                            }
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="box-footer">
+                            <button type="submit" class="btn btn-primary">บันทึก</button>
+                            <a href="@kemrex.UrlAction(PathHelper.SaleTeam)" class="btn btn-default">ยกเลิก</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        @if (Model.TeamId > 0)
+        {
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="panel">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">สมาชิกในทีม</h3>
+                        </div>
+                        <div class="panel-body">
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="table-responsive">
+                                        <table class="table table-bordered table-hover">
+                                            <thead>
+                                                <tr>
+                                                    <th>ชื่อ</th>
+                                                    <th>อีเมล์</th>
+                                                    <th>หมายเหตุ</th>
+                                                    <th>เครื่องมือ</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @if (Model.TeamSaleDetail.Count() <= 0)
+                                                {
+                                                    <tr>
+                                                        <td colspan="4">ไม่พบข้อมูล</td>
+                                                    </tr>
+                                                }
+                                                @foreach (var ob in Model.TeamSaleDetail)
+                                                {
+                                                    <tr>
+                                                        <td>@ob.Account.AccountName</td>
+                                                        <td>@ob.Account.AccountEmail</td>
+                                                        <td>@ob.TeamRemark</td>
+                                                        <td>
+                                                            <form method="post" action="@kemrex.UrlAction(PathHelper.SaleTeamDetailDelete)"
+                                                                  class="fnc-delete inline-block">
+                                                                <input type="hidden" name="id" value="@ob.Id" />
+                                                                @Html.AntiForgeryToken()
+                                                                <button type="submit" class="btn btn-danger btn-xs"><i class="fa fa-trash" aria-hidden="true"></i>&nbsp;ลบ</button>
+                                                            </form>
+                                                        </td>
+                                                    </tr>
+                                                }
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="panel-footer">
+                            <form method="post" action="@kemrex.UrlAction(PathHelper.SaleTeamDetailSet)">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="teamId" value="@Model.TeamId" />
+                                <div class="row">
+                                    <div class="col-xs-12 col-sm-6">
+                                        <div class="form-group">
+                                            <label for="accountId" class="mandatory">สมาชิก</label>
+                                            <select name="accountId" class="form-control">
+                                                @foreach (SysAccount it in optSale)
+                                                {
+                                                    <option value="@it.AccountId">@it.AccountName</option>
+                                                }
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-xs-12 col-sm-6">
+                                        <div class="form-group">
+                                            <label for="teamRemark">หมายเหตุ</label>
+                                            <input type="text" class="form-control" name="teamRemark" value="" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-12">
+                                        <button type="submit" class="btn btn-primary">บันทึก</button>
+                                        <button type="reset" class="btn btn-default">ล้างข้อมูล</button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>

@@ -1,0 +1,165 @@
+﻿@using Kemrex.Database
+@using Kemrex.SoilCalculator.Web.Controllers
+@{
+    SoilController mainFnc = ((SoilController)this.ViewContext.Controller);
+    Layout = "~/Views/Shared/_lyDefault.cshtml";
+}
+
+@section script {
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $("div.wizard-buttons").hide();
+        });
+    </script>
+}
+
+<div class="page">
+    <div class="page-header">
+        <h1 class="page-title">KEMREX CAPACITY LOAD CALCULATION</h1>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="../index-2.html">Home</a></li>
+            <li class="breadcrumb-item"><a href="javascript:void(0)">Soil Value form</a></li>
+            <li class="breadcrumb-item active">Calculator</li>
+        </ol>
+
+    </div>
+
+    <div class="page-content container-fluid">
+        <div class="row">
+            <div class="col-lg-12">
+                <!-- Panel Wizard Form -->
+                <div class="panel" id="exampleWizardForm">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">Soil strength parameter</h3>
+                    </div>
+                    <div class="panel-body">
+                        <div class="row" data-plugin="matchHeight">
+                            <div class="step col-lg-6 current">
+                                <span class="step-number">1</span>
+                                <div class="step-desc">
+                                    <span class="step-title">Compression capacity</span>
+                                    <p>Calculation</p>
+                                </div>
+                            </div>
+                            <div class="step col-lg-6">
+                                <span class="step-number">2</span>
+                                <div class="step-desc">
+                                    <span class="step-title">Finish</span>
+                                    <p>Waiting for the goods & Print Report</p>
+                                </div>
+                            </div>
+                        </div>
+                        <form id="exampleAccountForm" method="post" action="@Url.Action("Calculated", new { controller = "Soil", area = "" })">
+                            @Html.AntiForgeryToken()
+                            <div class="form-group">
+                                <label class="form-control-label" for="c">C (kg/m2)</label>
+                                <input type="number" class="form-control" id="inputC" name="inputC" value="1000" />
+                            </div>
+                            <div class="form-group">
+                                <label class="form-control-label" for="inputDegree">ϕ (degree)</label>
+                                <input type="number" class="form-control" id="inputDegree" name="inputDegree" value="0" readonly="readonly" />
+                            </div>
+                            <!-- Example Basic -->
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <label class="form-control-label" for="inputDegree">Use KEMREX Model</label>
+                                    <select name="inputModel" class="form-control" data-plugin="select2">
+                                        @foreach (TblPileSeries series in mainFnc.uow.ModelInfo.GetModelGroups())
+                                        {
+                                            <optgroup label="@series.SeriesName">
+                                                @foreach (TblPile it in mainFnc.uow.ModelInfo.GetModel(series.SeriesId))
+                                                {
+                                                    <option value="@it.PileId">@it.PileName</option>
+                                                }
+                                            </optgroup>
+                                        }
+                                    </select>
+                                </div>
+                                <div class="col-lg-6">
+                                    <label class="form-control-label" for="inputSafeLoad">Safe Load</label>
+                                    <select name="inputSafeLoad" class="form-control" data-plugin="select2">
+                                        <option value="1.0">ไม่คำนวณ Safe Load</option>
+                                        <option value="1.5">1.5</option>
+                                        <option value="2.0">2.0</option>
+                                        <option value="2.5">2.5</option>
+                                        <option value="3.0">3.0</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <hr />
+                            <div class="row">
+                                <div class="col-4">
+                                    <button type="submit" class="btn btn-primary">Submit</button>
+                                </div>
+                            </div>
+                            <!-- End Example Basic -->
+                        </form>
+                        @*<!-- Steps -->
+                            <div class="steps steps-sm row" data-plugin="matchHeight">
+                                <div class="step col-lg-6 current">
+                                    <span class="step-number">1</span>
+                                    <div class="step-desc">
+                                        <span class="step-title">Compression capacity</span>
+                                        <p>Calculation</p>
+                                    </div>
+                                </div>
+                                <div class="step col-lg-6">
+                                    <span class="step-number">2</span>
+                                    <div class="step-desc">
+                                        <span class="step-title">Finish</span>
+                                        <p>Waiting for the goods & Print Report</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="wizard-content">
+                                <div class="wizard-pane active">
+                                    <form id="exampleAccountForm" method="post" action="@Url.Action("Calculated", new { controller = "Soil", area = "" })">
+                                        @Html.AntiForgeryToken()
+                                        <label class="form-control-label">Soil strength parameter</label>
+                                        <div class="form-group">
+                                            <label class="form-control-label" for="c">C (kg/m2)</label>
+                                            <input type="number" class="form-control" id="inputC" name="inputC">
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="form-control-label" for="inputDegree">ϕ (degree)</label>
+                                            <input type="number" class="form-control" id="inputDegree" name="inputDegree" />
+                                        </div>
+                                        <!-- Example Basic -->
+                                        <div class="row">
+                                            <div class="col-lg-6">
+                                                <label class="form-control-label" for="inputDegree">Use KEMREX Model</label>
+                                                <div class="example">
+                                                    <select name="inputModel" class="form-control" data-plugin="select2">
+                                                        @foreach(string name in mainFnc.uow.Model.GetModelGroups())
+                                                        {
+                                                        <optgroup label="@name">
+                                                            @foreach (TblModelInfo it in mainFnc.uow.Model.GetModel(name))
+                                                            {
+                                                                <option value="@it.ModelId">@it.ModelName</option>
+                                                            }
+                                                        </optgroup>
+                                                        }
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-4">
+                                                <button type="submit" class="btn btn-primary">Submit</button>
+                                            </div>
+                                        </div>
+                                        <!-- End Example Basic -->
+                                    </form>
+                                </div>
+                            </div>
+
+                            <!-- End Wizard Content -->*@
+                    </div>
+                </div>
+                <!-- End Panel Wizard One Form -->
+            </div>
+        </div>
+
+    </div>
+</div>
+<!-- End Page -->

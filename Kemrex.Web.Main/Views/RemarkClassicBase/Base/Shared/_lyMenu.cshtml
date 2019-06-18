@@ -1,0 +1,48 @@
+﻿@using Kemrex.Web.Common.Models
+@using Kemrex.Web.Common.Models.Layouts
+@model MenuLayoutModel
+@foreach (MenuModel it in Model.Menus)
+{
+    bool hasSub = it.SubMenus.Count() > 0;
+    <li class="site-menu-item@(hasSub ? " has-sub" : "")@(Model.ActiveMenuId.Contains(it.MenuId) ? " active" + (hasSub ? " open" : "") : "")">
+        <a href="@(hasSub ? "javascript:void(0);" : Url.Action(it.MvcAction, new { area = it.MvcArea, controller = it.MvcController}))">
+            @Html.Raw(it.MenuIcon)
+            <span class="site-menu-title">@it.MenuName</span>
+            @if (hasSub)
+            {
+                <span class="site-menu-arrow"></span>
+            }
+        </a>
+        @if (hasSub)
+        {
+            <ul class="site-menu-sub" id="@it.MenuId">
+                @foreach (MenuModel sub in it.SubMenus)
+                {
+                    bool hasChild = sub.SubMenus.Count() > 0;
+                    <li class="site-menu-item@(hasChild ? " has-sub" : "")">
+                        <a href="@(hasChild ? "javascript:void(0);" : Url.Action(sub.MvcAction, new { area = sub.MvcArea, controller = sub.MvcController}))">
+                            <span class="site-menu-title">@sub.MenuName</span>
+                            @if (hasChild)
+                            {
+                                <span class="site-menu-arrow"></span>
+                            }
+                        </a>
+                        @if (hasChild)
+                        {
+                            <ul class="site-menu-sub" id="@sub.MenuId">
+                                @foreach (MenuModel child in sub.SubMenus)
+                                {
+                                    <li class="site-menu-item">
+                                        <a class="animsition-link" href="@Url.Action(child.MvcAction, new { area = child.MvcArea, controller = child.MvcController})">
+                                            <span class="site-menu-title">@child.MenuName</span>
+                                        </a>
+                                    </li>
+                                }
+                            </ul>
+                        }
+                    </li>
+                }
+            </ul>
+        }
+    </li>
+}

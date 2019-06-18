@@ -1,0 +1,128 @@
+﻿@using Kemrex.Core.Database.Models
+@using Kemrex.Web.Common.Controllers
+@using Kemrex.Web.Common.Models
+@model TblDepartment
+@{
+    ViewBag.Title = "Index";
+    KemrexController kemrex = ((KemrexController)this.ViewContext.Controller);
+    Layout = kemrex.PathViewShared("_lyDefault");
+    WidgetAlertModel Alert = (WidgetAlertModel)ViewBag.Alert;
+}
+
+@section Scripts {
+    <script type="text/javascript">
+        $(document).ready(function () {
+            window.setTimeout(function () {
+                $(".alert").fadeTo(1000, 0).slideUp(1000, function () {
+                    $(this).remove();
+                });
+            }, 5000);
+        });
+    </script>
+}
+
+<div class="page">
+    <div class="page-content container-fluid">
+        @if (ViewBag.Alert != null)
+        {
+            <div class="row">
+                <div class="col-12">
+                    @Html.Partial(kemrex.PathViewShared("_wgAlert"), Alert)
+                </div>
+            </div>
+        }
+        <div class="row">
+            <div class="col-12">
+                <div class="panel">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">
+                            @(Model.DepartmentId > 0 ? "เพิ่ม" : "แก้ไข")ข้อมูลแผนก
+                            <span class="panel-desc">รายละเอียดแผนก</span>
+                        </h3>
+                    </div>
+                    <form method="post" action="@Url.Action("Detail", "Department")" enctype="multipart/form-data">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="DepartmentId" value="@Model.DepartmentId" />
+                        <div class="panel-body">
+                            <div class="row">
+                                <div class="col-md-6 col-sm-12">
+                                    <div class="form-group">
+                                        <label for="DepartmentName" class="form-control-label">ชื่อแผนก</label>
+                                        <input type="text" class="form-control" name="DepartmentName" value="@Model.DepartmentName" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="panel-footer">
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="form-group">
+                                        <button type="submit" class="btn btn-primary">บันทึก</button>&nbsp;
+                                        <a href="@Url.Action("Index", "Department")" class="btn btn-default">ยกเลิก</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        @if (Model.DepartmentId > 0)
+        {
+            <div class="row">
+                <div class="col-12">
+                    <div class="panel">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">
+                                ตำแหน่ง&nbsp;
+                                <a href="@Url.Action("Detail", new { are = "", controller = "Position", did = Model.DepartmentId })" class="btn btn-xs btn-primary" style="color:white;">เพิ่มข้อมูล</a>
+                            </h3>
+                        </div>
+                        <div class="panel-body">
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="table-responsive">
+                                        <table class="table table-bordered table-hover">
+                                            <thead>
+                                                <tr>
+                                                    <th>ชื่อตำแหน่ง</th>
+                                                    <th>เครื่องมือ</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @if (Model.TblDepartmentPosition.Count() <= 0)
+                                                {
+                                                    <tr>
+                                                        <td colspan="2">ไม่พบข้อมูล</td>
+                                                    </tr>
+                                                }
+                                                @foreach (var ob in Model.TblDepartmentPosition)
+                                                {
+                                                    <tr>
+                                                        <td>@ob.PositionName</td>
+                                                        <td>
+                                                            <a href="@Url.Action("Detail", new { controller = "Position", are = "", did = ob.DepartmentId, id = ob.PositionId })"
+                                                               class="btn btn-xs btn-primary">
+                                                                <i class="fa fa-pencil" aria-hidden="true"></i>&nbsp;แก้ไข
+                                                            </a>
+                                                            <form method="post" action="@Url.Action("Delete", new { controller = "Position", did = ob.DepartmentId })"
+                                                                  class="fnc-delete inline-block">
+                                                                <input type="hidden" name="PositionId" value="@ob.PositionId" />
+                                                                @Html.AntiForgeryToken()
+                                                                <button type="submit" class="btn btn-danger btn-xs"><i class="fa fa-trash" aria-hidden="true"></i>&nbsp;ลบ</button>
+                                                            </form>
+                                                        </td>
+                                                    </tr>
+                                                }
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>

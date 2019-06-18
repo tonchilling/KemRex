@@ -1,0 +1,188 @@
+﻿@using Kemrex.Core.Database.Models
+@using Kemrex.Web.Controllers.Base
+@using Kemrex.Web.Common.Models
+@model TblProduct
+@{
+    ViewBag.Title = "Index";
+    KemrexController kemrex = ((KemrexController)this.ViewContext.Controller);
+    Layout = kemrex.PathViewShared("_lyDefault");
+    WidgetAlertModel Alert = (WidgetAlertModel)ViewBag.Alert;
+    List<TblUnit> optUnit = (List<TblUnit>)ViewData["optUnit"];
+    List<TblProductModel> optModel = (List<TblProductModel>)ViewData["optModel"];
+    List<TblProductCategory> optCategory = (List<TblProductCategory>)ViewData["optCategory"];
+}
+
+@section script {
+    <script type="text/javascript">
+        $(document).ready(function () {
+            window.setTimeout(function () {
+                $(".alert").fadeTo(1000, 0).slideUp(1000, function () {
+                    $(this).remove();
+                });
+            }, 5000);
+
+            $("input[name=PriceNet]").change(function () {
+                var net = $(this).val();
+                net = net === NaN || net === null || net === undefined ? 0 : parseFloat(net).toFixed(2);
+                var vat = parseFloat((parseFloat(net) * 7) / 100).toFixed(2);
+                var tot = parseFloat(net) + parseFloat(vat);
+                $("input[name=PriceVat]").val(vat);
+                $("input[name=PriceTot]").val(tot);
+            });
+
+
+            $("input[name=PriceTot]").change(function () {
+                var tot = $(this).val();
+                tot = tot === NaN || tot === null || tot === undefined ? 0 : parseFloat(tot).toFixed(2);
+                var net = parseFloat((parseFloat(tot) * 100) / 107).toFixed(2);
+                var vat = parseFloat(parseFloat(tot) - parseFloat(net)).toFixed(2);
+                $("input[name=PriceVat]").val(vat);
+                $("input[name=PriceNet]").val(net);
+            });
+        });
+    </script>
+}
+
+<div class="page">
+    <div class="page-content container-fluid">
+        @if (ViewBag.Alert != null)
+        {
+            <div class="row">
+                <div class="col-12">
+                    @Html.Partial(kemrex.PathViewShared("_wgAlert"), Alert)
+                </div>
+            </div>
+        }
+        <div class="row">
+            <div class="col-12">
+                <div class="panel">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">
+                            @(Model.ProductId > 0 ? "แก้ไข" : "เพิ่ม")สินค้า
+                            <span class="panel-desc">รายละเอียดสินค้า</span>
+                        </h3>
+                    </div>
+                    <form method="post" action="@Url.Action("Detail", "Product")" enctype="multipart/form-data">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="ProductId" value="@Model.ProductId" />
+                        <div class="panel-body">
+                            <div class="row">
+                                <div class="col-md-6 col-sm-12">
+                                    <div class="form-group">
+                                        <label for="ProductCode" class="form-control-label">รหัสสินค้า</label>
+                                        <input type="text" class="form-control" name="ProductCode" value="@Model.ProductCode" />
+                                    </div>
+                                </div>
+                                <div class="col-md-6 col-sm-12">
+                                    <div class="form-group">
+                                        <label for="ProductCode" class="form-control-label">หมวดหมู่</label>
+                                        <select name="CategoryId" class="form-control">
+                                            @foreach (TblProductCategory it in optCategory)
+                                            {
+                                                bool selected = it.CategoryId == Model.CategoryId;
+                                                <option value="@it.CategoryId" @(selected ? " selected=\"selected\"" : "")>@it.CategoryName</option>
+                                            }
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 col-sm-12">
+                                    <div class="form-group">
+                                        <label for="ProductName" class="form-control-label">ชื่อสินค้า</label>
+                                        <input type="text" class="form-control" name="ProductName" value="@Model.ProductName" />
+                                    </div>
+                                </div>
+                                <div class="col-md-6 col-sm-12">
+                                    <div class="form-group">
+                                        <label for="ProductNameTrade" class="form-control-label">ชื่อทางการค้า</label>
+                                        <input type="text" class="form-control" name="ProductNameTrade" value="@Model.ProductNameTrade" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 col-sm-12">
+                                    <div class="form-group">
+                                        <label for="ProductNameBilling" class="form-control-label">ชื่อสำหรับพิมพ์บิล</label>
+                                        <input type="text" class="form-control" name="ProductNameBilling" value="@Model.ProductNameBilling" />
+                                    </div>
+                                </div>
+                                <div class="col-md-6 col-sm-12">
+                                    <div class="form-group">
+                                        <label for="ModelId" class="form-control-label">รุ่น</label>
+                                        <select class="form-control" name="ModelId">
+                                            <option value="-1" @(!Model.ModelId.HasValue ? " selected=\"selected\"" : "")>ไม่ระบุ</option>
+                                            @foreach (TblProductModel it in optModel)
+                                            {
+                                                bool selected = Model.ModelId.HasValue && it.ModelId == Model.ModelId;
+                                                <option value="@it.ModelId" @(selected ? " selected=\"selected\"" : "")>@it.ModelName</option>
+                                            }
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 col-sm-12">
+                                    <div class="form-group">
+                                        <label for="QtyStock" class="form-control-label">จำนวนคงเหลือ</label>
+                                        <input type="text" class="form-control" name="QtyStock" value="@Model.QtyStock" />
+                                    </div>
+                                </div>
+                                <div class="col-md-6 col-sm-12">
+                                    <div class="form-group">
+                                        <label for="UnitId" class="form-control-label">หน่วยนับ</label>
+                                        <select class="form-control" name="UnitId">
+                                            @foreach (TblUnit it in optUnit)
+                                            {
+                                                bool selected = it.UnitId == Model.UnitId;
+                                                <option value="@it.UnitId" @(selected ? " selected=\"selected\"" : "")>@it.UnitName</option>
+                                            }
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-4 col-sm-4">
+                                    <div class="form-group">
+                                        <label for="PriceNet" class="form-control-label">ราคา (Exc.Vat)</label>
+                                        <input type="text" class="form-control" name="PriceNet" value="@Model.PriceNet" />
+                                    </div>
+                                </div>
+                                <div class="col-md-4 col-sm-4">
+                                    <div class="form-group">
+                                        <label for="PriceVat" class="form-control-label">ภาษีมูลค่าเพิ่ม</label>
+                                        <input type="text" class="form-control" name="PriceVat" value="@Model.PriceVat" readonly="readonly" />
+                                    </div>
+                                </div>
+                                <div class="col-md-4 col-sm-4">
+                                    <div class="form-group">
+                                        <label for="PriceTot" class="form-control-label">ราคา (Inc.Vat)</label>
+                                        <input type="text" class="form-control" name="PriceTot" value="@Model.PriceTot" />
+                                    </div>
+                                </div>
+                            </div>
+                            @*<div class="row">
+                                <div class="col-md-3 col-sm-6">
+                                    <div class="form-group">
+                                        <label for="FlagDeactive" class="form-control-label">ใช้งาน</label>
+                                        <input type="checkbox" name="FlagDeactive" value="1" @(!(Model.FlagActive ?? false) ? " checked=\"checked\"" : "") />&nbsp;ยกเลิกการใช้งาน
+                                    </div>
+                                </div>
+                            </div>*@
+                        </div>
+                        <div class="panel-footer">
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="form-group">
+                                        <button type="submit" class="btn btn-primary">บันทึก</button>&nbsp;
+                                        <a href="@Url.Action("Index", "Product")" class="btn btn-default">ยกเลิก</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

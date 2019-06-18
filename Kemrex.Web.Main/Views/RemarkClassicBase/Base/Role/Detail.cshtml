@@ -1,0 +1,148 @@
+﻿@using Kemrex.Core.Database.Models
+@using Kemrex.Web.Common.Controllers
+@using Kemrex.Web.Common.Models
+@model SysRole
+@{
+    KemrexController kemrex = ((KemrexController)this.ViewContext.Controller);
+    Layout = kemrex.PathViewShared("_lyDefault");
+    WidgetAlertModel AlertModel = (WidgetAlertModel)ViewBag.Alert;
+}
+
+@section Scripts {
+    <script type="text/javascript">
+        $(document).ready(function () {
+            initPage();
+        });
+
+        function initPage() {
+        }
+    </script>
+}
+
+<div class="page">
+    <div class="page-header">
+        <h1 class="page-title">
+            สิทธิ์การใช้งาน
+            <small>รายละเอียดสิทธิ์การใช้งาน</small>
+        </h1>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="@Url.Action("Index", new { controller = "Home", are = "" })" })">หน้าแรก</a></li>
+            <li class="breadcrumb-item"><a href="javascript:void(0)">ข้อมูลระบบ</a></li>
+            <li class="breadcrumb-item"><a href="@Url.Action("Index", new { controller = "Role", are = "" })" })">สิทธิ์การใช้งาน</a></li>
+            <li class="breadcrumb-item active">@(Model.RoleId > 0 ? "เพิ่มข้อมูล" : "แก้ไขข้อมูล")</li>
+        </ol>
+    </div>
+    <div class="page-content container-fluid">
+        <form role="form" method="post" id="frm-main" action="@Url.Action("Detail", new { controller = "Role", area = "" })">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="role_id" value="@Model.RoleId" />
+            <div class="row">
+                <div class="col-md-12">
+                    @if (ViewBag.Alert != null)
+                    {
+                        @Html.Partial(kemrex.PathViewShared("_wgAlert"), AlertModel)
+                    }
+                    <div class="panel">
+                        <div class="panel-heading">
+                            <h3 class="box-title">@(Model.RoleId <= 0 ? "เพิ่ม" : "แก้ไข")สิทธิ์การใช้งาน</h3>
+                        </div>
+                        <div class="panel-body">
+                            <div class="row">
+                                <div class="col-6">
+                                    <div class="form-group">
+                                        <label for="role_name" class="mandatory">ชื่อสิทธิ์การใช้งาน</label>
+                                        <input type="text" class="form-control" name="role_name" value="@Model.RoleName" placeholder="ชื่อสิทธิ์การใช้งาน" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="form-group">
+                                        <label for="role_description" class="mandatory">คำอธิบายเพิ่มเติม</label>
+                                        <input type="text" class="form-control" name="role_description" value="@Model.RoleDescription" placeholder="คำอธิบายเพิ่มเติม" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-6">
+                                    <div class="form-group">
+                                        <label for="flag_active">สถานะ</label>
+                                        <div>
+                                            <label class="radio-inline"><input type="radio" name="flag_active" value="1" @((Model.FlagActive ?? true) ? " checked=\"checked\"" : "") />ใช้งาน</label>
+                                            <label class="radio-inline"><input type="radio" name="flag_active" value="0" @(!(Model.FlagActive ?? true) ? " checked=\"checked\"" : "") />ไม่ใช้งาน</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="panel">
+                        <div class="panel-heading">
+                            <h3 class="box-title">รายละเอียดสิทธิ์การใช้งาน</h3>
+                        </div>
+                        <div class="panel-body">
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="table-responsive">
+                                        <table class="table">
+                                            <thead>
+                                                <tr>
+                                                    <th rowspan="2" class="text-middle">ฟังก์ชั่นการทำงาน</th>
+                                                    <th colspan="4" class="text-center">สิทธิ์การใช้งาน</th>
+                                                </tr>
+                                                <tr>
+                                                    <th class="text-center">ดู/อ่าน</th>
+                                                    <th class="text-center">เพิ่ม/แก้ไข</th>
+                                                    <th class="text-center">ลบข้อมูล</th>
+                                                    <th class="text-center">ดาวน์โหลด</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @helper ShowMenuTree(List<SysMenu> menues)
+                                                {
+                                                    foreach (SysMenu menu in menues)
+                                                    {
+                                                        <tr>
+                                                            <td>
+                                                                @for(int i = 1; i < menu.MenuLevel; i++)
+                                                                {
+                                                                    <span>|>>>&nbsp;</span>
+                                                                }
+                                                                @menu.MenuName
+                                                            </td>
+                                                            @for (int i = 1; i <= 4; i++)
+                                                            {
+                                                                <td class="text-center">
+                                                                    @if (menu.SysMenuPermission.Where(x => x.PermissionId == i).Count() > 0)
+                                                                    {
+                                                                        var permission = Model.RoleId > 0 ? Model.SysRolePermission.Where(x => x.MenuId == menu.MenuId && x.PermissionId == i).FirstOrDefault() : null;
+                                                                        bool flagChecked = Model.RoleId > 0 ? (permission == null ? true : permission.PermissionFlag) : true;
+                                                                        <input type="checkbox" name="permission-@menu.MenuId-@i" value="1" @(flagChecked ? " checked=\"checked\"" : "")>
+                                                                    }
+                                                                </td>
+                                                            }
+                                                        </tr>
+                                                        @ShowMenuTree(menu.InverseParent.ToList())
+                                                    }
+                                                }
+                                                @ShowMenuTree((List<SysMenu>)ViewBag.Menues)
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="panel-footer">
+                            <button type="submit" class="btn btn-primary">บันทึก</button>
+                            <a href="@Url.Action("Index", new { controller = "Role", area = "" })" class="btn btn-default">ย้อนกลับ</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>

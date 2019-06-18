@@ -1,0 +1,474 @@
+﻿@using Kemrex.Core.Database.Models
+@using Kemrex.Web.Controllers.Base
+@using Kemrex.Web.Common.Models
+
+@model TblSaleOrder
+@{
+    ViewBag.Title = "Index";
+    KemrexController kemrex = ((KemrexController)this.ViewContext.Controller);
+    Layout = kemrex.PathViewShared("_lyDefault");
+    WidgetAlertModel Alert = (WidgetAlertModel)ViewBag.Alert;
+
+}
+
+@section script {
+    <script type="text/javascript">
+
+        var _contact = [];
+
+        $(document).ready(function () {
+
+            window.setTimeout(function () {
+                $(".alert").fadeTo(1000, 0).slideUp(1000, function () {
+                    $(this).remove();
+                });
+            }, 5000);
+
+        });
+
+        function getUrlVars() {
+            var vars = [], hash;
+            var hashes = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');
+            for (var i = 0; i < hashes.length; i++) {
+                hash = hashes[i].split('=');
+                vars.push(hash[0]);
+                vars[hash[0]] = hash[1];
+            }
+            return vars;
+        }
+
+
+    </script>
+}
+
+<body data-spy="scroll" data-target="#myTap" data-offset="300">
+    <div class="page">
+        <div class="page-header">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="@Url.Action("Index", new { controller = "JobOrder", area = "" })" })">ย้อนกลับ</a></li>
+            </ol>
+        </div>
+        <div class="page-content container-fluid">
+            @if (ViewBag.Alert != null)
+            {
+                <div class="row">
+                    <div class="col-12">
+                        @Html.Partial(kemrex.PathViewShared("_wgAlert"), Alert)
+                    </div>
+                </div>
+            }
+
+            @*Head*@
+            <div class="row">
+                <div class="col-12">
+                    <div class="panel">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">
+                                @(Model.CustomerId > 0 ? "แก้ไข" : "เพิ่ม")ใบสั่งงาน
+                                <span class="panel-desc">รายละเอียดใบสั่งงาน</span>
+                            </h3>
+                        </div>
+                        <div class="panel-body">
+                            <div class="row">
+                                <div class="col-md-5">
+                                    <div class="form-group">
+                                        <label for="JobOrderName" class="form-control-label">ชื่องาน</label>
+                                        <input type="text" class="form-control" name="JobOrderName" value="" />
+                                    </div>
+                                </div>
+                                <div class="col-md-5 col-sm-8">
+                                    <div class="form-group">
+                                        <label for="JobOrderNo" class="form-control-label">เลขที่ใบสั่งผลิต</label>
+                                        <input type="text" class="form-control" name="JobOrderNo" value="" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            @*Detail*@
+            <div class="row">
+                <div class="col-12">
+                    <div class="panel">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">
+                                <span class="panel-desc">1.รายละเอียดโครงการ</span>
+                            </h3>
+                        </div>
+                        <div class="panel-body">
+                            <div class="row">
+                                <div class="col-md-5">
+                                    <div class="form-group">
+                                        <label for="JobOrderStartDate" class="form-control-label">วันที่ติดตั้ง</label>
+                                        <div class="input-group col-sm-6">
+                                            <span class="input-group-addon">
+                                                <i class="icon wb-calendar" aria-hidden="true"></i>
+                                            </span>
+                                            <input type="date" class="form-control" name="JobOrderStartDate" value="" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 col-sm-8">
+                                    <div class="form-group">
+                                        <label for="JobOrderCompleteDate" class="form-control-label">กำหนดเสร็จ</label>
+                                        <div class="input-group col-sm-6">
+                                            <span class="input-group-addon">
+                                                <i class="icon wb-calendar" aria-hidden="true"></i>
+                                            </span>
+                                            <input type="date" class="form-control" name="JobOrderCompleteDate" value="" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-5">
+                                    <div class="form-group">
+                                        <label for="" class="form-control-label">เวลาปฏิบัติหน้างาน</label>
+                                        <div class="input-group">
+                                            <div class="input-group col-sm-10">
+                                                <span class="input-group-addon">
+                                                    <i class="icon wb-calendar" aria-hidden="true"></i>
+                                                </span>
+                                                <input type="text" class="form-control" name="" value="" />
+
+                                                <span class="input-group-addon">
+                                                    <i class="icon wb-time" aria-hidden="true"></i>
+                                                </span>
+                                                <input type="text" class="form-control" name="" value="" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-5 col-sm-8">
+                                    <div class="form-group">
+                                        <label for="" class="form-control-label">ถึง</label>
+                                        <div class="input-group">
+                                            <div class="input-group col-sm-10">
+                                                <span class="input-group-addon">
+                                                    <i class="icon wb-calendar" aria-hidden="true"></i>
+                                                </span>
+                                                <input type="text" class="form-control" name="" value="" />
+
+                                                <span class="input-group-addon">
+                                                    <i class="icon wb-time" aria-hidden="true"></i>
+                                                </span>
+                                                <input type="text" class="form-control" name="" value="" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-5">
+                                    <div class="form-group">
+                                        <label for="" class="form-control-label">ชื่อโครงการ</label>
+                                        <input type="text" class="form-control" name="" value="" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-5">
+                                    <div class="form-group">
+                                        <label for="" class="form-control-label">ชื่อฝ่ายขาย</label>
+                                        <input type="text" class="form-control" name="" value="" />
+                                    </div>
+                                </div>
+                                <div class="col-md-2 col-sm-8">
+                                    <div class="form-group">
+                                        <label for="" class="form-control-label">โทรศัพท์</label>
+                                        <input type="tel" class="form-control" name="" value="" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-5">
+                                    <div class="form-group">
+                                        <label for="" class="form-control-label">ชื่อลูกค้า</label>
+                                        <input type="text" class="form-control" name="" value="" />
+                                    </div>
+                                </div>
+                                <div class="col-md-2 col-sm-8">
+                                    <div class="form-group">
+                                        <label for="" class="form-control-label">โทรศัพท์</label>
+                                        <input type="tel" class="form-control" name="" value="" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-5">
+                                    <div class="form-group">
+                                        <label for="JobOrderName" class="form-control-label">Email</label>
+                                        <input type="text" class="form-control" name="" value="" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            @*ลักษณะโครงการ*@
+            <div class="row">
+                <div class="col-12">
+                    <div class="panel">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">
+                                <span class="panel-desc">2.ลักษณะโครงการ</span>
+                            </h3>
+                        </div>
+                        <div class="panel-body">
+                            <div class="checkbox">
+                                <label><input type="checkbox" value="">งานต่อเติมบ้าน</label>
+                            </div>
+                            <div class="checkbox">
+                                <label><input type="checkbox" value="">งานโรงจอดรถ</label>
+                            </div>
+                            <div class="checkbox">
+                                <label><input type="checkbox" value="">ระเบียง/รั้ว</label>
+                            </div>
+                            <div class="checkbox">
+                                <label><input type="checkbox" value="">เสาไฟ</label>
+                            </div>
+                            <div class="checkbox">
+                                <label><input type="checkbox" value="">อาคาร/บ้าน</label>
+                            </div>
+                            <div class="checkbox">
+                                <label><input type="checkbox" value="">อื่นๆ</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            @*รายละเอียดเข็มเหล็กและอุปกรณ์เพิ่มเติม*@
+            <div class="row">
+                <div class="col-12">
+                    <div class="panel">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">
+                                <span class="panel-desc">3.รายละเอียดเข็มเหล็กและอุปกรณ์เพิ่มเติม</span>
+                            </h3>
+                        </div>
+                        <div class="panel-body">
+                            <div class="row">
+                                <div class="col-md-5">
+                                    <div class="form-group">
+                                        <label for="" class="form-control-label">3.1 เข็มเหล็กรุ่น (Model)</label>
+                                        <input type="text" class="form-control" name="" value="" />
+                                    </div>
+                                </div>
+                                <div class="col-md-2 col-sm-8">
+                                    <div class="form-group">
+                                        <label for="" class="form-control-label">จำนวน</label>
+                                        <input type="number" class="form-control" name="" value="" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-5">
+                                    <div class="form-group">
+                                        <label for="" class="form-control-label">3.2 น้ำหนักลงเข็ม (Load)</label>
+                                        <input type="text" class="form-control" name="" value="" />
+                                    </div>
+                                </div>
+                                <div class="col-md-2 col-sm-8">
+                                    <div class="form-group">
+                                        <label for="" class="form-control-label">Safety Factor</label>
+                                        <input type="text" class="form-control" name="" value="" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-5">
+                                    <div class="form-group">
+                                        <label for="" class="form-control-label">Adapter/Plate รุ่น</label>
+                                        <input type="text" class="form-control" name="" value="" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-5">
+                                    <div class="form-group">
+                                        <label for="" class="form-control-label">อื่นๆ</label>
+                                        <input type="text" class="form-control" name="" value="" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            @*รายละเอียดพื้นที่ติดตั้งหน้างาน*@
+            <div class="row">
+                <div class="col-12">
+                    <div class="panel">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">
+                                <span class="panel-desc">
+                                    4.รายละเอียดพื้นที่ติดตั้งหน้างาน
+                                </span>
+                            </h3>
+                        </div>
+                        <div class="panel-body">
+                            <div class="row">
+                                <div class="col-md-2">
+                                    <div class="form-group">
+                                        <label for="" class="form-control-label">4.1 เลขที่</label>
+                                        <input type="text" class="form-control" name="" value="" />
+                                    </div>
+                                </div>
+                                <div class="col-md-2 col-sm-8">
+                                    <div class="form-group">
+                                        <label for="" class="form-control-label">หมู่</label>
+                                        <input type="text" class="form-control" name="" value="" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-5">
+                                    <div class="form-group">
+                                        <label for="" class="form-control-label">ถนน</label>
+                                        <input type="text" class="form-control" name="" value="" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-5">
+                                    <div class="form-group">
+                                        <label for="" class="form-control-label">ตำบล > อำเภอ > จังหวัด</label>
+                                        <input type="text" class="form-control" name="" value="" />
+                                    </div>
+                                </div>
+                            </div>
+                            <hr />
+                            <div class="row">
+                                <div class="col-md-5">
+                                    <div class="form-group">
+                                        <label for="" class="form-control-label">4.2 อุปกรณ์ในการติดตั้งหน้างาน</label>
+                                        <div class="checkbox">
+                                            <label><input type="checkbox" value="">รถ MDG</label>
+                                        </div>
+                                        <div class="checkbox">
+                                            <label><input type="checkbox" value="">Hand drive</label>
+                                        </div>
+                                        <div class="checkbox">
+                                            <label><input type="checkbox" value="">Hand DriB</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <hr />
+                            <div class="row">
+                                <div class="col-md-5">
+                                    <div class="form-group">
+                                        <label for="" class="form-control-label">4.3 ลักษณะพื้นดินสำหรับการติดตั้ง</label>
+                                        <div class="checkbox">
+                                            <label><input type="checkbox" value="">พิ้นคอนกรีต</label>
+                                        </div>
+                                        <div class="checkbox">
+                                            <label><input type="checkbox" value="">พื้นยางมะตอย</label>
+                                        </div>
+                                        <div class="checkbox">
+                                            <label><input type="checkbox" value="">พื้นดินเดิม</label>
+                                        </div>
+                                        <div class="checkbox">
+                                            <label><input type="checkbox" value="">พื้นที่ดินอ่อนนุ่ม/น้ำขัง</label>
+                                        </div>
+                                        <div class="checkbox">
+                                            <label><input type="checkbox" value="">อื่นๆ</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <hr />
+                            <div class="row">
+                                <div class="col-md-5">
+                                    <div class="form-group">
+                                        <label for="" class="form-control-label">4.4 วัตถุใต้ดิน</label>
+                                        <div class="checkbox">
+                                            <label><input type="checkbox" value="">ท่อประปา</label>
+                                        </div>
+                                        <div class="checkbox">
+                                            <label><input type="checkbox" value="">สายไฟ</label>
+                                        </div>
+                                        <div class="checkbox">
+                                            <label><input type="checkbox" value="">ฐานรากเดิม</label>
+                                        </div>
+                                        <div class="checkbox">
+                                            <label><input type="checkbox" value="">อื่นๆ</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <hr />
+                            <div class="row">
+                                <div class="col-md-5">
+                                    <div class="form-group">
+                                        <label for="" class="form-control-label">4.5 ปัญหาและอุปสรรคหน้างาน</label>
+                                        <div class="checkbox">
+                                            <label><input type="checkbox" value="">มีสิ่งกีดขวางต้องเคลื่อนย้าย</label>
+                                        </div>
+                                        <div class="checkbox">
+                                            <label><input type="checkbox" value="">มีต้นไม้/วัชพืช</label>
+                                        </div>
+                                        <div class="checkbox">
+                                            <label><input type="checkbox" value="">อื่นๆ</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-5">
+                                    <div class="form-group">
+                                        <label for="" class="form-control-label">สาเหตุ</label>
+                                        <textarea rows="4" cols="47" class="form-control" name=""></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-5">
+                                    <div class="form-group">
+                                        <label for="" class="form-control-label">การแก้ไขปัญหา</label>
+                                        <textarea rows="4" cols="47" class="form-control" name=""></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                            <hr />
+                            <div class="row">
+                                <div class="col-md-5">
+                                    <div class="form-group">
+                                        <label for="" class="form-control-label">4.6 สิ่งที่แนบมากด้วย</label>
+                                        <div class="checkbox">
+                                            <label><input type="checkbox" value="">ภาพถ่ายหน้างาน</label>
+                                        </div>
+                                        <div class="checkbox">
+                                            <label><input type="checkbox" value="">แผนที่</label>
+                                        </div>
+                                        <div class="checkbox">
+                                            <label><input type="checkbox" value="">แบบแปลน</label>
+                                        </div>
+                                        <div class="checkbox">
+                                            <label><input type="checkbox" value="">อื่นๆ</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="form-group">
+                                        <button type="submit" class="btn btn-primary">บันทึก</button>&nbsp;
+                                        <a href="" class="btn btn-default">ยกเลิก</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>

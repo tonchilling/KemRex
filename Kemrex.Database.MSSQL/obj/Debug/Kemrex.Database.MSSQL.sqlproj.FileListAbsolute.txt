@@ -1,0 +1,15 @@
+C:\Users\supaw\Repositories\AiTechnovation\KEMREX\Source\Kemrex.Database.MSSQL\bin\Debug\Kemrex.Database.MSSQL.dacpac
+C:\Users\supaw\Repositories\AiTechnovation\KEMREX\Source\Kemrex.Database.MSSQL\bin\Debug\Kemrex.Database.MSSQL.dll
+C:\Users\supaw\Repositories\AiTechnovation\KEMREX\Source\Kemrex.Database.MSSQL\bin\Debug\Kemrex.Database.MSSQL.pdb
+C:\Users\supaw\Repositories\AiTechnovation\KEMREX\Source\Kemrex.Database.MSSQL\obj\Debug\Kemrex.Database.MSSQL.sqlprojAssemblyReference.cache
+C:\Users\supaw\Repositories\AiTechnovation\KEMREX\Source\Kemrex.Database.MSSQL\obj\Debug\Kemrex.Database.MSSQL.dll
+C:\Users\supaw\Repositories\AiTechnovation\KEMREX\Source\Kemrex.Database.MSSQL\obj\Debug\Kemrex.Database.MSSQL.pdb
+E:\Github\KEMREX\Source\Kemrex.Database.MSSQL\bin\Debug\Kemrex.Database.MSSQL.dacpac
+E:\Github\KEMREX\Source\Kemrex.Database.MSSQL\bin\Debug\Kemrex.Database.MSSQL.dll
+E:\Github\KEMREX\Source\Kemrex.Database.MSSQL\bin\Debug\Kemrex.Database.MSSQL.pdb
+E:\Github\KEMREX\Source\Kemrex.Database.MSSQL\obj\Debug\Kemrex.Database.MSSQL.dll
+E:\Github\KEMREX\Source\Kemrex.Database.MSSQL\obj\Debug\Kemrex.Database.MSSQL.pdb
+E:\Github\KEMREX\Source\Kemrex.Database.MSSQL\obj\Debug\Model.xml
+E:\Github\KEMREX\Source\Kemrex.Database.MSSQL\obj\Debug\refactor.xml
+E:\Github\KEMREX\Source\Kemrex.Database.MSSQL\obj\Debug\postdeploy.sql
+E:\Github\KEMREX\Source\Kemrex.Database.MSSQL\obj\Debug\predeploy.sql

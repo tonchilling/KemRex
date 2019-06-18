@@ -1,0 +1,123 @@
+﻿@using Kemrex.Core.Database.Models
+@using Kemrex.Web.Common.Controllers
+@using Kemrex.Web.Common.Models
+@model SysAccount
+@{
+    KemrexController kemrex = ((KemrexController)this.ViewContext.Controller);
+    Layout = kemrex.PathViewShared("_lyDefault");
+    WidgetAlertModel AlertModel = (WidgetAlertModel)ViewBag.Alert;
+}
+
+@section Scripts {
+    <script type="text/javascript">
+        $(document).ready(function () {
+            window.setTimeout(function () {
+                $(".alert").fadeTo(1000, 0).slideUp(1000, function () {
+                    $(this).remove();
+                });
+            }, 5000);
+
+            initPage();
+        });
+
+        function initPage() {
+            if (typeof CKEDITOR !== 'undefined') {
+                CKEDITOR.addCss('img {max-width:100%; height: auto;}');
+                $(".editorfull").each(function () {
+                    var editor = CKEDITOR.replace($(this).attr("id"), ckEditorConfig.CKFinder);
+                    CKFinder.setupCKEditor(editor, "@Url.Content("~/lib/manual/ckfinder/")");
+                });
+            }
+        }
+    </script>
+}
+
+<div class="page">
+    <div class="page-header">
+        <h1 class="page-title">ข้อมูลส่วนตัว</h1>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="@Url.Action("Index", new { controller = "Home", are = "" })" })">Home</a></li>
+            <li class="breadcrumb-item active">ข้อมูลส่วนตัว</li>
+        </ol>
+    </div>
+
+    <div class="page-content container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                @if (ViewBag.Alert != null)
+                {
+                    @Html.Partial(kemrex.PathViewShared("_wgAlert"), AlertModel)
+                }
+                <div class="panel">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">ข้อมูลส่วนตัว</h3>
+                    </div>
+                    <form role="form" method="post" action="@Url.Action("Profile", new { are = "", controller = "Account" })" enctype="multipart/form-data">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="account_id" value="@Model.AccountId" />
+                        <div class="panel-body">
+                            <div class="row">
+                                <div class="col-6">
+                                    <div class="form-group">
+                                        <label for="account_firstname" class="mandatory">ชื่อ</label>
+                                        <input type="text" class="form-control" name="account_firstname" value="@Model.AccountFirstName" />
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="form-group">
+                                        <label for="account_lastname" class="mandatory">นามสกุล</label>
+                                        <input type="text" class="form-control" name="account_lastname" value="@Model.AccountLastName" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-6">
+                                    <div class="form-group">
+                                        <label for="account_email" class="mandatory">อีเมล์</label>
+                                        <input type="text" class="form-control" name="account_email" value="@Model.AccountEmail" />
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="form-group">
+                                        <label for="AccountAvatar" class="form-control-label">รูปผู้ใช้งาน</label>
+                                        <input type="file" name="AccountAvatar" class="form-control" />
+                                        @if (!string.IsNullOrWhiteSpace(Model.AccountAvatar))
+                                        {
+                                            <span class="help-block"><a href="@Url.Content("~/" + Model.AccountAvatar)" target="_blank">กดที่นี่</a> เพื่อดูรูปปัจจุบัน</span>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-6">
+                                    <div class="form-group">
+                                        <label for="account_password" class="mandatory">รหัสผ่าน</label>
+                                        <input type="password" class="form-control" name="account_password" autocomplete="off" />
+                                        @if (Model.AccountId > 0)
+                                        {
+                                            <span class="help-block">ปล่อยว่างหากไม่ต้องการเปลี่ยนแปลงรหัสผ่าน</span>
+                                        }
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="form-group">
+                                        <label for="account_passwordre" class="mandatory">ยืนยันรหัสผ่าน</label>
+                                        <input type="password" class="form-control" name="account_passwordre" autocomplete="off" />
+                                        @if (Model.AccountId > 0)
+                                        {
+                                            <span class="help-block">ปล่อยว่างหากไม่ต้องการเปลี่ยนแปลงรหัสผ่าน</span>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="box-footer">
+                            <button type="submit" class="btn btn-primary">บันทึก</button>
+                            <a href="@Url.Action("Index", new { controller = "Home", are = "" })" class="btn btn-default">ยกเลิก</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

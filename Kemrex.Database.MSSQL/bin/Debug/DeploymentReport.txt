@@ -1,0 +1,45 @@
+﻿** Highlights
+     Tables that will be rebuilt
+       [dbo].[TblQuotation]
+       [dbo].[TblSaleOrder]
+     Clustered indexes that will be dropped
+       None
+     Clustered indexes that will be created
+       None
+     Possible data issues
+       None
+
+** User actions
+     Drop
+       unnamed constraint on [dbo].[TblSaleOrder] (Default Constraint)
+       unnamed constraint on [dbo].[TblSaleOrder] (Default Constraint)
+     Table rebuild
+       [dbo].[TblQuotation] (Table)
+       [dbo].[TblSaleOrder] (Table)
+
+** Supporting actions
+     Drop
+       [dbo].[DF_TblQuotation_ValidDay] (Default Constraint)
+       [dbo].[DF_TblQuotation_CreditDay] (Default Constraint)
+       [dbo].[FK_TblQuotationDetail_id] (Foreign Key)
+       [dbo].[FK_TblQuotation_Status] (Foreign Key)
+       [dbo].[FK_TblQuotation_Sale] (Foreign Key)
+       [dbo].[FK_TblQuotation_Customer] (Foreign Key)
+       [dbo].[FK_TblSaleOrder_Sale] (Foreign Key)
+       [dbo].[FK_TblSaleOrder_Customer] (Foreign Key)
+       [dbo].[FK_TblInvoice_SaleOrder] (Foreign Key)
+       [dbo].[FK_TblSaleOrderAttachment_Id] (Foreign Key)
+       [dbo].[FK_TblSaleOrderDetail_id] (Foreign Key)
+     Create
+       [dbo].[FK_TblQuotationDetail_id] (Foreign Key)
+       [dbo].[FK_TblQuotation_Status] (Foreign Key)
+       [dbo].[FK_TblQuotation_Sale] (Foreign Key)
+       [dbo].[FK_TblQuotation_Customer] (Foreign Key)
+       [dbo].[FK_TblSaleOrder_Sale] (Foreign Key)
+       [dbo].[FK_TblSaleOrder_Customer] (Foreign Key)
+       [dbo].[FK_TblInvoice_SaleOrder] (Foreign Key)
+       [dbo].[FK_TblSaleOrderAttachment_Id] (Foreign Key)
+       [dbo].[FK_TblSaleOrderDetail_id] (Foreign Key)
+
+The project and target databases have different collation settings. Deployment errors might occur.
+

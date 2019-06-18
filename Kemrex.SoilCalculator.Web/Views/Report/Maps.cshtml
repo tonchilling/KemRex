@@ -1,0 +1,334 @@
+﻿@using Kemrex.Database
+@using Kemrex.SoilCalculator.Web.Models
+@model List<TblKpt>
+@{
+    Layout = "~/Views/Shared/_lyDefault.cshtml";
+    bool canWrite = (bool)ViewBag.canWrite;
+    bool canDelete = (bool)ViewBag.canDelete;
+    bool canExport = (bool)ViewBag.canExport;
+    WidgetAlertModel AlertModel = (WidgetAlertModel)ViewBag.Alert;
+    WidgetPaginationModel Pagination = (WidgetPaginationModel)ViewBag.Pagination;
+    string GoogleMapsAPIKey = (string)ViewData["GoogleMapsAPIKey"];
+    string dateStart = (string)ViewData["dateStart"];
+    string dateEnd = (string)ViewData["dateEnd"];
+}
+
+@section styles {
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.8.0/css/bootstrap-datepicker.min.css" rel="stylesheet" type="text/css" />
+    <style type="text/css">
+        #map {
+            height: 100%;
+            min-height: 500px;
+            max-height: 500px;
+        }
+    </style>
+}
+
+@section script {
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.8.0/js/bootstrap-datepicker.min.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            window.setTimeout(function () {
+                $(".alert").fadeTo(1000, 0).slideUp(1000, function () {
+                    $(this).remove();
+                });
+            }, 5000);
+        });
+    </script>
+    <script type="text/javascript">
+
+        function initMap() {
+            var pos = {
+                lat: 13.756758354028204,
+                lng: 100.50619046470172
+            };
+            var map = new google.maps.Map(document.getElementById('map'), {
+                center: {lat: pos.lat, lng: pos.lng},
+                zoom: 10
+            });
+
+            var infoWindow = new google.maps.InfoWindow;
+            //if (navigator.geolocation) {
+            //    navigator.geolocation.getCurrentPosition(function (position) {
+            //        pos = {
+            //            lat: position.coords.latitude,
+            //            lng: position.coords.longitude
+            //        };
+            //        infoWindow.open(map);
+            //        map.setCenter(pos);
+            //    }, function () {
+            //        handleLocationError(true, infoWindow, map.getCenter());
+            //    });
+            //} else {
+            //    // Browser doesn't support Geolocation
+            //    handleLocationError(false, infoWindow, map.getCenter());
+            //}
+
+            var input = document.getElementById('pac-input');
+            var searchBox = new google.maps.places.SearchBox(input);
+            map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
+
+            map.addListener('bounds_changed', function () {
+                searchBox.setBounds(map.getBounds());
+            });
+            
+            var rsMarkers = [];
+            searchBox.addListener('places_changed', function () {
+                var places = searchBox.getPlaces();
+
+                if (places.length == 0) {
+                    return;
+                }
+
+                // Clear out the old markers.
+                rsMarkers.forEach(function (marker) {
+                    marker.setMap(null);
+                });
+                rsMarkers = [];
+
+                // For each place, get the icon, name and location.
+                var bounds = new google.maps.LatLngBounds();
+                places.forEach(function (place) {
+                    if (!place.geometry) {
+                        console.log("Returned place contains no geometry");
+                        return;
+                    }
+                    var icon = {
+                        url: place.icon,
+                        size: new google.maps.Size(71, 71),
+                        origin: new google.maps.Point(0, 0),
+                        anchor: new google.maps.Point(17, 34),
+                        scaledSize: new google.maps.Size(25, 25)
+                    };
+
+                    // Create a marker for each place.
+                    rsMarkers.push(new google.maps.Marker({
+                        map: map,
+                        icon: icon,
+                        title: place.name,
+                        position: place.geometry.location
+                    }));
+
+                    if (place.geometry.viewport) {
+                        // Only geocodes have viewport.
+                        bounds.union(place.geometry.viewport);
+                    } else {
+                        bounds.extend(place.geometry.location);
+                    }
+                });
+                map.fitBounds(bounds);
+            });
+
+            SetMarkers(map);
+        }
+
+        function SetMarkers(map) {
+            var locations = [
+                @foreach(TblKpt it in Model)
+                {
+                    <text>['@it.ProjectName', @it.KptLatitude, @it.KptLongtitude, '@it.CustomerName'],</text>
+                }
+            ];
+            //for (var i = 0; i < points.length; i++) {
+            //    var pt = points[i];
+            //    var marker = new google.maps.Marker({
+            //        position: { lat: pt[1], lng: pt[2] },
+            //        map: map,
+            //        title: pt[0],
+            //        zIndex: i + 1
+            //    });
+            //}
+
+            var markers = locations.map(function (location, i) {
+                var marker = new google.maps.Marker({
+                    position: { lat: location[1], lng: location[2] },
+                    map: map,
+                    title: location[0],
+                    zIndex: i + 1
+                });
+                var contentString = '<div id="content">' +
+                    '<div id="siteNotice">' +
+                    '</div>' +
+                    '<h5 id="firstHeading" class="firstHeading">' + location[0] + '</h5>' +
+                    '<div id="bodyContent">' +
+                    '<p><b>ชื่อลูกค้า</b> ' + location[3] + '</p>' +
+                    '</div>' +
+                    '</div>';
+                var infowindow = new google.maps.InfoWindow({
+                    content: contentString
+                });
+                marker.addListener('click', function () {
+                    infowindow.open(map, marker);
+                });
+
+                return marker;
+            });
+            //var markerCluster = new MarkerClusterer(map, markers, { imagePath: 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m' });
+        }
+
+        function handleLocationError(browserHasGeolocation, infoWindow, pos) {
+            infoWindow.setPosition(pos);
+            infoWindow.setContent(browserHasGeolocation ?
+                'Error: The Geolocation service failed.' :
+                'Error: Your browser doesn\'t support geolocation.');
+            infoWindow.open(map);
+        }
+    </script>
+    @*<script src="https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/markerclusterer.js"></script>*@
+    <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=@(GoogleMapsAPIKey)&callback=initMap&libraries=places"
+            async defer></script>
+}
+
+<div class="page">
+    <div class="page-header">
+        <h1 class="page-title">Kunzelstab Calculation</h1>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="@Url.Action("Index", new { controller = "Home", are = "" })" })">Home</a></li>
+            <li class="breadcrumb-item"><a href="javascript:void(0)">รายงาน</a></li>
+            <li class="breadcrumb-item active">Kunzelstab Calculation</li>
+        </ol>
+    </div>
+
+    <div class="page-content container-fluid">
+        <div class="row">
+            <div class="col-12">
+                <div class="panel">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">
+                            เงื่อนไขการค้นหา
+                        </h3>
+                    </div>
+                    <form method="get" action="@Url.Action("Maps", "Report")">
+                        <div class="panel-body">
+                            <div class="row">
+                                <div class="col-6">
+                                    <div class="form-group">
+                                        <label for="dateStart" class="mandatory">วันที่เริ่มต้น</label>
+                                        <div class="input-group date" data-provide="datepicker" data-date-format="dd/mm/yyyy">
+                                            <input type="text" name="dateStart" value="@dateStart" class="form-control">
+                                            <div class="input-group-addon">
+                                                <span class="glyphicon glyphicon-th"></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="form-group">
+                                        <label for="dateEnd" class="mandatory">วันที่สิ้นสุด</label>
+                                        <div class="input-group date" data-provide="datepicker" data-date-format="dd/mm/yyyy">
+                                            <input type="text" name="dateEnd" value="@dateEnd" class="form-control">
+                                            <div class="input-group-addon">
+                                                <span class="glyphicon glyphicon-th"></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="panel-footer">
+                            <div class="row">
+                                <div class="col-12">
+                                    <button type="submit" class="btn btn-primary">ค้นหา</button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12">
+                @if (ViewBag.Alert != null)
+                {
+                    @Html.Partial("_wgAlert", AlertModel)
+                }
+                <div class="panel">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">แผนที่</h3>
+                    </div>
+                    <!-- /.box-header -->
+                    <div class="panel-body">
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="form-group">
+                                    <input id="pac-input" class="form-control" style="max-width:500px;margin-top:10px;height:40px;" type="text" placeholder="ค้นหาสถานที่">
+                                    <div id="map"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- /.box-body -->
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12">
+                <div class="panel">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">
+                            Kunzelstab Calculation Maps
+                        </h3>
+                    </div>
+                    <!-- /.box-header -->
+                    <div class="panel-body dataTables_wrapper">
+                        <div class="row">
+                            <div class="col-12 col-sm-6 form-inline">
+                                @Html.Partial("_wgPaginationSize", Pagination)
+                            </div>
+                            <div class="col-12 col-sm-6">
+                                <div class="dataTables_paginate float-right">
+                                    @Html.Partial("_wgPagination", Pagination)
+                                </div>
+                                <div class="clear"></div>
+                            </div>
+                            <br /><br />
+                        </div>
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="table-responsive">
+                                    <table class="table table-bordered table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th>วันที่</th>
+                                                <th>ชื่อโครงการ</th>
+                                                <th>สถานที่</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @if (Model.Count() <= 0)
+                                            {
+                                                <tr>
+                                                    <td colspan="3">ไม่พบข้อมูล</td>
+                                                </tr>
+                                            }
+                                            @foreach (var ob in Model)
+                                            {
+                                                <tr>
+                                                    <td>@ob.CreatedDate.ToString("dd/MM/yyyy")</td>
+                                                    <td>@ob.ProjectName</td>
+                                                    <td>@ob.KptLocation</td>
+                                                </tr>
+                                            }
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-12 col-sm-6">
+                                <span>@Pagination.CurrentDisplay</span>
+                            </div>
+                            <div class="col-12 col-sm-6">
+                                <div class="dataTables_paginate float-right">
+                                    @Html.Partial("_wgPagination", Pagination)
+                                </div>
+                                <div class="clear"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- /.box-body -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

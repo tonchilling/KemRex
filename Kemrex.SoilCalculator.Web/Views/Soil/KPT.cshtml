@@ -1,0 +1,205 @@
+﻿@using Kemrex.Database
+@using Kemrex.SoilCalculator.Web.Controllers
+@{
+    SoilController mainFnc = ((SoilController)this.ViewContext.Controller);
+    Layout = "~/Views/Shared/_lyDefault.cshtml";
+}
+
+@section script {
+    <script type="text/javascript">
+        function AverageData(i) {
+            var totalN = 0;
+            var totalQu = 0;
+            $(".data-set-" + i).each(function () {
+                var n = $(this).find("input[name=blowCount]").val();
+                var Qu = $(this).find("td").eq(2).html();
+                totalN += parseFloat(n);
+                totalQu += parseFloat(Qu);
+            });
+            var avgN = parseFloat(parseFloat(totalN).toFixed(2) / 5).toFixed(2);
+            var avgQu = parseFloat(parseFloat(totalQu).toFixed(2) / 5).toFixed(2);
+            $(".avg-set-" + i).find("td").eq(3).html(avgN);
+            $(".avg-set-" + i).find("td").eq(4).html(avgQu);
+            $(".avg-set-" + i).find("td").eq(5).html(parseFloat(parseFloat(parseFloat(avgQu).toFixed(2)) / 2).toFixed(2));
+        }
+
+        $(document).ready(function () {
+            $(".cnt-set").change(function () {
+                var dset = $(this).data("dset");
+                var value = $(this).val();
+                if (value >= 0) {
+                    var tr = $(this).parent().parent();
+                    if (value > 15)
+                    { value = 15 + Math.floor(0.5 * (value - 15)); }
+                    var qu = 1.92 * (parseFloat(value) + 0.954);
+                    tr.find("td").eq(2).html(parseFloat(qu).toFixed(2));
+                    AverageData(dset);
+                }
+            });
+        });
+    </script>
+}
+
+<div class="page">
+    <div class="page-header">
+      <h1 class="page-title">KEMREX KUNZELSTAB PENETRATION TEST</h1>
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="@Url.Action("Index", new { controller = "Home", area = "" })">Home</a></li>
+        <li class="breadcrumb-item active">KTP Form</li>
+      </ol>
+    </div>
+
+    <div class="page-content container-fluid">
+        <!-- Panel -->
+        <div class="panel">
+            <div class="panel-body">
+                <table class="editable-table table table-striped" id="editableTable">
+                    <thead>
+                        <tr>
+                            <th>DEPTH (M.)</th>
+                            <th>Kunzelstab Blow count Per 20 cm. (N)</th>
+                            <th>Ultimate Bearing Capacity Qu (T/m2)</th>
+                            <th>Average (N)</th>
+                            <th>Average (Qu)</th>
+                            <th>Cohesion, c (t/m2)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="avg-set-1 data-set-1">
+                            <td>0.0 - 0.2</td>
+                            <td>
+                                <input type="number" name="blowCount" value="0"
+                                       class="form-control col-8 offset-2 form-control-sm text-center cnt-set" data-dset="1" />
+                            </td>
+                            <td class="text-center">0</td>
+                            <td rowspan="5" class="text-middle text-center">0</td>
+                            <td rowspan="5" class="text-middle text-center">0</td>
+                            <td rowspan="5" class="text-middle text-center">0</td>
+                        </tr>
+                        <tr class="data-set-1">
+                            <td>0.2 - 0.4</td>
+                            <td>
+                                <input type="number" name="blowCount" value="0"
+                                       class="form-control col-8 offset-2 form-control-sm text-center cnt-set" data-dset="1" />
+                            </td>
+                            <td class="text-center">0</td>
+                        </tr>
+                        <tr class="data-set-1">
+                            <td>0.4 - 0.6</td>
+                            <td>
+                                <input type="number" name="blowCount" value="0"
+                                       class="form-control col-8 offset-2 form-control-sm text-center cnt-set" data-dset="1" />
+                            </td>
+                            <td class="text-center">0</td>
+                        </tr>
+                        <tr class="data-set-1">
+                            <td>0.6 - 0.8</td>
+                            <td>
+                                <input type="number" name="blowCount" value="0"
+                                       class="form-control col-8 offset-2 form-control-sm text-center cnt-set" data-dset="1" />
+                            </td>
+                            <td class="text-center">0</td>
+                        </tr>
+                        <tr class="data-set-1">
+                            <td>0.8 - 1.0</td>
+                            <td>
+                                <input type="number" name="blowCount" value="0"
+                                       class="form-control col-8 offset-2 form-control-sm text-center cnt-set" data-dset="1" />
+                            </td>
+                            <td class="text-center">0</td>
+                        </tr>
+
+                        <tr class="avg-set-2 data-set-2">
+                            <td>1.0 - 1.2</td>
+                            <td>
+                                <input type="number" name="blowCount" value="0"
+                                       class="form-control col-8 offset-2 form-control-sm text-center cnt-set" data-dset="2" />
+                            </td>
+                            <td class="text-center">0</td>
+                            <td rowspan="5" class="text-middle text-center">0</td>
+                            <td rowspan="5" class="text-middle text-center">0</td>
+                            <td rowspan="5" class="text-middle text-center">0</td>
+                        </tr>
+                        <tr class="data-set-2">
+                            <td>1.2 - 1.4</td>
+                            <td>
+                                <input type="number" name="blowCount" value="0"
+                                       class="form-control col-8 offset-2 form-control-sm text-center cnt-set" data-dset="2" />
+                            </td>
+                            <td class="text-center">0</td>
+                        </tr>
+                        <tr class="data-set-2">
+                            <td>1.4 - 1.6</td>
+                            <td>
+                                <input type="number" name="blowCount" value="0"
+                                       class="form-control col-8 offset-2 form-control-sm text-center cnt-set" data-dset="2" />
+                            </td>
+                            <td class="text-center">0</td>
+                        </tr>
+                        <tr class="data-set-2">
+                            <td>1.6 - 1.8</td>
+                            <td>
+                                <input type="number" name="blowCount" value="0"
+                                       class="form-control col-8 offset-2 form-control-sm text-center cnt-set" data-dset="2" />
+                            </td>
+                            <td class="text-center">0</td>
+                        </tr>
+                        <tr class="data-set-2">
+                            <td>1.8 - 2.0</td>
+                            <td>
+                                <input type="number" name="blowCount" value="0"
+                                       class="form-control col-8 offset-2 form-control-sm text-center cnt-set" data-dset="2" />
+                            </td>
+                            <td class="text-center">0</td>
+                        </tr>
+
+                        <tr class="avg-set-3 data-set-3">
+                            <td>2.0 - 2.2</td>
+                            <td>
+                                <input type="number" name="blowCount" value="0"
+                                       class="form-control col-8 offset-2 form-control-sm text-center cnt-set" data-dset="3" />
+                            </td>
+                            <td class="text-center">0</td>
+                            <td rowspan="5" class="text-middle text-center">0</td>
+                            <td rowspan="5" class="text-middle text-center">0</td>
+                            <td rowspan="5" class="text-middle text-center">0</td>
+                        </tr>
+                        <tr class="data-set-3">
+                            <td>2.2 - 2.4</td>
+                            <td>
+                                <input type="number" name="blowCount" value="0"
+                                       class="form-control col-8 offset-2 form-control-sm text-center cnt-set" data-dset="3" />
+                            </td>
+                            <td class="text-center">0</td>
+                        </tr>
+                        <tr class="data-set-3">
+                            <td>2.4 - 2.6</td>
+                            <td>
+                                <input type="number" name="blowCount" value="0"
+                                       class="form-control col-8 offset-2 form-control-sm text-center cnt-set" data-dset="3" />
+                            </td>
+                            <td class="text-center">0</td>
+                        </tr>
+                        <tr class="data-set-3">
+                            <td>2.6 - 2.8</td>
+                            <td>
+                                <input type="number" name="blowCount" value="0"
+                                       class="form-control col-8 offset-2 form-control-sm text-center cnt-set" data-dset="3" />
+                            </td>
+                            <td class="text-center">0</td>
+                        </tr>
+                        <tr class="data-set-3">
+                            <td>2.8 - 3.0</td>
+                            <td>
+                                <input type="number" name="blowCount" value="0"
+                                       class="form-control col-8 offset-2 form-control-sm text-center cnt-set" data-dset="3" />
+                            </td>
+                            <td class="text-center">0</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- End Page -->

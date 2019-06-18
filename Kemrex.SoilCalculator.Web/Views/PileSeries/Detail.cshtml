@@ -1,0 +1,87 @@
+﻿@using Kemrex.Database
+@using Kemrex.SoilCalculator.Web.Models
+@model TblPileSeries
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_lyDefault.cshtml";
+    WidgetAlertModel Alert = (WidgetAlertModel)ViewBag.Alert;
+}
+
+@section script {
+    <script type="text/javascript">
+        $(document).ready(function () {
+            window.setTimeout(function () {
+                $(".alert").fadeTo(1000, 0).slideUp(1000, function () {
+                    $(this).remove();
+                });
+            }, 5000);
+        });
+    </script>
+}
+
+<div class="page">
+    <div class="page-content container-fluid">
+        @if (ViewBag.Alert != null)
+        {
+            <div class="row">
+                <div class="col-12">
+                    @Html.Partial("_wgAlert", Alert)
+                </div>
+            </div>
+        }
+        <div class="row">
+            <div class="col-12">
+                <div class="panel">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">
+                            @(Model.SeriesId > 0 ? "เพิ่ม" : "แก้ไข")ซีรี่ย์
+                            <span class="panel-desc">รายละเอียดซีรี่ย์สินค้า</span>
+                        </h3>
+                    </div>
+                    <form method="post" action="@Url.Action("Detail", "PileSeries")" enctype="multipart/form-data">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="SeriesId" value="@Model.SeriesId" />
+                        <div class="panel-body">
+                            <div class="row">
+                                <div class="col-md-6 col-sm-12">
+                                    <div class="form-group">
+                                        <label for="SeriesName" class="form-control-label">ชื่อซีรี่ย์</label>
+                                        <input type="text" class="form-control" name="SeriesName" value="@Model.SeriesName" />
+                                    </div>
+                                </div>
+                                <div class="col-md-6 col-sm-12">
+                                    <div class="form-group">
+                                        <label for="SeriesImage" class="form-control-label">รูปสินค้า</label>
+                                        <input type="file" class="form-control" name="SeriesImage" />
+                                        @if (!string.IsNullOrWhiteSpace(Model.SeriesImage))
+                                        {
+                                            <span class="help-block"><a href="@Url.Content("~/" + Model.SeriesImage)" target="_blank">กดที่นี่</a> เพื่อดูรูปปัจจุบัน</span>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-3 col-sm-6">
+                                    <div class="form-group">
+                                        <label for="SeriesOrder" class="form-control-label">ลำดับการแสดงผล</label>
+                                        <input type="number" class="form-control" name="SeriesOrder" value="@Model.SeriesOrder" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="panel-footer">
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="form-group">
+                                        <button type="submit" class="btn btn-primary">บันทึก</button>&nbsp;
+                                        <a href="@Url.Action("Index", "PileSeries")" class="btn btn-default">ยกเลิก</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,480 @@
+﻿@using DMN.Standard.Common.Extensions;
+@using Kemrex.Database
+@using Kemrex.SoilCalculator.Web.Models
+@model TblKpt
+@{
+    Layout = "~/Views/Shared/_lyDefault.cshtml";
+    bool canWrite = (bool)ViewBag.canWrite;
+    bool canDelete = (bool)ViewBag.canDelete;
+    bool canExport = (bool)ViewBag.canExport;
+    WidgetAlertModel AlertModel = (WidgetAlertModel)ViewBag.Alert;
+    string GoogleMapsAPIKey = (string)ViewData["GoogleMapsAPIKey"];
+}
+
+@section styles {
+    <link rel="stylesheet" type="text/css" href="~/lib/select2/css/select2.min.css" />
+    <style type="text/css">
+        #map {
+            height: 100%;
+            min-height: 500px;
+            max-height: 500px;
+        }
+    </style>
+}
+
+@section script {
+    <script type="text/javascript" src="~/lib/select2/js/select2.min.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            window.setTimeout(function () {
+                $(".alert").fadeTo(1000, 0).slideUp(1000, function () {
+                    $(this).remove();
+                });
+            }, 5000);
+
+            initPage();
+        });
+
+        function initPage() {
+            $(".cnt-set").change(function () {
+                var dset = $(this).data("dset");
+                var value = $(this).val();
+                if (value >= 0) {
+                    var tr = $(this).parent().parent();
+                    if (value > 15)
+                    { value = 15 + Math.floor(0.5 * (value - 15)); }
+                    var qu = parseFloat(value) <= 0 ? 0 : 1.92 * (parseFloat(value) + 0.954);
+                    tr.find("td").eq(2).html(parseFloat(qu).toFixed(2));
+                    AverageData(dset);
+                }
+            });
+
+            $("select[name=SubDistrictId]").select2({
+                ajax: {
+                    url: '@Url.Action("GetStateList", "System")',
+                    width: 'resolve',
+                    data: function (params) {
+                        return {
+                            q: params.term// search term
+                        };
+                    },
+                    processResults: function (data) {
+                        return {
+                            results: data.items
+                        };
+                    },
+                    minimumInputLength: 2,
+                    width: 'resolve'
+                }
+            });
+
+            $("select[name=SubDistrictId]").trigger("change");
+            $(".cnt-set").change();
+        }
+
+        function AverageData(i) {
+            var totalN = 0;
+            var totalQu = 0;
+            $(".data-set-" + i).each(function () {
+                var n = $(this).find("input.blowCount").val();
+                var Qu = $(this).find("td").eq(2).html();
+                totalN += parseFloat(n);
+                totalQu += parseFloat(Qu);
+            });
+            var avgN = parseFloat(parseFloat(totalN).toFixed(2) / 5).toFixed(2);
+            var avgQu = parseFloat(parseFloat(totalQu).toFixed(2) / 5).toFixed(2);
+            $(".avg-set-" + i).find("td").eq(3).html(avgN);
+            $(".avg-set-" + i).find("td").eq(4).html(avgQu);
+            $(".avg-set-" + i).find("td").eq(5).html(parseFloat(parseFloat(parseFloat(avgQu).toFixed(2)) / 2).toFixed(2));
+        }
+    </script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('form').on('keyup keypress', function (e) {
+                var keyCode = e.keyCode || e.which;
+                if (keyCode === 13) {
+                    e.preventDefault();
+                    return false;
+                }
+            });
+        });
+
+        function initMap() {
+            var pos = {
+                lat: @(Model.KptLatitude.ParseDecimal()),
+                lng: @(Model.KptLongtitude.ParseDecimal())
+            };
+            var map = new google.maps.Map(document.getElementById('map'), {
+                center: {lat: pos.lat, lng: pos.lng},
+                zoom: 18
+            });
+
+            google.maps.event.addListener(map, 'click', function (event) {
+                console.log("Latitude: " + event.latLng.lat() + " " + ", longitude: " + event.latLng.lng());
+                pos = {
+                    lat: event.latLng.lat(),
+                    lng: event.latLng.lng()
+                };
+                $("input[name=KptLatitude]").val(pos.lat);
+                $("input[name=KptLongtitude]").val(pos.lng);
+                infoWindow.setPosition(pos);
+                infoWindow.setContent('ตำแหน่งปัจุบัน. ละติจูด: ' + pos.lat + ', ลองติจูด: ' + pos.lng + ' ');
+                infoWindow.open(map);
+                map.setCenter(pos);
+            });
+
+
+            var infoWindow = new google.maps.InfoWindow;
+            if (pos.lat == 0 && pos.lng == 0) {
+                pos.lat = 13.756758354028204;
+                pos.lng = 100.50619046470172;
+            }
+
+            infoWindow.setPosition(pos);
+            infoWindow.setContent('ตำแหน่งปัจุบัน. ละติจูด: ' + pos.lat + ', ลองติจูด: ' + pos.lng + ' ');
+            infoWindow.open(map);
+            map.setCenter(pos);
+
+            var input = document.getElementById('pac-input');
+            var searchBox = new google.maps.places.SearchBox(input);
+            map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
+
+            map.addListener('bounds_changed', function () {
+                searchBox.setBounds(map.getBounds());
+            });
+
+            var rsMarkers = [];
+            searchBox.addListener('places_changed', function () {
+                var places = searchBox.getPlaces();
+
+                if (places.length == 0) {
+                    return;
+                }
+
+                // Clear out the old markers.
+                rsMarkers.forEach(function (marker) {
+                    marker.setMap(null);
+                });
+                rsMarkers = [];
+
+                // For each place, get the icon, name and location.
+                var bounds = new google.maps.LatLngBounds();
+                places.forEach(function (place) {
+                    if (!place.geometry) {
+                        console.log("Returned place contains no geometry");
+                        return;
+                    }
+                    var icon = {
+                        url: place.icon,
+                        size: new google.maps.Size(71, 71),
+                        origin: new google.maps.Point(0, 0),
+                        anchor: new google.maps.Point(17, 34),
+                        scaledSize: new google.maps.Size(25, 25)
+                    };
+
+                    // Create a marker for each place.
+                    rsMarkers.push(new google.maps.Marker({
+                        map: map,
+                        icon: icon,
+                        title: place.name,
+                        position: place.geometry.location
+                    }));
+
+                    if (place.geometry.viewport) {
+                        // Only geocodes have viewport.
+                        bounds.union(place.geometry.viewport);
+                    } else {
+                        bounds.extend(place.geometry.location);
+                    }
+                });
+                map.fitBounds(bounds);
+            });
+
+            //if (pos.lat != 0 && pos.lng != 0) {
+            //    infoWindow.setPosition(pos);
+            //    infoWindow.setContent('ตำแหน่งปัจุบัน. ละติจูด: ' + pos.lat + ', ลองติจูด: ' + pos.lng + ' ');
+            //    infoWindow.open(map);
+            //    map.setCenter(pos);
+            //} else if (pos.lat == 0 && pos.lng == 0 && navigator.geolocation) {
+            //    navigator.geolocation.getCurrentPosition(function (position) {
+            //        pos = {
+            //            lat: position.coords.latitude,
+            //            lng: position.coords.longitude
+            //        };
+            //        $("input[name=KptLatitude]").val(pos.lat);
+            //        $("input[name=KptLongtitude]").val(pos.lng);
+            //        infoWindow.setPosition(pos);
+            //        infoWindow.setContent('ตำแหน่งปัจุบัน. ละติจูด: ' + position.coords.latitude + ', ลองติจูด: ' + position.coords.longitude + ' ');
+            //        infoWindow.open(map);
+            //        map.setCenter(pos);
+            //    }, function () {
+            //        handleLocationError(true, infoWindow, map.getCenter());
+            //    });
+            //} else {
+            //    // Browser doesn't support Geolocation
+            //    handleLocationError(false, infoWindow, map.getCenter());
+            //}
+        }
+
+        //function setMaps(pos) {
+        //    infoWindow.setPosition(pos);
+        //    infoWindow.setContent('ตำแหน่งปัจุบัน. ละติจูด: ' + position.coords.latitude + ', ลองติจูด: ' + position.coords.longitude + ' ');
+        //    infoWindow.open(map);
+        //    map.setCenter(pos);
+        //}
+
+        function handleLocationError(browserHasGeolocation, infoWindow, pos) {
+            infoWindow.setPosition(pos);
+            infoWindow.setContent(browserHasGeolocation ?
+                'Error: The Geolocation service failed.' :
+                'Error: Your browser doesn\'t support geolocation.');
+            infoWindow.open(map);
+        }
+    </script>
+    <script  type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=@(GoogleMapsAPIKey)&callback=initMap&libraries=places"
+    async defer></script>
+}
+
+<div class="page">
+    <div class="page-header">
+        <h1 class="page-title">Kunzelstab Calculation</h1>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="@Url.Action("Index", new { controller = "Home", are = "" })" })">Home</a></li>
+            <li class="breadcrumb-item"><a href="javascript:void(0)">การคำนวณ</a></li>
+            <li class="breadcrumb-item"><a href="@Url.Action("Index", new { controller = "KPT", are = "" })">Kunzelstab Calculation</a></li>
+            <li class="breadcrumb-item active">@(Model.KptId > 0 ? "แก้ไข" : "เพิ่ม")</li>
+        </ol>
+    </div>
+
+    <div class="page-content container-fluid">
+        <input id="pac-input" class="form-control" style="max-width:500px;margin-top:10px;height:40px;" type="text" placeholder="ค้นหาสถานที่">
+        <div class="row">
+            <div class="col-md-12">
+                @if (ViewBag.Alert != null)
+                {
+                    @Html.Partial("_wgAlert", AlertModel)
+                }
+                <div class="panel">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">Kunzelstab Penetration Test</h3>
+                    </div>
+                    <form role="form" method="post" action="@Url.Action("Detail", new { controller = "KPT" })">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="KptId" value="@Model.KptId" />
+                        <div class="panel-body">
+                            <div class="row">
+                                <div class="col-6">
+                                    <div class="form-group">
+                                        <label for="ProjectName" class="mandatory">ชื่อโครงการ</label>
+                                        <input type="text" class="form-control" name="ProjectName" value="@Model.ProjectName" />
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="form-group">
+                                        <label for="CustomerName" class="mandatory">ชื่อลูกค้า</label>
+                                        <input type="text" class="form-control" name="CustomerName" value="@Model.CustomerName" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="form-group">
+                                        <label for="KptMaps" class="mandatory">แผนที่</label>
+                                        <div id="map"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-6">
+                                    <div class="form-group">
+                                        <label for="KptLatitude" class="mandatory">พิกัดละติจูด</label>
+                                        <input type="text" class="form-control" name="KptLatitude" value="@Model.KptLatitude" readonly="readonly" />
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="form-group">
+                                        <label for="KptLongtitude" class="mandatory">พิกัดลองติจูด</label>
+                                        <input type="text" class="form-control" name="KptLongtitude" value="@Model.KptLongtitude" readonly="readonly" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-6">
+                                    <div class="form-group">
+                                        <label for="KptLocation" class="mandatory">สถานที่</label>
+                                        <input type="text" class="form-control" name="KptLocation" value="@Model.KptLocation" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="form-group">
+                                        <label for="KptLocation" class="mandatory">ตำบล > อำเภอ > จังหวัด</label>
+                                        <select name="SubDistrictId" class="form-control">
+                                            @if ((Model.SubDistrictId ?? 0) > 0)
+                                            {
+                                                <option value="@Model.SubDistrictId.Value">@Model.SubDistrict().SubDistrictNameTH > @Model.SubDistrict().District().DistrictNameTH > @Model.SubDistrict().District().State().StateNameTH</option>
+                                            }
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-9">
+                                    <div class="form-group">
+                                        <label for="TestBy" class="mandatory">ผู้สำรวจ</label>
+                                        <input type="text" class="form-control" name="TestBy" value="@Model.TestBy" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="form-group">
+                                        <label for="KptRemark">หมายเหตุ</label>
+                                        <input type="text" class="form-control" name="KptRemark" value="@Model.KptRemark" />
+                                    </div>
+                                </div>
+                            </div>
+                            @*<div class="row">
+                                <div class="col-12">
+                                    <div class="form-group">
+                                        <label for="KptData">ข้อมูลที่บันทึก</label>
+                                        <div class="table-responsive">
+                                            <table class="editable-table table table-striped" id="editableTable">
+                                                <thead>
+                                                    <tr>
+                                                        <th>DEPTH (M.)</th>
+                                                        <th>Kunzelstab Blow count Per 20 cm. (N)</th>
+                                                        <th>Ultimate Bearing Capacity Qu (T/m2)</th>
+                                                        <th>Average (N)</th>
+                                                        <th>Average (Qu)</th>
+                                                        <th>Cohesion, c (t/m2)</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @for (int i = 1; i <= (7 * 5); i++)
+                                                    {
+                                                        int iset = (int)((i - 1) / 5) + 1;
+                                                        int setIndex = i % 5;
+                                                        <tr class="@(setIndex == 1 ? "avg-set-" + iset + " " : "")data-set-@iset">
+                                                            <td>@((0.2 * (double)(i - 1)).ToString("0.0")) - @((0.2 * (double)i).ToString("0.0"))</td>
+                                                            <td>
+                                                                <input type="number" name="blowCount-@i" value="@Model.BlowCountDepth(i)"
+                                                                       class="form-control col-8 offset-2 form-control-sm text-center cnt-set blowCount" data-dset="@iset" />
+                                                            </td>
+                                                            <td class="text-center">0</td>
+                                                            @if (setIndex == 1)
+                                                            {
+                                                                <td rowspan="5" class="text-middle text-center">0</td>
+                                                                <td rowspan="5" class="text-middle text-center">0</td>
+                                                                <td rowspan="5" class="text-middle text-center">0</td>
+                                                            }
+                                                        </tr>
+                                                    }
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>*@
+                        </div>
+                        <div class="panel-footer">
+                            @if (canWrite)
+                            {
+                                <button type="submit" class="btn btn-primary">บันทึก</button>
+                            }
+                            <a href="@Url.Action("Index", new { controller = "KPT", are = "" })" class="btn btn-default">ยกเลิก</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        @if (Model.KptId > 0)
+        {
+            <div class="row">
+                <div class="col-12">
+                    <div class="panel">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">จุดตรวจสอบ&nbsp;<a href="@Url.Action("Station", new { controller = "KPT", kId = Model.KptId })" class="btn btn-xs btn-primary" style="color:white;">เพิ่มข้อมูล</a></h3>
+                        </div>
+                        <!-- /.box-header -->
+                        <div class="panel-body">
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="table-responsive">
+                                        <table class="table table-bordered table-hover">
+                                            <thead>
+                                                <tr>
+                                                    <th>จุดตรวจสอบ</th>
+                                                    <th>ระดับความลึก (สุดท้าย)</th>
+                                                    <th>ค่าเฉลี่ย Blow Count (สุดท้าย)</th>
+                                                    <th>ค่าเฉลี่ย Qu (สุดท้าย)</th>
+                                                    <th>Cohesion, c (t/m2) (สุดท้าย)</th>
+                                                    <th>เครื่องมือ</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @if (Model.TblKptStation.Count() <= 0)
+                                                {
+                                                    <tr>
+                                                        <td colspan="6">ไม่พบข้อมูล</td>
+                                                    </tr>
+                                                }
+                                                @foreach (var ob in Model.TblKptStation)
+                                                {
+                                                    <tr>
+                                                        <td>@ob.StationName</td>
+                                                        <td>@ob.StationEndDepth</td>
+                                                        <td>@ob.StationAvgBlowCount</td>
+                                                        <td>@ob.StationAvgQu</td>
+                                                        <td>@ob.StationCohesion</td>
+                                                        <td>
+                                                            @if (canWrite)
+                                                            {
+                                                                <a href="@Url.Action("Station", new { controller = "KPT", kId = ob.KptId, id = ob.StationId })"
+                                                                   class="btn btn-xs btn-primary">
+                                                                    <i class="fa fa-pencil" aria-hidden="true"></i>&nbsp;แก้ไข
+                                                                </a>
+                                                            }
+                                                            @if (canExport)
+                                                            {
+                                                                <a href="@Url.Action("Export", new { controller = "KPT", id = ob.StationId })"
+                                                                   class="btn btn-xs btn-success" target="_blank">
+                                                                    <i class="fa fa-download" aria-hidden="true"></i>&nbsp;ดาวน์โหลด
+                                                                </a>
+                                                            }
+                                                            @if (canDelete)
+                                                            {
+                                                                <form method="post" action="@Url.Action("DeleteStation", new { controller = "KPT", kId = ob.KptId })"
+                                                                      class="fnc-delete inline-block">
+                                                                    <input type="hidden" name="Id" value="@ob.StationId" />
+                                                                    @Html.AntiForgeryToken()
+                                                                    <button type="submit" class="btn btn-danger btn-xs"><i class="fa fa-trash" aria-hidden="true"></i>&nbsp;ลบ</button>
+                                                                </form>
+                                                            }
+                                                            @*<a href="@Url.Action("Station", new { controller = "KPT", kId = ob.KptId, id = ob.StationId })"
+                                                               class="btn btn-xs btn-primary">
+                                                                <i class="fa fa-pencil" aria-hidden="true"></i>&nbsp;แก้ไข
+                                                            </a>
+                                                            <form method="post" action="@Url.Action("Delete", new { controller = "KPT", kId = ob.KptId })"
+                                                                  class="fnc-delete inline-block">
+                                                                <input type="hidden" name="Id" value="@ob.StationId" />
+                                                                @Html.AntiForgeryToken()
+                                                                <button type="submit" class="btn btn-danger btn-xs"><i class="fa fa-trash" aria-hidden="true"></i>&nbsp;ลบ</button>
+                                                            </form>*@
+                                                        </td>
+                                                    </tr>
+                                                }
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- /.box-body -->
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>

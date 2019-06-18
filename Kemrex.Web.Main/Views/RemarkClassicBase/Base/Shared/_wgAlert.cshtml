@@ -1,0 +1,7 @@
+﻿@using Kemrex.Web.Common.Models
+@model WidgetAlertModel
+<div class="alert alert-@Model.TypeStr alert-dismissible">
+    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+    <h4><i class="icon fa fa-@Model.Icon"></i> @Model.Title</h4>
+    @Html.Raw(Model.Message.Replace("{\n}", "<br />"))
+</div>

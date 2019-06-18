@@ -1,0 +1,128 @@
+﻿@using Kemrex.Core.Database.Models
+@using Kemrex.Web.Controllers.Base
+@using Kemrex.Web.Common.Models
+@model TblCustomerContact
+@{
+    ViewBag.Title = "ที่อยู่ลูกค้า";
+    KemrexController kemrex = ((KemrexController)this.ViewContext.Controller);
+    Layout = kemrex.PathViewShared("_lyDefault");
+    WidgetAlertModel Alert = (WidgetAlertModel)ViewBag.Alert;
+    int? QtId = (int?)ViewData["QtId"];
+}
+
+@section styles {
+    <link rel="stylesheet" type="text/css" href="~/lib/select2/css/select2.min.css" />
+}
+
+@section script {
+    <script type="text/javascript" src="~/lib/select2/js/select2.min.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            window.setTimeout(function () {
+                $(".alert").fadeTo(1000, 0).slideUp(1000, function () {
+                    $(this).remove();
+                });
+            }, 5000);
+
+            $("select[name=SubDistrictId]").select2({
+                ajax: {
+                    url: '@Url.Action("GetStateList", "System")',
+                    width: 'resolve',
+                    data: function (params) {
+                        return {
+                            q: params.term// search term
+                        };
+                    },
+                    processResults: function (data) {
+                        return {
+                            results: data.items
+                        };
+                    },
+                    minimumInputLength: 2,
+                    width: 'resolve'
+                }
+            });
+        });
+    </script>
+}
+<div class="page">
+    <div class="page-content container-fluid">
+        @if (ViewBag.Alert != null)
+        {
+            <div class="row">
+                <div class="col-12">
+                    @Html.Partial(kemrex.PathViewShared("_wgAlert"), Alert)
+                </div>
+            </div>
+        }
+        <div class="row">
+            <div class="col-12">
+                <div class="panel">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">
+                            @(Model.CustomerId > 0 ? "แก้ไข" : "เพิ่ม")ผู้ติดต่อ (ลูกค้า)
+                            <span class="panel-desc">รายละเอียดผู้ติดต่อ (ลูกค้าฉ</span>
+                        </h3>
+                    </div>
+                    <form method="post" action="@Url.Action("Detail", "CustomerContact")" enctype="multipart/form-data">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="ContactId" value="@Model.ContactId" />
+                        <input type="hidden" name="CustomerId" value="@Model.CustomerId" />
+                        @if (QtId.HasValue && (QtId ?? 0) > 0)
+                        {
+                            <input type="hidden" name="QtId" value="@(QtId ?? 0)" />
+                        }
+                        <div class="panel-body">
+                            <div class="row">
+                                <div class="col-md-6 col-sm-12">
+                                    <div class="form-group">
+                                        <label class="form-control-label">ชื่อลูกค้า</label>
+                                        <input type="text" class="form-control" value="@Model.Customer.CustomerName" readonly="readonly" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 col-sm-12">
+                                    <div class="form-group">
+                                        <label for="ContactName" class="form-control-label">ชื่อผู้ติดต่อ</label>
+                                        <input type="text" class="form-control" name="ContactName" value="@Model.ContactName" />
+                                    </div>
+                                </div>
+                                <div class="col-md-6 col-sm-12">
+                                    <div class="form-group">
+                                        <label for="ContactPosition" class="form-control-label">ตำแหน่ง</label>
+                                        <input type="text" class="form-control" name="ContactPosition" value="@Model.ContactPosition" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 col-sm-12">
+                                    <div class="form-group">
+                                        <label for="ContactPhone" class="form-control-label">โทรศัพท์</label>
+                                        <input type="text" class="form-control" name="ContactPhone" value="@Model.ContactPhone" />
+                                    </div>
+                                </div>
+                                <div class="col-md-6 col-sm-12">
+                                    <div class="form-group">
+                                        <label for="ContactEmail" class="form-control-label">E-Mail</label>
+                                        <input type="email" class="form-control" name="ContactEmail" value="@Model.ContactEmail" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="panel-footer">
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="form-group">
+                                        <button type="submit" class="btn btn-primary">บันทึก</button>&nbsp;
+                                        <a href="@Url.Action("Detail", "Customer", new { id = Model.CustomerId })" class="btn btn-default">ยกเลิก</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

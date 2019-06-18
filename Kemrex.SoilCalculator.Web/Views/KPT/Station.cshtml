@@ -1,0 +1,240 @@
+﻿@using Kemrex.Database
+@using Kemrex.SoilCalculator.Web.Models
+@model TblKptStation
+@{
+    Layout = "~/Views/Shared/_lyDefault.cshtml";
+    WidgetAlertModel AlertModel = (WidgetAlertModel)ViewBag.Alert;
+}
+
+@section styles {
+    <link rel="stylesheet" type="text/css" href="~/lib/select2/css/select2.min.css" />
+}
+
+@section script {
+    <script type="text/javascript" src="~/lib/select2/js/select2.min.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            window.setTimeout(function () {
+                $(".alert").fadeTo(1000, 0).slideUp(1000, function () {
+                    $(this).remove();
+                });
+            }, 5000);
+
+            initPage();
+        });
+
+        function initPage() {
+            $(".cnt-set").change(function () {
+                var dset = $(this).data("dset");
+                var value = $(this).val();
+                if (value >= 0) {
+                    var tr = $(this).parent().parent();
+                    if (value > 15)
+                    { value = 15 + Math.floor(0.5 * (value - 15)); }
+                    var qu = parseFloat(value) <= 0 ? 0 : 1.92 * (parseFloat(value) + 0.954);
+                    tr.find("td").eq(2).html(parseFloat(qu).toFixed(2));
+                    AverageData(dset);
+                }
+            });
+
+            $(".cnt-set").change();
+        }
+
+        function AverageData(i) {
+            var totalN = 0;
+            var totalQu = 0;
+            $(".data-set-" + i).each(function () {
+                var n = $(this).find("input.blowCount").val();
+                var Qu = $(this).find("td").eq(2).html();
+                totalN += parseFloat(n);
+                totalQu += parseFloat(Qu);
+            });
+            var avgN = parseFloat(parseFloat(totalN).toFixed(2) / 5).toFixed(2);
+            var avgQu = parseFloat(parseFloat(totalQu).toFixed(2) / 5).toFixed(2);
+            $(".avg-set-" + i).find("td").eq(3).html(avgN);
+            $(".avg-set-" + i).find("td").eq(4).html(avgQu);
+            $(".avg-set-" + i).find("td").eq(5).html(parseFloat(parseFloat(parseFloat(avgQu).toFixed(2)) / 2).toFixed(2));
+            $(".avg-set-" + i).find("td").eq(6).html(SoilStatus(avgN));
+        }
+
+        function SoilStatus(n) {
+            if (parseFloat(n) <= 0) { return "-"; }
+            else if (parseFloat(n) <= 3) { return "อ่อนมาก"; }
+            else if (parseFloat(n) <= 6) { return "อ่อน"; }
+            else if (parseFloat(n) <= 14) { return "ปานกลาง"; }
+            else if (parseFloat(n) <= 39) { return "แข็ง"; }
+            else if (parseFloat(n) <= 95) { return "แข็งมาก"; }
+            else { return "แข็งที่สุด"; }
+        }
+    </script>
+}
+
+<div class="page">
+    <div class="page-header">
+        <h1 class="page-title">Kunzelstab Calculation</h1>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="@Url.Action("Index", new { controller = "Home", are = "" })" })">Home</a></li>
+            <li class="breadcrumb-item"><a href="javascript:void(0)">การคำนวณ</a></li>
+            <li class="breadcrumb-item"><a href="@Url.Action("Index", new { controller = "KPT", are = "" })">Kunzelstab Calculation</a></li>
+            <li class="breadcrumb-item active">จุดตรวจสอบ</li>
+        </ol>
+    </div>
+
+    <div class="page-content container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                @if (ViewBag.Alert != null)
+                {
+                    @Html.Partial("_wgAlert", AlertModel)
+                }
+                <div class="panel">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">Kunzelstab Penetration Test จุด @Model.StationName</h3>
+                    </div>
+                    <form role="form" method="post" action="@Url.Action("Station", new { controller = "KPT", kId = Model.KptId })">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="KptId" value="@Model.KptId" />
+                        <input type="hidden" name="StationId" value="@Model.StationId" />
+                        <div class="panel-body">
+                            <div class="row">
+                                <div class="col-6">
+                                    <div class="form-group">
+                                        <label for="StationName" class="mandatory">ชื่อสถานี</label>
+                                        <input type="text" class="form-control" name="StationName" value="@Model.StationName" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-9">
+                                    <div class="form-group">
+                                        <label for="StationTestBy" class="mandatory">ผู้สำรวจ</label>
+                                        <input type="text" class="form-control" name="StationTestBy" value="@Model.StationTestBy" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="form-group">
+                                        <label for="StationRemark">หมายเหตุ</label>
+                                        <input type="text" class="form-control" name="StationRemark" value="@Model.StationRemark" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="form-group">
+                                        <label for="KptData">ข้อมูลที่บันทึก</label>
+                                        <div class="table-responsive">
+                                            <table class="editable-table table table-striped" id="editableTable">
+                                                <thead>
+                                                    <tr>
+                                                        <th>DEPTH (M.)</th>
+                                                        <th>Kunzelstab Blow count Per 20 cm. (N)</th>
+                                                        <th>Ultimate Bearing Capacity Qu (T/m2)</th>
+                                                        <th>Average (N)</th>
+                                                        <th>Average (Qu)</th>
+                                                        <th>Cohesion, c (t/m2)</th>
+                                                        <th>สภาพดิน</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @for (int i = 1; i <= (7 * 5); i++)
+                                                    {
+                                                        int iset = (int)((i - 1) / 5) + 1;
+                                                        int setIndex = i % 5;
+                                                        <tr class="@(setIndex == 1 ? "avg-set-" + iset + " " : "")data-set-@iset">
+                                                            <td>@((0.2 * (double)(i - 1)).ToString("0.0")) - @((0.2 * (double)i).ToString("0.0"))</td>
+                                                            <td>
+                                                                <input type="number" name="blowCount-@i" value="@Model.BlowCountDepth(i)"
+                                                                       class="form-control col-8 offset-2 form-control-sm text-center cnt-set blowCount" data-dset="@iset" />
+                                                            </td>
+                                                            <td class="text-center">0</td>
+                                                            @if (setIndex == 1)
+                                                            {
+                                                                <td rowspan="5" class="text-middle text-center">0</td>
+                                                                <td rowspan="5" class="text-middle text-center">0</td>
+                                                                <td rowspan="5" class="text-middle text-center">0</td>
+                                                                <td rowspan="5" class="text-middle text-center">-</td>
+                                                            }
+                                                        </tr>
+                                                    }
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="box-footer">
+                            <button type="submit" class="btn btn-primary">บันทึก</button>
+                            <a href="@Url.Action("Detail", new { controller = "KPT", id = Model.KptId })" class="btn btn-default">ยกเลิก</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        @if (Model.StationId > 0)
+        {
+            <div class="row">
+                <div class="col-12">
+                    <div class="panel">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">
+                                รายการไฟล์แนบ<br />
+                                <form method="post" action="@Url.Action("SetAttachStation", "KPT")" enctype="multipart/form-data" class="form-inline">
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="StationId" value="@Model.StationId" />
+                                    <div class="form-group">
+                                        <input type="text" class="form-control" name="AttachName" placeholder="ชื่อไฟล์แนบ" />
+                                    </div>
+                                    <div class="form-group">
+                                        <input type="file" class="form-control" name="AttachFile" />
+                                    </div>
+                                    <button type="submit" class="btn btn-primary">อัพโหลด</button>
+                                </form>
+                            </h3>
+                        </div>
+                        <div class="panel-body">
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="table-responsive">
+                                        <table class="table table-bordered table-hover">
+                                            <thead>
+                                                <tr>
+                                                    <th>ชื่อไฟล์</th>
+                                                    <th>เครื่องมือ</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @if (Model.TblKptStationAttachment.Count() <= 0)
+                                                {
+                                                    <tr>
+                                                        <td colspan="2">ไม่พบข้อมูล</td>
+                                                    </tr>
+                                                }
+                                                @foreach (var ob in Model.TblKptStationAttachment)
+                                                {
+                                                    <tr>
+                                                        <td><a href="@Url.Content("~/" + ob.AttachPath)" target="_blank">@ob.AttachName</a></td>
+                                                        <td>
+                                                            <form method="post" action="@Url.Action("DeleteAttachStation", new { controller = "KPT", sid = Model.StationId })"
+                                                                  class="fnc-delete inline-block">
+                                                                <input type="hidden" name="Id" value="@ob.AttachId" />
+                                                                @Html.AntiForgeryToken()
+                                                                <button type="submit" class="btn btn-danger btn-xs"><i class="fa fa-trash" aria-hidden="true"></i>&nbsp;ลบ</button>
+                                                            </form>
+                                                        </td>
+                                                    </tr>
+                                                }
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>

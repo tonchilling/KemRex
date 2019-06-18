@@ -1,0 +1,28 @@
+﻿@using Kemrex.Database
+@model List<SysMenu>
+@foreach (SysMenu lv1 in Model)
+{
+    int roleId = (int)(ViewData["RoleId"] ?? 0);
+    <li class="site-menu-item@(lv1.SubMenus(roleId).Count > 0 ? " has-sub" : "")">
+        <a href="@(lv1.SubMenus(roleId).Count > 0 ? "javascript:void(0)" : Url.Action(lv1.MvcAction, new { area = lv1.MvcArea, controller = lv1.MvcController }))">
+            <span class="site-menu-title">@lv1.MenuName</span>
+            @if (lv1.SubMenus(roleId).Count > 0)
+            {
+                <span class="site-menu-arrow"></span>
+            }
+        </a>
+        @if(lv1.SubMenus(roleId).Count > 0)
+        {
+            <ul class="site-menu-sub">
+                @foreach (SysMenu lv2 in lv1.SubMenus(roleId))
+                {
+                    <li class="site-menu-item">
+                        <a href="@Url.Action(lv2.MvcAction, new { controller = lv2.MvcController, area = lv2.MvcArea })">
+                            <span class="site-menu-title">@lv2.MenuName</span>
+                        </a>
+                    </li>
+                }
+            </ul>
+        }
+    </li>
+}

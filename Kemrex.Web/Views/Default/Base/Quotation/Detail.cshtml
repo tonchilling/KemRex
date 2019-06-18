@@ -1,0 +1,673 @@
+﻿@using Kemrex.Core.Database.Models
+@using Kemrex.Web.Controllers.Base
+@using Kemrex.Web.Common.Models
+
+@model TblQuotation
+@{
+    ViewBag.Title = "Index";
+    KemrexController kemrex = ((KemrexController)this.ViewContext.Controller);
+    Layout = kemrex.PathViewShared("_lyDefault");
+    WidgetAlertModel Alert = (WidgetAlertModel)ViewBag.Alert;
+
+    List<TblCustomer>
+    optCustomer = (List<TblCustomer>
+        )ViewData["optCustomer"];
+    List<TblCustomerAddress>
+        optCustomerAddress = (List<TblCustomerAddress>
+            )ViewData["optCustomerAddress"];
+    List<TblQuotationDetail>
+        optQtDetail = (List<TblQuotationDetail>
+            )ViewData["optQtDetail"];
+    List<TblProduct>
+    optProduct = (List<TblProduct>
+        )ViewData["optProduct"];
+    List<TblCustomerContact>
+optContact = (List<TblCustomerContact>
+    )ViewData["optContact"];
+    List<TblEmployee>
+optEmployee = (List<TblEmployee>
+)ViewData["optEmployee"];
+
+
+}
+
+@section styles {
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.8.0/css/bootstrap-datepicker.min.css" rel="stylesheet" type="text/css" />
+}
+
+@section script {
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.8.0/js/bootstrap-datepicker.min.js"></script>
+    <script type="text/javascript">
+
+        var _contact = [];
+
+        $(document).ready(function () {
+
+            window.setTimeout(function () {
+                $(".alert").fadeTo(1000, 0).slideUp(1000, function () {
+                    $(this).remove();
+                });
+            }, 5000);
+
+            var tab = TabPages.init('myTabPage');
+            //tab.selectTab('navInfo');
+
+            var myTabElement = new TabPages('myTabPage');
+            myTabElement.initTabs();
+            myTabElement.selectTab('navInfo');
+
+            if (getUrlVars()["tab"] == "Product")
+            {
+                myTabElement.selectTab('navProducts');
+            }
+            calDiscount();
+        });
+
+        function getUrlVars() {
+            var vars = [], hash;
+            var hashes = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');
+            for (var i = 0; i < hashes.length; i++) {
+                hash = hashes[i].split('=');
+                vars.push(hash[0]);
+                vars[hash[0]] = hash[1];
+            }
+            return vars;
+        }
+
+        function calDiscount() {
+            var st = document.getElementById("SummaryTot").value;
+            var dc = document.getElementById("DiscountCash").value;
+            if (dc > 0)
+            {
+                document.getElementById("SummaryTot").value = st - dc;
+            }
+        }
+
+        // Get CustomerAddress by customer id
+        function getAddress(e) {
+           var _customerAddress = [];
+            var myArray = [];
+            var id = document.getElementById("CustomerId").value;
+            @foreach (var d in optCustomerAddress.ToArray())
+            {
+                @:myArray.push("@d.CustomerId:@d.AddressId:@d.AddressName-@d.AddressText");
+            }
+            var addr = [];
+            myArray.forEach(function (e) {
+                var i = e.split(':');
+                if (i[0] == id)
+                    _customerAddress.push(e);
+            })
+            return _customerAddress.toString();
+        }
+
+        // Get CustomerContact by customer id
+        function getContact(e) {
+
+            var myArray = [];
+            var con = [];
+            var id = document.getElementById("CustomerId").value;
+            @foreach (var d in optContact.ToArray())
+            {
+                @:myArray.push("@d.CustomerId:@d.ContactId:@d.ContactName:@d.ContactPhone:@d.ContactEmail");
+            }
+            var addr = [];
+            myArray.forEach(function (e) {
+                var i = e.split(':');
+                if (i[0] == id)
+                    con.push(e);
+            })
+            return con.toString();
+        }
+        // Modal customer address
+        function showSelectModal(addr,name) {
+            var id = document.getElementById("CustomerId").value;
+
+            document.getElementById("lbCustomerId").innerText = id;
+            document.getElementById("lbCustomerName").innerText = document.getElementById("CustomerName").value;
+
+            var msg = "";
+            var a = addr.split(',');
+            a.forEach(function (e) {
+            var x = e.split(':');
+            msg += '<tr> ';
+
+            msg += '<td>';
+                msg += '<input type="hidden" name="AddressId" value=\'' + x[1] + '\' />';
+                msg += ' <a data-dismiss="modal" onclick="setSelectToText(\'' + name + '\',\'' + x[2] + '\')"';
+                msg += ' class="btn btn-info btn-sm" " style="color:white;">';
+                msg += ' เลือก';
+                msg += '  </a>';
+                msg += '</td >';
+                msg += '<td>' + x[2] + ' </td>  ';
+            msg += '</tr>';
+            }
+            );
+            //alert(msg);
+            document.getElementById("manageCustomerAddress").innerHTML = msg;
+        }
+        function setSelectToText(name, val) {
+            //  alert(name + ' ' + val);
+            document.getElementById(name).value = val;
+
+            // Set phone and email
+            if (name == "ContractName")
+            {
+
+                var i = _contact.split(',');
+                i.forEach(function (e) {
+                    x = e.split(':');
+                    if (x[2]==val)
+                    {
+                        setSelectToText("ContractPhone", x[3]);
+                        setSelectToText("ContractEmail", x[4]);
+                    }
+                })
+
+            }
+        }
+
+        // Event
+
+        $("#CustomerId").change(function () {
+            var id = document.getElementById("CustomerId").value;
+            document.getElementById("CustomerName").value = $(this).find("option:selected").text();
+        })
+
+        $("#SaleId").change(function () {
+            var id = document.getElementById("SaleId").value;
+            document.getElementById("SaleName").value = $(this).find("option:selected").text();
+        })
+
+        $("#button-BillingAddress").click(function () {
+            document.getElementById("bnAddnewAddress").style.display = "show";
+            document.getElementById("bnAddnewContact").style.display = "none";
+            showSelectModal(getAddress(), "BillingAddress");
+        })
+        $("#button-ShippingAddress").click(function () {
+            document.getElementById("bnAddnewAddress").style.display = "show";
+            document.getElementById("bnAddnewContact").style.display = "none";
+            showSelectModal(getAddress(), "ShippingAddress");
+        })
+        $("#button-contact").click(function () {
+            document.getElementById("bnAddnewAddress").style.display = "none";
+            document.getElementById("bnAddnewContact").style.display = "show";
+            _contact = getContact();
+            showSelectModal(_contact, "ContractName");
+        })
+
+        // Product section
+        $("#selProduct").change(function () {
+            var dt = document.getElementById("selProduct").value;
+            var price = 0;
+            var p = dt.split(':');
+            if (p[1] != null) {
+                price = parseFloat(p[1]);
+            }
+            document.getElementById("ProductQty").value = 1;
+            document.getElementById("ProductPrice").value = price;
+            document.getElementById("ProductDiscount").value = 0;
+        })
+
+        $("#button-EditCustomerAddress").click(function () {
+            var id = document.getElementById("CustomerId").value;
+            document.getElementById("caCustomerId").value = id;
+            document.getElementById("lbcaCustomerName").innerHTML = document.getElementById("lbCustomerName").innerText;
+        });
+    </script>
+}
+
+<body data-spy="scroll" data-target="#myTap" data-offset="300">
+
+    <div class="page">
+        <div class="page-header">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="@Url.Action("Index", new { controller = "Quotation", area = "" })" })">ย้อนกลับ</a></li>
+            </ol>
+        </div>
+        <div class="page-content container-fluid">
+            @if (ViewBag.Alert != null)
+            {
+                <div class="row">
+                    <div class="col-12">
+                        @Html.Partial(kemrex.PathViewShared("_wgAlert"), Alert)
+                    </div>
+                </div>
+            }
+            <div class="panel-heading">
+                <h3 class="panel-title">
+                    @(Model.QuotationId > 0 ? "แก้ไข" : "เพิ่ม")เอกสาร
+                    <span class="panel-desc">ใบเสนอราคา (Quotation)</span>
+                </h3>
+            </div>
+            <div class="card" data-tabs="myTabPage">
+                <div class="card-header">
+                    <ul class="nav nav-tabs card-header-tabs">
+                        <li class="nav-item">
+                            <a class="nav-link" href="#" data-tab-page="navInfo">ข้อมูลพื้นฐาน</a>
+                        </li>
+                        @if (Model.QuotationId > 0)
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link" href="#" data-tab-page="navProducts">รายการสินค้า</a>
+                            </li>
+                        }
+                    </ul>
+                </div>
+
+                <div class="card-block" data-tab-page="navInfo">
+                    <div class="col-12">
+                        <div class="panel">
+                            <form method="post" action="@Url.Action("Detail", "Quotation")" enctype="multipart/form-data">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="QuotationId" value="@Model.QuotationId" />
+                                <div class="panel-body">
+                                    <div class="row">
+
+                                        @*Left panel*@
+
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label for="QuotationNo" class="col-sm-4 col-form-label">เลขที่ใบเสนอราคา</label>
+                                                <div class="col-sm-4">
+                                                    <input type="text" class="form-control" name="QuotationNo"
+                                                           placeholder="บันทึกเพื่อสร้าง" value="@Model.QuotationNo" readonly />
+                                                </div>
+
+                                            </div>
+                                            @*QT Status*@
+                                            <div class="form-group">
+                                                <label for="PriceValidity" class="col-sm-5 col-form-label">สถานะเอกสาร</label>
+                                                <div class="col-sm-6">
+                                                    <select name="StatusId" id="StatusId" class="form-control">
+                                                        <option class="text-muted" value="1" @(Model.StatusId == 1 ? " selected=\" selected\"" : "")>ร่าง</option>
+                                                        <option class="text-primary" value="2" @(Model.StatusId == 2 ? " selected=\" selected\"" : "")>ส่งแล้ว</option>
+                                                        <option class="text-success" value="3" @(Model.StatusId == 3 ? " selected=\" selected\"" : "")>ตอบรับแล้ว</option>
+                                                        <option class="text-dark" value="4" @(Model.StatusId == 4 ? " selected=\" selected\"" : "")>ยกเลิก</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="CustomerId" class="col-sm-2 col-form-label">*ชื่อลูกค้า</label>
+                                                <div class="col-sm-10">
+                                                    <select class="form-control" id="CustomerId" data-live-search="true"
+                                                            name="CustomerId">
+                                                        <option value="-1" )></option>
+                                                        @foreach (TblCustomer it in optCustomer)
+                                                        {
+                                                            bool selected = it.CustomerName == Model.CustomerName;
+                                                            <option value="@it.CustomerId" @(selected ? " selected=\" selected\"" : "")>@it.CustomerName</option>
+                                                        }
+                                                    </select>
+                                                    <input type="hidden" id="CustomerName" name="CustomerName" value="@Model.CustomerName" />
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="ContractName" class="col-sm-4 col-form-label">ชื่อผู้ติดต่อ</label>
+                                                <div class="col-sm-10">
+                                                    <div class="input-group mb-3">
+                                                        <input type="text" class="form-control" id="ContractName" name="ContractName"
+                                                               placeholder="ชื่อ" value="@Model.ContractName" />
+                                                        <div class="input-group-append">
+                                                            <button class="btn btn-outline-secondary" type="button"
+                                                                    data-toggle="modal"
+                                                                    data-target="#AddressModal"
+                                                                    id="button-contact">
+                                                                ...
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-sm-10">
+                                                    <input type="text" class="form-control" id="ContractPhone" name="ContractPhone"
+                                                           placeholder="เบอร์โทรศัพท์" value="@Model.ContractPhone" />
+                                                </div>
+                                                <div class="col-sm-10">
+                                                    <input type="text" class="form-control" id="ContractEmail" name="ContractEmail"
+                                                           placeholder="Email" value="@Model.ContractEmail" />
+                                                </div>
+
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label for="BillingAddress" class="col-sm-4 col-form-label">ที่อยู่ออกบิล</label>
+                                                <div class="col-sm-10">
+                                                    <div class="input-group mb-3">
+                                                        <input type="text" class="form-control" id="BillingAddress" name="BillingAddress" value="@Model.BillingAddress" />
+
+                                                        <div class="input-group-append">
+                                                            <button class="btn btn-outline-secondary" type="button"
+                                                                    data-toggle="modal"
+                                                                    data-target="#AddressModal"
+                                                                    id="button-BillingAddress">
+                                                                ...
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="ShippingAddress" class="col-sm-4 col-form-label">ที่อยู่จัดส่ง</label>
+                                                <div class="col-sm-10">
+                                                    <div class="input-group mb-3">
+                                                        <input type="text" class="form-control" id="ShippingAddress" name="ShippingAddress" value="@Model.ShippingAddress" />
+                                                        <div class="input-group-append">
+                                                            <button class="btn btn-outline-secondary" type="button"
+                                                                    data-toggle="modal"
+                                                                    data-target="#AddressModal"
+                                                                    id="button-ShippingAddress">
+                                                                ...
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label for="Remark" class="col-sm-4 col-form-label">หมายเหตุ</label>
+                                                <div class="col-sm-10">
+                                                    <textarea rows="4" cols="47" class="form-control" name="QuotationRemark">@(Model ==null ? null : Model.QuotationRemark)</textarea>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        @*Right panel*@
+
+                                        <div class="col-md-5 col-sm-8">
+                                            <div class="form-group">
+                                                <label for="CreateDate" class="col-sm-5 col-form-label">วันที่ออกเอกสาร</label>
+                                                <div class="input-group col-sm-6">
+                                                    <span class="input-group-addon">
+                                                        <i class="icon wb-calendar" aria-hidden="true"></i>
+                                                    </span>
+                                                    <input type="text" class="form-control" name="CreatedDate" value="@Model.CreatedDate.ToString("dd/MM/yyyy")" readonly />
+                                                </div>
+
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label for="CustomerTaxId" class="col-sm-5 col-form-label">เลขประจำตัวผู้เสียภาษี</label>
+                                                <div class="col-sm-6">
+                                                    <input type="text" class="form-control" name="CustomerTaxId" value="@(Model.Customer ==null ?  null : Model.Customer.CustomerTaxId)" readonly />
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="SendDate" class="col-sm-5 col-form-label">วันที่กำหนดส่ง</label>
+                                                <div class="input-group col-sm-6 date" data-provide="datepicker" data-date-format="dd/mm/yyyy">
+                                                    <span class="input-group-addon">
+                                                        <i class="icon wb-calendar" aria-hidden="true"></i>
+                                                    </span>
+                                                    <input type="text" class="form-control" placeholder="dd/MM/yyyy ค.ส." name="DeliveryDate"
+                                                           value="@(Model.DeliveryDate ==null ? null : Model.DeliveryDate.Value.ToString("dd/MM/yyyy"))" />
+                                                </div>
+
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label for="PriceValidity" class="col-sm-5 col-form-label">ยืนยันราคาภายใน(วัน)</label>
+                                                <div class="col-sm-6">
+                                                    <input type="number" class="form-control" name="QuotationValidDay" value="@Model.QuotationValidDay" />
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="DueDate" class="col-sm-5 col-form-label">วันครบกำหนด (A)</label>
+                                                <div class="input-group col-sm-6 date" data-provide="datepicker" data-date-format="dd/mm/yyyy">
+                                                    <span class="input-group-addon">
+                                                        <i class="icon wb-calendar" aria-hidden="true"></i>
+                                                    </span>
+                                                    <input type="text" class="form-control" name="DueDate" value="@(Model.DueDate ==null ? null : Model.DueDate.Value.ToString("dd/MM/yyyy"))" readonly />
+                                                </div>
+
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label for="CreditDate" class="col-sm-5 col-form-label">จำนวนวันเครดิต</label>
+                                                <div class="col-sm-6">
+                                                    <input type="number" class="form-control" name="QuotationCreditDay" value="@Model.QuotationCreditDay" />
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label for="SaleName" class="col-sm-5 col-form-label">*พนักงานขาย</label>
+                                                <div class="col-sm-6">
+                                                    <select class="form-control" id="SaleId" data-live-search="true"
+                                                            name="SaleId">
+                                                        <option value="-1" )></option>
+                                                        @foreach (TblEmployee it in optEmployee)
+                                                        {
+                                                            bool selected = it.EmpNameTh == Model.SaleName;
+                                                            <option value="@it.EmpId" @(selected ? " selected=\" selected\"" : "")>@it.EmpNameTh</option>
+                                                        }
+                                                    </select>
+                                                    <input type="hidden" id="SaleName" name="SaleName" value="@Model.SaleName" />
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="panel-footer">
+                                    <div class="row">
+                                        <div class="col-12">
+                                            <div class="form-group">
+                                                <button type="submit" class="btn btn-primary">@(Model.QuotationId > 0 ? "บันทึก" : "ต่อไป")</button>&nbsp;
+                                                <a href="@Url.Action("Index", "Quotation" )" class="btn btn-default">ยกเลิก</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                @*Panel Address*@
+                <div class="card-block" data-tab-page="navAddress">
+
+                </div>
+                @*End Panel Address*@
+
+                @*panel Add Product*@
+
+                <div class="card-block" data-tab-page="navProducts">
+                    <div class="col-12">
+                        <div class="panel">
+                            <div class="panel-heading">
+                                <h3 class="panel-title">
+                                    รายการสินค้า&nbsp;
+                                </h3>
+                            </div>
+                            <div class="panel-body">
+                                <div class="row">
+                                    <div class="col-12">
+                                        <div class="table-responsive">
+                                            <table class="table table-hover table-striped">
+                                                <thead>
+                                                    <tr>
+                                                        <th>สินค้า</th>
+                                                        <th>จำนวน</th>
+                                                        <th>ราคา</th>
+                                                        <th>ส่วนลด</th>
+                                                        <th>รวม</th>
+                                                        <th>รวม VAT(7%)</th>
+                                                        <th>เครื่องมือ</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @if (Model.TblQuotationDetail.Count() <= 0)
+                                                    {
+                                                        <tr>
+                                                            <td colspan="7">ไม่พบข้อมูล</td>
+                                                        </tr>
+                                                    }
+                                                    @foreach (var ob in Model.TblQuotationDetail)
+                                                    {
+                                                        <tr>
+                                                            <td>@ob.Product.ProductCode @ob.Product.ProductName</td>
+                                                            <td>@ob.Quantity</td>
+                                                            <td>@ob.PriceNet</td>
+                                                            <td>@ob.DiscountNet</td>
+                                                            <td>@ob.TotalNet</td>
+                                                            <td>@ob.TotalTot</td>
+                                                            <td>
+                                                                <form method="post" action="@Url.Action("DetailDelete", new { controller = "Quotation" })"
+                                                                      class="fnc-delete inline-block">
+                                                                    <input type="hidden" name="QuotationId" value="@Model.QuotationId" />
+                                                                    <input type="hidden" name="Id" value="@ob.Id" />
+                                                                    @* @Html.AntiForgeryToken()*@
+                                                                    <button type="submit" class="btn btn-danger btn-xs"><i class="fa fa-trash" aria-hidden="true"></i>&nbsp;ลบ</button>
+                                                                </form>
+                                                            </td>
+                                                        </tr>
+                                                    }
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="panel-footer">
+                                <div class="row">
+                                    <div class="col-12">
+                                        <form method="post" action="@Url.Action("AddProduct", "Quotation")" enctype="multipart/form-data">
+                                            <input type="hidden" name="QuotationId" value="@Model.QuotationId" />         <div class="row">
+                                                <div class="col-4 col-md-4 form-group">
+                                                    <label for="PileId" class="form-control-label">รหัสสินค้า</label>
+                                                    <select class="form-control" id="selProduct" data-live-search="true"
+                                                            name="selProduct">
+                                                        <option value="-1" )></option>
+                                                        @foreach (TblProduct it in optProduct)
+                                                        {
+                                                            <option value="@it.ProductId:@it.PriceNet">@it.ProductCode @it.ProductName [@it.PriceNet]  Qty:@it.QtyStock</option>
+                                                        }
+                                                    </select>
+                                                </div><div class="col-2 col-md-2 form-group">
+                                                    <label for="Qty" class="form-control-label">จำนวน</label>
+                                                    <input type="number" class="form-control" id="ProductQty" name="ProductQty" />
+                                                </div>
+                                                <div class="col-2 col-md-2 form-group">
+                                                    <label for="Price" class="form-control-label">ราคา</label>
+                                                    <input type="text" class="form-control" id="ProductPrice" name="ProductPrice" />
+                                                </div>
+                                                <div class="col-2 col-md-2 form-group">
+                                                    <label for="Discount" class="form-control-label">ส่วนลด</label>
+                                                    <input type="text" class="form-control" id="ProductDiscount" name="ProductDiscount" />
+                                                </div>
+                                            </div>
+
+                                            <button type="submit" class="btn btn-primary">เพิ่ม</button>&nbsp;
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="panel">
+
+                            <div class="col-md-auto">
+                                ผลรวม
+                                <hr size=2>
+                                <form method="post" action="@Url.Action("saveDiscount", "Quotation")" enctype="multipart/form-data">
+                                    <input type="hidden" name="QuotationId" value="@Model.QuotationId" />
+                                    <div class="form-group row">
+                                        <label for="SubTotal" class="col-sm-5 col-form-label">ยอดก่อนลด</label>
+                                        <div class="col-sm-6">
+                                            <input type="text" class="form-control" id="SubTotal" name="SubTotalNet"
+                                                   style="text-align: right"
+                                                   value="@Model.SubTotalNet" readonly />
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label for="Discount" class="col-sm-5 col-form-label">ส่วนลดในรายการ</label>
+                                        <div class="col-sm-6">
+                                            <input type="text" class="form-control" id="Discount"
+                                                   style="text-align: right"
+                                                   value="@Model.DiscountNet" readonly />
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label for="TotalDiscount" class="col-sm-5 col-form-label">ยอดหลังหักส่วนลด</label>
+                                        <div class="col-sm-6">
+                                            <input type="text" class="form-control" id="TotalDiscount" style="text-align: right" value="@Model.SummaryNet" readonly />
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label for="Vat" class="col-sm-5 col-form-label">อัตราภาษี(7%)</label>
+                                        <div class="col-sm-6">
+                                            <input type="text" class="form-control" id="Vat"
+                                                   style="text-align: right"
+                                                   value="@Model.SummaryVat" readonly />
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label for="Discount" class="col-sm-5 col-form-label">ส่วนลดเงินสด</label>
+                                        <div class="col-sm-6">
+                                            <input type="text" class="form-control" id="DiscountCash" name="DiscountCash"
+                                                   style="text-align: right"
+                                                   value="@Model.DiscountCash" onChange="calDiscount()" />
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label for="Total" class="col-sm-5 col-form-label">จำนวนทั้งสิ้น</label>
+                                        <div class="col-sm-6">
+                                            <input type="text" class="form-control" id="SummaryTot"
+                                                   style="text-align: right"
+                                                   value="@Model.SummaryTot" readonly />
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-12">
+                                            <div class="form-group">
+                                                <button type="submit" class="btn btn-primary">บันทึก</button>&nbsp;
+                                                <a href="@Url.Action("Detail", "Quotation" )" class="btn btn-default">ยกเลิก</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                @*End panel Add product*@
+            </div>
+        </div>
+    </div>
+
+    <!-- Address Modal -->
+    <div class="modal fade" id="AddressModal" tabindex="-1" role="dialog" aria-labelledby="จัดการที่อยู่" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="AddressModalTitle"><label id="lbCustomerId" hidden></label></h5>
+                    <h2><label id="lbCustomerName">ไม่พบข้อมูลลูกค้า</label></h2>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+
+                </div>
+                <div class="modal-body">
+                    <a href="@Url.Action("Detail", new { area = "",cusId=Model.CustomerId,qtid=Model.QuotationId, controller = "CustomerAddress" })"
+                       class="btn btn-xs btn-primary" style="color:white;" id="bnAddnewAddress">เพิ่ม</a>
+
+                    <a href="@Url.Action("Detail", new { area = "",cusId=Model.CustomerId,qtid=Model.QuotationId, controller = "CustomerContact" })"
+                       class="btn btn-xs btn-primary" style="color:white;" id="bnAddnewContact">เพิ่ม</a>
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>กรุณาเลือก</th>
+                                    <th>รายการ</th>
+                                </tr>
+                            </thead>
+                            <tbody id="manageCustomerAddress"></tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+</body>

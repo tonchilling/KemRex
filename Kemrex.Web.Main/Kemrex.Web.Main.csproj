@@ -1,0 +1,1292 @@
+﻿<Project ToolsVersion="15.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>
+    </ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{428CF021-A9F1-44F0-AC2A-46F1C2D14E64}</ProjectGuid>
+    <ProjectTypeGuids>{349c5851-65df-11da-9384-00065b846f21};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Kemrex.Web.Main</RootNamespace>
+    <AssemblyName>Kemrex.Web.Main</AssemblyName>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <UseIISExpress>true</UseIISExpress>
+    <Use64BitIISExpress />
+    <IISExpressSSLPort />
+    <IISExpressAnonymousAuthentication />
+    <IISExpressWindowsAuthentication />
+    <IISExpressUseClassicPipelineMode />
+    <UseGlobalApplicationHostFile />
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="DMN.Standard.Common, Version=1.0.7.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\DMN.Standard.Common.1.0.7\lib\netstandard2.0\DMN.Standard.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="DocumentFormat.OpenXml, Version=2.9.1.0, Culture=neutral, PublicKeyToken=8fb06cb64d019a17, processorArchitecture=MSIL">
+      <HintPath>..\packages\DocumentFormat.OpenXml.2.9.1\lib\net46\DocumentFormat.OpenXml.dll</HintPath>
+    </Reference>
+    <Reference Include="itextsharp, Version=5.5.13.0, Culture=neutral, PublicKeyToken=8354ae6d2174ddca, processorArchitecture=MSIL">
+      <HintPath>..\packages\iTextSharp.5.5.13\lib\itextsharp.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Microsoft.EntityFrameworkCore, Version=2.2.4.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.EntityFrameworkCore.2.2.4\lib\netstandard2.0\Microsoft.EntityFrameworkCore.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.EntityFrameworkCore.Abstractions, Version=2.2.4.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.EntityFrameworkCore.Abstractions.2.2.4\lib\netstandard2.0\Microsoft.EntityFrameworkCore.Abstractions.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.Caching.Abstractions, Version=2.2.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Extensions.Caching.Abstractions.2.2.0\lib\netstandard2.0\Microsoft.Extensions.Caching.Abstractions.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.Caching.Memory, Version=2.2.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Extensions.Caching.Memory.2.2.0\lib\netstandard2.0\Microsoft.Extensions.Caching.Memory.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.Configuration, Version=2.2.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Extensions.Configuration.2.2.0\lib\netstandard2.0\Microsoft.Extensions.Configuration.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.Configuration.Abstractions, Version=2.2.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Extensions.Configuration.Abstractions.2.2.0\lib\netstandard2.0\Microsoft.Extensions.Configuration.Abstractions.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.Configuration.Binder, Version=2.2.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Extensions.Configuration.Binder.2.2.0\lib\netstandard2.0\Microsoft.Extensions.Configuration.Binder.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.DependencyInjection, Version=2.2.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Extensions.DependencyInjection.2.2.0\lib\net461\Microsoft.Extensions.DependencyInjection.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.DependencyInjection.Abstractions, Version=2.2.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Extensions.DependencyInjection.Abstractions.2.2.0\lib\netstandard2.0\Microsoft.Extensions.DependencyInjection.Abstractions.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.Logging, Version=2.2.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Extensions.Logging.2.2.0\lib\netstandard2.0\Microsoft.Extensions.Logging.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.Logging.Abstractions, Version=2.2.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Extensions.Logging.Abstractions.2.2.0\lib\netstandard2.0\Microsoft.Extensions.Logging.Abstractions.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.Options, Version=2.2.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Extensions.Options.2.2.0\lib\netstandard2.0\Microsoft.Extensions.Options.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.Primitives, Version=2.2.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Extensions.Primitives.2.2.0\lib\netstandard2.0\Microsoft.Extensions.Primitives.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.ReportViewer.Common, Version=15.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.ReportingServices.ReportViewerControl.WebForms.150.900.148\lib\net40\Microsoft.ReportViewer.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.ReportViewer.DataVisualization, Version=15.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.ReportingServices.ReportViewerControl.WebForms.150.900.148\lib\net40\Microsoft.ReportViewer.DataVisualization.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.ReportViewer.Design, Version=15.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.ReportingServices.ReportViewerControl.WebForms.150.900.148\lib\net40\Microsoft.ReportViewer.Design.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.ReportViewer.ProcessingObjectModel, Version=15.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.ReportingServices.ReportViewerControl.WebForms.150.900.148\lib\net40\Microsoft.ReportViewer.ProcessingObjectModel.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.ReportViewer.WebDesign, Version=15.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.ReportingServices.ReportViewerControl.WebForms.150.900.148\lib\net40\Microsoft.ReportViewer.WebDesign.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.ReportViewer.WebForms, Version=15.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.ReportingServices.ReportViewerControl.WebForms.150.900.148\lib\net40\Microsoft.ReportViewer.WebForms.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.ReportViewer.WinForms, Version=15.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.ReportingServices.ReportViewerControl.WebForms.150.900.148\lib\net40\Microsoft.ReportViewer.WinForms.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.SqlServer.Types, Version=14.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.SqlServer.Types.14.0.314.76\lib\net40\Microsoft.SqlServer.Types.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.12.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="Remotion.Linq, Version=2.2.0.0, Culture=neutral, PublicKeyToken=fee00910d6e5f53b, processorArchitecture=MSIL">
+      <HintPath>..\packages\Remotion.Linq.2.2.0\lib\net45\Remotion.Linq.dll</HintPath>
+    </Reference>
+    <Reference Include="Serilog, Version=2.0.0.0, Culture=neutral, PublicKeyToken=24c2f752a8e58a10, processorArchitecture=MSIL">
+      <HintPath>..\packages\Serilog.2.8.0\lib\net46\Serilog.dll</HintPath>
+    </Reference>
+    <Reference Include="Serilog.Sinks.Console, Version=3.1.1.0, Culture=neutral, PublicKeyToken=24c2f752a8e58a10, processorArchitecture=MSIL">
+      <HintPath>..\packages\Serilog.Sinks.Console.3.1.1\lib\net45\Serilog.Sinks.Console.dll</HintPath>
+    </Reference>
+    <Reference Include="Serilog.Sinks.File, Version=2.0.0.0, Culture=neutral, PublicKeyToken=24c2f752a8e58a10, processorArchitecture=MSIL">
+      <HintPath>..\packages\Serilog.Sinks.File.4.0.0\lib\net45\Serilog.Sinks.File.dll</HintPath>
+    </Reference>
+    <Reference Include="Serilog.Sinks.RollingFile, Version=2.0.0.0, Culture=neutral, PublicKeyToken=24c2f752a8e58a10, processorArchitecture=MSIL">
+      <HintPath>..\packages\Serilog.Sinks.RollingFile.3.3.0\lib\net45\Serilog.Sinks.RollingFile.dll</HintPath>
+    </Reference>
+    <Reference Include="SerilogWeb.Classic, Version=5.0.0.0, Culture=neutral, PublicKeyToken=9462ddd55fbc0e7f, processorArchitecture=MSIL">
+      <HintPath>..\packages\SerilogWeb.Classic.5.0.52\lib\net45\SerilogWeb.Classic.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Buffers, Version=4.0.2.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Buffers.4.4.0\lib\netstandard2.0\System.Buffers.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Collections.Immutable, Version=1.2.3.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Collections.Immutable.1.5.0\lib\netstandard2.0\System.Collections.Immutable.dll</HintPath>
+    </Reference>
+    <Reference Include="System.ComponentModel.Annotations, Version=4.2.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.ComponentModel.Annotations.4.5.0\lib\net461\System.ComponentModel.Annotations.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Diagnostics.DiagnosticSource, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Diagnostics.DiagnosticSource.4.5.0\lib\net46\System.Diagnostics.DiagnosticSource.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Interactive.Async, Version=3.2.0.0, Culture=neutral, PublicKeyToken=94bc3704cddfc263, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Interactive.Async.3.2.0\lib\net46\System.Interactive.Async.dll</HintPath>
+    </Reference>
+    <Reference Include="System.IO.FileSystem.Primitives, Version=4.0.2.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.IO.FileSystem.Primitives.4.3.0\lib\net46\System.IO.FileSystem.Primitives.dll</HintPath>
+      <Private>True</Private>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.IO.Packaging, Version=4.0.3.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.IO.Packaging.4.5.0\lib\net46\System.IO.Packaging.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Memory, Version=4.0.1.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Memory.4.5.1\lib\netstandard2.0\System.Memory.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Numerics" />
+    <Reference Include="System.Numerics.Vectors, Version=4.1.3.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Numerics.Vectors.4.4.0\lib\net46\System.Numerics.Vectors.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Runtime.CompilerServices.Unsafe, Version=4.0.4.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Runtime.CompilerServices.Unsafe.4.5.1\lib\netstandard2.0\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Web.DynamicData" />
+    <Reference Include="System.Web.Entity" />
+    <Reference Include="System.Web.ApplicationServices" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Web.Extensions" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Web.Services" />
+    <Reference Include="System.EnterpriseServices" />
+    <Reference Include="WindowsBase" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="System.Web.Razor">
+      <HintPath>..\packages\Microsoft.AspNet.Razor.3.2.7\lib\net45\System.Web.Razor.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Webpages">
+      <HintPath>..\packages\Microsoft.AspNet.Webpages.3.2.7\lib\net45\System.Web.Webpages.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Webpages.Deployment">
+      <HintPath>..\packages\Microsoft.AspNet.Webpages.3.2.7\lib\net45\System.Web.Webpages.Deployment.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Webpages.Razor">
+      <HintPath>..\packages\Microsoft.AspNet.Webpages.3.2.7\lib\net45\System.Web.Webpages.Razor.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Helpers">
+      <HintPath>..\packages\Microsoft.AspNet.Webpages.3.2.7\lib\net45\System.Web.Helpers.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Web.Infrastructure">
+      <HintPath>..\packages\Microsoft.Web.Infrastructure.1.0.0.0\lib\net40\Microsoft.Web.Infrastructure.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Mvc">
+      <HintPath>..\packages\Microsoft.AspNet.Mvc.5.2.7\lib\net45\System.Web.Mvc.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="fonts\7-stroke\7-stroke.min.css" />
+    <Content Include="fonts\7-stroke\7-stroke.svg" />
+    <Content Include="fonts\brand-icons\brand-icons.min.css" />
+    <Content Include="fonts\brand-icons\brand-icons.svg" />
+    <Content Include="fonts\entypo\entypo.min.css" />
+    <Content Include="fonts\entypo\entypo.svg" />
+    <Content Include="fonts\font-awesome\font-awesome.min.css" />
+    <Content Include="fonts\font-awesome\font-awesome.svg" />
+    <Content Include="fonts\foundation\foundation.min.css" />
+    <Content Include="fonts\foundation\foundation.svg" />
+    <Content Include="fonts\framework7\framework7.min.css" />
+    <Content Include="fonts\glyphicons\glyphicons-halflings-regular.svg" />
+    <Content Include="fonts\glyphicons\glyphicons.min.css" />
+    <Content Include="fonts\ionicons\ionicons.min.css" />
+    <Content Include="fonts\ionicons\ionicons.svg" />
+    <Content Include="fonts\map-icons\map-icons.min.css" />
+    <Content Include="fonts\map-icons\map-icons.svg" />
+    <Content Include="fonts\material-design\material-design.min.css" />
+    <Content Include="fonts\material-design\material-design.svg" />
+    <Content Include="fonts\mfglabs\mfglabs.min.css" />
+    <Content Include="fonts\mfglabs\mfglabs.svg" />
+    <Content Include="fonts\micon\micon.min.css" />
+    <Content Include="fonts\micon\micon.svg" />
+    <Content Include="fonts\octicons\octicons.min.css" />
+    <Content Include="fonts\octicons\octicons.svg" />
+    <Content Include="fonts\open-iconic\open-iconic.min.css" />
+    <Content Include="fonts\open-iconic\open-iconic.svg" />
+    <Content Include="fonts\openwebicons\openwebicons.min.css" />
+    <Content Include="fonts\openwebicons\openwebicons.svg" />
+    <Content Include="fonts\Roboto\Roboto-300.svg" />
+    <Content Include="fonts\Roboto\Roboto-300italic.svg" />
+    <Content Include="fonts\Roboto\Roboto-500.svg" />
+    <Content Include="fonts\Roboto\Roboto-regular.svg" />
+    <Content Include="fonts\Roboto\Roboto.min.css" />
+    <Content Include="fonts\themify\themify.min.css" />
+    <Content Include="fonts\themify\themify.svg" />
+    <Content Include="fonts\weather-icons\weather-icons.min.css" />
+    <Content Include="fonts\weather-icons\weather-icons.svg" />
+    <Content Include="fonts\web-icons\web-icons.min.css" />
+    <Content Include="fonts\web-icons\web-icons.svg" />
+    <Content Include="Global.asax" />
+    <Content Include="images\apple-touch-icon.png" />
+    <Content Include="images\avatar\guest.png" />
+    <Content Include="images\favicon.ico" />
+    <Content Include="images\logo%402x.png" />
+    <Content Include="images\logo-banner.png" />
+    <Content Include="images\logo.png" />
+    <Content Include="libs\bootstrap\css\bootstrap.min.css" />
+    <Content Include="libs\bootstrap\js\bootstrap.min.js" />
+    <Content Include="libs\flag-icon-css\flag-icon.min.css" />
+    <Content Include="libs\flag-icon-css\flags\1x1\ad.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\ae.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\af.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\ag.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\ai.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\al.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\am.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\ao.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\aq.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\ar.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\as.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\at.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\au.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\aw.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\ax.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\az.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\ba.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\bb.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\bd.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\be.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\bf.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\bg.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\bh.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\bi.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\bj.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\bl.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\bm.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\bn.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\bo.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\bq.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\br.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\bs.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\bt.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\bv.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\bw.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\by.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\bz.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\ca.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\cc.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\cd.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\cf.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\cg.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\ch.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\ci.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\ck.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\cl.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\cm.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\cn.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\co.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\cr.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\cu.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\cv.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\cw.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\cx.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\cy.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\cz.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\de.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\dj.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\dk.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\dm.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\do.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\dz.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\ec.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\ee.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\eg.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\eh.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\er.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\es-ct.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\es.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\et.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\eu.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\fi.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\fj.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\fk.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\fm.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\fo.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\fr.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\ga.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\gb-eng.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\gb-nir.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\gb-sct.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\gb-wls.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\gb.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\gd.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\ge.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\gf.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\gg.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\gh.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\gi.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\gl.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\gm.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\gn.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\gp.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\gq.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\gr.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\gs.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\gt.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\gu.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\gw.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\gy.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\hk.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\hm.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\hn.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\hr.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\ht.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\hu.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\id.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\ie.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\il.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\im.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\in.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\io.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\iq.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\ir.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\is.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\it.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\je.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\jm.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\jo.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\jp.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\ke.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\kg.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\kh.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\ki.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\km.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\kn.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\kp.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\kr.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\kw.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\ky.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\kz.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\la.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\lb.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\lc.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\li.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\lk.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\lr.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\ls.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\lt.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\lu.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\lv.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\ly.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\ma.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\mc.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\md.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\me.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\mf.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\mg.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\mh.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\mk.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\ml.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\mm.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\mn.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\mo.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\mp.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\mq.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\mr.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\ms.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\mt.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\mu.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\mv.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\mw.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\mx.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\my.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\mz.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\na.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\nc.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\ne.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\nf.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\ng.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\ni.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\nl.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\no.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\np.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\nr.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\nu.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\nz.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\om.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\pa.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\pe.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\pf.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\pg.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\ph.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\pk.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\pl.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\pm.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\pn.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\pr.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\ps.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\pt.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\pw.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\py.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\qa.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\re.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\ro.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\rs.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\ru.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\rw.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\sa.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\sb.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\sc.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\sd.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\se.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\sg.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\sh.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\si.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\sj.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\sk.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\sl.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\sm.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\sn.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\so.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\sr.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\ss.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\st.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\sv.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\sx.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\sy.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\sz.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\tc.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\td.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\tf.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\tg.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\th.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\tj.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\tk.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\tl.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\tm.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\tn.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\to.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\tr.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\tt.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\tv.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\tw.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\tz.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\ua.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\ug.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\um.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\un.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\us.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\uy.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\uz.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\va.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\vc.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\ve.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\vg.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\vi.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\vn.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\vu.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\wf.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\ws.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\ye.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\yt.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\za.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\zm.svg" />
+    <Content Include="libs\flag-icon-css\flags\1x1\zw.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\ad.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\ae.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\af.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\ag.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\ai.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\al.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\am.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\ao.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\aq.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\ar.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\as.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\at.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\au.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\aw.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\ax.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\az.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\ba.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\bb.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\bd.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\be.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\bf.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\bg.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\bh.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\bi.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\bj.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\bl.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\bm.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\bn.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\bo.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\bq.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\br.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\bs.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\bt.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\bv.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\bw.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\by.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\bz.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\ca.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\cc.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\cd.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\cf.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\cg.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\ch.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\ci.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\ck.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\cl.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\cm.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\cn.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\co.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\cr.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\cu.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\cv.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\cw.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\cx.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\cy.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\cz.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\de.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\dj.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\dk.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\dm.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\do.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\dz.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\ec.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\ee.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\eg.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\eh.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\er.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\es-ct.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\es.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\et.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\eu.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\fi.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\fj.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\fk.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\fm.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\fo.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\fr.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\ga.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\gb-eng.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\gb-nir.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\gb-sct.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\gb-wls.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\gb.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\gd.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\ge.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\gf.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\gg.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\gh.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\gi.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\gl.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\gm.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\gn.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\gp.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\gq.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\gr.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\gs.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\gt.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\gu.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\gw.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\gy.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\hk.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\hm.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\hn.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\hr.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\ht.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\hu.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\id.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\ie.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\il.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\im.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\in.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\io.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\iq.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\ir.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\is.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\it.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\je.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\jm.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\jo.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\jp.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\ke.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\kg.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\kh.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\ki.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\km.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\kn.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\kp.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\kr.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\kw.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\ky.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\kz.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\la.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\lb.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\lc.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\li.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\lk.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\lr.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\ls.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\lt.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\lu.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\lv.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\ly.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\ma.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\mc.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\md.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\me.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\mf.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\mg.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\mh.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\mk.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\ml.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\mm.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\mn.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\mo.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\mp.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\mq.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\mr.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\ms.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\mt.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\mu.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\mv.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\mw.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\mx.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\my.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\mz.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\na.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\nc.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\ne.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\nf.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\ng.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\ni.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\nl.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\no.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\np.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\nr.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\nu.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\nz.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\om.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\pa.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\pe.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\pf.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\pg.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\ph.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\pk.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\pl.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\pm.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\pn.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\pr.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\ps.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\pt.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\pw.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\py.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\qa.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\re.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\ro.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\rs.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\ru.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\rw.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\sa.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\sb.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\sc.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\sd.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\se.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\sg.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\sh.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\si.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\sj.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\sk.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\sl.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\sm.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\sn.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\so.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\sr.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\ss.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\st.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\sv.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\sx.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\sy.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\sz.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\tc.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\td.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\tf.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\tg.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\th.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\tj.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\tk.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\tl.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\tm.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\tn.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\to.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\tr.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\tt.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\tv.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\tw.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\tz.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\ua.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\ug.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\um.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\un.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\us.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\uy.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\uz.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\va.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\vc.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\ve.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\vg.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\vi.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\vn.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\vu.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\wf.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\ws.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\ye.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\yt.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\za.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\zm.svg" />
+    <Content Include="libs\flag-icon-css\flags\4x3\zw.svg" />
+    <Content Include="libs\gmaps\gmaps.min.js" />
+    <Content Include="libs\html5shiv\html5shiv.min.js" />
+    <Content Include="libs\jquery-mousewheel\jquery.mousewheel.min.js" />
+    <Content Include="libs\jquery\jquery.min.js" />
+    <Content Include="libs\media-match\media.match.min.js" />
+    <Content Include="libs\popper-js\popper-utils.min.js" />
+    <Content Include="libs\popper-js\popper.min.js" />
+    <Content Include="libs\respond\respond.min.js" />
+    <Content Include="libs\screenfull\screenfull.min.js" />
+    <Content Include="libs\switchery\switchery.min.css" />
+    <Content Include="libs\switchery\switchery.min.js" />
+    <Content Include="SqlServerTypes\readme.htm" />
+    <Content Include="SqlServerTypes\x64\msvcr120.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="SqlServerTypes\x64\SqlServerSpatial140.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="SqlServerTypes\x86\msvcr120.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="SqlServerTypes\x86\SqlServerSpatial140.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="themes\RemarkClassicBase\css\bootstrap-extend.css" />
+    <Content Include="themes\RemarkClassicBase\css\bootstrap-extend.min.css">
+      <DependentUpon>bootstrap-extend.css</DependentUpon>
+    </Content>
+    <Content Include="themes\RemarkClassicBase\css\bootstrap.css" />
+    <Content Include="themes\RemarkClassicBase\css\bootstrap.min.css">
+      <DependentUpon>bootstrap.css</DependentUpon>
+    </Content>
+    <Content Include="themes\RemarkClassicBase\css\calendar.css" />
+    <Content Include="themes\RemarkClassicBase\css\calendar.min.css">
+      <DependentUpon>calendar.css</DependentUpon>
+    </Content>
+    <Content Include="themes\RemarkClassicBase\css\login.css" />
+    <Content Include="themes\RemarkClassicBase\css\login.min.css">
+      <DependentUpon>login.css</DependentUpon>
+    </Content>
+    <Content Include="themes\RemarkClassicBase\css\site.css" />
+    <Content Include="themes\RemarkClassicBase\css\site.min.css">
+      <DependentUpon>site.css</DependentUpon>
+    </Content>
+    <Content Include="themes\RemarkClassicBase\js\Base.js" />
+    <Content Include="themes\RemarkClassicBase\js\Component.js" />
+    <Content Include="themes\RemarkClassicBase\js\Config.js" />
+    <Content Include="themes\RemarkClassicBase\js\Config\colors.js" />
+    <Content Include="themes\RemarkClassicBase\js\jquery.validate.js" />
+    <Content Include="themes\RemarkClassicBase\js\Plugin.js" />
+    <Content Include="themes\RemarkClassicBase\js\Plugin\ace-editor.js" />
+    <Content Include="themes\RemarkClassicBase\js\Plugin\action-btn.js" />
+    <Content Include="themes\RemarkClassicBase\js\Plugin\alertify.js" />
+    <Content Include="themes\RemarkClassicBase\js\Plugin\animate-list.js" />
+    <Content Include="themes\RemarkClassicBase\js\Plugin\animsition.js" />
+    <Content Include="themes\RemarkClassicBase\js\Plugin\asbreadcrumbs.js" />
+    <Content Include="themes\RemarkClassicBase\js\Plugin\ascolorpicker.js" />
+    <Content Include="themes\RemarkClassicBase\js\Plugin\aspaginator.js" />
+    <Content Include="themes\RemarkClassicBase\js\Plugin\aspieprogress.js" />
+    <Content Include="themes\RemarkClassicBase\js\Plugin\asprogress.js" />
+    <Content Include="themes\RemarkClassicBase\js\Plugin\asrange.js" />
+    <Content Include="themes\RemarkClassicBase\js\Plugin\asscrollable.js" />
+    <Content Include="themes\RemarkClassicBase\js\Plugin\asselectable.js" />
+    <Content Include="themes\RemarkClassicBase\js\Plugin\asspinner.js" />
+    <Content Include="themes\RemarkClassicBase\js\Plugin\bootbox.js" />
+    <Content Include="themes\RemarkClassicBase\js\Plugin\bootstrap-datepicker.js" />
+    <Content Include="themes\RemarkClassicBase\js\Plugin\bootstrap-maxlength.js" />
+    <Content Include="themes\RemarkClassicBase\js\Plugin\bootstrap-select.js" />
+    <Content Include="themes\RemarkClassicBase\js\Plugin\bootstrap-sweetalert.js" />
+    <Content Include="themes\RemarkClassicBase\js\Plugin\bootstrap-tagsinput.js" />
+    <Content Include="themes\RemarkClassicBase\js\Plugin\bootstrap-tokenfield.js" />
+    <Content Include="themes\RemarkClassicBase\js\Plugin\bootstrap-touchspin.js" />
+    <Content Include="themes\RemarkClassicBase\js\Plugin\bootstrap-treeview.js" />
+    <Content Include="themes\RemarkClassicBase\js\Plugin\card.js" />
+    <Content Include="themes\RemarkClassicBase\js\Plugin\clockpicker.js" />
+    <Content Include="themes\RemarkClassicBase\js\Plugin\closeable-tabs.js" />
+    <Content Include="themes\RemarkClassicBase\js\Plugin\datatables.js" />
+    <Content Include="themes\RemarkClassicBase\js\Plugin\datepair.js" />
+    <Content Include="themes\RemarkClassicBase\js\Plugin\donut.js" />
+    <Content Include="themes\RemarkClassicBase\js\Plugin\dropify.js" />
+    <Content Include="themes\RemarkClassicBase\js\Plugin\editable-table.js" />
+    <Content Include="themes\RemarkClassicBase\js\Plugin\editlist.js" />
+    <Content Include="themes\RemarkClassicBase\js\Plugin\filterable.js" />
+    <Content Include="themes\RemarkClassicBase\js\Plugin\floatthead.js" />
+    <Content Include="themes\RemarkClassicBase\js\Plugin\formatter.js" />
+    <Content Include="themes\RemarkClassicBase\js\Plugin\gauge.js" />
+    <Content Include="themes\RemarkClassicBase\js\Plugin\gmaps.js" />
+    <Content Include="themes\RemarkClassicBase\js\Plugin\gridstack.js" />
+    <Content Include="themes\RemarkClassicBase\js\Plugin\highlight.js" />
+    <Content Include="themes\RemarkClassicBase\js\Plugin\html5sortable.js" />
+    <Content Include="themes\RemarkClassicBase\js\Plugin\icheck.js" />
+    <Content Include="themes\RemarkClassicBase\js\Plugin\input-group-file.js" />
+    <Content Include="themes\RemarkClassicBase\js\Plugin\ionrangeslider.js" />
+    <Content Include="themes\RemarkClassicBase\js\Plugin\isotope.js" />
+    <Content Include="themes\RemarkClassicBase\js\Plugin\jquery-appear.js" />
+    <Content Include="themes\RemarkClassicBase\js\Plugin\jquery-knob.js" />
+    <Content Include="themes\RemarkClassicBase\js\Plugin\jquery-labelauty.js" />
+    <Content Include="themes\RemarkClassicBase\js\Plugin\jquery-placeholder.js" />
+    <Content Include="themes\RemarkClassicBase\js\Plugin\jquery-strength.js" />
+    <Content Include="themes\RemarkClassicBase\js\Plugin\jquery-wizard.js" />
+    <Content Include="themes\RemarkClassicBase\js\Plugin\jstree.js" />
+    <Content Include="themes\RemarkClassicBase\js\Plugin\jt-timepicker.js" />
+    <Content Include="themes\RemarkClassicBase\js\Plugin\jvectormap.js" />
+    <Content Include="themes\RemarkClassicBase\js\Plugin\ladda.js" />
+    <Content Include="themes\RemarkClassicBase\js\Plugin\loading-button.js" />
+    <Content Include="themes\RemarkClassicBase\js\Plugin\magnific-popup.js" />
+    <Content Include="themes\RemarkClassicBase\js\Plugin\masonry.js" />
+    <Content Include="themes\RemarkClassicBase\js\Plugin\matchheight.js" />
+    <Content Include="themes\RemarkClassicBase\js\Plugin\material.js" />
+    <Content Include="themes\RemarkClassicBase\js\Plugin\material.min.js">
+      <DependentUpon>material.js</DependentUpon>
+    </Content>
+    <Content Include="themes\RemarkClassicBase\js\Plugin\menu.js" />
+    <Content Include="themes\RemarkClassicBase\js\Plugin\menu.min.js">
+      <DependentUpon>menu.js</DependentUpon>
+    </Content>
+    <Content Include="themes\RemarkClassicBase\js\Plugin\more-button.js" />
+    <Content Include="themes\RemarkClassicBase\js\Plugin\multi-select.js" />
+    <Content Include="themes\RemarkClassicBase\js\Plugin\nestable.js" />
+    <Content Include="themes\RemarkClassicBase\js\Plugin\notie-js.js" />
+    <Content Include="themes\RemarkClassicBase\js\Plugin\nprogress.js" />
+    <Content Include="themes\RemarkClassicBase\js\Plugin\owl-carousel.js" />
+    <Content Include="themes\RemarkClassicBase\js\Plugin\panel.js" />
+    <Content Include="themes\RemarkClassicBase\js\Plugin\peity.js" />
+    <Content Include="themes\RemarkClassicBase\js\Plugin\plyr.js" />
+    <Content Include="themes\RemarkClassicBase\js\Plugin\raty.js" />
+    <Content Include="themes\RemarkClassicBase\js\Plugin\responsive-tabs.js" />
+    <Content Include="themes\RemarkClassicBase\js\Plugin\select2.js" />
+    <Content Include="themes\RemarkClassicBase\js\Plugin\selectable.js" />
+    <Content Include="themes\RemarkClassicBase\js\Plugin\skintools.js" />
+    <Content Include="themes\RemarkClassicBase\js\Plugin\slidepanel.js" />
+    <Content Include="themes\RemarkClassicBase\js\Plugin\sortable.js" />
+    <Content Include="themes\RemarkClassicBase\js\Plugin\sticky-header.js" />
+    <Content Include="themes\RemarkClassicBase\js\Plugin\summernote.js" />
+    <Content Include="themes\RemarkClassicBase\js\Plugin\switchery.js" />
+    <Content Include="themes\RemarkClassicBase\js\Plugin\table.js" />
+    <Content Include="themes\RemarkClassicBase\js\Plugin\tablesaw.js" />
+    <Content Include="themes\RemarkClassicBase\js\Plugin\tabs.js" />
+    <Content Include="themes\RemarkClassicBase\js\Plugin\tasklist.js" />
+    <Content Include="themes\RemarkClassicBase\js\Plugin\toastr.js" />
+    <Content Include="themes\RemarkClassicBase\js\Plugin\toolbar.js" />
+    <Content Include="themes\RemarkClassicBase\js\Plugin\webui-popover.js" />
+    <Content Include="themes\RemarkClassicBase\js\Section\bundle.js" />
+    <Content Include="themes\RemarkClassicBase\js\Section\bundle.min.js">
+      <DependentUpon>bundle.js</DependentUpon>
+    </Content>
+    <Content Include="themes\RemarkClassicBase\js\Section\GridMenu.js" />
+    <Content Include="themes\RemarkClassicBase\js\Section\Menubar.js" />
+    <Content Include="themes\RemarkClassicBase\js\Section\PageAside.js" />
+    <Content Include="themes\RemarkClassicBase\js\Section\Sidebar.js" />
+    <Content Include="themes\RemarkClassicBase\js\Site.js" />
+    <Content Include="themes\RemarkClassicBase\libs\animsition\animsition.css" />
+    <Content Include="themes\RemarkClassicBase\libs\animsition\animsition.js" />
+    <Content Include="themes\RemarkClassicBase\libs\animsition\animsition.min.css" />
+    <Content Include="themes\RemarkClassicBase\libs\animsition\animsition.min.js" />
+    <Content Include="themes\RemarkClassicBase\libs\babel-external-helpers\babel-external-helpers.js" />
+    <Content Include="themes\RemarkClassicBase\libs\babel-external-helpers\babel-external-helpers.min.js">
+      <DependentUpon>babel-external-helpers.js</DependentUpon>
+    </Content>
+    <Content Include="themes\RemarkClassicBase\libs\breakpoints\breakpoints.es.js" />
+    <Content Include="themes\RemarkClassicBase\libs\breakpoints\breakpoints.js" />
+    <Content Include="themes\RemarkClassicBase\libs\breakpoints\breakpoints.min.js" />
+    <Content Include="themes\RemarkClassicBase\libs\fullcalendar\fullcalendar.css" />
+    <Content Include="themes\RemarkClassicBase\libs\fullcalendar\fullcalendar.js" />
+    <Content Include="themes\RemarkClassicBase\libs\fullcalendar\fullcalendar.min.css" />
+    <Content Include="themes\RemarkClassicBase\libs\fullcalendar\fullcalendar.min.js" />
+    <Content Include="themes\RemarkClassicBase\libs\fullcalendar\fullcalendar.print.css" />
+    <Content Include="themes\RemarkClassicBase\libs\fullcalendar\fullcalendar.print.min.css" />
+    <Content Include="themes\RemarkClassicBase\libs\fullcalendar\gcal.js" />
+    <Content Include="themes\RemarkClassicBase\libs\fullcalendar\gcal.min.js" />
+    <Content Include="themes\RemarkClassicBase\libs\fullcalendar\locale-all.js" />
+    <Content Include="themes\RemarkClassicBase\libs\fullcalendar\locale\af.js" />
+    <Content Include="themes\RemarkClassicBase\libs\fullcalendar\locale\ar-dz.js" />
+    <Content Include="themes\RemarkClassicBase\libs\fullcalendar\locale\ar-kw.js" />
+    <Content Include="themes\RemarkClassicBase\libs\fullcalendar\locale\ar-ly.js" />
+    <Content Include="themes\RemarkClassicBase\libs\fullcalendar\locale\ar-ma.js" />
+    <Content Include="themes\RemarkClassicBase\libs\fullcalendar\locale\ar-sa.js" />
+    <Content Include="themes\RemarkClassicBase\libs\fullcalendar\locale\ar-tn.js" />
+    <Content Include="themes\RemarkClassicBase\libs\fullcalendar\locale\ar.js" />
+    <Content Include="themes\RemarkClassicBase\libs\fullcalendar\locale\bg.js" />
+    <Content Include="themes\RemarkClassicBase\libs\fullcalendar\locale\bs.js" />
+    <Content Include="themes\RemarkClassicBase\libs\fullcalendar\locale\ca.js" />
+    <Content Include="themes\RemarkClassicBase\libs\fullcalendar\locale\cs.js" />
+    <Content Include="themes\RemarkClassicBase\libs\fullcalendar\locale\da.js" />
+    <Content Include="themes\RemarkClassicBase\libs\fullcalendar\locale\de-at.js" />
+    <Content Include="themes\RemarkClassicBase\libs\fullcalendar\locale\de-ch.js" />
+    <Content Include="themes\RemarkClassicBase\libs\fullcalendar\locale\de.js" />
+    <Content Include="themes\RemarkClassicBase\libs\fullcalendar\locale\el.js" />
+    <Content Include="themes\RemarkClassicBase\libs\fullcalendar\locale\en-au.js" />
+    <Content Include="themes\RemarkClassicBase\libs\fullcalendar\locale\en-ca.js" />
+    <Content Include="themes\RemarkClassicBase\libs\fullcalendar\locale\en-gb.js" />
+    <Content Include="themes\RemarkClassicBase\libs\fullcalendar\locale\en-ie.js" />
+    <Content Include="themes\RemarkClassicBase\libs\fullcalendar\locale\en-nz.js" />
+    <Content Include="themes\RemarkClassicBase\libs\fullcalendar\locale\es-do.js" />
+    <Content Include="themes\RemarkClassicBase\libs\fullcalendar\locale\es-us.js" />
+    <Content Include="themes\RemarkClassicBase\libs\fullcalendar\locale\es.js" />
+    <Content Include="themes\RemarkClassicBase\libs\fullcalendar\locale\et.js" />
+    <Content Include="themes\RemarkClassicBase\libs\fullcalendar\locale\eu.js" />
+    <Content Include="themes\RemarkClassicBase\libs\fullcalendar\locale\fa.js" />
+    <Content Include="themes\RemarkClassicBase\libs\fullcalendar\locale\fi.js" />
+    <Content Include="themes\RemarkClassicBase\libs\fullcalendar\locale\fr-ca.js" />
+    <Content Include="themes\RemarkClassicBase\libs\fullcalendar\locale\fr-ch.js" />
+    <Content Include="themes\RemarkClassicBase\libs\fullcalendar\locale\fr.js" />
+    <Content Include="themes\RemarkClassicBase\libs\fullcalendar\locale\gl.js" />
+    <Content Include="themes\RemarkClassicBase\libs\fullcalendar\locale\he.js" />
+    <Content Include="themes\RemarkClassicBase\libs\fullcalendar\locale\hi.js" />
+    <Content Include="themes\RemarkClassicBase\libs\fullcalendar\locale\hr.js" />
+    <Content Include="themes\RemarkClassicBase\libs\fullcalendar\locale\hu.js" />
+    <Content Include="themes\RemarkClassicBase\libs\fullcalendar\locale\id.js" />
+    <Content Include="themes\RemarkClassicBase\libs\fullcalendar\locale\is.js" />
+    <Content Include="themes\RemarkClassicBase\libs\fullcalendar\locale\it.js" />
+    <Content Include="themes\RemarkClassicBase\libs\fullcalendar\locale\ja.js" />
+    <Content Include="themes\RemarkClassicBase\libs\fullcalendar\locale\ka.js" />
+    <Content Include="themes\RemarkClassicBase\libs\fullcalendar\locale\kk.js" />
+    <Content Include="themes\RemarkClassicBase\libs\fullcalendar\locale\ko.js" />
+    <Content Include="themes\RemarkClassicBase\libs\fullcalendar\locale\lb.js" />
+    <Content Include="themes\RemarkClassicBase\libs\fullcalendar\locale\lt.js" />
+    <Content Include="themes\RemarkClassicBase\libs\fullcalendar\locale\lv.js" />
+    <Content Include="themes\RemarkClassicBase\libs\fullcalendar\locale\mk.js" />
+    <Content Include="themes\RemarkClassicBase\libs\fullcalendar\locale\ms-my.js" />
+    <Content Include="themes\RemarkClassicBase\libs\fullcalendar\locale\ms.js" />
+    <Content Include="themes\RemarkClassicBase\libs\fullcalendar\locale\nb.js" />
+    <Content Include="themes\RemarkClassicBase\libs\fullcalendar\locale\nl-be.js" />
+    <Content Include="themes\RemarkClassicBase\libs\fullcalendar\locale\nl.js" />
+    <Content Include="themes\RemarkClassicBase\libs\fullcalendar\locale\nn.js" />
+    <Content Include="themes\RemarkClassicBase\libs\fullcalendar\locale\pl.js" />
+    <Content Include="themes\RemarkClassicBase\libs\fullcalendar\locale\pt-br.js" />
+    <Content Include="themes\RemarkClassicBase\libs\fullcalendar\locale\pt.js" />
+    <Content Include="themes\RemarkClassicBase\libs\fullcalendar\locale\ro.js" />
+    <Content Include="themes\RemarkClassicBase\libs\fullcalendar\locale\ru.js" />
+    <Content Include="themes\RemarkClassicBase\libs\fullcalendar\locale\sk.js" />
+    <Content Include="themes\RemarkClassicBase\libs\fullcalendar\locale\sl.js" />
+    <Content Include="themes\RemarkClassicBase\libs\fullcalendar\locale\sq.js" />
+    <Content Include="themes\RemarkClassicBase\libs\fullcalendar\locale\sr-cyrl.js" />
+    <Content Include="themes\RemarkClassicBase\libs\fullcalendar\locale\sr.js" />
+    <Content Include="themes\RemarkClassicBase\libs\fullcalendar\locale\sv.js" />
+    <Content Include="themes\RemarkClassicBase\libs\fullcalendar\locale\th.js" />
+    <Content Include="themes\RemarkClassicBase\libs\fullcalendar\locale\tr.js" />
+    <Content Include="themes\RemarkClassicBase\libs\fullcalendar\locale\uk.js" />
+    <Content Include="themes\RemarkClassicBase\libs\fullcalendar\locale\vi.js" />
+    <Content Include="themes\RemarkClassicBase\libs\fullcalendar\locale\zh-cn.js" />
+    <Content Include="themes\RemarkClassicBase\libs\fullcalendar\locale\zh-tw.js" />
+    <Content Include="themes\RemarkClassicBase\libs\jquery-ashoverscroll\jquery-asHoverScroll.es.js" />
+    <Content Include="themes\RemarkClassicBase\libs\jquery-ashoverscroll\jquery-asHoverScroll.js" />
+    <Content Include="themes\RemarkClassicBase\libs\jquery-ashoverscroll\jquery-asHoverScroll.min.js" />
+    <Content Include="themes\RemarkClassicBase\libs\jquery-asscrollable\jquery-asScrollable.css" />
+    <Content Include="themes\RemarkClassicBase\libs\jquery-asscrollable\jquery-asScrollable.es.js" />
+    <Content Include="themes\RemarkClassicBase\libs\jquery-asscrollable\jquery-asScrollable.js" />
+    <Content Include="themes\RemarkClassicBase\libs\jquery-asscrollable\jquery-asScrollable.min.css" />
+    <Content Include="themes\RemarkClassicBase\libs\jquery-asscrollable\jquery-asScrollable.min.js" />
+    <Content Include="themes\RemarkClassicBase\libs\jquery-asscrollbar\jquery-asScrollbar.css" />
+    <Content Include="themes\RemarkClassicBase\libs\jquery-asscrollbar\jquery-asScrollbar.es.js" />
+    <Content Include="themes\RemarkClassicBase\libs\jquery-asscrollbar\jquery-asScrollbar.js" />
+    <Content Include="themes\RemarkClassicBase\libs\jquery-asscrollbar\jquery-asScrollbar.min.css" />
+    <Content Include="themes\RemarkClassicBase\libs\jquery-asscrollbar\jquery-asScrollbar.min.js" />
+    <Content Include="themes\RemarkClassicBase\libs\jquery-matchheight\jquery.matchHeight.js" />
+    <Content Include="themes\RemarkClassicBase\libs\jquery-matchheight\jquery.matchHeight.min.js" />
+    <Content Include="themes\RemarkClassicBase\libs\jquery-placeholder\jquery.placeholder.js" />
+    <Content Include="themes\RemarkClassicBase\libs\jquery-placeholder\jquery.placeholder.min.js">
+      <DependentUpon>jquery.placeholder.js</DependentUpon>
+    </Content>
+    <Content Include="themes\RemarkClassicBase\libs\jquery-slidepanel\jquery-slidePanel.css" />
+    <Content Include="themes\RemarkClassicBase\libs\jquery-slidepanel\jquery-slidePanel.es.js" />
+    <Content Include="themes\RemarkClassicBase\libs\jquery-slidepanel\jquery-slidePanel.js" />
+    <Content Include="themes\RemarkClassicBase\libs\jquery-slidepanel\jquery-slidePanel.min.css" />
+    <Content Include="themes\RemarkClassicBase\libs\jquery-slidepanel\jquery-slidePanel.min.js" />
+    <Content Include="themes\RemarkClassicBase\skins\brown.min.css" />
+    <Content Include="themes\RemarkClassicBase\skins\cyan.min.css" />
+    <Content Include="themes\RemarkClassicBase\skins\green.min.css" />
+    <Content Include="themes\RemarkClassicBase\skins\grey.min.css" />
+    <Content Include="themes\RemarkClassicBase\skins\indigo.min.css" />
+    <Content Include="themes\RemarkClassicBase\skins\orange.min.css" />
+    <Content Include="themes\RemarkClassicBase\skins\pink.min.css" />
+    <Content Include="themes\RemarkClassicBase\skins\purple.min.css" />
+    <Content Include="themes\RemarkClassicBase\skins\red.min.css" />
+    <Content Include="themes\RemarkClassicBase\skins\teal.min.css" />
+    <Content Include="themes\RemarkClassicBase\skins\yellow.min.css" />
+    <Content Include="Views\RemarkClassicBase\Base\Authen\Index.cshtml" />
+    <Content Include="Views\RemarkClassicBase\Base\CustomerAddress\Detail.cshtml" />
+    <Content Include="Views\RemarkClassicBase\Base\Customer\Detail.cshtml" />
+    <Content Include="Views\RemarkClassicBase\Base\Customer\Index.cshtml" />
+    <Content Include="Views\RemarkClassicBase\Base\Home\Index.cshtml" />
+    <Content Include="Views\RemarkClassicBase\Base\Shared\_lyDefault.cshtml" />
+    <Content Include="Views\RemarkClassicBase\Base\Shared\_lyMenu.cshtml" />
+    <Content Include="Views\RemarkClassicBase\Base\Shared\_wgAlert.cshtml" />
+    <Content Include="Web.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="App_Start\RouteConfig.cs" />
+    <Compile Include="Controllers\AccountController.cs" />
+    <Compile Include="Controllers\AuthenController.cs" />
+    <Compile Include="Controllers\CalendarController.cs" />
+    <Compile Include="Controllers\CustomerAddressController.cs" />
+    <Compile Include="Controllers\CustomerContactController.cs" />
+    <Compile Include="Controllers\CustomerController.cs" />
+    <Compile Include="Controllers\CustomerGroupController.cs" />
+    <Compile Include="Controllers\DepartmentController.cs" />
+    <Compile Include="Controllers\EmployeeController.cs" />
+    <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\InvoiceController.cs" />
+    <Compile Include="Controllers\JobOrderController.cs" />
+    <Compile Include="Controllers\PileController.cs" />
+    <Compile Include="Controllers\PileSeriesController.cs" />
+    <Compile Include="Controllers\PositionController.cs" />
+    <Compile Include="Controllers\ProductCategoryController.cs" />
+    <Compile Include="Controllers\ProductController.cs" />
+    <Compile Include="Controllers\ProductModelController.cs" />
+    <Compile Include="Controllers\ProductTypeController.cs" />
+    <Compile Include="Controllers\QuotationController.cs" />
+    <Compile Include="Controllers\RoleController.cs" />
+    <Compile Include="Controllers\SaleOrderController.cs" />
+    <Compile Include="Controllers\SystemController.cs" />
+    <Compile Include="Controllers\TeamOperationController.cs" />
+    <Compile Include="Controllers\TeamSaleController.cs" />
+    <Compile Include="Controllers\UnitController.cs" />
+    <Compile Include="Global.asax.cs">
+      <DependentUpon>Global.asax</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CalendarDayModel.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SqlServerTypes\Loader.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\web.config" />
+    <Content Include="fonts\7-stroke\7-stroke.eot" />
+    <Content Include="fonts\7-stroke\7-stroke.ttf" />
+    <Content Include="fonts\7-stroke\7-stroke.woff" />
+    <Content Include="fonts\brand-icons\brand-icons.eot" />
+    <Content Include="fonts\brand-icons\brand-icons.ttf" />
+    <Content Include="fonts\brand-icons\brand-icons.woff" />
+    <Content Include="fonts\brand-icons\brand-icons.woff2" />
+    <Content Include="fonts\entypo\entypo.eot" />
+    <Content Include="fonts\entypo\entypo.ttf" />
+    <Content Include="fonts\entypo\entypo.woff" />
+    <Content Include="fonts\font-awesome\font-awesome.eot" />
+    <Content Include="fonts\font-awesome\font-awesome.ttf" />
+    <Content Include="fonts\font-awesome\font-awesome.woff" />
+    <Content Include="fonts\font-awesome\font-awesome.woff2" />
+    <Content Include="fonts\foundation\foundation.eot" />
+    <Content Include="fonts\foundation\foundation.ttf" />
+    <Content Include="fonts\foundation\foundation.woff" />
+    <Content Include="fonts\framework7\framework7.eot" />
+    <Content Include="fonts\framework7\framework7.ttf" />
+    <Content Include="fonts\framework7\framework7.woff" />
+    <Content Include="fonts\framework7\framework7.woff2" />
+    <Content Include="fonts\glyphicons\glyphicons-halflings-regular.eot" />
+    <Content Include="fonts\glyphicons\glyphicons-halflings-regular.ttf" />
+    <Content Include="fonts\glyphicons\glyphicons-halflings-regular.woff" />
+    <Content Include="fonts\glyphicons\glyphicons-halflings-regular.woff2" />
+    <Content Include="fonts\ionicons\ionicons.eot" />
+    <Content Include="fonts\ionicons\ionicons.ttf" />
+    <Content Include="fonts\ionicons\ionicons.woff" />
+    <Content Include="fonts\ionicons\ionicons.woff2" />
+    <Content Include="fonts\map-icons\map-icons.eot" />
+    <Content Include="fonts\map-icons\map-icons.ttf" />
+    <Content Include="fonts\map-icons\map-icons.woff" />
+    <Content Include="fonts\material-design\material-design.eot" />
+    <Content Include="fonts\material-design\material-design.ttf" />
+    <Content Include="fonts\material-design\material-design.woff" />
+    <Content Include="fonts\material-design\material-design.woff2" />
+    <Content Include="fonts\mfglabs\mfglabs.eot" />
+    <Content Include="fonts\mfglabs\mfglabs.ttf" />
+    <Content Include="fonts\mfglabs\mfglabs.woff" />
+    <Content Include="fonts\micon\micon.eot" />
+    <Content Include="fonts\micon\micon.ttf" />
+    <Content Include="fonts\micon\micon.woff" />
+    <Content Include="fonts\micon\micon.woff2" />
+    <Content Include="fonts\octicons\octicons.eot" />
+    <Content Include="fonts\octicons\octicons.ttf" />
+    <Content Include="fonts\octicons\octicons.woff" />
+    <Content Include="fonts\open-iconic\open-iconic.eot" />
+    <Content Include="fonts\open-iconic\open-iconic.ttf" />
+    <Content Include="fonts\open-iconic\open-iconic.woff" />
+    <Content Include="fonts\openwebicons\openwebicons.eot" />
+    <Content Include="fonts\openwebicons\openwebicons.ttf" />
+    <Content Include="fonts\openwebicons\openwebicons.woff" />
+    <Content Include="fonts\openwebicons\openwebicons.woff2" />
+    <Content Include="fonts\Roboto\Roboto-300.eot" />
+    <Content Include="fonts\Roboto\Roboto-300.ttf" />
+    <Content Include="fonts\Roboto\Roboto-300.woff" />
+    <Content Include="fonts\Roboto\Roboto-300.woff2" />
+    <Content Include="fonts\Roboto\Roboto-300italic.eot" />
+    <Content Include="fonts\Roboto\Roboto-300italic.ttf" />
+    <Content Include="fonts\Roboto\Roboto-300italic.woff" />
+    <Content Include="fonts\Roboto\Roboto-300italic.woff2" />
+    <Content Include="fonts\Roboto\Roboto-500.eot" />
+    <Content Include="fonts\Roboto\Roboto-500.ttf" />
+    <Content Include="fonts\Roboto\Roboto-500.woff" />
+    <Content Include="fonts\Roboto\Roboto-500.woff2" />
+    <Content Include="fonts\Roboto\Roboto-regular.eot" />
+    <Content Include="fonts\Roboto\Roboto-regular.ttf" />
+    <Content Include="fonts\Roboto\Roboto-regular.woff" />
+    <Content Include="fonts\Roboto\Roboto-regular.woff2" />
+    <Content Include="fonts\themify\themify.eot" />
+    <Content Include="fonts\themify\themify.ttf" />
+    <Content Include="fonts\themify\themify.woff" />
+    <Content Include="fonts\weather-icons\weather-icons.eot" />
+    <Content Include="fonts\weather-icons\weather-icons.ttf" />
+    <Content Include="fonts\weather-icons\weather-icons.woff" />
+    <Content Include="fonts\web-icons\web-icons.eot" />
+    <Content Include="fonts\web-icons\web-icons.ttf" />
+    <Content Include="fonts\web-icons\web-icons.woff" />
+    <Content Include="fonts\web-icons\web-icons.woff2" />
+    <Content Include="libs\bootstrap\css\bootstrap.min.css.map" />
+    <Content Include="libs\bootstrap\js\bootstrap.min.js.map" />
+    <Content Include="libs\gmaps\gmaps.min.js.map" />
+    <Content Include="libs\jquery\jquery.min.js.map" />
+    <Content Include="libs\popper-js\popper-utils.min.js.map" />
+    <Content Include="libs\popper-js\popper.min.js.map" />
+    <None Include="bundleconfig.json" />
+    <None Include="packages.config" />
+    <Content Include="themes\RemarkClassicBase\libs\breakpoints\breakpoints.min.js.map" />
+    <Content Include="themes\RemarkClassicBase\libs\jquery-placeholder\jquery.placeholder.min.js.map" />
+    <Content Include="Views\RemarkClassicBase\Base\CustomerContact\Detail.cshtml" />
+    <Content Include="Views\RemarkClassicBase\Base\CustomerGroup\Detail.cshtml" />
+    <Content Include="Views\RemarkClassicBase\Base\CustomerGroup\Index.cshtml" />
+    <Content Include="Views\RemarkClassicBase\Base\Department\Detail.cshtml" />
+    <Content Include="Views\RemarkClassicBase\Base\Department\Index.cshtml" />
+    <Content Include="Views\RemarkClassicBase\Base\Employee\Detail.cshtml" />
+    <Content Include="Views\RemarkClassicBase\Base\Employee\Index.cshtml" />
+    <Content Include="Views\RemarkClassicBase\Base\Invoice\Detail.cshtml" />
+    <Content Include="Views\RemarkClassicBase\Base\Invoice\Index.cshtml" />
+    <Content Include="Views\RemarkClassicBase\Base\JobOrder\Detail.cshtml" />
+    <Content Include="Views\RemarkClassicBase\Base\JobOrder\Index.cshtml" />
+    <Content Include="Views\RemarkClassicBase\Base\PileSeries\Detail.cshtml" />
+    <Content Include="Views\RemarkClassicBase\Base\PileSeries\Index.cshtml" />
+    <Content Include="Views\RemarkClassicBase\Base\Pile\Detail.cshtml" />
+    <Content Include="Views\RemarkClassicBase\Base\Pile\Index.cshtml" />
+    <Content Include="Views\RemarkClassicBase\Base\Position\Detail.cshtml" />
+    <Content Include="Views\RemarkClassicBase\Base\Position\Index.cshtml" />
+    <Content Include="Views\RemarkClassicBase\Base\ProductCategory\Detail.cshtml" />
+    <Content Include="Views\RemarkClassicBase\Base\ProductCategory\Index.cshtml" />
+    <Content Include="Views\RemarkClassicBase\Base\ProductModel\Detail.cshtml" />
+    <Content Include="Views\RemarkClassicBase\Base\ProductModel\Index.cshtml" />
+    <Content Include="Views\RemarkClassicBase\Base\ProductType\Detail.cshtml" />
+    <Content Include="Views\RemarkClassicBase\Base\ProductType\Index.cshtml" />
+    <Content Include="Views\RemarkClassicBase\Base\Product\Detail.cshtml" />
+    <Content Include="Views\RemarkClassicBase\Base\Product\Index.cshtml" />
+    <Content Include="Views\RemarkClassicBase\Base\Quotation\Detail.cshtml" />
+    <Content Include="Views\RemarkClassicBase\Base\Quotation\Index.cshtml" />
+    <Content Include="Views\RemarkClassicBase\Base\SaleOrder\Detail.cshtml" />
+    <Content Include="Views\RemarkClassicBase\Base\SaleOrder\Index.cshtml" />
+    <Content Include="Views\RemarkClassicBase\Base\Unit\Detail.cshtml" />
+    <Content Include="Views\RemarkClassicBase\Base\Unit\Index.cshtml" />
+    <Content Include="Views\RemarkClassicBase\Base\Shared\_wgPagination.cshtml" />
+    <Content Include="Views\RemarkClassicBase\Base\Shared\_wgPaginationSize.cshtml" />
+    <None Include="Properties\PublishProfiles\Supawat - FileSystem.pubxml" />
+    <Content Include="Views\RemarkClassicBase\Base\Account\Detail.cshtml" />
+    <Content Include="Views\RemarkClassicBase\Base\Account\Index.cshtml" />
+    <Content Include="Views\RemarkClassicBase\Base\Account\Profile.cshtml" />
+    <Content Include="Views\RemarkClassicBase\Base\Role\Detail.cshtml" />
+    <Content Include="Views\RemarkClassicBase\Base\Role\Index.cshtml" />
+    <Content Include="Views\RemarkClassicBase\Base\TeamSale\Index.cshtml" />
+    <Content Include="Views\RemarkClassicBase\Base\TeamSale\Detail.cshtml" />
+    <Content Include="Views\RemarkClassicBase\Base\TeamOperation\Detail.cshtml" />
+    <Content Include="Views\RemarkClassicBase\Base\TeamOperation\Index.cshtml" />
+    <Content Include="Views\RemarkClassicBase\Base\Calendar\Index.cshtml" />
+    <None Include="Web.Debug.config">
+      <DependentUpon>Web.config</DependentUpon>
+    </None>
+    <None Include="Web.Release.config">
+      <DependentUpon>Web.config</DependentUpon>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="App_Data\" />
+    <Folder Include="Views\Calendar\" />
+    <Folder Include="Views\RemarkClassicBase\Base\System\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Kemrex.Core.Common\Kemrex.Core.Common.csproj">
+      <Project>{c33f76f7-d242-4fdc-a74c-95e22a0fa942}</Project>
+      <Name>Kemrex.Core.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Kemrex.Core.Database\Kemrex.Core.Database.csproj">
+      <Project>{3a007a37-928f-4d14-b7d0-bd78a0217890}</Project>
+      <Name>Kemrex.Core.Database</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Kemrex.Web.Common\Kemrex.Web.Common.csproj">
+      <Project>{33455549-C834-41CA-8771-CF3099A7EEC9}</Project>
+      <Name>Kemrex.Web.Common</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <PropertyGroup>
+    <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
+    <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
+  </PropertyGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(VSToolsPath)\WebApplications\Microsoft.WebApplication.targets" Condition="'$(VSToolsPath)' != ''" />
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" Condition="false" />
+  <ProjectExtensions>
+    <VisualStudio>
+      <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
+        <WebProjectProperties>
+          <UseIIS>True</UseIIS>
+          <AutoAssignPort>True</AutoAssignPort>
+          <DevelopmentServerPort>62805</DevelopmentServerPort>
+          <DevelopmentServerVPath>/</DevelopmentServerVPath>
+          <IISUrl>http://localhost:62805/</IISUrl>
+          <NTLMAuthentication>False</NTLMAuthentication>
+          <UseCustomServer>False</UseCustomServer>
+          <CustomServerUrl>
+          </CustomServerUrl>
+          <SaveServerSettingsInUserFile>False</SaveServerSettingsInUserFile>
+        </WebProjectProperties>
+      </FlavorProperties>
+    </VisualStudio>
+  </ProjectExtensions>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

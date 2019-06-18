@@ -1,0 +1,136 @@
+﻿@using Kemrex.Core.Database.Models
+@using Kemrex.Web.Common.Controllers
+@using Kemrex.Web.Common.Models
+@model TblPile
+@{
+    ViewBag.Title = "Index";
+    KemrexController kemrex = ((KemrexController)this.ViewContext.Controller);
+    Layout = kemrex.PathViewShared("_lyDefault");
+    WidgetAlertModel Alert = (WidgetAlertModel)ViewBag.Alert;
+    List<TblPileSeries> optSeries = (List<TblPileSeries>)ViewData["optSeries"];
+}
+
+@section Scripts {
+    <script type="text/javascript">
+        $(document).ready(function () {
+            window.setTimeout(function () {
+                $(".alert").fadeTo(1000, 0).slideUp(1000, function () {
+                    $(this).remove();
+                });
+            }, 5000);
+        });
+    </script>
+}
+
+<div class="page">
+    <div class="page-content container-fluid">
+        @if (ViewBag.Alert != null)
+        {
+            <div class="row">
+                <div class="col-12">
+                    @Html.Partial(kemrex.PathViewShared("_wgAlert"), Alert)
+                </div>
+            </div>
+        }
+        <div class="row">
+            <div class="col-12">
+                <div class="panel">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">
+                            @(Model.PileId > 0 ? "เพิ่ม" : "แก้ไข")สินค้า
+                            <span class="panel-desc">รายละเอียดสินค้า</span>
+                        </h3>
+                    </div>
+                    <form method="post" action="@Url.Action("Detail", "Pile")" enctype="multipart/form-data">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="PileId" value="@Model.PileId" />
+                        <div class="panel-body">
+                            <div class="row">
+                                <div class="col-md-6 col-sm-12">
+                                    <div class="form-group">
+                                        <label for="PileName" class="form-control-label">ชื่อรุ่น</label>
+                                        <input type="text" class="form-control" name="PileName" value="@Model.PileName" />
+                                    </div>
+                                </div>
+                                <div class="col-md-6 col-sm-12">
+                                    <div class="form-group">
+                                        <label for="PileName" class="form-control-label">ซีรี่ย์</label>
+                                        <select name="SeriesId" class="form-control">
+                                            @foreach(TblPileSeries it in optSeries)
+                                            {
+                                                bool selected = it.SeriesId == Model.SeriesId;
+                                                <option value="@it.SeriesId"@(selected ? " selected=\"selected\"" : "")>@it.SeriesName</option>
+                                            }
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-4 col-sm-6">
+                                    <div class="form-group">
+                                        <label for="PileLength" class="form-control-label">Length</label>
+                                        <input type="number" class="form-control" name="PileLength" value="@Model.PileLength" />
+                                    </div>
+                                </div>
+                                <div class="col-md-4 col-sm-6">
+                                    <div class="form-group">
+                                        <label for="PileDia" class="form-control-label">Diameter</label>
+                                        <input type="text" class="form-control" name="PileDia" value="@Model.PileDia" />
+                                    </div>
+                                </div>
+                                <div class="col-md-4 col-sm-6">
+                                    <div class="form-group">
+                                        <label for="PileBlade" class="form-control-label">Blade</label>
+                                        <input type="text" class="form-control" name="PileBlade" value="@Model.PileBlade" />
+                                    </div>
+                                </div>
+                                <div class="col-md-4 col-sm-6">
+                                    <div class="form-group">
+                                        <label for="PileSpiralLength" class="form-control-label">L Spiral</label>
+                                        <input type="text" class="form-control" name="PileSpiralLength" value="@Model.PileSpiralLength" />
+                                    </div>
+                                </div>
+                                <div class="col-md-4 col-sm-6">
+                                    <div class="form-group">
+                                        <label for="PileSpiralDepth" class="form-control-label">Depth Spiral</label>
+                                        <input type="text" class="form-control" name="PileSpiralDepth" value="@Model.PileSpiralDepth" />
+                                    </div>
+                                </div>
+                                <div class="col-md-4 col-sm-6">
+                                    <div class="form-group">
+                                        <label for="PileFlangeWidth" class="form-control-label">Flange Width</label>
+                                        <input type="text" class="form-control" name="PileFlangeWidth" value="@Model.PileFlangeWidth" />
+                                    </div>
+                                </div>
+                                <div class="col-md-4 col-sm-6">
+                                    <div class="form-group">
+                                        <label for="PileFlangeLength" class="form-control-label">Flagne Length</label>
+                                        <input type="text" class="form-control" name="PileFlangeLength" value="@Model.PileFlangeLength" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-3 col-sm-6">
+                                    <div class="form-group">
+                                        <label for="PileSeriesOrder" class="form-control-label">ลำดับการแสดงผล (ซีรี่ย์)</label>
+                                        <input type="number" class="form-control" name="PileSeriesOrder" value="@Model.PileSeriesOrder" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="panel-footer">
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="form-group">
+                                        <button type="submit" class="btn btn-primary">บันทึก</button>&nbsp;
+                                        <a href="@Url.Action("Index", "Pile")" class="btn btn-default">ยกเลิก</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

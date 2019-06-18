@@ -1,0 +1,99 @@
+﻿@using Kemrex.Core.Database.Models
+@using Kemrex.Web.Common.Controllers
+@using Kemrex.Web.Common.Models
+@{
+    ViewBag.Title = "Dashboard";
+    KemrexController kemrex = ((KemrexController)ViewContext.Controller);
+    Layout = kemrex.PathViewShared("_lyDefault");
+    WidgetAlertModel AlertModel = (WidgetAlertModel)ViewBag.Alert;
+    SysAccount usr = kemrex.CurrentUser;
+    string usrAvatar = string.Format("~/{0}", usr.AccountId > 0 && !string.IsNullOrWhiteSpace(usr.AccountAvatar) && File.Exists(Server.MapPath(usr.AccountAvatar)) ?
+        usr.AccountAvatar : "images/avatar/guest.png");
+    string usrName = usr.AccountId > 0 && !string.IsNullOrWhiteSpace(usr.AccountName) ? usr.AccountName : "[Name]";
+}
+
+@section Styles {
+    <style type="text/css">
+        .dashboard .card, .dashboard .panel {
+            height: calc(100% - 30px);
+        }
+    </style>
+}
+
+@section Plugins {
+    <script src="~/themes/@kemrex.GetCurrentTheme()/js/Plugin/matchheight.js"></script>
+}
+<!-- Page -->
+<div class="page">
+    <div class="page-header h-100 mb-10">
+        <div class="text-center blue-grey-800 m-0">
+            <div class="font-size-40 blue-grey-800">KEMREX Dashboard</div>
+            @*<ul class="list-inline font-size-14">
+                    <li class="list-inline-item">
+                        <i class="icon wb-map mr-5" aria-hidden="true"></i> Central and southern
+                        Alaska
+                    </li>
+                    <li class="list-inline-item ml-20">
+                        <i class="icon wb-heart mr-5" aria-hidden="true"></i> 26,428
+                    </li>
+                </ul>*@
+        </div>
+    </div>
+
+    <div class="page-content container-fluid">
+        <div class="row" data-plugin="matchHeight">
+            <div class="col-xxl-3 col-xl-3">
+                <!-- Panel Web Designer -->
+                <div class="card card-shadow">
+                    <div class="card-block text-center bg-white p-40">
+                        <div class="avatar avatar-100 mb-20">
+                            <img src="@Url.Content(usrAvatar)" alt="@usrName">
+                        </div>
+                        <p class="font-size-20 blue-grey-700">@usrName</p>
+                        <p class="blue-grey-400 mb-20">@usr.AccountUsername</p>
+                        <p class="mb-35">
+                            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer
+                            nec odio. Praesent libero. Sed cursus ante dapibus diam. Sed
+                            nisi.
+                        </p>
+                        <ul class="list-inline font-size-18 mb-35">
+                            <li class="list-inline-item">
+                                <a class="blue-grey-400" href="javascript:void(0)">
+                                    <i class="icon bd-twitter" aria-hidden="true"></i>
+                                </a>
+                            </li>
+                            <li class="list-inline-item ml-10">
+                                <a class="blue-grey-400" href="javascript:void(0)">
+                                    <i class="icon bd-facebook" aria-hidden="true"></i>
+                                </a>
+                            </li>
+                            <li class="list-inline-item ml-10">
+                                <a class="blue-grey-400" href="javascript:void(0)">
+                                    <i class="icon bd-dribbble" aria-hidden="true"></i>
+                                </a>
+                            </li>
+                            <li class="list-inline-item ml-10">
+                                <a class="blue-grey-400" href="javascript:void(0)">
+                                    <i class="icon bd-instagram" aria-hidden="true"></i>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <!-- End Panel Web Designer -->
+            </div>
+            <div class="col-xxl-9 col-xl-9">
+                <div class="card card-shadow">
+                    <div class="card-header">
+                        <h3 class="card-title">ประกาศ</h3>
+                    </div>
+                    <div class="card-block text-justify bg-white p-40">
+                        <p>Lorem Ipsum คือ เนื้อหาจำลองแบบเรียบๆ ที่ใช้กันในธุรกิจงานพิมพ์หรืองานเรียงพิมพ์ มันได้กลายมาเป็นเนื้อหาจำลองมาตรฐานของธุรกิจดังกล่าวมาตั้งแต่ศตวรรษที่ 16 เมื่อเครื่องพิมพ์โนเนมเครื่องหนึ่งนำรางตัวพิมพ์มาสลับสับตำแหน่งตัวอักษรเพื่อทำหนังสือตัวอย่าง Lorem Ipsum อยู่ยงคงกระพันมาไม่ใช่แค่เพียงห้าศตวรรษ แต่อยู่มาจนถึงยุคที่พลิกโฉมเข้าสู่งานเรียงพิมพ์ด้วยวิธีทางอิเล็กทรอนิกส์ และยังคงสภาพเดิมไว้อย่างไม่มีการเปลี่ยนแปลง มันได้รับความนิยมมากขึ้นในยุค ค.ศ. 1960 เมื่อแผ่น Letraset วางจำหน่ายโดยมีข้อความบนนั้นเป็น Lorem Ipsum และล่าสุดกว่านั้น คือเมื่อซอฟท์แวร์การทำสื่อสิ่งพิมพ์ (Desktop Publishing) อย่าง Aldus PageMaker ได้รวมเอา Lorem Ipsum เวอร์ชั่นต่างๆ เข้าไว้ในซอฟท์แวร์ด้วย</p>
+                        <p>ตรงกันข้ามกับความเชื่อที่นิยมกัน Lorem Ipsum ไม่ได้เป็นเพียงแค่ชุดตัวอักษรที่สุ่มขึ้นมามั่วๆ แต่หากมีที่มาจากวรรณกรรมละตินคลาสสิกชิ้นหนึ่งในยุค 45 ปีก่อนคริสตศักราช ทำให้มันมีอายุถึงกว่า 2000 ปีเลยทีเดียว ริชาร์ด แมคคลินท็อค ศาสตราจารย์ชาวละติน จากวิทยาลัยแฮมพ์เด็น-ซิดนีย์ ในรัฐเวอร์จิเนียร์ นำคำภาษาละตินคำว่า consectetur ซึ่งหาคำแปลไม่ได้จาก Lorem Ipsum ตอนหนึ่งมาค้นเพิ่มเติม โดยตรวจเทียบกับแหล่งอ้างอิงต่างๆ ในวรรณกรรมคลาสสิก และค้นพบแหล่งข้อมูลที่ไร้ข้อกังขาว่า Lorem Ipsum นั้นมาจากตอนที่ 1.10.32 และ 1.10.33 ของเรื่อง "de Finibus Bonorum et Malorum" (The Extremes of Good and Evil) ของ ซิเซโร ที่แต่งไว้เมื่อ 45 ปีก่อนคริสตศักราช หนังสือเล่มนี้เป็นเรื่องราวที่ว่าด้วยทฤษฎีแห่งจริยศาสตร์ ซึ่งเป็นที่นิยมมากในยุคเรเนสซองส์ บรรทัดแรกของ Lorem Ipsum "Lorem ipsum dolor sit amet.." ก็มาจากบรรทัดหนึ่งในตอนที่ 1.10.32 นั่นเอง</p>
+                        <p>มีหลักฐานที่เป็นข้อเท็จจริงยืนยันมานานแล้ว ว่าเนื้อหาที่อ่านรู้เรื่องนั้นจะไปกวนสมาธิของคนอ่านให้เขวไปจากส่วนที้เป็น Layout เรานำ Lorem Ipsum มาใช้เพราะความที่มันมีการกระจายของตัวอักษรธรรมดาๆ แบบพอประมาณ ซึ่งเอามาใช้แทนการเขียนว่า ‘ตรงนี้เป็นเนื้อหา, ตรงนี้เป็นเนื้อหา' ได้ และยังทำให้มองดูเหมือนกับภาษาอังกฤษที่อ่านได้ปกติ ปัจจุบันมีแพ็กเกจของซอฟท์แวร์การทำสื่อสิ่งพิมพ์ และซอฟท์แวร์การสร้างเว็บเพจ (Web Page Editor) หลายตัวที่ใช้ Lorem Ipsum เป็นแบบจำลองเนื้อหาที่เป็นค่าตั้งต้น และเวลาที่เสิร์ชด้วยคำว่า 'lorem ipsum' ผลการเสิร์ชที่ได้ก็จะไม่พบบรรดาเว็บไซต์ที่ยังคงอยู่ในช่วงเริ่มสร้างด้วย โดยหลายปีที่ผ่านมาก็มีการคิดค้นเวอร์ชั่นต่างๆ ของ Lorem Ipsum ขึ้นมาใช้ บ้างก็เป็นความบังเอิญ บ้างก็เป็นความตั้งใจ (เช่น การแอบแทรกมุกตลก)</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

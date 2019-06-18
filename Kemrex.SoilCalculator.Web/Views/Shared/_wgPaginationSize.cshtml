@@ -1,0 +1,22 @@
+﻿@using Kemrex.SoilCalculator.Web.Models
+@model WidgetPaginationModel
+@{
+    /**/
+
+    int[] sizeList = new int[] { 10, 30, 50, 100 };
+    string uniqueId = Guid.NewGuid().ToString("n");
+}
+<div class="form-group">
+    <div class="dropdown">
+        <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">
+            จำนวนข้อมูลที่แสดง
+            <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu">
+            @foreach (int size in sizeList)
+            {
+                <li><a href="@Url.Action(Model.Action, new { controller = Model.Controller, area = Model.Area, sort = Model.SortExp, page = 1, size = size })">@size</a></li>
+            }
+        </ul>
+    </div>
+</div>

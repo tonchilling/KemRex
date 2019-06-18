@@ -1,0 +1,247 @@
+﻿@using Kemrex.Core.Database.Models
+@using Kemrex.Web.Controllers.Base
+@using Kemrex.Web.Common.Models
+@model TblCustomer
+@{
+    ViewBag.Title = "Index";
+    KemrexController kemrex = ((KemrexController)this.ViewContext.Controller);
+    Layout = kemrex.PathViewShared("_lyDefault");
+    WidgetAlertModel Alert = (WidgetAlertModel)ViewBag.Alert;
+    List<EnmPrefix> optPrefix = (List<EnmPrefix>)ViewData["optPrefix"];
+    List<TblCustomerGroup> optGroup = (List<TblCustomerGroup>)ViewData["optGroup"];
+}
+
+@section script {
+    <script type="text/javascript">
+        $(document).ready(function () {
+            window.setTimeout(function () {
+                $(".alert").fadeTo(1000, 0).slideUp(1000, function () {
+                    $(this).remove();
+                });
+            }, 5000);
+        });
+    </script>
+}
+
+<div class="page">
+    <div class="page-content container-fluid">
+        @if (ViewBag.Alert != null)
+        {
+            <div class="row">
+                <div class="col-12">
+                    @Html.Partial(kemrex.PathViewShared("_wgAlert"), Alert)
+                </div>
+            </div>
+        }
+        <div class="row">
+            <div class="col-12">
+                <div class="panel">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">
+                            @(Model.CustomerId > 0 ? "แก้ไข" : "เพิ่ม")ลูกค้า
+                            <span class="panel-desc">รายละเอียดลูกค้า</span>
+                        </h3>
+                    </div>
+                    <form method="post" action="@Url.Action("Detail", "Customer")" enctype="multipart/form-data">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="CustomerId" value="@Model.CustomerId" />
+                        <div class="panel-body">
+                            <div class="row">
+                                <div class="col-md-3 col-sm-4">
+                                    <div class="form-group">
+                                        <label for="PrefixId" class="form-control-label">คำนำหน้า</label>
+                                        <select class="form-control" name="PrefixId">
+                                            <option value="-1" @(!Model.PrefixId.HasValue ? " selected=\"selected\"" : "")>ไม่ระบุ</option>
+                                            @foreach (EnmPrefix it in optPrefix)
+                                            {
+                                                bool selected = Model.PrefixId.HasValue && it.PrefixId == Model.PrefixId;
+                                                <option value="@it.PrefixId" @(selected ? " selected=\"selected\"" : "")>@it.PrefixNameTh</option>
+                                            }
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-9 col-sm-8">
+                                    <div class="form-group">
+                                        <label for="CustomerName" class="form-control-label">ชื่อลูกค้า</label>
+                                        <input type="text" class="form-control" name="CustomerName" value="@Model.CustomerName" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 col-sm-12">
+                                    <div class="form-group">
+                                        <label for="GroupId" class="form-control-label">กลุ่มลูกค้า</label>
+                                        <select name="GroupId" class="form-control">
+                                            @foreach (TblCustomerGroup it in optGroup)
+                                            {
+                                                bool selected = it.GroupId == Model.GroupId;
+                                                <option value="@it.GroupId" @(selected ? " selected=\"selected\"" : "")>@it.GroupName</option>
+                                            }
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 col-sm-12">
+                                    <div class="form-group">
+                                        <label for="CustomerAvatar" class="form-control-label">รูปลูกค้า</label>
+                                        <input type="file" class="form-control" name="CustomerAvatar" />
+                                        @if (!string.IsNullOrWhiteSpace(Model.CustomerAvatar))
+                                        {
+                                            <span class="help-block"><a href="@Url.Content("~/" + Model.CustomerAvatar)" target="_blank">กดที่นี่</a> เพื่อดูรูปปัจจุบัน</span>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 col-sm-12">
+                                    <div class="form-group">
+                                        <label for="CustomerPhone" class="form-control-label">โทรศัพท์</label>
+                                        <input type="text" class="form-control" name="CustomerPhone" value="@Model.CustomerPhone" />
+                                    </div>
+                                </div>
+                                <div class="col-md-6 col-sm-12">
+                                    <div class="form-group">
+                                        <label for="CustomerEmail" class="form-control-label">E-Mail</label>
+                                        <input type="email" class="form-control" name="CustomerEmail" value="@Model.CustomerEmail" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="panel-footer">
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="form-group">
+                                        <button type="submit" class="btn btn-primary">บันทึก</button>&nbsp;
+                                        <a href="@Url.Action("Index", "Customer")" class="btn btn-default">ยกเลิก</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        @if (Model.CustomerId > 0)
+        {
+            <div class="row">
+                <div class="col-12">
+                    <div class="panel">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">ที่อยู่&nbsp;<a href="@Url.Action("Detail", new { controller = "CustomerAddress", cusId = Model.CustomerId })" class="btn btn-xs btn-primary" style="color:white;">เพิ่มข้อมูล</a></h3>
+                        </div>
+                        <!-- /.box-header -->
+                        <div class="panel-body">
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="table-responsive">
+                                        <table class="table table-bordered table-hover">
+                                            <thead>
+                                                <tr>
+                                                    <th>ชื่อ</th>
+                                                    <th>ที่อยู่</th>
+                                                    <th>ผู้ติด่อ</th>
+                                                    <th>อีเมล์</th>
+                                                    <th>เบอร์โทรศัพท์</th>
+                                                    <th>เครื่องมือ</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @if (Model.TblCustomerAddress.Count() <= 0)
+                                                {
+                                                    <tr>
+                                                        <td colspan="6">ไม่พบข้อมูล</td>
+                                                    </tr>
+                                                }
+                                                @foreach (var ob in Model.TblCustomerAddress)
+                                                {
+                                                    <tr>
+                                                        <td>@ob.AddressName</td>
+                                                        <td>@kemrex.CustomerAddressText(ob)</td>
+                                                        <td>@ob.AddressContact</td>
+                                                        <td>@ob.AddressContactEmail</td>
+                                                        <td>@ob.AddressContactPhone</td>
+                                                        <td>
+                                                            <a href="@Url.Action("Detail", new { controller = "CustomerAddress", cusId = ob.CustomerId, id = ob.AddressId })"
+                                                               class="btn btn-xs btn-primary">
+                                                                <i class="fa fa-pencil" aria-hidden="true"></i>&nbsp;แก้ไข
+                                                            </a>
+                                                            <form method="post" action="@Url.Action("Delete", new { controller = "CustomerAddress", cusId = ob.CustomerId })"
+                                                                  class="fnc-delete inline-block">
+                                                                <input type="hidden" name="CustomerId" value="@ob.CustomerId" />
+                                                                @Html.AntiForgeryToken()
+                                                                <button type="submit" class="btn btn-danger btn-xs"><i class="fa fa-trash" aria-hidden="true"></i>&nbsp;ลบ</button>
+                                                            </form>
+                                                        </td>
+                                                    </tr>
+                                                }
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- /.box-body -->
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12">
+                    <div class="panel">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">ผู้ติดต่อ&nbsp;<a href="@Url.Action("Detail", new { controller = "CustomerContact", cusId = Model.CustomerId })" class="btn btn-xs btn-primary" style="color:white;">เพิ่มข้อมูล</a></h3>
+                        </div>
+                        <!-- /.box-header -->
+                        <div class="panel-body">
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="table-responsive">
+                                        <table class="table table-bordered table-hover">
+                                            <thead>
+                                                <tr>
+                                                    <th>ชื่อ</th>
+                                                    <th>ตำแหน่ง</th>
+                                                    <th>อีเมล์</th>
+                                                    <th>เบอร์โทรศัพท์</th>
+                                                    <th>เครื่องมือ</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @if (Model.TblCustomerContact.Count() <= 0)
+                                                {
+                                                    <tr>
+                                                        <td colspan="5">ไม่พบข้อมูล</td>
+                                                    </tr>
+                                                }
+                                                @foreach (var ob in Model.TblCustomerContact)
+                                                {
+                                                    <tr>
+                                                        <td>@ob.ContactName</td>
+                                                        <td>@ob.ContactPosition</td>
+                                                        <td>@ob.ContactEmail</td>
+                                                        <td>@ob.ContactPhone</td>
+                                                        <td>
+                                                            <a href="@Url.Action("Detail", new { controller = "CustomerContact", cusId = ob.CustomerId, id = ob.ContactId })"
+                                                               class="btn btn-xs btn-primary">
+                                                                <i class="fa fa-pencil" aria-hidden="true"></i>&nbsp;แก้ไข
+                                                            </a>
+                                                            <form method="post" action="@Url.Action("Delete", new { controller = "CustomerContact", cusId = ob.CustomerId })"
+                                                                  class="fnc-delete inline-block">
+                                                                <input type="hidden" name="CustomerId" value="@ob.CustomerId" />
+                                                                @Html.AntiForgeryToken()
+                                                                <button type="submit" class="btn btn-danger btn-xs"><i class="fa fa-trash" aria-hidden="true"></i>&nbsp;ลบ</button>
+                                                            </form>
+                                                        </td>
+                                                    </tr>
+                                                }
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- /.box-body -->
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>

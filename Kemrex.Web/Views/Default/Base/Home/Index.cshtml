@@ -1,0 +1,35 @@
+﻿@using Kemrex.Web.Controllers.Base
+@using Kemrex.Web.Common.Models
+@{
+    ViewBag.Title = "Index";
+    KemrexController kemrex = ((KemrexController)this.ViewContext.Controller);
+    Layout = kemrex.PathViewShared("_lyDefault");
+    WidgetAlertModel AlertModel = (WidgetAlertModel)ViewBag.Alert;
+}
+
+<div class="page">
+    <div class="page-header">
+        <h1 class="page-title">หน้าแรก</h1>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="@Url.Action("Index", new { controller = "Home", are = "" })" })">หน้าแรก</a></li>
+        </ol>
+    </div>
+    <div class="page-content container-fluid">
+        <div class="row">
+            <div class="col-12">
+                @if (ViewBag.Alert != null)
+                {
+                    @Html.Partial("_wgAlert", AlertModel)
+                }
+                <div class="panel">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">หน้าแรก</h3>
+                    </div>
+                    <div class="panel-body h-100">
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

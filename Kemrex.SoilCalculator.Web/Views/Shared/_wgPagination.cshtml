@@ -1,0 +1,33 @@
+﻿@using Kemrex.SoilCalculator.Web.Models
+@model WidgetPaginationModel
+
+@if (Model.Total > Model.Size)
+{
+    <ul class="pagination">
+        <li class="paginate_button page-item previous@(Model.Page == 1 ? " disabled" : "")"><a href="@Url.Action(Model.Action, new { controller = Model.Controller, area = Model.Area, sort = Model.SortExp, page = (Model.Page - 1), size = Model.Size })" class="page-link">Previous</a></li>
+        @if ((Model.Page - 2) > 1)
+        {
+            <li class="paginate_button page-item"><a href="@Url.Action(Model.Action, new { controller = Model.Controller, area = Model.Area, sort = Model.SortExp, page = 1, size = Model.Size })" class="page-link">1</a></li>
+            if ((Model.Page - 3) > 1)
+            {
+                <li class="paginate_button page-item disabled"><a href="javascript:;" class="page-link">...</a></li>
+            }
+        }
+        @for (int i = 1; i <= Model.Last; i++)
+        {
+            if (i >= (Model.Page - 2) && i <= (Model.Page + 2))
+            {
+                <li class="paginate_button page-item@(Model.Page == i ? " active" : "")"><a href="@Url.Action(Model.Action, new { controller = Model.Controller, area = Model.Area, sort = Model.SortExp, page = i, size = Model.Size })" class="page-link">@i</a></li>
+            }
+        }
+        @if ((Model.Page + 2) < Model.Last)
+        {
+            if ((Model.Page - 3) > 1)
+            {
+                <li class="paginate_button page-item disabled"><a href="javascript:;" class="page-link">...</a></li>
+            }
+            <li class="paginate_button page-item"><a href="@Url.Action(Model.Action, new { controller = Model.Controller, area = Model.Area, sort = Model.SortExp, page = Model.Last, size = Model.Size })" class="page-link">@Model.Last</a></li>
+        }
+        <li class="paginate_button page-item next@(Model.Page == Model.Last ? " disabled" : "")"><a href="@Url.Action(Model.Action, new { controller = Model.Controller, area = Model.Area, sort = Model.SortExp, page = (Model.Page + 1), size = Model.Size })" class="page-link">Next</a></li>
+    </ul>
+}

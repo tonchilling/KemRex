@@ -1,0 +1,12 @@
+﻿CREATE TABLE [dbo].[SysState]
+(
+	[StateId] INT IDENTITY(1,1) NOT NULL,
+	[StateCode] NVARCHAR(2) NULL,
+	[StateNameTH] NVARCHAR(256) NULL,
+	[StateNameEN] NVARCHAR(256) NULL,
+	[GeoId] INT NULL,
+    CONSTRAINT [PK_SysState] PRIMARY KEY ([StateId]), 
+    CONSTRAINT [FK_SysState_Geopraphy] FOREIGN KEY ([GeoId]) REFERENCES [SysGeography]([GeoId])
+		ON UPDATE CASCADE
+		ON DELETE SET NULL
+)

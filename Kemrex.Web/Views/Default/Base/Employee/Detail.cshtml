@@ -1,0 +1,272 @@
+﻿@using Kemrex.Core.Database.Models
+@using Kemrex.Web.Controllers.Base
+@using Kemrex.Web.Common.Models
+@model TblEmployee
+@{
+    ViewBag.Title = "Index";
+    KemrexController kemrex = ((KemrexController)this.ViewContext.Controller);
+    Layout = kemrex.PathViewShared("_lyDefault");
+    WidgetAlertModel Alert = (WidgetAlertModel)ViewBag.Alert;
+    List<EnmPrefix> optPrefix = (List<EnmPrefix>)ViewData["optPrefix"];
+    List<TblEmployee> optLead = (List<TblEmployee>)ViewData["optLead"];
+    List<TblDepartment> optDepartment = (List<TblDepartment>)ViewData["optDepartment"];
+    List<TblPosition> optPosition = (List<TblPosition>)ViewData["optPosition"];
+}
+
+@section script {
+    <script type="text/javascript">
+        $(document).ready(function () {
+            window.setTimeout(function () {
+                $(".alert").fadeTo(1000, 0).slideUp(1000, function () {
+                    $(this).remove();
+                });
+            }, 5000);
+        });
+    </script>
+}
+
+<div class="page">
+    <div class="page-content container-fluid">
+        @if (ViewBag.Alert != null)
+        {
+            <div class="row">
+                <div class="col-12">
+                    @Html.Partial(kemrex.PathViewShared("_wgAlert"), Alert)
+                </div>
+            </div>
+        }
+        <div class="row">
+            <div class="col-12">
+                <form method="post" action="@Url.Action("Detail", "Employee")" enctype="multipart/form-data">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="EmpId" value="@Model.EmpId" />
+                    <div class="panel">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">
+                                @(Model.EmpId > 0 ? "เพิ่ม" : "แก้ไข")ข้อมูลพนักงาน
+                                <span class="panel-desc">รายละเอียดพนักงาน (Employee)</span>
+                            </h3>
+
+                        </div>
+                        <div class="panel-body">
+                            <div class="row">
+                                <div class="col-md-6 col-sm-12">
+                                    <div class="form-group">
+                                        <label for="EmpCode" class="form-control-label">รหัสพนักงาน</label>
+                                        <input type="text" class="form-control" name="EmpCode" value="@Model.EmpCode" />
+                                    </div>
+                                </div>
+                                <div class="col-md-6 col-sm-12">
+                                    <div class="form-group">
+                                        <label for="AccountId" class="form-control-label">ผู้ใช้งาน</label>
+                                        <select class="form-control" name="AccountId">
+                                            <option value="-1" @(!Model.AccountId.HasValue ? " selected=\"selected\"" : "")>ไม่ระบุ</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-3 col-sm-4">
+                                    <div class="form-group">
+                                        <label for="PrefixId" class="form-control-label">คำนำหน้า</label>
+                                        <select class="form-control" name="PrefixId">
+                                            <option value="-1" @(!Model.PrefixId.HasValue ? " selected=\"selected\"" : "")>ไม่ระบุ</option>
+                                            @foreach (EnmPrefix it in optPrefix)
+                                            {
+                                                bool selected = Model.PrefixId.HasValue && it.PrefixId == Model.PrefixId;
+                                                <option value="@it.PrefixId" @(selected ? " selected=\"selected\"" : "")>@it.PrefixNameTh</option>
+                                            }
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-9 col-sm-8">
+                                    <div class="form-group">
+                                        <label for="EmpNameTh" class="form-control-label">ชื่อพนักงาน (ไทย)</label>
+                                        <input type="text" class="form-control" name="EmpNameTh" value="@Model.EmpNameTh" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-3 col-sm-4">
+                                    <div class="form-group">
+                                        <label for="PrefixIdEng" class="form-control-label">คำนำหน้า (Eng)</label>
+                                        <select class="form-control" name="PrefixIdEng">
+                                            <option value="-1" @(!Model.PrefixId.HasValue ? " selected=\"selected\"" : "")>ไม่ระบุ</option>
+                                            @foreach (EnmPrefix it in optPrefix)
+                                            {
+                                                bool selected = Model.PrefixId.HasValue && it.PrefixId == Model.PrefixId;
+                                                <option value="@it.PrefixId" @(selected ? " selected=\"selected\"" : "")>@it.PrefixNameTh</option>
+                                            }
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-9 col-sm-8">
+                                    <div class="form-group">
+                                        <label for="EmpNameEn" class="form-control-label">ชื่อพนักงาน (Eng)</label>
+                                        <input type="text" class="form-control" name="EmpNameEn" value="@Model.EmpNameEn" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-4 col-md-6 col-sm-12">
+                                    <div class="form-group">
+                                        <label for="DepartmentId" class="form-control-label">แผนก</label>
+                                        <select class="form-control" name="DepartmentId">
+                                            <option value="-1" @(!Model.DepartmentId.HasValue ? " selected=\"selected\"" : "")>ไม่ระบุ</option>
+                                            @foreach (TblDepartment it in optDepartment)
+                                            {
+                                                bool selected = Model.DepartmentId.HasValue && it.DepartmentId == Model.DepartmentId;
+                                                <option value="@it.DepartmentId" @(selected ? " selected=\"selected\"" : "")>@it.DepartmentName</option>
+                                            }
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-lg-4 col-md-6 col-sm-12">
+                                    <div class="form-group">
+                                        <label for="PositionId" class="form-control-label">ตำแหน่ง</label>
+                                        <select class="form-control" name="PositionId">
+                                            <option value="-1" @(!Model.PositionId.HasValue ? " selected=\"selected\"" : "")>ไม่ระบุ</option>
+                                            @foreach (TblPosition it in optPosition)
+                                            {
+                                                bool selected = Model.PositionId.HasValue && it.PositionId == Model.PositionId;
+                                                <option value="@it.PositionId" @(selected ? " selected=\"selected\"" : "")>@it.PositionName</option>
+                                            }
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-lg-4 col-md-6 col-sm-12">
+                                    <div class="form-group">
+                                        <label for="StatusId" class="form-control-label">สถานะ</label>
+                                        <select class="form-control" name="StatusId">
+                                            <option value="1">ปกติ</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-lg-4 col-md-6 col-sm-12">
+                                    <div class="form-group">
+                                        <label for="EmpTypeId" class="form-control-label">ประเภทพนักงาน</label>
+                                        <select class="form-control" name="EmpTypeId">
+                                            <option value="-1" @(!Model.EmpTypeId.HasValue ? " selected=\"selected\"" : "")>ไม่ระบุ</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-lg-4 col-md-6 col-sm-12">
+                                    <div class="form-group">
+                                        <label for="LeadId" class="form-control-label">หัวหน้าทีม</label>
+                                        <select class="form-control" name="LeadId">
+                                            <option value="-1" @(!Model.LeadId.HasValue ? " selected=\"selected\"" : "")>ไม่ระบุ</option>
+                                            @foreach (TblEmployee it in optLead)
+                                            {
+                                                bool selected = Model.LeadId.HasValue && it.EmpId == Model.LeadId;
+                                                <option value="@it.EmpId" @(selected ? " selected=\"selected\"" : "")>@it.EmpNameTh</option>
+                                            }
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel">
+                        <div class="panel-heading">
+                            <h3 class="panel-title"><span class="panel-desc">ข้อมูลส่วนบุคคล</span></h3>
+                        </div>
+                        <div class="panel-body">
+                            <div class="row">
+                                <div class="col-md-6 col-sm-12">
+                                    <div class="form-group">
+                                        <label for="EmpPid" class="form-control-label">เลขประจำตัวประชาชน/เลขผู้เสียภาษี</label>
+                                        <input type="text" class="form-control" name="EmpPid" value="@Model.EmpPid" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 col-sm-12">
+                                    <div class="form-group">
+                                        <label for="EmpApplyDate" class="form-control-label">วันที่เข้าทำงาน</label>
+                                        <div class="input-group">
+                                            <span class="input-group-addon">
+                                                <i class="icon wb-calendar" aria-hidden="true"></i>
+                                            </span>
+                                            <input type="text" name="EmpApplyDate" class="form-control" data-plugin="datepicker">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 col-sm-12">
+                                    <div class="form-group">
+                                        <label for="EmpPromoteDate" class="form-control-label">วันที่ปรับเงินเดือน</label>
+                                        <div class="input-group">
+                                            <span class="input-group-addon">
+                                                <i class="icon wb-calendar" aria-hidden="true"></i>
+                                            </span>
+                                            <input type="text" name="EmpPromoteDate" class="form-control" data-plugin="datepicker">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-9 col-sm-12">
+                                    <div class="form-group">
+                                        <label for="EmpAddress" class="form-control-label">ที่อยู่</label>
+                                        <input type="text" class="form-control" name="EmpAddress" value="@Model.EmpAddress" />
+                                    </div>
+                                </div>
+                                <div class="col-md-3 col-sm-6">
+                                    <div class="form-group">
+                                        <label for="EmpPostcode" class="form-control-label">รหัสไปรษณีย์</label>
+                                        <input type="text" class="form-control" name="EmpPostcode" value="@Model.EmpPostcode" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 col-sm-12">
+                                    <div class="form-group">
+                                        <label for="EmpMobile" class="form-control-label">โทรศัพท์</label>
+                                        <input type="text" class="form-control" name="EmpMobile" value="@Model.EmpMobile" />
+                                    </div>
+                                </div>
+                                <div class="col-md-6 col-sm-12">
+                                    <div class="form-group">
+                                        <label for="EmpEmail" class="form-control-label">E-Mail</label>
+                                        <input type="email" class="form-control" name="EmpEmail" value="@Model.EmpEmail" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 col-sm-12">
+                                    <div class="form-group">
+                                        <label for="EmpSignature" class="form-control-label">ลายเซ็นต์</label>
+                                        <input type="file" class="form-control" name="EmpSignature" />
+                                        @if (!string.IsNullOrWhiteSpace(Model.EmpSignature))
+                                        {
+                                            <span class="help-block"><a href="@Url.Content(Model.EmpSignature)" target="_blank">กดที่นี่</a> เพื่อดูลายเซ็นต์ปัจจุบัน</span>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="form-group">
+                                        <label for="EmpRemark" class="form-control-label">หมายเหตุ</label>
+                                        <input type="text" class="form-control" name="EmpRemark" value="@Model.EmpRemark" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel">
+                        <div class="panel-body">
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="form-group">
+                                        <button type="submit" class="btn btn-primary">บันทึก</button>&nbsp;
+                                        <a href="@Url.Action("Index", "Employee")" class="btn btn-default">ยกเลิก</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
