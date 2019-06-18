@@ -16,8 +16,12 @@ using IOFile = System.IO.File;
 
 namespace Kemrex.Web.Main.Controllers
 {
-    public class SaleOrderController : KemrexController
+    public class SaleOrderXController : KemrexController
     {
+
+
+       
+     
         public ActionResult Index(int? page, int? size, string msg, AlertMsgType? msgType,
                    string src = "")
         {
@@ -387,7 +391,7 @@ namespace Kemrex.Web.Main.Controllers
                     FilePath = string.Format("files/so/{0}", sid);
                     if (!Directory.Exists(Server.MapPath("~/files"))) { Directory.CreateDirectory(Server.MapPath("~/files")); }
                     if (!Directory.Exists(Server.MapPath("~/files/so"))) { Directory.CreateDirectory(Server.MapPath("~/files/so")); }
-                    if (!Directory.Exists(Server.MapPath("~/" + FilePath))) { Directory.CreateDirectory(Server.MapPath(FilePath)); }
+                    if (!Directory.Exists(Server.MapPath("~/" + FilePath))) { Directory.CreateDirectory(Server.MapPath("~/" + FilePath)); }
                     FilePath += "/" + Path.GetFileName(uploadedFile.FileName);
                     sa.AttachmentPath = FilePath;
                     sa.SaleOrderId = int.Parse(sid);
