@@ -847,10 +847,16 @@ optEmployee = (List<TblEmployee>
 
                     </div>
                     <div class="modal-body">
-                        <a href="@Url.Action("Detail", new { area = "",cusId=Model.CustomerId,qtid=Model.QuotationId, controller = "CustomerAddress" })"
+                        @*<a href="@Url.Action("Detail", new { area = "", cusId = Model.CustomerId, qtid = Model.QuotationId, controller = "CustomerAddress" })"
+        class="btn btn-xs btn-primary" style="color:white;" id="bnAddnewAddress">เพิ่ม</a>*@
+                        <a href="#"
+                           onclick="location.href='@Url.Action("Detail", "CustomerAddress")?cusId=' + $('#CustomerId').val() + '&qtid=' + $('#QuotationId').val()"
                            class="btn btn-xs btn-primary" style="color:white;" id="bnAddnewAddress">เพิ่ม</a>
 
-                        <a href="@Url.Action("Detail", "CustomerContact", new { area = "",cusId=Model.CustomerId,qtid=Model.QuotationId })"
+                        @*<a href="@Url.Action("Detail", "CustomerContact", new { area = "",cusId=Model.CustomerId,qtid=Model.QuotationId })"*@
+
+                        <a href="#"
+                           onclick="location.href='@Url.Action("Detail", "CustomerContact")?cusId=' + $('#CustomerId').val() + '&qtid=' + $('#QuotationId').val()"
                            class="btn btn-xs btn-primary" style="color:white;" id="bnAddnewContact">เพิ่ม</a>
                         <div class="table-responsive">
                             <table class="table table-hover">
