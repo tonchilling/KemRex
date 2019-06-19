@@ -43,6 +43,27 @@ namespace Kemrex.Core.Common.Modules
                        CreatedDate = DateTime.Now
                    };
         }
+
+        public TblSaleOrder GetFull(int id)
+        {
+            TblSaleOrder tblSaleOrder= db.TblSaleOrder
+                   .Where(x => x.SaleOrderId == id)
+                   .FirstOrDefault() ?? new TblSaleOrder()
+                   {
+                       CreatedDate = DateTime.Now
+                   };
+            //var customerID = Convert.ToInt32(tblSaleOrder.CustomerId);
+            ////tblSaleOrder.Customers = new List<TblCustomer>();
+            //var customerDto = db.TblCustomer.Where(cus => cus.CustomerId == customerID).FirstOrDefault() ?? new TblCustomer()
+            //{
+            //    CreatedDate = DateTime.Now
+            //};
+
+          //  tblSaleOrder.Customer =  (from customer in db.TblCustomer where customer.CustomerId == tblSaleOrder.CustomerId select customer).FirstOrDefault();
+
+            return tblSaleOrder;
+        }
+
         public List<TblSaleOrder> Gets(int page = 1, int size = 0, int month = 0, string src = "")
         {
             var data = db.TblSaleOrder
