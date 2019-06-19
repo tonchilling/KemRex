@@ -364,7 +364,7 @@ optEmployee = (List<TblEmployee>
     <div class="page">
         <div class="page-header">
             <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="@Url.Action("Index", new { controller = "SaleOrderX", area = "" })" })">ย้อนกลับ</a></li>
+                <li class="breadcrumb-item"><a href="@Url.Action("Index", new { controller = "SaleOrder", area = "" })" })">ย้อนกลับ</a></li>
             </ol>
         </div>
         <div class="page-content container-fluid">
@@ -396,7 +396,7 @@ optEmployee = (List<TblEmployee>
                     <div class="card-block" data-tab-page="navInfo">
                         <div class="col-12">
                             <div class="panel">
-                                <form method="post" action="@Url.Action("Detail", "SaleOrderX")" enctype="multipart/form-data">
+                                <form method="post" action="@Url.Action("Detail", "SaleOrder")" enctype="multipart/form-data">
                                     @Html.AntiForgeryToken()
                                     <input type="hidden" name="SaleOrderId" value="@Model.SaleOrderId" />
                                     <div class="panel-body">
@@ -616,7 +616,7 @@ optEmployee = (List<TblEmployee>
                                             <div class="col-12">
                                                 <div class="form-group">
                                                     <button type="submit" class="btn btn-primary">@(Model.SaleOrderId > 0 ? "บันทึก" : "ต่อไป")</button>&nbsp;
-                                                    <a href="@Url.Action("Index", "SaleOrderX" )" class="btn btn-default">ยกเลิก</a>
+                                                    <a href="@Url.Action("Index", "SaleOrder" )" class="btn btn-default">ยกเลิก</a>
                                                 </div>
                                             </div>
                                         </div>
@@ -671,7 +671,7 @@ optEmployee = (List<TblEmployee>
                                                                 <td>@ob.TotalNet</td>
                                                                 <td>@ob.TotalTot</td>
                                                                 <td>
-                                                                    <form method="post" action="@Url.Action("DetailDelete", new { controller = "SaleOrderX" })"
+                                                                    <form method="post" action="@Url.Action("DetailDelete", new { controller = "SaleOrder" })"
                                                                           class="fnc-delete inline-block">
                                                                         <input type="hidden" name="SaleOrderId" value="@Model.SaleOrderId" />
                                                                         <input type="hidden" name="Id" value="@ob.Id" />
@@ -690,7 +690,7 @@ optEmployee = (List<TblEmployee>
                                 <div class="panel-footer">
                                     <div class="row">
                                         <div class="col-12">
-                                            <form method="post" action="@Url.Action("AddProduct", "SaleOrderX")" enctype="multipart/form-data">
+                                            <form method="post" action="@Url.Action("AddProduct", "SaleOrder")" enctype="multipart/form-data">
                                                 <input type="hidden" name="SaleOrderId" value="@Model.SaleOrderId" />         <div class="row">
                                                     <div class="col-4 col-md-4 form-group">
                                                         <label for="PileId" class="form-control-label">รหัสสินค้า</label>
@@ -727,7 +727,7 @@ optEmployee = (List<TblEmployee>
                                 <div class="col-md-auto">
                                     ผลรวม
                                     <hr size=2>
-                                    <form method="post" action="@Url.Action("saveDiscount", "SaleOrderX")" enctype="multipart/form-data">
+                                    <form method="post" action="@Url.Action("saveDiscount", "SaleOrder")" enctype="multipart/form-data">
                                         <input type="hidden" name="SaleOrderId" value="@Model.SaleOrderId" />
                                         <div class="form-group row">
                                             <label for="SubTotal" class="col-sm-5 col-form-label">ยอดก่อนลด</label>
@@ -779,7 +779,7 @@ optEmployee = (List<TblEmployee>
                                             <div class="col-12">
                                                 <div class="form-group">
                                                     <button type="submit" class="btn btn-primary" >บันทึก</button>&nbsp;
-                                                    <a href="@Url.Action("Detail", "SaleOrderX" )" class="btn btn-default">ยกเลิก</a>
+                                                    <a href="@Url.Action("Detail", "SaleOrder" )" class="btn btn-default">ยกเลิก</a>
                                                 </div>
                                             </div>
                                         </div>
@@ -823,7 +823,7 @@ optEmployee = (List<TblEmployee>
                                                                 </td>
                                                                 <td>@at.AttachmentRemark</td>
                                                                 <td>
-                                                                    <form method="post" action="@Url.Action("DeleteFile", new { controller = "SaleOrderX" })"
+                                                                    <form method="post" action="@Url.Action("DeleteFile", new { controller = "SaleOrder" })"
                                                                           class="fnc-delete inline-block">
                                                                         <input type="hidden" name="soId" value="@at.SaleOrderId" />
                                                                         <input type="hidden" name="atId" value="@at.Id" />
@@ -843,7 +843,7 @@ optEmployee = (List<TblEmployee>
                                     <hr />
                                     <div class="panel-footer">
                                         <div class="col-md-6 col-sm-12">
-                                            <form method="post" action="@Url.Action("UploadFile", "SaleOrderX")" enctype="multipart/form-data">
+                                            <form method="post" action="@Url.Action("UploadFile", "SaleOrder")" enctype="multipart/form-data">
                                                 <div class="form-group">
                                                     <label for="FileAttachment" class="form-control-label">เพิ่มเอกสาร</label>
                                                     <input type="file" name="FileAttachment" class="form-control-file" />
@@ -909,7 +909,7 @@ optEmployee = (List<TblEmployee>
     <!-- Address Modal -->
     <div class="modal fade" id="ConfirmModal" tabindex="-1" role="dialog" aria-labelledby="confirm" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered" role="document">
-            <form method="post" action="@Url.Action("QT2SO", "SaleOrderX")" enctype="multipart/form-data">
+            <form method="post" action="@Url.Action("QT2SO", "SaleOrder")" enctype="multipart/form-data">
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title" id="ConfirmModalTitle"><label id="SaleOrderId" hidden></label></h5>
