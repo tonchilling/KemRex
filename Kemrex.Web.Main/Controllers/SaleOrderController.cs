@@ -20,7 +20,7 @@ namespace Kemrex.Web.Main.Controllers
     {
 
 
-       
+     
      
         public ActionResult Index(int? page, int? size, string msg, AlertMsgType? msgType,
                    string src = "")
