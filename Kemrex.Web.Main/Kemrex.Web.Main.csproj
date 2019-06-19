@@ -1059,7 +1059,9 @@
     <Content Include="Views\RemarkClassicBase\Base\Shared\_lyDefault.cshtml" />
     <Content Include="Views\RemarkClassicBase\Base\Shared\_lyMenu.cshtml" />
     <Content Include="Views\RemarkClassicBase\Base\Shared\_wgAlert.cshtml" />
-    <Content Include="Web.config" />
+    <Content Include="Web.config">
+      <SubType>Designer</SubType>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App_Start\RouteConfig.cs" />

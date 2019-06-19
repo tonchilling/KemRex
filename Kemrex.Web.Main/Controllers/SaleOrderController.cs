@@ -16,7 +16,7 @@ using IOFile = System.IO.File;
 
 namespace Kemrex.Web.Main.Controllers
 {
-    public class SaleOrderXController : KemrexController
+    public class SaleOrderController : KemrexController
     {
 
 
