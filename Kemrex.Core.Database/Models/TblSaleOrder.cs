@@ -47,7 +47,7 @@ namespace Kemrex.Core.Database.Models
         public DateTime? DeliveryDate { get; set; }
         public int SaleOrderCreditDay { get; set; }
 
-        public  List<TblCustomer> Customers { get; set; }
+       
 
         public virtual TblCustomer Customer { get; set; }
         public virtual TblEmployee Sale { get; set; }

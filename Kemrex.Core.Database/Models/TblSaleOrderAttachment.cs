@@ -10,7 +10,7 @@ namespace Kemrex.Core.Database.Models
         public string AttachmentPath { get; set; }
         public int AttachmentOrder { get; set; }
         public string AttachmentRemark { get; set; }
-
-        public virtual TblSaleOrder SaleOrder { get; set; }
+       
+    public virtual TblSaleOrder SaleOrder { get; set; }
     }
 }

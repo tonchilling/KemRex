@@ -11,6 +11,7 @@ using System.IO;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using System.Web.Script.Serialization;
 
 using IOFile = System.IO.File;
 
@@ -65,6 +66,9 @@ namespace Kemrex.Web.Main.Controllers
             TblSaleOrder ob = uow.Modules.SaleOrder.Get(id ?? 0);
             return ViewDetail(ob, msg, msgType);
         }
+
+
+
 
         private string genSaleOrderId(string pre)
         {
@@ -211,6 +215,16 @@ namespace Kemrex.Web.Main.Controllers
         {
             ViewData["optCustomerAddress"] = uow.Modules.CustomerAddress.Gets(cusId: id);
             return View();
+        }
+
+        [HttpGet]
+        public JsonResult GetDetail(int? id, string msg, AlertMsgType? msgType)
+        {
+            TblSaleOrder ob = uow.Modules.SaleOrder.GetFull(id ?? 0);
+            var js = new JavaScriptSerializer();
+
+            
+            return Json(ob, JsonRequestBehavior.AllowGet);
         }
 
 

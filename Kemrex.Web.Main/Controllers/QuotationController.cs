@@ -63,10 +63,10 @@ namespace Kemrex.Web.Main.Controllers
 
         private string genQuotationId()
         {
-            System.Globalization.CultureInfo _cultureTHInfo = new System.Globalization.CultureInfo("th-TH");
+            System.Globalization.CultureInfo _cultureTHInfo = new System.Globalization.CultureInfo("en-US");
             string Id = uow.Modules.Quotation.GetLastId();
             string qid = "QU";
-            var dt = DateTime.Now.ToString("ddMMyy", _cultureTHInfo);
+            var dt = DateTime.Now.ToString("yyMMdd", _cultureTHInfo);
             string preid = Id.Split('-')[0];
             int runid = int.Parse(Id.Split('-')[1]);
 

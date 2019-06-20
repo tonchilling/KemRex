@@ -109,11 +109,11 @@ optEmployee = (List<TblEmployee>
         }
 
         function calDiscount() {
-            var st = document.getElementById("SummaryTot").value;
-            var dc = document.getElementById("DiscountCash").value;
+            var st = document.getElementById("SummaryTot").value.replace(",","");
+            var dc = document.getElementById("DiscountCash").value.replace(",", "");
             if (dc > 0)
             {
-                document.getElementById("SummaryTot").value = st - dc;
+                document.getElementById("SummaryTot").value = numeral(st - dc).format('0,0.00');
             }
         }
 
@@ -232,7 +232,10 @@ optEmployee = (List<TblEmployee>
         $("#button-BillingAddress").click(function () {
             document.getElementById("bnAddnewAddress").style.display = "show";
             document.getElementById("bnAddnewContact").style.display = "none";
-            showSelectModal(getAddress(), "BillingAddress");
+            if (AddrValidation()) {
+                showSelectModal(getAddress(), "BillingAddress");
+            }
+           
         })
         $("#button-ShippingAddress").click(function () {
             document.getElementById("bnAddnewAddress").style.display = "show";
@@ -243,7 +246,10 @@ optEmployee = (List<TblEmployee>
             document.getElementById("bnAddnewAddress").style.display = "none";
             document.getElementById("bnAddnewContact").style.display = "show";
             _contact = getContact();
-            showSelectModal(_contact, "ContractName");
+            if (AddrValidation()) {
+                showSelectModal(_contact, "ContractName");
+            }
+           
         })
 
         // Product section
@@ -263,6 +269,8 @@ optEmployee = (List<TblEmployee>
             var id = document.getElementById("CustomerId").value;
             document.getElementById("caCustomerId").value = id;
             document.getElementById("lbcaCustomerName").innerHTML = document.getElementById("lbCustomerName").innerText;
+
+
         });
 
 
@@ -277,7 +285,79 @@ optEmployee = (List<TblEmployee>
               */
         });
 
+        $("#btnNextStep").click(function () {
 
+            return ValidationAll();
+        });
+
+
+
+        function ValidationAll() {
+            var chkValidate = true;
+
+
+
+            if ($("#selQuotationNo").val() == "") {
+                $("#selQuotationNo").addClass("has-error");
+                chkValidate = false;
+            } else {
+                $("#selQuotationNo").removeClass("has-error");
+            }
+
+            if ($("#CustomerId").val() == "") {
+                $("#CustomerId").addClass("has-error");
+                chkValidate = false;
+            } else {
+                $("#CustomerId").removeClass("has-error");
+            }
+
+
+            if ($("#BillingAddress").val() == "") {
+                $("#BillingAddress").addClass("has-error");
+                chkValidate = false;
+            } else {
+                $("#SaleId").removeClass("has-error");
+            }
+
+            if ($("#ShippingAddress").val() == "") {
+                $("#ShippingAddress").addClass("has-error");
+                chkValidate = false;
+            } else {
+                $("#ShippingAddress").removeClass("has-error");
+            }
+            
+            if ($("#SaleId").val() == "") {
+                $("#SaleId").addClass("has-error");
+                chkValidate = false;
+            } else {
+                $("#SaleId").removeClass("has-error");
+            }
+
+
+            
+
+
+            return chkValidate;
+
+        }
+
+        function AddrValidation() {
+            var chkValidate = true;
+            if ($("#CustomerId").val() == "") {
+                $("#CustomerId").addClass("has-error");
+                chkValidate = false;
+            } else {
+                $("#CustomerId").removeClass("has-error");
+            }
+
+
+
+
+
+
+            return chkValidate;
+
+        }
 
         function AddProductValidation() {
 
@@ -287,6 +367,9 @@ optEmployee = (List<TblEmployee>
              ProductDiscount*/
 
             var chkValidate = true;
+
+
+
             if ($("#selProduct").val() == "") {
                 $("#selProduct").addClass("has-error");
                 chkValidate = false;
@@ -294,6 +377,9 @@ optEmployee = (List<TblEmployee>
                 $("#ProductQty").removeClass("has-error");
             }
 
+
+
+            
             if ($("#ProductQty").val() == "") {
                 $("#ProductQty").addClass("has-error");
                 chkValidate = false;
@@ -321,6 +407,10 @@ optEmployee = (List<TblEmployee>
             return chkValidate;
 
         }
+
+
+       
+
 
     </script>
 }
@@ -472,8 +562,7 @@ optEmployee = (List<TblEmployee>
                                                                    placeholder="ชื่อ" value="@Model.ContractName" />
                                                             <div class="input-group-append">
                                                                 <button class="btn btn-outline-secondary btn-primary " type="button"
-                                                                        data-toggle="modal"
-                                                                        data-target="#AddressModal"
+                                                                       
                                                                         id="button-contact">
                                                                     ...
                                                                 </button>
@@ -490,8 +579,7 @@ optEmployee = (List<TblEmployee>
 
                                                             <div class="input-group-append">
                                                                 <button class="btn btn-outline-secondary btn-primary" type="button"
-                                                                        data-toggle="modal"
-                                                                        data-target="#AddressModal"
+                                                                       
                                                                         id="button-BillingAddress">
                                                                     ...
                                                                 </button>
@@ -506,8 +594,7 @@ optEmployee = (List<TblEmployee>
                                                             <input type="text" class="form-control" id="ShippingAddress" name="ShippingAddress" value="@Model.ShippingAddress" />
                                                             <div class="input-group-append">
                                                                 <button class="btn btn-outline-secondary btn-primary" type="button"
-                                                                        data-toggle="modal"
-                                                                        data-target="#AddressModal"
+                                                                        
                                                                         id="button-ShippingAddress">
                                                                     ...
                                                                 </button>
@@ -615,7 +702,7 @@ optEmployee = (List<TblEmployee>
                                         <div class="row">
                                             <div class="col-12">
                                                 <div class="form-group">
-                                                    <button type="submit" class="btn btn-primary">@(Model.SaleOrderId > 0 ? "บันทึก" : "ต่อไป")</button>&nbsp;
+                                                    <button type="submit" id="btnNextStep" class="btn btn-primary">@(Model.SaleOrderId > 0 ? "บันทึก" : "ต่อไป")</button>&nbsp;
                                                     <a href="@Url.Action("Index", "SaleOrder" )" class="btn btn-default">ยกเลิก</a>
                                                 </div>
                                             </div>
@@ -666,10 +753,10 @@ optEmployee = (List<TblEmployee>
                                                             <tr>
                                                                 <td>@ob.Product.ProductCode @ob.Product.ProductName</td>
                                                                 <td>@ob.Quantity</td>
-                                                                <td>@ob.PriceNet</td>
-                                                                <td>@ob.DiscountNet</td>
-                                                                <td>@ob.TotalNet</td>
-                                                                <td>@ob.TotalTot</td>
+                                                                <td>@ob.PriceNet.ToString("#,#0.00")</td>
+                                                                <td>@ob.DiscountNet.ToString("#,#0.00")</td>
+                                                                <td>@ob.TotalNet.Value.ToString("#,#0.00")</td>
+                                                                <td>@ob.TotalTot.Value.ToString("#,#0.00")</td>
                                                                 <td>
                                                                     <form method="post" action="@Url.Action("DetailDelete", new { controller = "SaleOrder" })"
                                                                           class="fnc-delete inline-block">
@@ -734,7 +821,7 @@ optEmployee = (List<TblEmployee>
                                             <div class="col-sm-6">
                                                 <input type="text" class="form-control" id="SubTotal" name="SubTotalNet"
                                                        style="text-align: right"
-                                                       value="@Model.SubTotalNet" readonly />
+                                                       value="@Model.SubTotalNet.Value.ToString("#,#0.00")" readonly />
                                             </div>
                                         </div>
                                         <div class="form-group row">
@@ -742,13 +829,13 @@ optEmployee = (List<TblEmployee>
                                             <div class="col-sm-6">
                                                 <input type="text" class="form-control" id="Discount"
                                                        style="text-align: right"
-                                                       value="@Model.DiscountNet" readonly />
+                                                       value="@Model.DiscountNet.Value.ToString("#,#0.00")" readonly />
                                             </div>
                                         </div>
                                         <div class="form-group row">
                                             <label for="TotalDiscount" class="col-sm-5 col-form-label">ยอดหลังหักส่วนลด</label>
                                             <div class="col-sm-6">
-                                                <input type="text" class="form-control" id="TotalDiscount" style="text-align: right" value="@Model.SummaryNet" readonly />
+                                                <input type="text" class="form-control" id="TotalDiscount" style="text-align: right" value="@Model.SummaryNet.Value.ToString("#,#0.00")" readonly />
                                             </div>
                                         </div>
                                         <div class="form-group row">
@@ -756,7 +843,7 @@ optEmployee = (List<TblEmployee>
                                             <div class="col-sm-6">
                                                 <input type="text" class="form-control" id="Vat"
                                                        style="text-align: right"
-                                                       value="@Model.SummaryVat" readonly />
+                                                       value="@Model.SummaryVat.Value.ToString("#,#0.00")" readonly />
                                             </div>
                                         </div>
                                         <div class="form-group row">
@@ -764,7 +851,7 @@ optEmployee = (List<TblEmployee>
                                             <div class="col-sm-6">
                                                 <input type="text" class="form-control" id="DiscountCash" name="DiscountCash"
                                                        style="text-align: right"
-                                                       value="@Model.DiscountCash" onChange="calDiscount()" />
+                                                       value="@Model.DiscountCash.Value.ToString("#,#0.00")" onChange="calDiscount()" />
                                             </div>
                                         </div>
                                         <div class="form-group row">
@@ -772,7 +859,7 @@ optEmployee = (List<TblEmployee>
                                             <div class="col-sm-6">
                                                 <input type="text" class="form-control" id="SummaryTot"
                                                        style="text-align: right"
-                                                       value="@Model.SummaryTot" readonly />
+                                                       value="@Model.SummaryTot.Value.ToString("#,#0.00")" readonly />
                                             </div>
                                         </div>
                                         <div class="row">
