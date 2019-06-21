@@ -78,7 +78,7 @@ namespace Kemrex.Web.Common.Controllers
                 MvcArea = ob.MvcArea,
                 MvcController = ob.MvcController,
                 MvcAction = ob.MvcAction,
-                SubMenus = ob.InverseParent.Select(x => ConvertToMenuModel(x)).ToList()
+                SubMenus = ob.InverseParent.Select(x => ConvertToMenuModel(x)).OrderBy(o=>o.MenuOrder).ToList()
             };
             return rs;
         }

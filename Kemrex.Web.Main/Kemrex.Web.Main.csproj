@@ -162,6 +162,10 @@
     <Reference Include="System.Memory, Version=4.0.1.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Memory.4.5.1\lib\netstandard2.0\System.Memory.dll</HintPath>
     </Reference>
+    <Reference Include="System.Net.Http, Version=4.2.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
+    <Reference Include="System.Net.Http.Formatting, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebApi.Client.5.2.3\lib\net45\System.Net.Http.Formatting.dll</HintPath>
+    </Reference>
     <Reference Include="System.Numerics" />
     <Reference Include="System.Numerics.Vectors, Version=4.1.3.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Numerics.Vectors.4.4.0\lib\net46\System.Numerics.Vectors.dll</HintPath>
@@ -179,6 +183,12 @@
     <Reference Include="System.Core" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Web.Extensions" />
+    <Reference Include="System.Web.Http, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebApi.Core.5.2.3\lib\net45\System.Web.Http.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Http.WebHost, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebApi.WebHost.5.2.3\lib\net45\System.Web.Http.WebHost.dll</HintPath>
+    </Reference>
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Web" />
@@ -783,6 +793,63 @@
     <Content Include="libs\popper-js\popper.min.js" />
     <Content Include="libs\respond\respond.min.js" />
     <Content Include="libs\screenfull\screenfull.min.js" />
+    <Content Include="libs\select2\css\select2.min.css" />
+    <Content Include="libs\select2\js\i18n\af.js" />
+    <Content Include="libs\select2\js\i18n\ar.js" />
+    <Content Include="libs\select2\js\i18n\az.js" />
+    <Content Include="libs\select2\js\i18n\bg.js" />
+    <Content Include="libs\select2\js\i18n\bs.js" />
+    <Content Include="libs\select2\js\i18n\ca.js" />
+    <Content Include="libs\select2\js\i18n\cs.js" />
+    <Content Include="libs\select2\js\i18n\da.js" />
+    <Content Include="libs\select2\js\i18n\de.js" />
+    <Content Include="libs\select2\js\i18n\dsb.js" />
+    <Content Include="libs\select2\js\i18n\el.js" />
+    <Content Include="libs\select2\js\i18n\en.js" />
+    <Content Include="libs\select2\js\i18n\es.js" />
+    <Content Include="libs\select2\js\i18n\et.js" />
+    <Content Include="libs\select2\js\i18n\eu.js" />
+    <Content Include="libs\select2\js\i18n\fa.js" />
+    <Content Include="libs\select2\js\i18n\fi.js" />
+    <Content Include="libs\select2\js\i18n\fr.js" />
+    <Content Include="libs\select2\js\i18n\gl.js" />
+    <Content Include="libs\select2\js\i18n\he.js" />
+    <Content Include="libs\select2\js\i18n\hi.js" />
+    <Content Include="libs\select2\js\i18n\hr.js" />
+    <Content Include="libs\select2\js\i18n\hsb.js" />
+    <Content Include="libs\select2\js\i18n\hu.js" />
+    <Content Include="libs\select2\js\i18n\hy.js" />
+    <Content Include="libs\select2\js\i18n\id.js" />
+    <Content Include="libs\select2\js\i18n\is.js" />
+    <Content Include="libs\select2\js\i18n\it.js" />
+    <Content Include="libs\select2\js\i18n\ja.js" />
+    <Content Include="libs\select2\js\i18n\km.js" />
+    <Content Include="libs\select2\js\i18n\ko.js" />
+    <Content Include="libs\select2\js\i18n\lt.js" />
+    <Content Include="libs\select2\js\i18n\lv.js" />
+    <Content Include="libs\select2\js\i18n\mk.js" />
+    <Content Include="libs\select2\js\i18n\ms.js" />
+    <Content Include="libs\select2\js\i18n\nb.js" />
+    <Content Include="libs\select2\js\i18n\nl.js" />
+    <Content Include="libs\select2\js\i18n\pl.js" />
+    <Content Include="libs\select2\js\i18n\ps.js" />
+    <Content Include="libs\select2\js\i18n\pt-BR.js" />
+    <Content Include="libs\select2\js\i18n\pt.js" />
+    <Content Include="libs\select2\js\i18n\ro.js" />
+    <Content Include="libs\select2\js\i18n\ru.js" />
+    <Content Include="libs\select2\js\i18n\sk.js" />
+    <Content Include="libs\select2\js\i18n\sl.js" />
+    <Content Include="libs\select2\js\i18n\sr-Cyrl.js" />
+    <Content Include="libs\select2\js\i18n\sr.js" />
+    <Content Include="libs\select2\js\i18n\sv.js" />
+    <Content Include="libs\select2\js\i18n\th.js" />
+    <Content Include="libs\select2\js\i18n\tr.js" />
+    <Content Include="libs\select2\js\i18n\uk.js" />
+    <Content Include="libs\select2\js\i18n\vi.js" />
+    <Content Include="libs\select2\js\i18n\zh-CN.js" />
+    <Content Include="libs\select2\js\i18n\zh-TW.js" />
+    <Content Include="libs\select2\js\select2.full.min.js" />
+    <Content Include="libs\select2\js\select2.min.js" />
     <Content Include="libs\switchery\switchery.min.css" />
     <Content Include="libs\switchery\switchery.min.js" />
     <Content Include="SqlServerTypes\readme.htm" />
@@ -850,7 +917,9 @@
     <Content Include="themes\RemarkClassicBase\js\Plugin\card.js" />
     <Content Include="themes\RemarkClassicBase\js\Plugin\clockpicker.js" />
     <Content Include="themes\RemarkClassicBase\js\Plugin\closeable-tabs.js" />
+    <Content Include="themes\RemarkClassicBase\js\Plugin\dataTables.bootstrap-1.10.19.min.js" />
     <Content Include="themes\RemarkClassicBase\js\Plugin\datatables.js" />
+    <Content Include="themes\RemarkClassicBase\js\Plugin\datatables.min.js" />
     <Content Include="themes\RemarkClassicBase\js\Plugin\datepair.js" />
     <Content Include="themes\RemarkClassicBase\js\Plugin\donut.js" />
     <Content Include="themes\RemarkClassicBase\js\Plugin\dropify.js" />
@@ -874,6 +943,7 @@
     <Content Include="themes\RemarkClassicBase\js\Plugin\jquery-placeholder.js" />
     <Content Include="themes\RemarkClassicBase\js\Plugin\jquery-strength.js" />
     <Content Include="themes\RemarkClassicBase\js\Plugin\jquery-wizard.js" />
+    <Content Include="themes\RemarkClassicBase\js\Plugin\jquery.dataTables-1.10.19.min-.js" />
     <Content Include="themes\RemarkClassicBase\js\Plugin\jstree.js" />
     <Content Include="themes\RemarkClassicBase\js\Plugin\jt-timepicker.js" />
     <Content Include="themes\RemarkClassicBase\js\Plugin\jvectormap.js" />
@@ -895,6 +965,7 @@
     <Content Include="themes\RemarkClassicBase\js\Plugin\nestable.js" />
     <Content Include="themes\RemarkClassicBase\js\Plugin\notie-js.js" />
     <Content Include="themes\RemarkClassicBase\js\Plugin\nprogress.js" />
+    <Content Include="themes\RemarkClassicBase\js\Plugin\numeral2.6.min.js" />
     <Content Include="themes\RemarkClassicBase\js\Plugin\owl-carousel.js" />
     <Content Include="themes\RemarkClassicBase\js\Plugin\panel.js" />
     <Content Include="themes\RemarkClassicBase\js\Plugin\peity.js" />
@@ -1065,7 +1136,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App_Start\RouteConfig.cs" />
+    <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\AccountController.cs" />
+    <Compile Include="Controllers\api\SaleOrderServiceController.cs" />
     <Compile Include="Controllers\AuthenController.cs" />
     <Compile Include="Controllers\CalendarController.cs" />
     <Compile Include="Controllers\CustomerAddressController.cs" />
@@ -1242,7 +1315,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Views\Calendar\" />
     <Folder Include="Views\RemarkClassicBase\Base\System\" />
   </ItemGroup>
   <ItemGroup>

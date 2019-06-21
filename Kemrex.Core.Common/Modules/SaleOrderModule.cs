@@ -52,6 +52,8 @@ namespace Kemrex.Core.Common.Modules
                    {
                        CreatedDate = DateTime.Now
                    };
+
+           
             //var customerID = Convert.ToInt32(tblSaleOrder.CustomerId);
             ////tblSaleOrder.Customers = new List<TblCustomer>();
             //var customerDto = db.TblCustomer.Where(cus => cus.CustomerId == customerID).FirstOrDefault() ?? new TblCustomer()
@@ -59,8 +61,36 @@ namespace Kemrex.Core.Common.Modules
             //    CreatedDate = DateTime.Now
             //};
 
-          //  tblSaleOrder.Customer =  (from customer in db.TblCustomer where customer.CustomerId == tblSaleOrder.CustomerId select customer).FirstOrDefault();
+              tblSaleOrder.Customer =  (from customer in db.TblCustomer where customer.CustomerId == tblSaleOrder.CustomerId select customer).FirstOrDefault();
+            tblSaleOrder.TblSaleOrderDetail = (from q in db.TblSaleOrderDetail.Include(x => x.Product)
+                                               where q.SaleOrderId == id select new TblSaleOrderDetail
+            {
+                Id = q.Id,
+        SaleOrderId = q.SaleOrderId,
+                ProductId = q.ProductId,
+                Quantity = q.Quantity,
+                PriceNet = q.PriceNet,
+                PriceVat = q.PriceVat,
+                PriceTot = q.PriceTot,
+                DiscountNet = q.DiscountNet,
+                DiscountVat = q.DiscountVat,
+                DiscountTot = q.DiscountTot,
+                TotalNet = q.TotalNet,
+                TotalVat = q.TotalVat,
+                TotalTot = q.TotalTot,
+                Remark = q.Remark,
+                Product=q.Product
+            }).ToList();
 
+            tblSaleOrder.TblSaleOrderAttachment = (from q in db.TblSaleOrderAttachment where q.SaleOrderId == id select new TblSaleOrderAttachment {
+
+                Id = q.Id,
+                SaleOrderId = q.SaleOrderId,
+                AttachmentPath = q.AttachmentPath,
+                AttachmentOrder = q.AttachmentOrder,
+                AttachmentRemark = q.AttachmentRemark
+               
+            }).ToList();
             return tblSaleOrder;
         }
 

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
-
+using System.Web.Http;
 namespace Kemrex.Web.Main
 {
     public class MvcApplication : System.Web.HttpApplication
@@ -12,6 +12,7 @@ namespace Kemrex.Web.Main
         protected void Application_Start()
         {
             AreaRegistration.RegisterAllAreas();
+            GlobalConfiguration.Configure(WebApiConfig.Register);
             RouteConfig.RegisterRoutes(RouteTable.Routes);
         }
     }

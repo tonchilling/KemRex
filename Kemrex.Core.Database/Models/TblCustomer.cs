@@ -9,8 +9,8 @@ namespace Kemrex.Core.Database.Models
         {
             TblCustomerAddress = new HashSet<TblCustomerAddress>();
             TblCustomerContact = new HashSet<TblCustomerContact>();
-            TblQuotation = new HashSet<TblQuotation>();
-            TblSaleOrder = new HashSet<TblSaleOrder>();
+          /*  TblQuotation = new HashSet<TblQuotation>();
+            TblSaleOrder = new HashSet<TblSaleOrder>();*/
         }
 
         public int CustomerId { get; set; }
@@ -32,7 +32,7 @@ namespace Kemrex.Core.Database.Models
         public virtual EnmPrefix Prefix { get; set; }
         public virtual ICollection<TblCustomerAddress> TblCustomerAddress { get; set; }
         public virtual ICollection<TblCustomerContact> TblCustomerContact { get; set; }
-        public virtual ICollection<TblQuotation> TblQuotation { get; set; }
-        public virtual ICollection<TblSaleOrder> TblSaleOrder { get; set; }
+      /*  public virtual ICollection<TblQuotation> TblQuotation { get; set; }
+        public virtual ICollection<TblSaleOrder> TblSaleOrder { get; set; }*/
     }
 }

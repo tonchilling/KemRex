@@ -100,11 +100,11 @@ optEmployee = (List<TblEmployee>
         }
 
         function calDiscount() {
-            var st = document.getElementById("SummaryTot").value;
-            var dc = document.getElementById("DiscountCash").value;
+            var st = document.getElementById("SummaryTot").value.repace(",","");
+            var dc = document.getElementById("DiscountCash").repace(",", "");
             if (dc > 0)
             {
-                document.getElementById("SummaryTot").value = st - dc;
+                document.getElementById("SummaryTot").value = numeral(st - dc).format('0,0.00');
             }
         }
 
@@ -259,6 +259,8 @@ optEmployee = (List<TblEmployee>
             ProductDiscount*/
 
             var chkValidate = true;
+
+
             if ($("#selProduct").val() == "") {
                 $("#selProduct").addClass("has-error");
                 chkValidate = false;
@@ -691,10 +693,10 @@ optEmployee = (List<TblEmployee>
                                                             <tr>
                                                                 <td>@ob.Product.ProductCode @ob.Product.ProductName</td>
                                                                 <td>@ob.Quantity</td>
-                                                                <td>@ob.PriceNet</td>
-                                                                <td>@ob.DiscountNet</td>
-                                                                <td>@ob.TotalNet</td>
-                                                                <td>@ob.TotalTot</td>
+                                                                <td>@ob.PriceNet.ToString("#,#0.00")</td>
+                                                                <td>@ob.DiscountNet.ToString("#,#0.00")</td>
+                                                                <td>@ob.TotalNet.Value.ToString("#,#0.00")</td>
+                                                                <td>@ob.TotalTot.Value.ToString("#,#0.00")</td>
                                                                 <td>
                                                                     <form method="post" action="@Url.Action("DetailDelete", new { controller = "Quotation" })"
                                                                           class="fnc-delete inline-block">
@@ -759,7 +761,7 @@ optEmployee = (List<TblEmployee>
                                             <div class="col-sm-6">
                                                 <input type="text" class="form-control" id="SubTotal" name="SubTotalNet"
                                                        style="text-align: right"
-                                                       value="@Model.SubTotalNet" readonly />
+                                                       value="@Model.SubTotalNet.Value.ToString("#,#0.00")" readonly />
                                             </div>
                                         </div>
                                         <div class="form-group row">
@@ -767,13 +769,13 @@ optEmployee = (List<TblEmployee>
                                             <div class="col-sm-6">
                                                 <input type="text" class="form-control" id="Discount"
                                                        style="text-align: right"
-                                                       value="@Model.DiscountNet" readonly />
+                                                       value="@Model.DiscountNet.Value.ToString("#,#0.00")" readonly />
                                             </div>
                                         </div>
                                         <div class="form-group row">
                                             <label for="TotalDiscount" class="col-sm-5 col-form-label">ยอดหลังหักส่วนลด</label>
                                             <div class="col-sm-6">
-                                                <input type="text" class="form-control" id="TotalDiscount" style="text-align: right" value="@Model.SummaryNet" readonly />
+                                                <input type="text" class="form-control" id="TotalDiscount" style="text-align: right" value="@Model.SummaryNet.Value.ToString("#,#0.00")" readonly />
                                             </div>
                                         </div>
                                         <div class="form-group row">
@@ -781,7 +783,7 @@ optEmployee = (List<TblEmployee>
                                             <div class="col-sm-6">
                                                 <input type="text" class="form-control" id="Vat"
                                                        style="text-align: right"
-                                                       value="@Model.SummaryVat" readonly />
+                                                       value="@Model.SummaryVat.Value.ToString("#,#0.00")" readonly />
                                             </div>
                                         </div>
                                         <div class="form-group row">
@@ -789,7 +791,7 @@ optEmployee = (List<TblEmployee>
                                             <div class="col-sm-6">
                                                 <input type="text" class="form-control" id="DiscountCash" name="DiscountCash"
                                                        style="text-align: right"
-                                                       value="@Model.DiscountCash" onChange="calDiscount()" />
+                                                       value="@Model.DiscountCash.ToString("#,#0.00")" onChange="calDiscount()" />
                                             </div>
                                         </div>
                                         <div class="form-group row">
@@ -797,7 +799,7 @@ optEmployee = (List<TblEmployee>
                                             <div class="col-sm-6">
                                                 <input type="text" class="form-control" id="SummaryTot"
                                                        style="text-align: right"
-                                                       value="@Model.SummaryTot" readonly />
+                                                       value="@Model.SummaryTot.Value.ToString("#,#0.00")" readonly />
                                             </div>
                                         </div>
                                         <div class="row">

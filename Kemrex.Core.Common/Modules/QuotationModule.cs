@@ -41,9 +41,9 @@ namespace Kemrex.Core.Common.Modules
         }
         public string GetLastId()
         {
-            return (from q in db.TblQuotation
-                    select q.QuotationNo).Max();
+            return db.TblQuotation.OrderByDescending(x => x.QuotationId).Select(x=>x.QuotationNo).First();
         }
+
         public List<TblQuotation> Gets(int page = 1, int size = 0,string src="")
         {
             var data = db.TblQuotation.Include(c => c.Status)
