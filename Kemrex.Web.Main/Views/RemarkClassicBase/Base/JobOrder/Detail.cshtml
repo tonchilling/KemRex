@@ -39,7 +39,16 @@
 
 
     </script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.8.0/js/bootstrap-datepicker.min.js"></script>
+
 }
+@section Styles {
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.8.0/css/bootstrap-datepicker.min.css" rel="stylesheet" type="text/css" />
+
+
+
+}
+
 
 <body data-spy="scroll" data-target="#myTap" data-offset="300">
     <div class="page">
@@ -99,25 +108,39 @@
                         </div>
                         <div class="panel-body">
                             <div class="row">
-                                <div class="col-md-5">
+                                <div class="col-md-6 col-sm-8">
                                     <div class="form-group">
                                         <label for="JobOrderStartDate" class="form-control-label">วันที่ติดตั้ง</label>
-                                        <div class="input-group col-sm-6">
+                                        @*<div class="input-group col-sm-6">
+                                                <span class="input-group-addon">
+                                                    <i class="icon wb-calendar" aria-hidden="true"></i>
+                                                </span>
+                                                <input type="date" class="form-control" name="JobOrderStartDate" value="" />
+                                            </div>*@
+                                        <div class="input-group col-sm-6 date" data-provide="datepicker" data-date-format="dd/mm/yyyy">
+                                            <input id="OperationStartDate" type="text" class="form-control" placeholder="dd/MM/yyyy ค.ศ." name="OperationStartDate"
+                                                   value="@(Model.OperationStartDate ==null ? null : Model.OperationStartDate.Value.ToString("dd/MM/yyyy"))" />
                                             <span class="input-group-addon">
-                                                <i class="icon wb-calendar" aria-hidden="true"></i>
+                                                <i class="icon wb-calendar icon-2-5x text-success" aria-hidden="true"></i>
                                             </span>
-                                            <input type="date" class="form-control" name="JobOrderStartDate" value="" />
                                         </div>
                                     </div>
                                 </div>
                                 <div class="col-md-6 col-sm-8">
                                     <div class="form-group">
                                         <label for="JobOrderCompleteDate" class="form-control-label">กำหนดเสร็จ</label>
-                                        <div class="input-group col-sm-6">
+                                        @*<div class="input-group col-sm-6">
                                             <span class="input-group-addon">
                                                 <i class="icon wb-calendar" aria-hidden="true"></i>
                                             </span>
                                             <input type="date" class="form-control" name="JobOrderCompleteDate" value="" />
+                                        </div>*@
+                                        <div class="input-group col-sm-6 date" data-provide="datepicker" data-date-format="dd/mm/yyyy">
+                                            <input id="OperationEndDate" type="text" class="form-control" placeholder="dd/MM/yyyy ค.ศ." name="OperationEndDate"
+                                                   value="@(Model.OperationEndDate ==null ? null : Model.OperationEndDate.Value.ToString("dd/MM/yyyy"))" />
+                                            <span class="input-group-addon">
+                                                <i class="icon wb-calendar icon-2-5x text-success" aria-hidden="true"></i>
+                                            </span>
                                         </div>
                                     </div>
                                 </div>
