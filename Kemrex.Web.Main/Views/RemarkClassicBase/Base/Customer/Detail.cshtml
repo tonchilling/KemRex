@@ -70,14 +70,8 @@
                             <div class="row">
                                 <div class="col-md-6 col-sm-12">
                                     <div class="form-group">
-                                        <label for="GroupId" class="form-control-label">กลุ่มลูกค้า</label>
-                                        <select name="GroupId" class="form-control">
-                                            @foreach (TblCustomerGroup it in optGroup)
-                                            {
-                                                bool selected = it.GroupId == Model.GroupId;
-                                                <option value="@it.GroupId" @(selected ? " selected=\"selected\"" : "")>@it.GroupName</option>
-                                            }
-                                        </select>
+                                        <label for="CustomerTaxId" class="form-control-label">เลขประจำตัวผู้เสียภาษี</label>
+                                        <input type="text" class="form-control" name="CustomerTaxId" value="@Model.CustomerTaxId" />
                                     </div>
                                 </div>
                                 <div class="col-md-6 col-sm-12">
@@ -90,6 +84,21 @@
                                         }
                                     </div>
                                 </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 col-sm-12">
+                                    <div class="form-group">
+                                        <label for="GroupId" class="form-control-label">กลุ่มลูกค้า</label>
+                                        <select name="GroupId" class="form-control">
+                                            @foreach (TblCustomerGroup it in optGroup)
+                                            {
+                                                bool selected = it.GroupId == Model.GroupId;
+                                                <option value="@it.GroupId" @(selected ? " selected=\"selected\"" : "")>@it.GroupName</option>
+                                            }
+                                        </select>
+                                    </div>
+                                </div>
+                                
                             </div>
                             <div class="row">
                                 <div class="col-md-6 col-sm-12">

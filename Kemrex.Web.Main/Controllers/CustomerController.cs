@@ -84,6 +84,7 @@ namespace Kemrex.Web.Main.Controllers
                 ob.Prefix = uow.Modules.Enum.PrefixGet(ob.PrefixId.Value);
             }
             ob.CustomerName = Request.Form["CustomerName"];
+            ob.CustomerTaxId = Request.Form["CustomerTaxId"];
             ob.GroupId = Request.Form["GroupId"].ParseInt();
             ob.Group = uow.Modules.CustomerGroup.Get(ob.GroupId.Value);
             ob.CustomerPhone = Request.Form["CustomerPhone"];
