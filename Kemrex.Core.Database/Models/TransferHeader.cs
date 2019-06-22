@@ -14,5 +14,7 @@ namespace Kemrex.Core.Database.Models
         public string TransferStatus { get; set; }
         public string Note1 { get; set; }
         public DateTime? LastModified { get; set; }
+
+        public List<TransferDetail> TransferDetail { get; set; }
     }
 }

@@ -131,7 +131,7 @@ namespace Kemrex.Web.Main.Controllers
 
             ob.ShippingAddress = Request.Form["ShippingAddress"];
             ob.SaleOrderRemark = Request.Form["SaleOrderRemark"];
-
+            ob.TeamId = Request.Form["TeamId"].ParseInt();
             if (Request.Form["DiscountCash"] != null)
                 ob.DiscountCash = decimal.Parse(Request.Form["DiscountCash"]);
 
@@ -198,6 +198,7 @@ namespace Kemrex.Web.Main.Controllers
                 ViewData["optEmployee"] = uow.Modules.Employee.Gets();
                 ViewData["optPayment"] = uow.Modules.PaymentCondition.Gets();
                 ViewData["optAttachment"] = uow.Modules.SaleOrderAttachment.Gets(ob.SaleOrderId);
+                ViewData["optTeam"] = uow.Modules.TeamOperation.Gets();
                 return View(ob);
             }
             catch (Exception ex)

@@ -90,6 +90,7 @@ namespace Kemrex.Core.Common
             private TeamOperationModule _TeamOperation;
             private TeamOperationDetailModule _TeamOperationDetail;
             private UnitModule _Unit;
+           
 
             public AccountModule Account => _Account ?? (_Account = new AccountModule(db));
             public CustomerAddressModule CustomerAddress => _CustomerAddress ?? (_CustomerAddress = new CustomerAddressModule(db));
