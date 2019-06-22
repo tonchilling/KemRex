@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 using System;
 
-namespace Kemrex.Core.Database
+namespace Kemrex.Core.Database.Models
 {
     public partial class mainContext : DbContext
     {
@@ -1123,10 +1123,10 @@ namespace Kemrex.Core.Database
 
                 entity.Property(e => e.UpdateDate).HasColumnType("datetime");
 
-              /*  entity.HasOne(d => d.Customer)
+                entity.HasOne(d => d.Customer)
                     .WithMany(p => p.TblQuotation)
                     .HasForeignKey(d => d.CustomerId)
-                    .HasConstraintName("FK_TblQuotation_Customer");*/
+                    .HasConstraintName("FK_TblQuotation_Customer");
 
                 entity.HasOne(d => d.Sale)
                     .WithMany(p => p.TblQuotation)
@@ -1250,15 +1250,20 @@ namespace Kemrex.Core.Database
 
                 entity.Property(e => e.UpdateDate).HasColumnType("datetime");
 
-             /*   entity.HasOne(d => d.Customer)
+                entity.HasOne(d => d.Customer)
                     .WithMany(p => p.TblSaleOrder)
                     .HasForeignKey(d => d.CustomerId)
-                    .HasConstraintName("FK_TblSaleOrder_Customer");*/
+                    .HasConstraintName("FK_TblSaleOrder_Customer");
 
                 entity.HasOne(d => d.Sale)
                     .WithMany(p => p.TblSaleOrder)
                     .HasForeignKey(d => d.SaleId)
                     .HasConstraintName("FK_TblSaleOrder_Sale");
+
+                entity.HasOne(d => d.Team)
+                    .WithMany(p => p.TblSaleOrder)
+                    .HasForeignKey(d => d.TeamId)
+                    .HasConstraintName("FK__TblSaleOrder__Team");
             });
 
             modelBuilder.Entity<TblSaleOrderAttachment>(entity =>
@@ -1304,7 +1309,7 @@ namespace Kemrex.Core.Database
                     .HasColumnType("decimal(13, 2)")
                     .HasComputedColumnSql("([PriceVat]-[DiscountVat])");
 
-             /*   entity.HasOne(d => d.Product)
+                entity.HasOne(d => d.Product)
                     .WithMany(p => p.TblSaleOrderDetail)
                     .HasForeignKey(d => d.ProductId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
@@ -1315,7 +1320,6 @@ namespace Kemrex.Core.Database
                     .HasForeignKey(d => d.SaleOrderId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_TblSaleOrderDetail_id");
-                    */
             });
 
             modelBuilder.Entity<TblUnit>(entity =>

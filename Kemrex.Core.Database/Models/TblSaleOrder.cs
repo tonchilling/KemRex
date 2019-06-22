@@ -25,6 +25,7 @@ namespace Kemrex.Core.Database.Models
         public string PoNo { get; set; }
         public int? SaleId { get; set; }
         public string SaleName { get; set; }
+        public int? TeamId { get; set; }
         public string BillingAddress { get; set; }
         public string ShippingAddress { get; set; }
         public string SaleOrderRemark { get; set; }
@@ -47,10 +48,9 @@ namespace Kemrex.Core.Database.Models
         public DateTime? DeliveryDate { get; set; }
         public int SaleOrderCreditDay { get; set; }
 
-       
-
         public virtual TblCustomer Customer { get; set; }
         public virtual TblEmployee Sale { get; set; }
+        public virtual TeamOperation Team { get; set; }
         public virtual ICollection<TblInvoice> TblInvoice { get; set; }
         public virtual ICollection<TblSaleOrderAttachment> TblSaleOrderAttachment { get; set; }
         public virtual ICollection<TblSaleOrderDetail> TblSaleOrderDetail { get; set; }
