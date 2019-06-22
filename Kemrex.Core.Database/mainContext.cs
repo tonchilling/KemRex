@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 using System;
 
-namespace Kemrex.Core.Database.Models
+namespace Kemrex.Core.Database
 {
     public partial class mainContext : DbContext
     {
