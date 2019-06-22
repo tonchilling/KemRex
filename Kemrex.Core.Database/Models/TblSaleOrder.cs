@@ -49,7 +49,6 @@ namespace Kemrex.Core.Database.Models
         public int SaleOrderCreditDay { get; set; }
 
         public virtual TblCustomer Customer { get; set; }
-        public virtual TblEmployee Sale { get; set; }
         public virtual TeamOperation Team { get; set; }
         public virtual ICollection<TblInvoice> TblInvoice { get; set; }
         public virtual ICollection<TblSaleOrderAttachment> TblSaleOrderAttachment { get; set; }
