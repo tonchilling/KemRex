@@ -9,6 +9,7 @@ namespace Kemrex.Core.Database.Models
         {
             TblQuotationDetail = new HashSet<TblQuotationDetail>();
             TblSaleOrderDetail = new HashSet<TblSaleOrderDetail>();
+            TransferDetail = new HashSet<TransferDetail>();
         }
 
         public int ProductId { get; set; }
@@ -38,5 +39,6 @@ namespace Kemrex.Core.Database.Models
         public virtual TblUnit Unit { get; set; }
         public virtual ICollection<TblQuotationDetail> TblQuotationDetail { get; set; }
         public virtual ICollection<TblSaleOrderDetail> TblSaleOrderDetail { get; set; }
+        public virtual ICollection<TransferDetail> TransferDetail { get; set; }
     }
 }

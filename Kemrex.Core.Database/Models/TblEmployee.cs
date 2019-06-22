@@ -9,7 +9,6 @@ namespace Kemrex.Core.Database.Models
         {
             InverseLead = new HashSet<TblEmployee>();
             TblQuotation = new HashSet<TblQuotation>();
-            TblSaleOrder = new HashSet<TblSaleOrder>();
         }
 
         public int EmpId { get; set; }
@@ -45,6 +44,5 @@ namespace Kemrex.Core.Database.Models
         public virtual EnmStatusEmployee Status { get; set; }
         public virtual ICollection<TblEmployee> InverseLead { get; set; }
         public virtual ICollection<TblQuotation> TblQuotation { get; set; }
-        public virtual ICollection<TblSaleOrder> TblSaleOrder { get; set; }
     }
 }
