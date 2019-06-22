@@ -821,7 +821,7 @@ optEmployee = (List<TblEmployee>
                                             <div class="col-sm-6">
                                                 <input type="text" class="form-control" id="SubTotal" name="SubTotalNet"
                                                        style="text-align: right"
-                                                       value="@Model.SubTotalNet.Value.ToString("#,#0.00")" readonly />
+                                                       value="@(Model.SubTotalNet.HasValue?Model.SubTotalNet.Value.ToString("#,#0.00"):"0")" readonly />
                                             </div>
                                         </div>
                                         <div class="form-group row">
@@ -829,13 +829,13 @@ optEmployee = (List<TblEmployee>
                                             <div class="col-sm-6">
                                                 <input type="text" class="form-control" id="Discount"
                                                        style="text-align: right"
-                                                       value="@Model.DiscountNet.Value.ToString("#,#0.00")" readonly />
+                                                       value="@(Model.DiscountNet.HasValue?Model.DiscountNet.Value.ToString("#,#0.00"):"0")" readonly />
                                             </div>
                                         </div>
                                         <div class="form-group row">
                                             <label for="TotalDiscount" class="col-sm-5 col-form-label">ยอดหลังหักส่วนลด</label>
                                             <div class="col-sm-6">
-                                                <input type="text" class="form-control" id="TotalDiscount" style="text-align: right" value="@Model.SummaryNet.Value.ToString("#,#0.00")" readonly />
+                                                <input type="text" class="form-control" id="TotalDiscount" style="text-align: right" value="@(Model.SummaryNet.HasValue?Model.SummaryNet.Value.ToString("#,#0.00"):"0")" readonly />
                                             </div>
                                         </div>
                                         <div class="form-group row">
@@ -843,7 +843,7 @@ optEmployee = (List<TblEmployee>
                                             <div class="col-sm-6">
                                                 <input type="text" class="form-control" id="Vat"
                                                        style="text-align: right"
-                                                       value="@Model.SummaryVat.Value.ToString("#,#0.00")" readonly />
+                                                       value="@(Model.SummaryVat.HasValue?Model.SummaryVat.Value.ToString("#,#0.00"):"0")" readonly />
                                             </div>
                                         </div>
                                         <div class="form-group row">
@@ -851,7 +851,7 @@ optEmployee = (List<TblEmployee>
                                             <div class="col-sm-6">
                                                 <input type="text" class="form-control" id="DiscountCash" name="DiscountCash"
                                                        style="text-align: right"
-                                                       value="@Model.DiscountCash.Value.ToString("#,#0.00")" onChange="calDiscount()" />
+                                                       value="@(Model.DiscountCash.HasValue?Model.DiscountCash.Value.ToString("#,#0.00"):"0")" onChange="calDiscount()" />
                                             </div>
                                         </div>
                                         <div class="form-group row">
@@ -859,7 +859,7 @@ optEmployee = (List<TblEmployee>
                                             <div class="col-sm-6">
                                                 <input type="text" class="form-control" id="SummaryTot"
                                                        style="text-align: right"
-                                                       value="@Model.SummaryTot.Value.ToString("#,#0.00")" readonly />
+                                                       value="@(Model.SummaryTot.HasValue?Model.SummaryTot.Value.ToString("#,#0.00"):"0")" readonly />
                                             </div>
                                         </div>
                                         <div class="row">

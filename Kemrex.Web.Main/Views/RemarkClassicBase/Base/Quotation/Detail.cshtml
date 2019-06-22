@@ -100,8 +100,8 @@ optEmployee = (List<TblEmployee>
         }
 
         function calDiscount() {
-            var st = document.getElementById("SummaryTot").value.repace(",","");
-            var dc = document.getElementById("DiscountCash").repace(",", "");
+            var st = document.getElementById("SummaryTot").value.replace(",","");
+            var dc = document.getElementById("DiscountCash").value.replace(",", "");
             if (dc > 0)
             {
                 document.getElementById("SummaryTot").value = numeral(st - dc).format('0,0.00');
@@ -724,27 +724,31 @@ optEmployee = (List<TblEmployee>
                                                         <select class="form-control" id="selProduct" data-live-search="true"
                                                                 name="selProduct">
                                                             <option value="">กรุณาเลือก</option>
-                                                            @foreach (TblProduct it in optProduct)
-                                                            {
-                                                                <option value="@it.ProductId:@it.PriceNet">@it.ProductCode @it.ProductName [@it.PriceNet]  Qty:@it.QtyStock</option>
-                                                            }
-                                                        </select>
-                                                    </div><div class="col-2 col-md-2 form-group">
-                                                        <label for="Qty" class="form-control-label">จำนวน</label>
-                                                        <input type="number" class="form-control" id="ProductQty" name="ProductQty" value="1" />
-                                                    </div>
-                                                    <div class="col-2 col-md-2 form-group">
-                                                        <label for="Price" class="form-control-label">ราคา</label>
-                                                        <input type="text" class="form-control Number" id="ProductPrice" name="ProductPrice" />
-                                                    </div>
-                                                    <div class="col-2 col-md-2 form-group">
-                                                        <label for="Discount" class="form-control-label">ส่วนลด</label>
-                                                        <input type="text" class="form-control Number" id="ProductDiscount" name="ProductDiscount" />
-                                                    </div>
-                                                </div>
+                                                       
+                                                                @foreach (var it in optProduct)
+                                                                {
+                                                                    <option value="@it.ProductId:@it.PriceNet">@it.ProductCode @it.ProductName [@it.PriceNet]  Qty:@it.QtyStock</option>
+                                                                }
+                                                     
 
-                                                <button type="submit" id="btnAddProduct" class="btn btn-primary">เพิ่ม</button>&nbsp;
-                                            </form>
+
+                                                            </select >
+                                                            </div><div class="col-2 col-md-2 form-group">
+                                                            <label for="Qty" class="form-control-label">จำนวน</label>
+                                                            <input type="number" class="form-control" id="ProductQty" name="ProductQty" value="1" />
+</div>
+                                                                                                    <div class="col-2 col-md-2 form-group">
+                                                                                                        <label for="Price" class="form-control-label">ราคา</label>
+                                                                                                        <input type = "text" class="form-control Number" id="ProductPrice" name="ProductPrice" />
+                                                                                                    </div>
+                                                                                                    <div class="col-2 col-md-2 form-group">
+                                                                                                        <label for="Discount" class="form-control-label">ส่วนลด</label>
+                                                                                                        <input type = "text" class="form-control Number" id="ProductDiscount" name="ProductDiscount" />
+                                                                                                    </div>
+                                                                                                </div>
+
+                                                                                                <button type = "submit" id="btnAddProduct" class="btn btn-primary">เพิ่ม</button>&nbsp;
+</form>
                                         </div>
                                     </div>
                                 </div>
@@ -761,7 +765,7 @@ optEmployee = (List<TblEmployee>
                                             <div class="col-sm-6">
                                                 <input type="text" class="form-control" id="SubTotal" name="SubTotalNet"
                                                        style="text-align: right"
-                                                       value="@Model.SubTotalNet.Value.ToString("#,#0.00")" readonly />
+                                                       value="@(Model.SubTotalNet.HasValue?Model.SubTotalNet.Value.ToString("#,#0.00"):"0")" readonly />
                                             </div>
                                         </div>
                                         <div class="form-group row">
@@ -769,13 +773,13 @@ optEmployee = (List<TblEmployee>
                                             <div class="col-sm-6">
                                                 <input type="text" class="form-control" id="Discount"
                                                        style="text-align: right"
-                                                       value="@Model.DiscountNet.Value.ToString("#,#0.00")" readonly />
+                                                       value="@(Model.DiscountNet.HasValue?Model.DiscountNet.Value.ToString("#,#0.00"):"0")" readonly />
                                             </div>
                                         </div>
                                         <div class="form-group row">
                                             <label for="TotalDiscount" class="col-sm-5 col-form-label">ยอดหลังหักส่วนลด</label>
                                             <div class="col-sm-6">
-                                                <input type="text" class="form-control" id="TotalDiscount" style="text-align: right" value="@Model.SummaryNet.Value.ToString("#,#0.00")" readonly />
+                                                <input type="text" class="form-control" id="TotalDiscount" style="text-align: right" value="@(Model.SummaryNet.HasValue?Model.SummaryNet.Value.ToString("#,#0.00"):"0")" readonly />
                                             </div>
                                         </div>
                                         <div class="form-group row">
@@ -783,7 +787,7 @@ optEmployee = (List<TblEmployee>
                                             <div class="col-sm-6">
                                                 <input type="text" class="form-control" id="Vat"
                                                        style="text-align: right"
-                                                       value="@Model.SummaryVat.Value.ToString("#,#0.00")" readonly />
+                                                       value="@(Model.SummaryVat.HasValue?Model.SummaryVat.Value.ToString("#,#0.00"):"0")" readonly />
                                             </div>
                                         </div>
                                         <div class="form-group row">
@@ -791,7 +795,7 @@ optEmployee = (List<TblEmployee>
                                             <div class="col-sm-6">
                                                 <input type="text" class="form-control" id="DiscountCash" name="DiscountCash"
                                                        style="text-align: right"
-                                                       value="@Model.DiscountCash.ToString("#,#0.00")" onChange="calDiscount()" />
+                                                       value="@(Model.DiscountCash!=null?Model.DiscountCash.ToString("#,#0.00"):"0")" onChange="calDiscount()" />
                                             </div>
                                         </div>
                                         <div class="form-group row">
@@ -799,7 +803,7 @@ optEmployee = (List<TblEmployee>
                                             <div class="col-sm-6">
                                                 <input type="text" class="form-control" id="SummaryTot"
                                                        style="text-align: right"
-                                                       value="@Model.SummaryTot.Value.ToString("#,#0.00")" readonly />
+                                                       value="@(Model.SummaryTot.HasValue?Model.SummaryTot.Value.ToString("#,#0.00"):"0")" readonly />
                                             </div>
                                         </div>
                                         <div class="row">
