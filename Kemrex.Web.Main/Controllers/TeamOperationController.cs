@@ -179,6 +179,23 @@ namespace Kemrex.Web.Main.Controllers
         }
 
         #region Private Action
+
+        [HttpGet]
+      
+        public JsonResult GetAllTeam(int? id)
+        {
+
+           List<TeamOperation> teamOperations= uow.Modules.TeamOperation.GetAll();
+            // ob.TblSaleOrderDetail = uow.Modules.SaleOrderDetail.Gets(id ?? 0);
+            // TblCustomer objCustomer = uow.Modules.Customer.Get(Convert.ToInt32(ob.CustomerId));
+         
+
+
+            return Json(teamOperations, JsonRequestBehavior.AllowGet);
+        }
+
+
+
         private ActionResult ViewDetail(TeamOperation ob, string msg, AlertMsgType? msgType)
         {
             try

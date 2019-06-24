@@ -8,6 +8,7 @@ namespace Kemrex.Core.Database.Models
         public TblSaleOrder()
         {
             TblInvoice = new HashSet<TblInvoice>();
+            TblJobOrder = new HashSet<TblJobOrder>();
             TblSaleOrderAttachment = new HashSet<TblSaleOrderAttachment>();
             TblSaleOrderDetail = new HashSet<TblSaleOrderDetail>();
         }
@@ -51,6 +52,7 @@ namespace Kemrex.Core.Database.Models
         public virtual TblCustomer Customer { get; set; }
         public virtual TeamOperation Team { get; set; }
         public virtual ICollection<TblInvoice> TblInvoice { get; set; }
+        public virtual ICollection<TblJobOrder> TblJobOrder { get; set; }
         public virtual ICollection<TblSaleOrderAttachment> TblSaleOrderAttachment { get; set; }
         public virtual ICollection<TblSaleOrderDetail> TblSaleOrderDetail { get; set; }
     }

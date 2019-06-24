@@ -9,6 +9,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Web;
 using System.Web.Mvc;
+using DMN.Standard.Common.Constraints;
+using DMN.Standard.Common.Extensions;
+using Kemrex.Core.Database.Models;
 
 using IOFile = System.IO.File;
 
@@ -19,7 +22,7 @@ namespace Kemrex.Web.Main.Controllers
         public ActionResult Index(int? page, int? size, string msg, AlertMsgType? msgType,
                    string src = "")
         {
-            List<TblSaleOrder> lst = new List<TblSaleOrder>();
+            List<TblJobOrder> lst = new List<TblJobOrder>();
             try
             {
                 if (!string.IsNullOrWhiteSpace(msg))
@@ -28,8 +31,8 @@ namespace Kemrex.Web.Main.Controllers
                     if (msgType.HasValue) { alert.Type = msgType.Value; }
                     ViewBag.Alert = alert;
                 }
-                int total = uow.Modules.SaleOrder.Count(0, src);
-                WidgetPaginationModel Pagination = new WidgetPaginationModel("Index", "SaleOrder", "")
+                int total = uow.Modules.JobOrder.Count(src,0 );
+                WidgetPaginationModel Pagination = new WidgetPaginationModel("Index", "JobOrder", "")
                 {
                     Page = (page ?? 1),
                     Size = (size ?? 10),
@@ -41,7 +44,7 @@ namespace Kemrex.Web.Main.Controllers
                     Total = total
                 };
                 ViewBag.Pagination = Pagination;
-                lst = uow.Modules.SaleOrder.Gets(Pagination.Page, Pagination.Size, 0, src);
+                lst = uow.Modules.JobOrder.Gets(Pagination.Page, Pagination.Size, src, 0);
             }
             catch (Exception ex)
             {
@@ -57,14 +60,202 @@ namespace Kemrex.Web.Main.Controllers
 
         public ActionResult Detail(int? id, string msg, AlertMsgType? msgType)
         {
-            TblSaleOrder ob = uow.Modules.SaleOrder.Get(id ?? 0);
+            System.Threading.Thread.CurrentThread.CurrentCulture = new System.Globalization.CultureInfo("en-US"); ;
+            System.Threading.Thread.CurrentThread.CurrentUICulture = new System.Globalization.CultureInfo("en-US"); ;
+
+            TblJobOrder ob = uow.Modules.JobOrder.Get(id ?? 0);
             return ViewDetail(ob, msg, msgType);
         }
 
-        [ValidateAntiForgeryToken]
-        [HttpPost, ActionName("Detail")]
-        public ActionResult SetDetail()
+
+        private string getJobId()
         {
+            string qid = "J";
+            System.Globalization.CultureInfo _cultureTHInfo = new System.Globalization.CultureInfo("en-US");
+            var dt = DateTime.Now.ToString("yyMMdd", _cultureTHInfo);
+            string Id = uow.Modules.JobOrder.GetLastId(qid+ dt);
+            
+          
+            string preid = Id.Split('-')[0];
+            int runid = int.Parse(Id.Split('-')[1]);
+
+            if (preid.Contains(dt))
+            {
+                runid++;
+            }
+            else
+            {
+                runid = 1;
+            }
+            qid += dt + "-" + runid.ToString("D3");
+            return qid;
+        }
+
+
+
+        [HttpPost, ActionName("Detail")]
+        public ActionResult SetDetail(TblJobOrder jobOrder)
+        {
+            System.Globalization.CultureInfo _cultureTHInfo = new System.Globalization.CultureInfo("en-US");
+            List<TblJobOrderProjectType> projectType = null;
+            List<TblJobOrderEquipmentType> EquipmentType = null;
+            List<TblJobOrderLandType> LandType = null;
+            List<TblJobOrderUndergroundType> UndergroundType = null;
+            List<TblJobOrderObstructionType> ObstructionType = null;
+            List<TblJobOrderAttachmentType> AttachmentType = null;
+
+            string JobOrderId = this.Request.Form["JobOrderId"];
+
+            string StartHH = this.Request.Form["StartHH"];
+            string StartMM = this.Request.Form["StartMM"];
+            string EndHH = this.Request.Form["EndHH"];
+            string EndMM = this.Request.Form["EndMM"];
+            string SaleName = this.Request.Form["SaleName"];
+            string SaleMobile = this.Request.Form["SaleMobile"];
+            string hddProject = this.Request.Form["hddProject"];
+            string hddEquipmentType = this.Request.Form["hddEquipmentType"];
+            string hddLandType = this.Request.Form["hddLandType"];
+            string hddUndergroundType = this.Request.Form["hddUndergroundType"];
+            string hddObstructionType = this.Request.Form["hddObstructionType"];
+            string hddAttachmentType = this.Request.Form["hddAttachmentType"];
+
+            jobOrder.StartWorkingTime = StartHH + ":" + StartMM;
+            jobOrder.EndWorkingTime = EndHH + ":" + EndMM;
+            jobOrder.JobOrderNo = getJobId();
+            if (Request.Form["StartDate"].ToString() !="")
+            {
+                var dd = Request.Form["StartDate"]+ " 00:00:00";
+
+                jobOrder.StartDate = dd.ParseDate(DateFormat.ddMMyyyyHHmmss,culInfo: _cultureTHInfo);
+            }
+
+            if (Request.Form["EndDate"].ToString() != "")
+            {
+                var dd = Request.Form["EndDate"].Split(' ')[0] + " 00:00:00";
+
+                jobOrder.EndDate = dd.ParseDate(DateFormat.ddMMyyyyHHmmss, culInfo: _cultureTHInfo);
+            }
+
+
+            /*# hddProject
+            # hddEquipmentType
+            # hddLandType
+            # hddUndergroundType
+            # hddObstructionType
+            # hddAttachmentType
+                        */
+
+          
+            try
+            {
+
+                uow.Modules.JobOrder.Set(jobOrder);
+                uow.SaveChanges();
+
+
+
+                #region Project Type
+                projectType = new List<TblJobOrderProjectType>();
+
+                if (hddProject != null && hddProject.Length > 0)
+                {
+                    foreach (string id in hddProject.Split(','))
+                    {
+                        projectType.Add(new TblJobOrderProjectType() { JobOrderId = jobOrder.JobOrderId, ProjectTypeId = id.ParseInt() });
+                    }
+                    jobOrder.ProjectType = projectType;
+
+                }
+                #endregion
+
+                #region EquipmentType 
+                EquipmentType = new List<TblJobOrderEquipmentType>();
+
+                if (hddEquipmentType != null && hddEquipmentType.Length > 0)
+                {
+                    foreach (string id in hddEquipmentType.Split(','))
+                    {
+                        EquipmentType.Add(new TblJobOrderEquipmentType() { JobOrderId = jobOrder.JobOrderId, EquipmentTypeId = id.ParseInt() });
+                    }
+                    jobOrder.EquipmentType = EquipmentType;
+
+                }
+                #endregion
+
+                #region LandType  
+                LandType = new List<TblJobOrderLandType>();
+
+                if (hddLandType != null && hddLandType.Length > 0)
+                {
+                    foreach (string id in hddLandType.Split(','))
+                    {
+                        LandType.Add(new TblJobOrderLandType() { JobOrderId = jobOrder.JobOrderId, LandTypeId = id.ParseInt() });
+                    }
+                    jobOrder.LandType = LandType;
+
+                }
+                #endregion
+
+                #region UndergroundType  
+                UndergroundType = new List<TblJobOrderUndergroundType>();
+
+                if (hddUndergroundType != null && hddUndergroundType.Length > 0)
+                {
+                    foreach (string id in hddUndergroundType.Split(','))
+                    {
+                        UndergroundType.Add(new TblJobOrderUndergroundType() { JobOrderId = jobOrder.JobOrderId, UndergroundTypeId = id.ParseInt() });
+                    }
+                    jobOrder.UndergroundType = UndergroundType;
+
+                }
+                #endregion
+
+                #region ObstructionType  
+                ObstructionType = new List<TblJobOrderObstructionType>();
+
+                if (hddObstructionType != null && hddObstructionType.Length > 0)
+                {
+                    foreach (string id in hddObstructionType.Split(','))
+                    {
+                        ObstructionType.Add(new TblJobOrderObstructionType() { JobOrderId = jobOrder.JobOrderId, ObstructionTypeId = id.ParseInt() });
+                    }
+                    jobOrder.ObstructionType = ObstructionType;
+
+                }
+                #endregion
+
+
+                #region TblJobOrderAttachmentType  
+                AttachmentType = new List<TblJobOrderAttachmentType>();
+
+                if (hddAttachmentType != null && hddAttachmentType.Length > 0)
+                {
+                    foreach (string id in hddAttachmentType.Split(','))
+                    {
+                        AttachmentType.Add(new TblJobOrderAttachmentType() { JobOrderId = jobOrder.JobOrderId, AttachmentTypeId = id.ParseInt() });
+                    }
+                    jobOrder.AttachmentType = AttachmentType;
+
+                }
+                #endregion
+
+
+
+                uow.Modules.JobOrder.Set(jobOrder);
+
+                uow.SaveChanges();
+
+                return RedirectToAction("Detail", MVCController, new { id = jobOrder.JobOrderId, msg = "บันทึกข้อมูลเรียบร้อยแล้ว", msgType = AlertMsgType.Success });
+            }
+            catch (Exception ex)
+            {
+                string msg = ex.GetMessage(true);
+                return ViewDetail(jobOrder, msg, AlertMsgType.Danger);
+            }
+
+
+
+
             return RedirectToAction("Detail", MVCController, new { id = 1, msg = "บันทึกข้อมูลเรียบร้อยแล้ว", msgType = AlertMsgType.Success });
         }
 
@@ -75,10 +266,12 @@ namespace Kemrex.Web.Main.Controllers
             return RedirectToAction("Index", MVCController, new { msg = "ไม่พบข้อมูลที่ต้องการ", msgType = AlertMsgType.Warning });
         }
         #region Private Action
-        private ActionResult ViewDetail(TblSaleOrder ob, string msg, AlertMsgType? msgType)
+        private ActionResult ViewDetail(TblJobOrder ob, string msg, AlertMsgType? msgType)
         {
             try
             {
+                TblSaleOrder saleOrder = null;
+                TblCustomer customer = null;
                 if (ob == null)
                 { throw new Exception("ไม่พบข้อมูลที่ต้องการ, กรุณาลองใหม่อีกครั้ง"); }
 
@@ -89,6 +282,14 @@ namespace Kemrex.Web.Main.Controllers
                     ViewBag.Alert = alert;
                 }
 
+                
+                ViewData["JobOrderDetail"] = uow.Modules.JobOrder.Gets();
+                ViewData["SysCategoryDetail"] = uow.Modules.SysCategory.Gets();
+                ViewData["SaleorderDetail"] = uow.Modules.SaleOrder.Gets();
+                ViewData["Saleorder"] =  saleOrder = uow.Modules.SaleOrder.Get(ob.SaleOrderId.HasValue? ob.SaleOrderId.Value:-1);
+                ViewData["TeamOperation"] = uow.Modules.TeamOperation.Gets();
+                ViewData["optCustomer"] = customer = uow.Modules.Customer.Get(saleOrder.CustomerId.HasValue ? saleOrder.CustomerId.Value : -1);
+            //    ViewData["optCustomerAddress"] = uow.Modules.CustomerAddress.Get(customer.addHasValue ? saleOrder.CustomerId.Value : -1); 
                 return View(ob);
             }
             catch (Exception ex)
@@ -104,48 +305,49 @@ namespace Kemrex.Web.Main.Controllers
 
 
         // This action handles the form POST and the upload
-        [HttpPost]
-        public ActionResult UploadFile()
-        {
-            // Verify that the user selected a file
-            string sid = Request.Form["soId"];
-            string FilePath = "";
-            try
-            {
-                if (Request.Files.Count > 0 && Request.Files["FileAttachment"] != null && Request.Files["FileAttachment"].ContentLength > 0)
-                {
+        /*   [HttpPost]
+         public ActionResult UploadFile()
+          {
+              // Verify that the user selected a file
+              string sid = Request.Form["soId"];
+              string FilePath = "";
+              try
+              {
+                  if (Request.Files.Count > 0 && Request.Files["FileAttachment"] != null && Request.Files["FileAttachment"].ContentLength > 0)
+                  {
 
-                    TblSaleOrderAttachment sa = uow.Modules.SaleOrderAttachment.Get(0);
+                      TblJobOrderAttachment sa = uow.Modules.JobOrderAttachment.Get(0);
 
-                    HttpPostedFileBase uploadedFile = Request.Files["FileAttachment"];
-                    FilePath = string.Format("files/so/{0}", sid);
-                    if (!Directory.Exists(Server.MapPath("~/files"))) { Directory.CreateDirectory(Server.MapPath("~/files")); }
-                    if (!Directory.Exists(Server.MapPath("~/files/so"))) { Directory.CreateDirectory(Server.MapPath("~/files/so")); }
-                    if (!Directory.Exists(Server.MapPath("~/" + FilePath))) { Directory.CreateDirectory(Server.MapPath(FilePath)); }
-                    FilePath += "/" + Path.GetFileName(uploadedFile.FileName);
-                    sa.AttachmentPath = FilePath;
-                    sa.SaleOrderId = int.Parse(sid);
-                    sa.AttachmentRemark = Path.GetExtension(uploadedFile.FileName);
-                    sa.AttachmentOrder = uow.Modules.SaleOrderAttachment.GetLastOrder(int.Parse(sid)) + 1;
-                    uploadedFile.SaveAs(Server.MapPath("~/" + FilePath));
+                      HttpPostedFileBase uploadedFile = Request.Files["FileAttachment"];
+                      FilePath = string.Format("files/so/{0}", sid);
+                      if (!Directory.Exists(Server.MapPath("~/files"))) { Directory.CreateDirectory(Server.MapPath("~/files")); }
+                      if (!Directory.Exists(Server.MapPath("~/files/so"))) { Directory.CreateDirectory(Server.MapPath("~/files/so")); }
+                      if (!Directory.Exists(Server.MapPath("~/" + FilePath))) { Directory.CreateDirectory(Server.MapPath(FilePath)); }
+                      FilePath += "/" + Path.GetFileName(uploadedFile.FileName);
+                      sa.AttachmentPath = FilePath;
+                      sa.JobOrderId = int.Parse(sid);
+                      sa.AttachmentRemark = Path.GetExtension(uploadedFile.FileName);
+                      sa.AttachmentOrder = uow.Modules.JobOrderAttachment.GetLastOrder(int.Parse(sid)) + 1;
+                      uploadedFile.SaveAs(Server.MapPath("~/" + FilePath));
 
-                    uow.Modules.SaleOrderAttachment.Set(sa);
-                    uow.SaveChanges();
-                }
-                else
-                {
-                    string msg = "ไม่พบไฟล์แนบ";
-                    return RedirectToAction("Detail", MVCController, new { id = sid, tab = "Attachment", fi = FilePath, msg, msgType = AlertMsgType.Danger });
-                }
-            }
-            catch (Exception ex)
-            {
-                string msg = ex.GetMessage(true);
-                return RedirectToAction("Detail", MVCController, new { id = sid, tab = "Attachment", fi = FilePath, msg, msgType = AlertMsgType.Danger });
-            }
-            // redirect back to the index action to show the form once again
-            return RedirectToAction("Detail", MVCController, new { id = sid, tab = "Attachment", msg = "", msgType = AlertMsgType.Success });
-        }
+                      uow.Modules.JobOrderAttachment.Set(sa);
+                      uow.SaveChanges();
+                  }
+                  else
+                  {
+                      string msg = "ไม่พบไฟล์แนบ";
+                      return RedirectToAction("Detail", MVCController, new { id = sid, tab = "Attachment", fi = FilePath, msg, msgType = AlertMsgType.Danger });
+                  }
+              }
+              catch (Exception ex)
+              {
+                  string msg = ex.GetMessage(true);
+                  return RedirectToAction("Detail", MVCController, new { id = sid, tab = "Attachment", fi = FilePath, msg, msgType = AlertMsgType.Danger });
+              }
+              // redirect back to the index action to show the form once again
+              return RedirectToAction("Detail", MVCController, new { id = sid, tab = "Attachment", msg = "", msgType = AlertMsgType.Success });
+          }
+         
         [HttpPost]
         public ActionResult DeleteFile()
         {
@@ -157,11 +359,12 @@ namespace Kemrex.Web.Main.Controllers
             if (!string.IsNullOrWhiteSpace(atname) && IOFile.Exists(Server.MapPath("~/" + atname)))
             { IOFile.Delete(Server.MapPath("~/" + atname)); }
             // Delete database
-            uow.Modules.SaleOrderAttachment.Delete(int.Parse(atid));
+            uow.Modules.JobOrderAttachment.Delete(int.Parse(atid));
             uow.SaveChanges();
 
             return RedirectToAction("Detail", MVCController, new { id = sid, tab = "Attachment", msg = "", msgType = AlertMsgType.Success });
         }
+         */
         #endregion
     }
 }

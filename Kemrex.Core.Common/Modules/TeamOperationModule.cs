@@ -59,6 +59,17 @@ namespace Kemrex.Core.Common.Modules
             return data.ToList();
         }
 
+
+        public List<TeamOperation> GetAll()
+        {
+            var data = db.TeamOperation;
+              //  .Include(x => x.Manager)
+               // .Include(x => x.TeamOperationDetail)
+                //.AsQueryable();
+        
+            return data.ToList();
+        }
+
         public List<SysAccount> GetNotMembers(string src = "")
         {
             var data = db.SysAccount

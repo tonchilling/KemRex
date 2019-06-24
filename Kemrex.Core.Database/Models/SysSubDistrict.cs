@@ -8,6 +8,7 @@ namespace Kemrex.Core.Database.Models
         public SysSubDistrict()
         {
             TblCustomerAddress = new HashSet<TblCustomerAddress>();
+            TblJobOrder = new HashSet<TblJobOrder>();
             TblKpt = new HashSet<TblKpt>();
         }
 
@@ -20,6 +21,7 @@ namespace Kemrex.Core.Database.Models
 
         public virtual SysDistrict District { get; set; }
         public virtual ICollection<TblCustomerAddress> TblCustomerAddress { get; set; }
+        public virtual ICollection<TblJobOrder> TblJobOrder { get; set; }
         public virtual ICollection<TblKpt> TblKpt { get; set; }
     }
 }

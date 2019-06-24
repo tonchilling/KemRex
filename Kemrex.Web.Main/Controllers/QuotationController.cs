@@ -58,6 +58,7 @@ namespace Kemrex.Web.Main.Controllers
         public ActionResult Detail(int? id, string msg, AlertMsgType? msgType)
         {
             TblQuotation ob = uow.Modules.Quotation.Get(id ?? 0);
+           
             return ViewDetail(ob, msg, msgType);
         }
 

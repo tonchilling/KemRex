@@ -60,6 +60,7 @@ namespace Kemrex.Core.Database
         public virtual DbSet<TblDepartmentPosition> TblDepartmentPosition { get; set; }
         public virtual DbSet<TblEmployee> TblEmployee { get; set; }
         public virtual DbSet<TblInvoice> TblInvoice { get; set; }
+        public virtual DbSet<TblJobOrder> TblJobOrder { get; set; }
         public virtual DbSet<TblJobOrderAttachmentType> TblJobOrderAttachmentType { get; set; }
         public virtual DbSet<TblJobOrderEquipmentType> TblJobOrderEquipmentType { get; set; }
         public virtual DbSet<TblJobOrderLandType> TblJobOrderLandType { get; set; }
@@ -790,6 +791,65 @@ namespace Kemrex.Core.Database
                     .HasForeignKey(d => d.SaleOrderId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_TblInvoice_SaleOrder");
+            });
+
+            modelBuilder.Entity<TblJobOrder>(entity =>
+            {
+                entity.HasKey(e => e.JobOrderId)
+                    .HasName("PK__TblJobOr__EACFC526C19E50C7");
+
+                entity.Property(e => e.JobOrderId).HasColumnName("JobOrderID");
+
+                entity.Property(e => e.Adapter).HasMaxLength(100);
+
+                entity.Property(e => e.CustomerEmail).HasMaxLength(50);
+
+                entity.Property(e => e.CustomerName).HasMaxLength(50);
+
+                entity.Property(e => e.CustomerPhone).HasMaxLength(50);
+
+                entity.Property(e => e.EndDate).HasColumnType("datetime");
+
+                entity.Property(e => e.EndWorkingTime).HasMaxLength(10);
+
+                entity.Property(e => e.HouseNo).HasMaxLength(50);
+
+                entity.Property(e => e.JobName).HasMaxLength(50);
+
+                entity.Property(e => e.JobOrderNo).HasMaxLength(50);
+
+                entity.Property(e => e.Other).HasMaxLength(100);
+
+                entity.Property(e => e.ProductSaftyFactory).HasMaxLength(50);
+
+                entity.Property(e => e.ProductWeight).HasColumnType("decimal(8, 2)");
+
+                entity.Property(e => e.ProjectName).HasMaxLength(100);
+
+                entity.Property(e => e.Reason).HasMaxLength(100);
+
+                entity.Property(e => e.Solution).HasMaxLength(100);
+
+                entity.Property(e => e.StartDate).HasColumnType("datetime");
+
+                entity.Property(e => e.StartWorkingTime).HasMaxLength(10);
+
+                entity.Property(e => e.VillageNo).HasMaxLength(50);
+
+                entity.HasOne(d => d.SaleOrder)
+                    .WithMany(p => p.TblJobOrder)
+                    .HasForeignKey(d => d.SaleOrderId)
+                    .HasConstraintName("FK__TblJobOrd__SaleO__3EE740E8");
+
+                entity.HasOne(d => d.SubDistrict)
+                    .WithMany(p => p.TblJobOrder)
+                    .HasForeignKey(d => d.SubDistrictId)
+                    .HasConstraintName("FK__TblJobOrd__SubDi__3FDB6521");
+
+                entity.HasOne(d => d.Team)
+                    .WithMany(p => p.TblJobOrder)
+                    .HasForeignKey(d => d.TeamId)
+                    .HasConstraintName("FK__TblJobOrd__TeamI__477C86E9");
             });
 
             modelBuilder.Entity<TblJobOrderAttachmentType>(entity =>

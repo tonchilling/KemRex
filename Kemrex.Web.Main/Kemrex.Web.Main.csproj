@@ -1138,6 +1138,7 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\AccountController.cs" />
+    <Compile Include="Controllers\api\CommonController.cs" />
     <Compile Include="Controllers\api\SaleOrderServiceController.cs" />
     <Compile Include="Controllers\AuthenController.cs" />
     <Compile Include="Controllers\CalendarController.cs" />
