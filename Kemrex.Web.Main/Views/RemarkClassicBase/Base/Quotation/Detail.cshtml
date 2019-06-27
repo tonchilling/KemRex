@@ -445,23 +445,37 @@ optEmployee = (List<TblEmployee>
                         <li class="tab-link current" data-tab="tab-1">ข้อมูลพื้นฐาน</li>
                         @if (Model.QuotationId > 0)
                         {
-                        <li class="tab-link" data-tab="tab-2">รายการสินค้า</li>
+                            <li class="tab-link" data-tab="tab-2">รายการสินค้า</li>
                         }
-                        </ul>
+                    </ul>
+                    
                     <div id="tab-1" class="tab-content current">
 
                         <div class="card-block" id="navInfo" data-tab-page="navInfo">
+
                             <div class="col-12">
+                                <table width="100%" style="margin:-10px 0 0 0;">
+                                    <tr>
+                                        <td align="right">
+                                            <div style="text-align:right;">
+                                                <a href="@Url.Action("PDFQuatation", new { controller = "export", area = "", id = Model.QuotationId  })"
+                                                   class="btn btn-xs btn-warning">
+                                                    <i class="fa fa-file-pdf-o" aria-hidden="true"></i>&nbsp;PDF
+                                                </a>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </table>
                                 <div class="panel">
                                     <form method="post" action="@Url.Action("Detail", "Quotation")" enctype="multipart/form-data">
                                         @Html.AntiForgeryToken()
                                         <input type="hidden" name="QuotationId" value="@Model.QuotationId" />
+
                                         <div class="panel-body">
                                             <div class="row">
-
                                                 @*Left panel*@
-
                                                 <div class="col-md-6">
+
                                                     <div class="form-group">
                                                         <label for="QuotationNo" class="col-sm-4 col-form-label">เลขที่ใบเสนอราคา</label>
                                                         <div class="col-sm-6">
@@ -656,175 +670,175 @@ optEmployee = (List<TblEmployee>
                         </div>
                     </div>
                     <div id="tab-2" class="tab-content">
-                      
-                         <div class="card-block" id="navProducts" data-tab-page="navProducts">
-                        <div class="col-12">
-                            <div class="panel">
-                                <div class="panel-heading">
-                                    <h3 class="panel-title">
-                                        รายการสินค้า&nbsp;
-                                    </h3>
-                                </div>
-                                <div class="panel-body">
-                                    <div class="row">
-                                        <div class="col-12">
-                                            <div class="table-responsive">
-                                                <table class="table table-hover table-striped">
-                                                    <thead>
-                                                        <tr>
-                                                            <th>สินค้า</th>
-                                                            <th>จำนวน</th>
-                                                            <th>ราคา</th>
-                                                            <th>ส่วนลด</th>
-                                                            <th>รวม</th>
-                                                            <th>รวม VAT(7%)</th>
-                                                            <th>เครื่องมือ</th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                        @if (Model.TblQuotationDetail.Count() <= 0)
-                                                        {
+
+                        <div class="card-block" id="navProducts" data-tab-page="navProducts">
+                            <div class="col-12">
+                                <div class="panel">
+                                    <div class="panel-heading">
+                                        <h3 class="panel-title">
+                                            รายการสินค้า&nbsp;
+                                        </h3>
+                                    </div>
+                                    <div class="panel-body">
+                                        <div class="row">
+                                            <div class="col-12">
+                                                <div class="table-responsive">
+                                                    <table class="table table-hover table-striped">
+                                                        <thead>
                                                             <tr>
-                                                                <td colspan="7">ไม่พบข้อมูล</td>
+                                                                <th>สินค้า</th>
+                                                                <th>จำนวน</th>
+                                                                <th>ราคา</th>
+                                                                <th>ส่วนลด</th>
+                                                                <th>รวม</th>
+                                                                <th>รวม VAT(7%)</th>
+                                                                <th>เครื่องมือ</th>
                                                             </tr>
-                                                        }
-                                                        @foreach (var ob in Model.TblQuotationDetail)
-                                                        {
-                                                            <tr>
-                                                                <td>@ob.Product.ProductCode @ob.Product.ProductName</td>
-                                                                <td>@ob.Quantity</td>
-                                                                <td>@ob.PriceNet.ToString("#,#0.00")</td>
-                                                                <td>@ob.DiscountNet.ToString("#,#0.00")</td>
-                                                                <td>@ob.TotalNet.Value.ToString("#,#0.00")</td>
-                                                                <td>@ob.TotalTot.Value.ToString("#,#0.00")</td>
-                                                                <td>
-                                                                    <form method="post" action="@Url.Action("DetailDelete", new { controller = "Quotation" })"
-                                                                          class="fnc-delete inline-block">
-                                                                        <input type="hidden" name="QuotationId" value="@Model.QuotationId" />
-                                                                        <input type="hidden" name="Id" value="@ob.Id" />
-                                                                        @* @Html.AntiForgeryToken()*@
-                                                                        <button type="submit" class="btn btn-danger btn-xs"><i class="fa fa-trash" aria-hidden="true"></i>&nbsp;ลบ</button>
-                                                                    </form>
-                                                                </td>
-                                                            </tr>
-                                                        }
-                                                    </tbody>
-                                                </table>
+                                                        </thead>
+                                                        <tbody>
+                                                            @if (Model.TblQuotationDetail.Count() <= 0)
+                                                            {
+                                                                <tr>
+                                                                    <td colspan="7">ไม่พบข้อมูล</td>
+                                                                </tr>
+                                                            }
+                                                            @foreach (var ob in Model.TblQuotationDetail)
+                                                            {
+                                                                <tr>
+                                                                    <td>@ob.Product.ProductCode @ob.Product.ProductName</td>
+                                                                    <td>@ob.Quantity</td>
+                                                                    <td>@ob.PriceNet.ToString("#,#0.00")</td>
+                                                                    <td>@ob.DiscountNet.ToString("#,#0.00")</td>
+                                                                    <td>@ob.TotalNet.Value.ToString("#,#0.00")</td>
+                                                                    <td>@ob.TotalTot.Value.ToString("#,#0.00")</td>
+                                                                    <td>
+                                                                        <form method="post" action="@Url.Action("DetailDelete", new { controller = "Quotation" })"
+                                                                              class="fnc-delete inline-block">
+                                                                            <input type="hidden" name="QuotationId" value="@Model.QuotationId" />
+                                                                            <input type="hidden" name="Id" value="@ob.Id" />
+                                                                            @* @Html.AntiForgeryToken()*@
+                                                                            <button type="submit" class="btn btn-danger btn-xs"><i class="fa fa-trash" aria-hidden="true"></i>&nbsp;ลบ</button>
+                                                                        </form>
+                                                                    </td>
+                                                                </tr>
+                                                            }
+                                                        </tbody>
+                                                    </table>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
-                                </div>
-                                <div class="panel-footer">
-                                    <div class="row">
-                                        <div class="col-12">
-                                            <form method="post" action="@Url.Action("AddProduct", "Quotation")" enctype="multipart/form-data">
-                                                <input type="hidden" name="QuotationId" value="@Model.QuotationId" />         <div class="row">
-                                                    <div class="col-4 col-md-4 form-group">
-                                                        <label for="PileId" class="form-control-label">รหัสสินค้า</label>
-                                                        <select class="form-control" id="selProduct" data-live-search="true"
-                                                                name="selProduct">
-                                                            <option value="">กรุณาเลือก</option>
-                                                       
+                                    <div class="panel-footer">
+                                        <div class="row">
+                                            <div class="col-12">
+                                                <form method="post" action="@Url.Action("AddProduct", "Quotation")" enctype="multipart/form-data">
+                                                    <input type="hidden" name="QuotationId" value="@Model.QuotationId" />         <div class="row">
+                                                        <div class="col-4 col-md-4 form-group">
+                                                            <label for="PileId" class="form-control-label">รหัสสินค้า</label>
+                                                            <select class="form-control" id="selProduct" data-live-search="true"
+                                                                    name="selProduct">
+                                                                <option value="">กรุณาเลือก</option>
+
                                                                 @foreach (var it in optProduct)
                                                                 {
                                                                     <option value="@it.ProductId:@it.PriceNet">@it.ProductCode @it.ProductName [@it.PriceNet]  Qty:@it.QtyStock</option>
                                                                 }
-                                                     
 
 
-                                                            </select >
-                                                            </div><div class="col-2 col-md-2 form-group">
+
+                                                            </select>
+                                                        </div><div class="col-2 col-md-2 form-group">
                                                             <label for="Qty" class="form-control-label">จำนวน</label>
                                                             <input type="number" class="form-control" id="ProductQty" name="ProductQty" value="1" />
-</div>
-                                                                                                    <div class="col-2 col-md-2 form-group">
-                                                                                                        <label for="Price" class="form-control-label">ราคา</label>
-                                                                                                        <input type = "text" class="form-control Number" id="ProductPrice" name="ProductPrice" />
-                                                                                                    </div>
-                                                                                                    <div class="col-2 col-md-2 form-group">
-                                                                                                        <label for="Discount" class="form-control-label">ส่วนลด</label>
-                                                                                                        <input type = "text" class="form-control Number" id="ProductDiscount" name="ProductDiscount" />
-                                                                                                    </div>
-                                                                                                </div>
+                                                        </div>
+                                                        <div class="col-2 col-md-2 form-group">
+                                                            <label for="Price" class="form-control-label">ราคา</label>
+                                                            <input type="text" class="form-control Number" readonly id="ProductPrice" name="ProductPrice" />
+                                                        </div>
+                                                        <div class="col-2 col-md-2 form-group">
+                                                            <label for="Discount" class="form-control-label">ส่วนลด</label>
+                                                            <input type="text" class="form-control Number" id="ProductDiscount" name="ProductDiscount" />
+                                                        </div>
+                                                    </div>
 
-                                                                                                <button type = "submit" id="btnAddProduct" class="btn btn-primary">เพิ่ม</button>&nbsp;
-</form>
+                                                    <button type="submit" id="btnAddProduct" class="btn btn-primary">เพิ่ม</button>&nbsp;
+                                                </form>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="panel">
+                                <div class="panel">
 
-                                <div class="col-md-auto">
-                                    ผลรวม
-                                    <hr size=2>
-                                    <form method="post" action="@Url.Action("saveDiscount", "Quotation")" enctype="multipart/form-data">
-                                        <input type="hidden" name="QuotationId" value="@Model.QuotationId" />
-                                        <div class="form-group row">
-                                            <label for="SubTotal" class="col-sm-5 col-form-label">ยอดก่อนลด</label>
-                                            <div class="col-sm-6">
-                                                <input type="text" class="form-control" id="SubTotal" name="SubTotalNet"
-                                                       style="text-align: right"
-                                                       value="@(Model.SubTotalNet.HasValue?Model.SubTotalNet.Value.ToString("#,#0.00"):"0")" readonly />
-                                            </div>
-                                        </div>
-                                        <div class="form-group row">
-                                            <label for="Discount" class="col-sm-5 col-form-label">ส่วนลดในรายการ</label>
-                                            <div class="col-sm-6">
-                                                <input type="text" class="form-control" id="Discount"
-                                                       style="text-align: right"
-                                                       value="@(Model.DiscountNet.HasValue?Model.DiscountNet.Value.ToString("#,#0.00"):"0")" readonly />
-                                            </div>
-                                        </div>
-                                        <div class="form-group row">
-                                            <label for="TotalDiscount" class="col-sm-5 col-form-label">ยอดหลังหักส่วนลด</label>
-                                            <div class="col-sm-6">
-                                                <input type="text" class="form-control" id="TotalDiscount" style="text-align: right" value="@(Model.SummaryNet.HasValue?Model.SummaryNet.Value.ToString("#,#0.00"):"0")" readonly />
-                                            </div>
-                                        </div>
-                                        <div class="form-group row">
-                                            <label for="Vat" class="col-sm-5 col-form-label">อัตราภาษี(7%)</label>
-                                            <div class="col-sm-6">
-                                                <input type="text" class="form-control" id="Vat"
-                                                       style="text-align: right"
-                                                       value="@(Model.SummaryVat.HasValue?Model.SummaryVat.Value.ToString("#,#0.00"):"0")" readonly />
-                                            </div>
-                                        </div>
-                                        <div class="form-group row">
-                                            <label for="Discount" class="col-sm-5 col-form-label">ส่วนลดเงินสด</label>
-                                            <div class="col-sm-6">
-                                                <input type="text" class="form-control" id="DiscountCash" name="DiscountCash"
-                                                       style="text-align: right"
-                                                       value="@(Model.DiscountCash!=null?Model.DiscountCash.ToString("#,#0.00"):"0")" onChange="calDiscount()" />
-                                            </div>
-                                        </div>
-                                        <div class="form-group row">
-                                            <label for="Total" class="col-sm-5 col-form-label">จำนวนทั้งสิ้น</label>
-                                            <div class="col-sm-6">
-                                                <input type="text" class="form-control" id="SummaryTot"
-                                                       style="text-align: right"
-                                                       value="@(Model.SummaryTot.HasValue?Model.SummaryTot.Value.ToString("#,#0.00"):"0")" readonly />
-                                            </div>
-                                        </div>
-                                        <div class="row">
-                                            <div class="col-12">
-                                                <div class="form-group">
-                                                    <button type="submit" class="btn btn-primary">บันทึก/ส่วนลด</button>&nbsp;
-                                                    <a href="@Url.Action("Detail", "Quotation" )" class="btn btn-default">ยกเลิก</a>
+                                    <div class="col-md-auto">
+                                        ผลรวม
+                                        <hr size=2>
+                                        <form method="post" action="@Url.Action("saveDiscount", "Quotation")" enctype="multipart/form-data">
+                                            <input type="hidden" name="QuotationId" value="@Model.QuotationId" />
+                                            <div class="form-group row">
+                                                <label for="SubTotal" class="col-sm-5 col-form-label">ยอดก่อนลด</label>
+                                                <div class="col-sm-6">
+                                                    <input type="text" class="form-control" id="SubTotal" name="SubTotalNet"
+                                                           style="text-align: right"
+                                                           value="@(Model.SubTotalNet.HasValue?Model.SubTotalNet.Value.ToString("#,#0.00"):"0")" readonly />
                                                 </div>
                                             </div>
-                                        </div>
-                                    </form>
+                                            <div class="form-group row">
+                                                <label for="Discount" class="col-sm-5 col-form-label">ส่วนลดในรายการ</label>
+                                                <div class="col-sm-6">
+                                                    <input type="text" class="form-control" id="Discount"
+                                                           style="text-align: right"
+                                                           value="@(Model.DiscountNet.HasValue?Model.DiscountNet.Value.ToString("#,#0.00"):"0")" readonly />
+                                                </div>
+                                            </div>
+                                            <div class="form-group row">
+                                                <label for="TotalDiscount" class="col-sm-5 col-form-label">ยอดหลังหักส่วนลด</label>
+                                                <div class="col-sm-6">
+                                                    <input type="text" class="form-control" id="TotalDiscount" style="text-align: right" value="@(Model.SummaryNet.HasValue?Model.SummaryNet.Value.ToString("#,#0.00"):"0")" readonly />
+                                                </div>
+                                            </div>
+                                            <div class="form-group row">
+                                                <label for="Vat" class="col-sm-5 col-form-label">อัตราภาษี(7%)</label>
+                                                <div class="col-sm-6">
+                                                    <input type="text" class="form-control" id="Vat"
+                                                           style="text-align: right"
+                                                           value="@(Model.SummaryVat.HasValue?Model.SummaryVat.Value.ToString("#,#0.00"):"0")" readonly />
+                                                </div>
+                                            </div>
+                                            <div class="form-group row">
+                                                <label for="Discount" class="col-sm-5 col-form-label">ส่วนลดเงินสด</label>
+                                                <div class="col-sm-6">
+                                                    <input type="text" class="form-control" id="DiscountCash" name="DiscountCash"
+                                                           style="text-align: right"
+                                                           value="@(Model.DiscountCash!=null?Model.DiscountCash.ToString("#,#0.00"):"0")" onChange="calDiscount()" />
+                                                </div>
+                                            </div>
+                                            <div class="form-group row">
+                                                <label for="Total" class="col-sm-5 col-form-label">จำนวนทั้งสิ้น</label>
+                                                <div class="col-sm-6">
+                                                    <input type="text" class="form-control" id="SummaryTot"
+                                                           style="text-align: right"
+                                                           value="@(Model.SummaryTot.HasValue?Model.SummaryTot.Value.ToString("#,#0.00"):"0")" readonly />
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-12">
+                                                    <div class="form-group">
+                                                        <button type="submit" class="btn btn-primary">บันทึก/ส่วนลด</button>&nbsp;
+                                                        <a href="@Url.Action("Detail", "Quotation" )" class="btn btn-default">ยกเลิก</a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    </div>
 
 
-                
 
-                  
+
+
 
                     @*Panel Address*@
                     <div class="card-block" data-tab-page="navAddress">
@@ -834,7 +848,7 @@ optEmployee = (List<TblEmployee>
 
                     @*panel Add Product*@
 
-                   
+
                     @*End panel Add product*@
                 </div>
             </div>
