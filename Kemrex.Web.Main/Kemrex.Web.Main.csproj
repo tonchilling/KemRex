@@ -1139,6 +1139,7 @@
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\api\CommonController.cs" />
+    <Compile Include="Controllers\api\DefaultController.cs" />
     <Compile Include="Controllers\api\SaleOrderServiceController.cs" />
     <Compile Include="Controllers\AuthenController.cs" />
     <Compile Include="Controllers\CalendarController.cs" />
@@ -1148,6 +1149,8 @@
     <Compile Include="Controllers\CustomerGroupController.cs" />
     <Compile Include="Controllers\DepartmentController.cs" />
     <Compile Include="Controllers\EmployeeController.cs" />
+    <Compile Include="Controllers\EmptyController.cs" />
+    <Compile Include="Controllers\ExportController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\InvoiceController.cs" />
     <Compile Include="Controllers\JobOrderController.cs" />
@@ -1161,6 +1164,7 @@
     <Compile Include="Controllers\QuotationController.cs" />
     <Compile Include="Controllers\RoleController.cs" />
     <Compile Include="Controllers\SaleOrderController.cs" />
+    <Compile Include="Controllers\StockController.cs" />
     <Compile Include="Controllers\SystemController.cs" />
     <Compile Include="Controllers\TeamOperationController.cs" />
     <Compile Include="Controllers\TeamSaleController.cs" />
