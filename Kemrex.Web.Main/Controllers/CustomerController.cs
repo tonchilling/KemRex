@@ -173,6 +173,20 @@ namespace Kemrex.Web.Main.Controllers
                 });
             }
         }
+
+        [HttpGet]
+
+        public JsonResult GetCustomer(int id)
+        {
+
+         
+             TblCustomer objCustomer = uow.Modules.Customer.GetByCondition(id);
+
+
+
+            return Json(objCustomer, JsonRequestBehavior.AllowGet);
+        }
+
         #endregion
     }
 }

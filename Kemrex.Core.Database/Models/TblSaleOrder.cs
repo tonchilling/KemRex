@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-
+using System.ComponentModel.DataAnnotations.Schema;
 namespace Kemrex.Core.Database.Models
 {
     public partial class TblSaleOrder
@@ -8,7 +8,7 @@ namespace Kemrex.Core.Database.Models
         public TblSaleOrder()
         {
             TblInvoice = new HashSet<TblInvoice>();
-            TblJobOrder = new HashSet<TblJobOrder>();
+            
             TblSaleOrderAttachment = new HashSet<TblSaleOrderAttachment>();
             TblSaleOrderDetail = new HashSet<TblSaleOrderDetail>();
         }
@@ -33,6 +33,9 @@ namespace Kemrex.Core.Database.Models
         public int StatusId { get; set; }
         public long CreatedBy { get; set; }
         public DateTime CreatedDate { get; set; }
+
+        [NotMapped]
+        public virtual string CreatedDateToString { get; set; }
         public long UpdatedBy { get; set; }
         public DateTime UpdateDate { get; set; }
         public string CancelReason { get; set; }
@@ -47,13 +50,21 @@ namespace Kemrex.Core.Database.Models
         public decimal? SummaryVat { get; set; }
         public decimal? SummaryTot { get; set; }
         public DateTime? DeliveryDate { get; set; }
+        [NotMapped]
+        public virtual string DeliveryDateToString { get; set; }
+        [NotMapped]
+        public virtual int HasJob { get; set; }
         public int SaleOrderCreditDay { get; set; }
-
+        public  TblEmployee Sale { get; set; }
         public virtual TblCustomer Customer { get; set; }
-        public virtual TeamOperation Team { get; set; }
+        public virtual TblJobOrder JobOrder { get; set; }
         public virtual ICollection<TblInvoice> TblInvoice { get; set; }
-        public virtual ICollection<TblJobOrder> TblJobOrder { get; set; }
+       
         public virtual ICollection<TblSaleOrderAttachment> TblSaleOrderAttachment { get; set; }
         public virtual ICollection<TblSaleOrderDetail> TblSaleOrderDetail { get; set; }
+       
     }
+
+
+
 }

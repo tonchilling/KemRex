@@ -38,6 +38,9 @@ optEmployee = (List<TblEmployee>
     List<TblSaleOrderAttachment> optAttachment = (List<TblSaleOrderAttachment>
         )ViewData["optAttachment"];
 
+    List<TeamOperation> optTeam = (List<TeamOperation>
+     )ViewData["optTeam"];
+
 }
 
 @section Styles {
@@ -618,7 +621,7 @@ optEmployee = (List<TblEmployee>
                                                     <label for="CreateDate" class="col-sm-5 col-form-label">วันที่ออกเอกสาร</label>
                                                     <div class="input-group col-sm-6">
 
-                                                        <input type="text" class="form-control" name="CreatedDate" value="@Model.CreatedDate" readonly  autocomplete="off" />
+                                                        <input type="text" class="form-control" name="CreatedDate" value="@Model.CreatedDate" readonly autocomplete="off" />
                                                         <span class="input-group-addon">
                                                             <i class="icon wb-calendar icon-2-5x text-success" aria-hidden="true"></i>
                                                         </span>
@@ -672,11 +675,13 @@ optEmployee = (List<TblEmployee>
                                                                 <option value="@it.ConditionId" @(selected ? " selected=\" selected\"" : "" )>@it.ConditionName</option>
                                                             }
                                                             @*<option value="1" @(Model.ConditionId == 1 ? " selected=\" selected\"" : "" )>จ่าย 100% หลังติดตั้งงาน</option>
-                                                                <option value="2" @(Model.ConditionId == 2 ? " selected=\" selected\"" : "" )>มัดจำ 100% ก่อนติดตั้งงาน</option>
-                                                                <option value="3" @(Model.ConditionId == 3 ? " selected=\" selected\"" : "" )>2 งวด 50/50</option>*@
+                    <option value="2" @(Model.ConditionId == 2 ? " selected=\" selected\"" : "" )>มัดจำ 100% ก่อนติดตั้งงาน</option>
+                    <option value="3" @(Model.ConditionId == 3 ? " selected=\" selected\"" : "" )>2 งวด 50/50</option>*@
                                                         </select>
                                                     </div>
                                                 </div>
+
+                                             
 
                                                 <div class="form-group">
                                                     <label for="CreditDate" class="col-sm-5 col-form-label">จำนวนวันเครดิต</label>
@@ -704,6 +709,10 @@ optEmployee = (List<TblEmployee>
                                                 <div class="form-group">
                                                     <button type="submit" id="btnNextStep" class="btn btn-primary">@(Model.SaleOrderId > 0 ? "บันทึก" : "ต่อไป")</button>&nbsp;
                                                     <a href="@Url.Action("Index", "SaleOrder" )" class="btn btn-default">ยกเลิก</a>
+                                                    @if(Model.SaleOrderId > 0)
+                                                    { 
+                                                    <a href="@Url.Action("Detail", new { controller="JobOrder" , area="" , SaleOrderId=Model.SaleOrderId } )" class="btn btn-success">สร้างใบสั่งงาน</a>
+                                                    }
                                                 </div>
                                             </div>
                                         </div>

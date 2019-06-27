@@ -46,6 +46,9 @@ namespace Kemrex.Core.Common.Modules
                 .FirstOrDefault() ?? new TeamSale();
         }
 
+       
+
+
         public List<TeamSale> Gets(int page = 1, int size = 0
             , string src = "", int managerId = 0)
         {

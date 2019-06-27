@@ -3,6 +3,7 @@ using Kemrex.Core.Database;
 using Kemrex.Core.Database.Models;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
+using Kemrex.Core.Common.Helper;
 using System.Linq;
 
 namespace Kemrex.Core.Common.Modules
@@ -73,6 +74,9 @@ namespace Kemrex.Core.Common.Modules
             , string src = "", int id = 0)
         {
             var data = db.TblJobOrder
+
+
+           
               /*  .Include(x => x.AttachmentType.Where(o => o.JobOrderId == id))
                .Include(x => x.EquipmentType.Where(o => o.JobOrderId == id))
                  .Include(x => x.LandType.Where(o => o.JobOrderId == id))
@@ -84,6 +88,12 @@ namespace Kemrex.Core.Common.Modules
                 .OrderBy(x => x.JobName);
             if (size > 0)
             { data = data.Skip((page - 1) * size).Take(size); }
+
+            foreach (TblJobOrder job in data)
+            {
+                job.CreateDateToString = Converting.ToDDMMYYYY(job.CreateDate);
+
+            }
             return data.ToList();
         }
 

@@ -121,7 +121,15 @@ namespace Kemrex.Web.Main.Controllers
 
             jobOrder.StartWorkingTime = StartHH + ":" + StartMM;
             jobOrder.EndWorkingTime = EndHH + ":" + EndMM;
-            jobOrder.JobOrderNo = getJobId();
+            if (JobOrderId == "" || JobOrderId == "0")
+            {
+                jobOrder.JobOrderNo = getJobId();
+                jobOrder.CreateDate = DateTime.Now;
+            }
+            else {
+                jobOrder.UpdateDate = DateTime.Now;
+            }
+            
             if (Request.Form["StartDate"].ToString() !="")
             {
                 var dd = Request.Form["StartDate"]+ " 00:00:00";
@@ -136,6 +144,7 @@ namespace Kemrex.Web.Main.Controllers
                 jobOrder.EndDate = dd.ParseDate(DateFormat.ddMMyyyyHHmmss, culInfo: _cultureTHInfo);
             }
 
+            
 
             /*# hddProject
             # hddEquipmentType
@@ -145,7 +154,7 @@ namespace Kemrex.Web.Main.Controllers
             # hddAttachmentType
                         */
 
-          
+
             try
             {
 
