@@ -10,5 +10,6 @@ namespace Kemrex.Web.Main.Models
     {
         public DateTime Date { get; set; }
         public List<TblSaleOrder> Jobs { get; set; }
+      
     }
 }

@@ -836,10 +836,11 @@ namespace Kemrex.Core.Database
 
                 entity.Property(e => e.VillageNo).HasMaxLength(50);
 
-                entity.HasOne(d => d.SaleOrder)
+            /*    entity.HasOne(d => d.SaleOrder)
                     .WithMany(p => p.TblJobOrder)
                     .HasForeignKey(d => d.SaleOrderId)
                     .HasConstraintName("FK__TblJobOrd__SaleO__3EE740E8");
+                    */
 
                 entity.HasOne(d => d.SubDistrict)
                     .WithMany(p => p.TblJobOrder)
@@ -1322,10 +1323,10 @@ namespace Kemrex.Core.Database
 
                 entity.Property(e => e.UpdateDate).HasColumnType("datetime");
 
-                entity.HasOne(d => d.Customer)
+              /*  entity.HasOne(d => d.Customer)
                     .WithMany(p => p.TblQuotation)
                     .HasForeignKey(d => d.CustomerId)
-                    .HasConstraintName("FK_TblQuotation_Customer");
+                    .HasConstraintName("FK_TblQuotation_Customer");*/
 
                 entity.HasOne(d => d.Sale)
                     .WithMany(p => p.TblQuotation)
@@ -1449,15 +1450,15 @@ namespace Kemrex.Core.Database
 
                 entity.Property(e => e.UpdateDate).HasColumnType("datetime");
 
-                entity.HasOne(d => d.Customer)
+             /*   entity.HasOne(d => d.Customer)
                     .WithMany(p => p.TblSaleOrder)
                     .HasForeignKey(d => d.CustomerId)
-                    .HasConstraintName("FK_TblSaleOrder_Customer");
+                    .HasConstraintName("FK_TblSaleOrder_Customer");*/
 
-                entity.HasOne(d => d.Team)
+             /*   entity.HasOne(d => d.Team)
                     .WithMany(p => p.TblSaleOrder)
                     .HasForeignKey(d => d.TeamId)
-                    .HasConstraintName("FK__TblSaleOrder__Team");
+                    .HasConstraintName("FK__TblSaleOrder__Team");*/
             });
 
             modelBuilder.Entity<TblSaleOrderAttachment>(entity =>

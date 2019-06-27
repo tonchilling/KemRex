@@ -46,6 +46,19 @@ namespace Kemrex.Core.Common.Modules
                     TblCustomerContact = new List<TblCustomerContact>()
                 };
         }
+        public TblCustomer GetByCondition(int id)
+        {
+            return db.TblCustomer
+                .Where(x => x.CustomerId == id)
+              
+                .FirstOrDefault() ?? new TblCustomer()
+                {
+                    Group = new TblCustomerGroup(),
+                    TblCustomerAddress = new List<TblCustomerAddress>(),
+                    TblCustomerContact = new List<TblCustomerContact>()
+                };
+        }
+
         public List<TblCustomer> GetAll()
         {
             var data= db.TblCustomer

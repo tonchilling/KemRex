@@ -39,6 +39,15 @@ namespace Kemrex.Core.Common.Modules
                 .FirstOrDefault() ?? new TblEmployee() { Prefix = new EnmPrefix() };
         }
 
+
+        public TblEmployee GetByCondition(int id)
+        {
+            return db.TblEmployee
+                .Where(x => x.EmpId == id)
+              
+                .FirstOrDefault() ?? new TblEmployee() { Prefix = new EnmPrefix() };
+        }
+
         public List<TblEmployee> Gets(int page = 1, int size = 0
             , string src = "", string phone = "", string email = "")
         {
