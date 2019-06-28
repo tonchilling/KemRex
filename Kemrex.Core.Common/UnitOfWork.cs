@@ -90,6 +90,10 @@ namespace Kemrex.Core.Common
             private TeamOperationModule _TeamOperation;
             private TeamOperationDetailModule _TeamOperationDetail;
             private UnitModule _Unit;
+            private AttachmentTypeModule _AttachmentTypeModule;
+            private SysCategoryModule _SysCategoryModule;
+            private JobOrderModule _JobOrderModule;
+
 
             public AccountModule Account => _Account ?? (_Account = new AccountModule(db));
             public CustomerAddressModule CustomerAddress => _CustomerAddress ?? (_CustomerAddress = new CustomerAddressModule(db));
@@ -122,6 +126,9 @@ namespace Kemrex.Core.Common
             public TeamOperationModule TeamOperation => _TeamOperation ?? (_TeamOperation = new TeamOperationModule(db));
             public TeamOperationDetailModule TeamOperationDetail => _TeamOperationDetail ?? (_TeamOperationDetail = new TeamOperationDetailModule(db));
             public UnitModule Unit => _Unit ?? (_Unit = new UnitModule(db));
+            public AttachmentTypeModule AttachmentType => _AttachmentTypeModule ?? (_AttachmentTypeModule = new AttachmentTypeModule(db));
+            public SysCategoryModule SysCategory => _SysCategoryModule ?? (_SysCategoryModule = new SysCategoryModule(db));
+            public JobOrderModule JobOrder => _JobOrderModule ?? (_JobOrderModule = new JobOrderModule(db));
         }
         #endregion
     }

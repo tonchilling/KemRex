@@ -95,6 +95,22 @@
             alert('Coming soon');
             return false;
         });
+        $(document).on("click", ".btnJobOrder", function () {
+
+         
+            var url = '@Url.Action("Detail", "JobOrder", new { id = "__id__" })';
+            window.location.href = url.replace('__id__', $("#JobOrderId").val());
+        });
+
+        $(document).on("click", ".btnSaleOrder", function () {
+            var url = '@Url.Action("Detail", "SaleOrder", new { id = "__id__" })';
+            window.location.href = url.replace('__id__', $("#SaleOrderId").val());
+        });
+
+       /* 
+        
+
+        hddID*/
 
         $(".btnViewOrder").click(function () {
 
@@ -105,132 +121,56 @@
                 url: '@Url.Action("SaleOrderService", "api")' +'/GetDetail',
                 data: { id: $(this).attr('dataid'), msg: "", msgType: "" },
                 success: function (obj) {
-                    $("#SaleOrderId").val(obj.SaleOrderNo);
-                    $("#CreatedDate").val(obj.CreateDate);
-                    $("#QuotationNo").val(obj.QuotationNo);
-                    $("#CustomerTaxId").val(obj.Customer.CustomerTaxId);
-                    $("#CustomerName").val(obj.CustomerName);
-                    $("#DeliveryDate").val(obj.DeliveryDate);
-                    $("#ContractName").val(obj.ContractName);
+
+                    if (obj.JobOrder != null) {
+                        $("#JobOrderNo").val(obj.JobOrder.JobOrderNo);
+                        $("#JobOrderTeam").val(obj.JobOrder.Team.TeamName);
+                        $("#JobOrderDate").val(obj.JobOrder.CreateDateToString);
+                        $("#OperationStartDate").val(obj.JobOrder.StartDateToString);
+                        $("#OperationEndDate").val(obj.JobOrder.EndDateToString);
+                        $("#JobOrderId").val(obj.JobOrder.JobOrderId);
+                        $(".btnJobOrder").css('visibility', 'visible');
+                    } else {
+                        $(".btnJobOrder").css('visibility', 'hidden');
+                        
+
+                    }
+
+                    $("#SaleOrderNo").val(obj.SaleOrderNo);
                     $("#SaleName").val(obj.SaleName);
-                    $("#BillingAddress").val(obj.BillingAddress);
-                    $("#ShippingAddress").val(obj.ShippingAddress);
-                    $("#OperationStartDate").val(obj.OperationStartDate);
-                    $("#OperationEndDate").val(obj.OperationEndDate);
+                    $("#SaleDate").val(obj.CreatedDateToString);
+
+
+                    if (obj.Customer != null) {
+                        $("#CustomerName").val(obj.Customer.CustomerName);
+                        $("#CustomerPhone").val(obj.Customer.CustomerPhone);
+                    }
+                  
                     $("#SaleOrderRemark").val(obj.SaleOrderRemark);
                     $("#StatusId").val(obj.StatusId);
                     $('.lblSaleOrderId').text($(this).attr('dataid'));
+                 
+                    $("#SaleOrderId").val(obj.SaleOrderId);
+                    
                     $('#SaleOrderModal').modal('show');
 
-                    var html = '';
-                    $('.pnlOrder').empty();
-                    if (obj != null && obj.TblSaleOrderDetail != null) {
-                        html += '<table class="table table-bordered table-hover"   id="tblSaleorder">';
-                        html += '<thead>';
-                        html += '<tr class="bg-primary" >';
-                        html += '<th>สินค้า</th>';
-                        html += '<th>จำนวน</th>';
-                        html += '<th>ราคา</th>';
-                        html += '<th>ส่วนลด</th>';
-                        html += '<th>รวม</th>';
-                        html += '<th>รวม VAT(7%)</th>';
 
-                        html += ' </tr>';
-                        html += '</thead>';
-                        html += '<tbody>';
-                        $.each(obj.TblSaleOrderDetail, function (x, item) {
-                            html += '<tr>';
+                /*   JobOrderNo = obj.JobOrder.JobOrderNo
+                    JobOrderTeam = obj.JobOrder.Team.TeamName
+                    JobOrderDate = obj.JobOrder.CreateDate
 
-                                html += ' <td>' + item.Product.ProductName + '</td>';
-                            html += ' <td  class="text-right">' + item.Quantity + '</td>';
-                            html += ' <td  class="text-right">' + numeral(item.PriceNet).format('0,0.00') + '</td>';
-                            html += ' <td  class="text-right">' + numeral(item.DiscountNet).format('0,0.00') + '</td>';
-                            html += ' <td  class="text-right">' + numeral(item.TotalNet).format('0,0.00') + '</td>';
-                            html += ' <td  class="text-right">' + numeral(item.TotalTot).format('0,0.00') + '</td>';
+                    SaleOrderNo = obj.SaleOrderNo
+                    SaleName = obj.SaleName
+                    SaleDate = obj.CreatedDate
 
+                    CustomerName = obj.Customer.CustomerName
+                    CustomerPhone = obj.Customer.CustomerPhone
 
-                            html += ' </tr>';
-
-                        });
-
-                        /*
-                            ProductId = q.ProductId,
-                Quantity = q.Quantity,
-                PriceNet = q.PriceNet,
-                PriceVat = q.PriceVat,
-                PriceTot = q.PriceTot,
-                DiscountNet = q.DiscountNet,
-                DiscountVat = q.DiscountVat,
-                DiscountTot = q.DiscountTot,
-                TotalNet = q.TotalNet,
-                TotalVat = q.TotalVat,
-                TotalTot = q.TotalTot,
-                Remark = q.Remark,
-                Product=q.Product
-                         */
-                        html += '</tbody>';
-                        html += '<tfoot class="tfooter">';
-                        html += '<tr class="text-right" >';
-                        html += '<th colspan="5">ยอดก่อนลด :</th>';
-                        html += '<th  class="tsummary">' + numeral(obj.SubTotalNet).format('0,0.00') +'</th>';
-                        html += ' </tr>';
-
-                        html += '<tr class="text-right" >';
-                        html += '<th colspan="5">ส่วนลดในรายการ:</th>';
-                        html += '<th  class="tsummary">' + numeral(obj.DiscountNet).format('0,0.00')+'</th>';
-                        html += ' </tr>';
-                        html += '<tr class="text-right" >';
-                        html += '<th colspan="5">ยอดหลังหักส่วนลด:</th>';
-                        html += '<th  class="tsummary">' + numeral(obj.SummaryNet).format('0,0.00')+'</th>';
-                        html += ' </tr>';
-                        html += '<tr class="text-right" >';
-                        html += '<th colspan="5">อัตราภาษี(7%):</th>';
-                        html += '<th  class="tsummary">' + numeral(obj.SummaryVat).format('0,0.00')+'</th>';
-                        html += ' </tr>';
-                        html += '<tr class="text-right" >';
-                        html += '<th colspan="5">ส่วนลดเงินสด:</th>';
-                        html += '<th  class="tsummary">' + numeral(obj.DiscountCash).format('0,0.00')  +'</th>';
-                        html += ' </tr>';
-                        html += '<tr class="text-right" >';
-                        html += '<th colspan="5">จำนวนทั้งสิ้น:</th>';
-                        html += '<th class="tsummary">' + numeral(obj.SummaryTot).format('0,0.00')  +'</th>';
-                        html += ' </tr>';
-                        html += '<tfoot>';
-                        html += ' </table>';
-
-                        $('.pnlOrder').append(html);
-                    //    $(".pnlOrder table").DataTable();
-                    }
-
-                       var html = '';
-                    $('.pnlAttachFile').empty();
-                    if (obj != null && obj.TblSaleOrderAttachment != null) {
-                        html += '<table class="table table-bordered table-hover"   id="tblAttachment">';
-                        html += '<thead>';
-                        html += '<tr class="bg-primary" >';
-                        html += '<th>No</th>';
-                        html += '<th>FileName</th>';
-                        html += ' </tr>';
-                        html += '</thead>';
-                        html += '<tbody>';
-                        $.each(obj.TblSaleOrderAttachment, function (x, item) {
-                            html += '<tr>';
-
-                            html += ' <td>' + item.AttachmentOrder + '</td>';
-                            html += ' <td>  <a href="@Url.Content("~/")' + item.AttachmentPath + '" target="_blank">' + item.AttachmentPath.split('/')[item.AttachmentPath.split('/').length-1]+'</a></td>';
-
-
-
-                            html += ' </tr>';
-
-                        });
-                        html += '</tbody>';
-                       
-                        html += ' </table>';
-
-                        $('.pnlAttachFile').append(html);
-                      //  $(".pnlAttachFile table").DataTable();
-                    }
+                    OperationStartDate = obj.JobOrder.StartDate
+                    OperationEndDate = obj.JobOrder.EndDate
+                    SaleOrderRemark = obj.SaleOrderRemark
+                    */
+                   
 
                 },
                 error: function (jqXHR, textStatus, errorThrown) {
@@ -483,12 +423,27 @@
                                                                                 CalendarDayModel md = Model[calendarIndex + day];
                                                                                 if (md.Jobs.Count > 0)
                                                                                 {
+                                                                                    
                                                                                     <td class="fc-event-container">
                                                                                         @foreach (TblSaleOrder it in md.Jobs)
                                                                                         {
-                                                                                            <a class="fc-day-grid-event fc-h-event fc-event fc-start fc-end btnViewOrder"
+                                                                                            var bgColor = "bg-primary";
+                                                                                            switch (it.StatusId)
+                                                                                            {
+
+                                                                                                case 2:
+                                                                                                    bgColor = "bg-success";
+                                                                                                    break;
+                                                                                                case 3: bgColor = "bg-success";
+                                                                                                    break;
+                                                                                            }
+                                                                                            if (it.HasJob == 0)
+                                                                                            {
+                                                                                                bgColor = "bg-danger";
+                                                                                            }
+                                                                                            <a class="fc-day-grid-event fc-h-event fc-event fc-start fc-end @bgColor btnViewOrder"
                                                                                                href="#" dataid="@it.SaleOrderId">
-                                                                                                <div class="fc-content">
+                                                                                                <div class="fc-content  ">
                                                                                                     <span class="fc-title">@it.SaleOrderNo</span>
                                                                                                 </div>
                                                                                             </a>
@@ -960,231 +915,185 @@
 </div>
 <div class="modal fade" id="SaleOrderModal" tabindex="-1" role="dialog" aria-labelledby="confirm" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
-      
-            <div class="modal-content modal-primary">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="ConfirmModalTitle"><label class="lblSaleOrderId"></label></h5>
+        <div class="modal-content modal-primary">
+            <div class="modal-header">
+                <h5 class="modal-title" id="ConfirmModalTitle"><label class="lblSaleOrderId"></label></h5>
 
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+
+            <div class="modal-body" >
+                  <div class="row">
+                    <div class="col-sm-4">
+                        <div class="form-group">
+                            <label for="JobOrderNo" class="col-form-label">เลขที่ใบสั่งงาน</label>
+
+                            <div class="input-group ">
+                                <input type="text" class="form-control" id="JobOrderNo" name="JobOrderNo"
+                                       placeholder="เลขที่ใบสั่งงาน" readonly />
+
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="form-group">
+                            <label for="QuotationNo" class="col-form-label">ทีมปฏิบัติงาน</label>
+
+                            <div class="input-group ">
+                                <input type="text" class="form-control" id="JobOrderTeam" name="JobOrderTeam"
+                                       placeholder="ทีมปฏิบัติงาน" readonly />
+
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="form-group">
+                            <label for="JobOrderDate" class="col-form-label">วันที่ออกเอกสาร</label>
+                            <div class="input-group ">
+
+                                <input type="text" class="form-control" id="JobOrderDate" name="JobOrderDate" value="" placeholder="dd/MM/yyyy ค.ศ." readonly autocomplete="off" />
+                                <span class="input-group-addon">
+                                    <i class="icon wb-calendar icon-2-5x text-success" aria-hidden="true"></i>
+                                </span>
+                            </div>
+
+                        </div>
+                    </div>
+
                 </div>
+                  <div class="row">
+                      <div class="col-sm-4">
+                          <div class="form-group">
+                              <label for="SaleOrderId" class="col-form-label">เลขที่สั่งขาย</label>
 
-                <div class="modal-body" style="background-color:#f1f4f5">
-                    <div data-tabs="myTabPage">
-                        <ul class="tabs">
-                            <li class="tab-link current" data-tab="tab-1">ข้อมูลพื้นฐาน</li>
-                            <li class="tab-link" data-tab="tab-2">รายการสินค้า</li>
-                            <li class="tab-link" data-tab="tab-3">เอกสารแนบ</li>
-                        </ul>
-                        <div id="tab-1" class="tab-content current">
-                            <div class="row">
-                                <div class="col-sm-6">
-                                    <div class="form-group">
-                                        <label for="SaleOrderId" class="col-form-label">เลขที่ใบสั่งงาน</label>
+                              <div class="input-group ">
+                                  <input type="text" class="form-control" id="SaleOrderNo" name="SaleOrderNo"
+                                         placeholder="เลขที่สั่งขาย" readonly />
 
-                                        <div class="input-group ">
-                                            <input type="text" class="form-control" id="SaleOrderId" name="SaleOrderId"
-                                                   placeholder="เลขทที่ใบสั่งงาน" readonly />
+                              </div>
 
-                                        </div>
+                          </div>
+                      </div>
+                      <div class="col-sm-4">
+                          <div class="form-group">
+                              <label for="SaleName" class="col-form-label">พนักงานขาย</label>
 
-                                    </div>
-                                </div>
-                                <div class="col-sm-6">
-                                    <div class="form-group">
-                                        <label for="CreateDate" class="col-form-label">วันที่ออกเอกสาร</label>
-                                        <div class="input-group ">
+                              <div class="input-group ">
+                                  <input type="text" class="form-control" id="SaleName" name="SaleName"
+                                         placeholder="พนักงานขาย" readonly />
 
-                                            <input type="text" class="form-control" id="CreatedDate" name="CreatedDate" value="" placeholder="dd/MM/yyyy ค.ศ." readonly autocomplete="off" />
-                                            <span class="input-group-addon">
-                                                <i class="icon wb-calendar icon-2-5x text-success" aria-hidden="true"></i>
-                                            </span>
-                                        </div>
+                              </div>
 
-                                    </div>
-                                </div>
+                          </div>
+                      </div>
+                      <div class="col-sm-4">
+                          <div class="form-group">
+                              <label for="SaleDate" class="col-form-label">วันที่ออกเอกสาร</label>
+                              <div class="input-group ">
+
+                                  <input type="text" class="form-control" id="SaleDate" name="SaleDate" value="" placeholder="dd/MM/yyyy ค.ศ." readonly autocomplete="off" />
+                                  <span class="input-group-addon">
+                                      <i class="icon wb-calendar icon-2-5x text-success" aria-hidden="true"></i>
+                                  </span>
+                              </div>
+
+                          </div>
+                      </div>
+                  </div>
+              
+                <div class="row">
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label for="CustomerName" class="col-form-label">ชื่อลูกค้า</label>
+
+                            <div class="input-group ">
+                                <input type="text" class="form-control" id="CustomerName" name="CustomerName"
+                                       placeholder="ชื่อลูกค้า" readonly />
+
                             </div>
-                            <div class="row">
-                                <div class="col-sm-6">
-                                    <div class="form-group">
-                                        <label for="QuotationNo" class="col-form-label">เลขที่ใบเสนอราคา</label>
 
-                                        <div class="input-group ">
-                                            <input type="text" class="form-control" id="QuotationNo" name="QuotationNo"
-                                                   placeholder="เลขที่ใบเสนอราคา" readonly />
-
-                                        </div>
-
-                                    </div>
-                                </div>
-                                <div class="col-sm-6">
-                                    <div class="form-group">
-                                        <label for="CustomerTaxId" class="col-form-label">เลขประจำตัวผู้เสียภาษี</label>
-
-                                        <div class="input-group ">
-                                            <input type="text" class="form-control" id="CustomerTaxId" name="CustomerTaxId"
-                                                   placeholder="เลขประจำตัวผู้เสียภาษี" readonly />
-
-                                        </div>
-
-                                    </div>
-
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-sm-6">
-                                    <div class="form-group">
-                                        <label for="CustomerName" class="col-form-label">ชื่อลูกค้า</label>
-
-                                        <div class="input-group ">
-                                            <input type="text" class="form-control" id="CustomerName" name="CustomerName"
-                                                   placeholder="ชื่อลูกค้า" readonly />
-
-                                        </div>
-
-                                    </div>
-                                </div>
-                                <div class="col-sm-6">
-                                    <div class="form-group">
-                                        <label for="DeliveryDate" class="col-form-label">วันที่สั่งขาย</label>
-                                        <div class="input-group ">
-
-                                            <input type="text" id="DeliveryDate" class="form-control" name="DeliveryDate" value="" placeholder="dd/MM/yyyy ค.ศ." readonly autocomplete="off" />
-                                            <span class="input-group-addon">
-                                                <i class="icon wb-calendar icon-2-5x text-success" aria-hidden="true"></i>
-                                            </span>
-                                        </div>
-
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-sm-6">
-                                    <div class="form-group">
-                                        <label for="ContractName" class="col-form-label">ชื่อผู้ติดต่อ</label>
-
-                                        <div class="input-group ">
-                                            <input type="text" class="form-control" id="ContractName" name="ContractName"
-                                                   placeholder="ชื่อลูกค้า" readonly />
-
-                                        </div>
-
-                                    </div>
-                                </div>
-                                <div class="col-sm-6">
-                                    <div class="form-group">
-                                        <label for="SaleName" class="col-form-label">พนักงานงาน</label>
-
-                                        <div class="input-group ">
-                                            <input type="text" class="form-control" id="SaleName" name="SaleName"
-                                                   placeholder="ชื่อลูกค้า" readonly />
-
-                                        </div>
-
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-sm-6">
-                                    <div class="form-group">
-                                        <label for="BillingAddress" class="col-form-label">ที่อยู่ออกบิล</label>
-
-                                        <div class="input-group ">
-                                            <input type="text" class="form-control" id="BillingAddress" name="BillingAddress"
-                                                   placeholder="ที่อยู่ออกบิล" readonly />
-
-                                        </div>
-
-                                    </div>
-                                </div>
-                                <div class="col-sm-6">
-                                    <div class="form-group">
-                                        <label for="ShippingAddress" class="col-form-label">ที่อยู่ที่จัดส่ง</label>
-
-                                        <div class="input-group ">
-                                            <input type="text" class="form-control" id="ShippingAddress" name="ShippingAddress"
-                                                   placeholder="ที่อยู่ที่จัดส่ง" readonly />
-
-                                        </div>
-
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-sm-6">
-                                    <div class="form-group">
-                                        <label for="OperationStartDate" class="col-form-label">วันที่เริ่มงาน</label>
-                                        <div class="input-group ">
-
-                                            <input type="text" class="form-control" id="OperationStartDate" name="OperationStartDate" value="" placeholder="dd/MM/yyyy ค.ศ." autocomplete="off" />
-                                            <span class="input-group-addon">
-                                                <i class="icon wb-calendar icon-2-5x text-success" aria-hidden="true"></i>
-                                            </span>
-                                        </div>
-
-                                    </div>
-                                </div>
-                                <div class="col-sm-6">
-                                    <div class="form-group">
-                                        <label for="OperationEndDate" class="col-form-label">วันที่สิ้นสุดงาน</label>
-                                        <div class="input-group ">
-
-                                            <input type="text" class="form-control" id="OperationEndDate" name="OperationEndDate" value="" placeholder="dd/MM/yyyy ค.ศ." autocomplete="off" />
-                                            <span class="input-group-addon">
-                                                <i class="icon wb-calendar icon-2-5x text-success" aria-hidden="true"></i>
-                                            </span>
-                                        </div>
-
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-sm-6">
-                                    <div class="form-group">
-                                        <label for="OperationStartDate" class="col-form-label">หมายเหตุ</label>
-                                        <div class="input-group ">
-
-                                            <textarea rows="4" cols="47" class="form-control" name="SaleOrderRemark"></textarea>
-                                        </div>
-
-                                    </div>
-                                </div>
-                                <div class="col-sm-6">
-                                    <div class="form-group">
-                                        <label for="PriceValidity" class="col-form-label">สถานะเอกสาร</label>
-                                       
-                                            <select name="StatusId" id="StatusId" class="form-control">
-                                                <option class="text-primary" value="1">เปิด</option>
-                                                <option class="text-success" value="2">ปิด</option>
-                                                <option class="text-muted" value="3">ยกเลิก</option>
-                                            </select>
-                                        
-                                    </div>
-                                </div>
-                            </div>
                         </div>
-                        </div>
-                        <div id="tab-2" class="tab-content">
-                           <div class="pnlOrder"></div>
-                        </div>
-                        <div id="tab-3" class="tab-content">
-                            <div class="pnlAttachFile"></div>
-                        </div>
-                
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label for="CustomerPhone" class="col-form-label">เบอร์โทร</label>
+                            <div class="input-group ">
 
+                                <input type="text" id="CustomerPhone" class="form-control" name="CustomerPhone" value="" readonly autocomplete="off" />
+                               
+                            </div>
 
-                    <input type="hidden" id="lbPreSONo" name="lbPreSONo" value="-" />
-                    <input type="hidden" id="lbQuotationId" name="lbQuotationId" value="" />
-                    <input type="hidden" id="lbSaleOrderId" name="lbSaleOrderId" value="" />
+                        </div>
+                    </div>
                 </div>
-                <div class="modal-footer">
-                    <button type="submit"  class="btn btn-primary btnSaveTime">บันทึก</button>
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">ยกเลิก</button>
+               
+               
+                <div class="row">
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label for="OperationStartDate" class="col-form-label">วันที่เริ่มงาน</label>
+                            <div class="input-group ">
+
+                                <input type="text" class="form-control" id="OperationStartDate" name="OperationStartDate" value=""
+                                       placeholder="dd/MM/yyyy ค.ศ." autocomplete="off" readonly autocomplete="off" />
+                                <span class="input-group-addon">
+                                    <i class="icon wb-calendar icon-2-5x text-success" readonly autocomplete="off" aria-hidden="true"></i>
+                                </span>
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label for="OperationEndDate" class="col-form-label">วันที่สิ้นสุดงาน</label>
+                            <div class="input-group ">
+
+                                <input type="text" class="form-control" id="OperationEndDate" name="OperationEndDate"
+                                       value="" placeholder="dd/MM/yyyy ค.ศ." autocomplete="off" readonly  />
+                                <span class="input-group-addon">
+                                    <i class="icon wb-calendar icon-2-5x text-success" aria-hidden="true"></i>
+                                </span>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label for="OperationStartDate" class="col-form-label">หมายเหตุ</label>
+                            <div class="input-group ">
+
+                                <textarea rows="4" cols="47" class="form-control" name="SaleOrderRemark"  autocomplete="off" readonly ></textarea>
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label for="StatusId" class="col-form-label">สถานะเอกสาร</label>
+
+                            <select name="StatusId" id="StatusId" class="form-control" disabled>
+                                <option class="text-primary" value="1">เปิด</option>
+                                <option class="text-success" value="2">ปิด</option>
+                                <option class="text-muted" value="3">ยกเลิก</option>
+                            </select>
+
+                        </div>
+                    </div>
                 </div>
 
             </div>
-       
-    </div>
-
+            <div class="modal-footer">
+                <input type="hidden" id="JobOrderId" name="JobOrderId" />
+                <input type="hidden" id="SaleOrderId" name="SaleOrderId" />
+                <button type="submit" class="btn btn-success btnJobOrder">ใบสั่งงาน</button>
+                <button type="submit" class="btn btn-primary btnSaleOrder">ใบสั่งขาย</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">ยกเลิก</button>
+            </div>
+        </div>
 </div>

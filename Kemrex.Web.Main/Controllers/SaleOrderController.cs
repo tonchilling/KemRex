@@ -131,7 +131,7 @@ namespace Kemrex.Web.Main.Controllers
 
             ob.ShippingAddress = Request.Form["ShippingAddress"];
             ob.SaleOrderRemark = Request.Form["SaleOrderRemark"];
-
+            ob.TeamId = Request.Form["TeamId"].ParseInt();
             if (Request.Form["DiscountCash"] != null)
                 ob.DiscountCash = decimal.Parse(Request.Form["DiscountCash"]);
 
@@ -198,6 +198,7 @@ namespace Kemrex.Web.Main.Controllers
                 ViewData["optEmployee"] = uow.Modules.Employee.Gets();
                 ViewData["optPayment"] = uow.Modules.PaymentCondition.Gets();
                 ViewData["optAttachment"] = uow.Modules.SaleOrderAttachment.Gets(ob.SaleOrderId);
+                ViewData["optTeam"] = uow.Modules.TeamOperation.Gets();
                 return View(ob);
             }
             catch (Exception ex)
@@ -446,6 +447,36 @@ namespace Kemrex.Web.Main.Controllers
 
             return RedirectToAction("Detail", MVCController, new { id = sid, tab = "Attachment", msg = "", msgType = AlertMsgType.Success });
         }
+
+
+        [HttpGet]
+        public JsonResult GetSaleOrder(string startDate,string toDate)
+        {
+
+            List<TblSaleOrder> saleOrderList = uow.Modules.SaleOrder.GetFindByCondition(startDate, toDate);
+            // ob.TblSaleOrderDetail = uow.Modules.SaleOrderDetail.Gets(id ?? 0);
+            // TblCustomer objCustomer = uow.Modules.Customer.Get(Convert.ToInt32(ob.CustomerId));
+
+
+
+            return Json(saleOrderList, JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpGet]
+        public JsonResult GetSaleOrderById(int id)
+        {
+
+            TblSaleOrder saleOrder = uow.Modules.SaleOrder.GetFull(id);
+            //saleOrder.Customer = uow.Modules.Customer.GetByCondition(saleOrder.CustomerId.Value);
+          //  saleOrder.Sale = uow.Modules.Employee.GetByCondition(saleOrder.SaleId.Value);
+           
+            // TblCustomer objCustomer = uow.Modules.Customer.Get(Convert.ToInt32(ob.CustomerId));
+
+
+
+            return Json(saleOrder, JsonRequestBehavior.AllowGet);
+        }
+
         #endregion
     }
 }

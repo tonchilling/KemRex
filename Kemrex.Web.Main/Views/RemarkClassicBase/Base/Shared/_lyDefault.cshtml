@@ -26,7 +26,7 @@
     <link rel="stylesheet" href="~/themes/@kemrex.GetCurrentTheme()/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/themes/@kemrex.GetCurrentTheme()/css/bootstrap-extend.min.css?ver=xx4" />
     <link rel="stylesheet" href="~/themes/@kemrex.GetCurrentTheme()/css/site.min.css?ver=xx3" />
-
+    <link href="~/themes/@kemrex.GetCurrentTheme()/css/datatable.boostrap.css" rel="stylesheet" />
     <!-- Plugins -->
     <link rel="stylesheet" href="~/themes/@kemrex.GetCurrentTheme()/libs/animsition/animsition.min.css" />
     <link rel="stylesheet" href="~/themes/@kemrex.GetCurrentTheme()/libs/jquery-asscrollbar/jquery-asScrollbar.min.css" />
@@ -39,6 +39,8 @@
     <link rel="stylesheet" href="~/fonts/font-awesome/font-awesome.min.css" />
     <link rel="stylesheet" href="~/fonts/brand-icons/brand-icons.min.css" />
     <link rel="stylesheet" href="~/fonts/web-icons/web-icons.min.css" />
+    <link href="~/fonts/glyphicons/glyphicons.min.css" rel="stylesheet" />
+    <link href="~/fonts/glyphicons/glyphicons.css" rel="stylesheet" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Sarabun:300,400,500,300italic" />
 
     @RenderSection("Styles", false)
@@ -256,12 +258,14 @@
     <script src="~/themes/@kemrex.GetCurrentTheme()/js/Section/bundle.min.js"></script>
     <script src="~/themes/@kemrex.GetCurrentTheme()/js/Plugin/menu.min.js"></script>
     <script src="~/themes/@kemrex.GetCurrentTheme()/js/jquery.validate.js"></script>
+    <script src="~/themes/@kemrex.GetCurrentTheme()/js/Plugin/datatables.min.js"></script>
+    <script src="~/themes/RemarkClassicBase/js/Plugin/datatable.boostrap4.js"></script>
     @RenderSection("Plugins", false)
 
     <!-- Page -->
     <script src="~/themes/@kemrex.GetCurrentTheme()/js/Site.js"></script>
     <script type="text/javascript">
-      
+
         (function (global, factory) {
             if (typeof define === "function" && define.amd) {
                 define("/site", ["jquery", "Site"], factory);
@@ -282,7 +286,7 @@
                 (0, _Site.run)();
 
             });
-            });
+        });
 
 
         $('.Number').keypress(function (event) {

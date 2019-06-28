@@ -30,7 +30,7 @@ namespace Kemrex.Web.Main.Controllers
                     ViewBag.Alert = alert;
                 }
                 int total = uow.Modules.Customer.Count(0, src);
-                WidgetPaginationModel Pagination = new WidgetPaginationModel("Index", "Account", "")
+                WidgetPaginationModel Pagination = new WidgetPaginationModel("Index", "Customer", "")
                 {
                     Page = (page ?? 1),
                     Size = (size ?? 10),
@@ -84,6 +84,7 @@ namespace Kemrex.Web.Main.Controllers
                 ob.Prefix = uow.Modules.Enum.PrefixGet(ob.PrefixId.Value);
             }
             ob.CustomerName = Request.Form["CustomerName"];
+            ob.CustomerTaxId = Request.Form["CustomerTaxId"];
             ob.GroupId = Request.Form["GroupId"].ParseInt();
             ob.Group = uow.Modules.CustomerGroup.Get(ob.GroupId.Value);
             ob.CustomerPhone = Request.Form["CustomerPhone"];
@@ -172,6 +173,20 @@ namespace Kemrex.Web.Main.Controllers
                 });
             }
         }
+
+        [HttpGet]
+
+        public JsonResult GetCustomer(int id)
+        {
+
+         
+             TblCustomer objCustomer = uow.Modules.Customer.GetByCondition(id);
+
+
+
+            return Json(objCustomer, JsonRequestBehavior.AllowGet);
+        }
+
         #endregion
     }
 }

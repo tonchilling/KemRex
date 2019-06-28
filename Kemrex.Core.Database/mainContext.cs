@@ -34,6 +34,8 @@ namespace Kemrex.Core.Database
         public virtual DbSet<EnmStatusQuotation> EnmStatusQuotation { get; set; }
         public virtual DbSet<SysAccount> SysAccount { get; set; }
         public virtual DbSet<SysAccountRole> SysAccountRole { get; set; }
+        public virtual DbSet<SysCategory> SysCategory { get; set; }
+        public virtual DbSet<SysCategoryType> SysCategoryType { get; set; }
         public virtual DbSet<SysDistrict> SysDistrict { get; set; }
         public virtual DbSet<SysGeography> SysGeography { get; set; }
         public virtual DbSet<SysMenu> SysMenu { get; set; }
@@ -58,6 +60,13 @@ namespace Kemrex.Core.Database
         public virtual DbSet<TblDepartmentPosition> TblDepartmentPosition { get; set; }
         public virtual DbSet<TblEmployee> TblEmployee { get; set; }
         public virtual DbSet<TblInvoice> TblInvoice { get; set; }
+        public virtual DbSet<TblJobOrder> TblJobOrder { get; set; }
+        public virtual DbSet<TblJobOrderAttachmentType> TblJobOrderAttachmentType { get; set; }
+        public virtual DbSet<TblJobOrderEquipmentType> TblJobOrderEquipmentType { get; set; }
+        public virtual DbSet<TblJobOrderLandType> TblJobOrderLandType { get; set; }
+        public virtual DbSet<TblJobOrderObstructionType> TblJobOrderObstructionType { get; set; }
+        public virtual DbSet<TblJobOrderProjectType> TblJobOrderProjectType { get; set; }
+        public virtual DbSet<TblJobOrderUndergroundType> TblJobOrderUndergroundType { get; set; }
         public virtual DbSet<TblKpt> TblKpt { get; set; }
         public virtual DbSet<TblKptAttachment> TblKptAttachment { get; set; }
         public virtual DbSet<TblKptDetail> TblKptDetail { get; set; }
@@ -81,6 +90,8 @@ namespace Kemrex.Core.Database
         public virtual DbSet<TeamOperationDetail> TeamOperationDetail { get; set; }
         public virtual DbSet<TeamSale> TeamSale { get; set; }
         public virtual DbSet<TeamSaleDetail> TeamSaleDetail { get; set; }
+        public virtual DbSet<TransferDetail> TransferDetail { get; set; }
+        public virtual DbSet<TransferHeader> TransferHeader { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -222,6 +233,27 @@ namespace Kemrex.Core.Database
                     .HasForeignKey(d => d.RoleId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_SysAccountRole_Role");
+            });
+
+            modelBuilder.Entity<SysCategory>(entity =>
+            {
+                entity.HasKey(e => e.CategoryId)
+                    .HasName("PK__SysCateg__19093A0BF80B83F0");
+
+                entity.Property(e => e.CategoryName).HasMaxLength(50);
+
+                entity.HasOne(d => d.CategoryType)
+                    .WithMany(p => p.SysCategory)
+                    .HasForeignKey(d => d.CategoryTypeId)
+                    .HasConstraintName("FK__SysCatego__Categ__19B5BC39");
+            });
+
+            modelBuilder.Entity<SysCategoryType>(entity =>
+            {
+                entity.HasKey(e => e.CategoryTypeId)
+                    .HasName("PK__SysCateg__7B30E7A30A46A2FF");
+
+                entity.Property(e => e.CategoryName).HasMaxLength(50);
             });
 
             modelBuilder.Entity<SysDistrict>(entity =>
@@ -761,6 +793,174 @@ namespace Kemrex.Core.Database
                     .HasConstraintName("FK_TblInvoice_SaleOrder");
             });
 
+            modelBuilder.Entity<TblJobOrder>(entity =>
+            {
+                entity.HasKey(e => e.JobOrderId)
+                    .HasName("PK__TblJobOr__EACFC526C19E50C7");
+
+                entity.Property(e => e.JobOrderId).HasColumnName("JobOrderID");
+
+                entity.Property(e => e.Adapter).HasMaxLength(100);
+
+                entity.Property(e => e.CustomerEmail).HasMaxLength(50);
+
+                entity.Property(e => e.CustomerName).HasMaxLength(50);
+
+                entity.Property(e => e.CustomerPhone).HasMaxLength(50);
+
+                entity.Property(e => e.EndDate).HasColumnType("datetime");
+
+                entity.Property(e => e.EndWorkingTime).HasMaxLength(10);
+
+                entity.Property(e => e.HouseNo).HasMaxLength(50);
+
+                entity.Property(e => e.JobName).HasMaxLength(50);
+
+                entity.Property(e => e.JobOrderNo).HasMaxLength(50);
+
+                entity.Property(e => e.Other).HasMaxLength(100);
+
+                entity.Property(e => e.ProductSaftyFactory).HasMaxLength(50);
+
+                entity.Property(e => e.ProductWeight).HasColumnType("decimal(8, 2)");
+
+                entity.Property(e => e.ProjectName).HasMaxLength(100);
+
+                entity.Property(e => e.Reason).HasMaxLength(100);
+
+                entity.Property(e => e.Solution).HasMaxLength(100);
+
+                entity.Property(e => e.StartDate).HasColumnType("datetime");
+
+                entity.Property(e => e.StartWorkingTime).HasMaxLength(10);
+
+                entity.Property(e => e.VillageNo).HasMaxLength(50);
+
+            /*    entity.HasOne(d => d.SaleOrder)
+                    .WithMany(p => p.TblJobOrder)
+                    .HasForeignKey(d => d.SaleOrderId)
+                    .HasConstraintName("FK__TblJobOrd__SaleO__3EE740E8");
+                    */
+
+                entity.HasOne(d => d.SubDistrict)
+                    .WithMany(p => p.TblJobOrder)
+                    .HasForeignKey(d => d.SubDistrictId)
+                    .HasConstraintName("FK__TblJobOrd__SubDi__3FDB6521");
+
+                //entity.HasOne(d => d.Team)
+                //    .WithMany(p => p.TblJobOrder)
+                //    .HasForeignKey(d => d.TeamId)
+                //    .HasConstraintName("FK__TblJobOrd__TeamI__477C86E9");
+            });
+
+            modelBuilder.Entity<TblJobOrderAttachmentType>(entity =>
+            {
+                entity.HasKey(e => new { e.JobOrderId, e.AttachmentTypeId })
+                    .HasName("PK__TblJobOr__BF09FF903427230F");
+
+                entity.ToTable("TblJobOrder_AttachmentType");
+
+                entity.Property(e => e.JobOrderId).HasColumnName("JobOrderID");
+
+                entity.Property(e => e.Caption).HasMaxLength(100);
+
+                entity.HasOne(d => d.AttachmentType)
+                    .WithMany(p => p.TblJobOrderAttachmentType)
+                    .HasForeignKey(d => d.AttachmentTypeId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK__TblJobOrd__Attac__3C0AD43D");
+            });
+
+            modelBuilder.Entity<TblJobOrderEquipmentType>(entity =>
+            {
+                entity.HasKey(e => new { e.JobOrderId, e.EquipmentTypeId })
+                    .HasName("PK__TblJobOr__3F9BB749D923A672");
+
+                entity.ToTable("TblJobOrder_EquipmentType");
+
+                entity.Property(e => e.JobOrderId).HasColumnName("JobOrderID");
+
+                entity.Property(e => e.Caption).HasMaxLength(100);
+
+                entity.HasOne(d => d.EquipmentType)
+                    .WithMany(p => p.TblJobOrderEquipmentType)
+                    .HasForeignKey(d => d.EquipmentTypeId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK__TblJobOrd__Equip__392E6792");
+            });
+
+            modelBuilder.Entity<TblJobOrderLandType>(entity =>
+            {
+                entity.HasKey(e => new { e.JobOrderId, e.LandTypeId })
+                    .HasName("PK__TblJobOr__84B262F182E26026");
+
+                entity.ToTable("TblJobOrder_LandType");
+
+                entity.Property(e => e.JobOrderId).HasColumnName("JobOrderID");
+
+                entity.Property(e => e.Caption).HasMaxLength(100);
+
+                entity.HasOne(d => d.LandType)
+                    .WithMany(p => p.TblJobOrderLandType)
+                    .HasForeignKey(d => d.LandTypeId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK__TblJobOrd__LandT__2DBCB4E6");
+            });
+
+            modelBuilder.Entity<TblJobOrderObstructionType>(entity =>
+            {
+                entity.HasKey(e => new { e.JobOrderId, e.ObstructionTypeId })
+                    .HasName("PK__TblJobOr__1B281B0443CD5E0F");
+
+                entity.ToTable("TblJobOrder_ObstructionType");
+
+                entity.Property(e => e.JobOrderId).HasColumnName("JobOrderID");
+
+                entity.Property(e => e.Caption).HasMaxLength(100);
+
+                entity.HasOne(d => d.ObstructionType)
+                    .WithMany(p => p.TblJobOrderObstructionType)
+                    .HasForeignKey(d => d.ObstructionTypeId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK__TblJobOrd__Obstr__3651FAE7");
+            });
+
+            modelBuilder.Entity<TblJobOrderProjectType>(entity =>
+            {
+                entity.HasKey(e => new { e.JobOrderId, e.ProjectTypeId })
+                    .HasName("PK__TblJobOr__CC3D80C0BC8E8C5D");
+
+                entity.ToTable("TblJobOrder_ProjectType");
+
+                entity.Property(e => e.JobOrderId).HasColumnName("JobOrderID");
+
+                entity.Property(e => e.Caption).HasMaxLength(100);
+
+                entity.HasOne(d => d.ProjectType)
+                    .WithMany(p => p.TblJobOrderProjectType)
+                    .HasForeignKey(d => d.ProjectTypeId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK__TblJobOrd__Proje__2062B9C8");
+            });
+
+            modelBuilder.Entity<TblJobOrderUndergroundType>(entity =>
+            {
+                entity.HasKey(e => new { e.JobOrderId, e.UndergroundTypeId })
+                    .HasName("PK__TblJobOr__6DAF5D38B94FC145");
+
+                entity.ToTable("TblJobOrder_UndergroundType");
+
+                entity.Property(e => e.JobOrderId).HasColumnName("JobOrderID");
+
+                entity.Property(e => e.Caption).HasMaxLength(100);
+
+                entity.HasOne(d => d.UndergroundType)
+                    .WithMany(p => p.TblJobOrderUndergroundType)
+                    .HasForeignKey(d => d.UndergroundTypeId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK__TblJobOrd__Under__33758E3C");
+            });
+
             modelBuilder.Entity<TblKpt>(entity =>
             {
                 entity.HasKey(e => e.KptId);
@@ -1255,10 +1455,10 @@ namespace Kemrex.Core.Database
                     .HasForeignKey(d => d.CustomerId)
                     .HasConstraintName("FK_TblSaleOrder_Customer");*/
 
-                entity.HasOne(d => d.Sale)
+             /*   entity.HasOne(d => d.Team)
                     .WithMany(p => p.TblSaleOrder)
-                    .HasForeignKey(d => d.SaleId)
-                    .HasConstraintName("FK_TblSaleOrder_Sale");
+                    .HasForeignKey(d => d.TeamId)
+                    .HasConstraintName("FK__TblSaleOrder__Team");*/
             });
 
             modelBuilder.Entity<TblSaleOrderAttachment>(entity =>
@@ -1304,7 +1504,7 @@ namespace Kemrex.Core.Database
                     .HasColumnType("decimal(13, 2)")
                     .HasComputedColumnSql("([PriceVat]-[DiscountVat])");
 
-             /*   entity.HasOne(d => d.Product)
+                entity.HasOne(d => d.Product)
                     .WithMany(p => p.TblSaleOrderDetail)
                     .HasForeignKey(d => d.ProductId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
@@ -1315,7 +1515,6 @@ namespace Kemrex.Core.Database
                     .HasForeignKey(d => d.SaleOrderId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_TblSaleOrderDetail_id");
-                    */
             });
 
             modelBuilder.Entity<TblUnit>(entity =>
@@ -1409,6 +1608,65 @@ namespace Kemrex.Core.Database
                     .HasForeignKey(d => d.TeamId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_TeamSaleDetail_Id");
+            });
+
+            modelBuilder.Entity<TransferDetail>(entity =>
+            {
+                entity.HasKey(e => new { e.TransferNo, e.Seq })
+                    .HasName("PK__Transfer__09E95DAB26E6103B");
+
+                entity.Property(e => e.TransferNo).HasMaxLength(11);
+
+                entity.Property(e => e.CurrentQty)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.LastModified)
+                    .HasColumnName("last_modified")
+                    .HasColumnType("datetime");
+
+                entity.Property(e => e.RequestUnit)
+                    .HasMaxLength(20)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.RequestUnitFactor).HasColumnType("decimal(8, 3)");
+
+                entity.HasOne(d => d.Product)
+                    .WithMany(p => p.TransferDetail)
+                    .HasForeignKey(d => d.ProductId)
+                    .HasConstraintName("FK__TransferD__Produ__2803DB90");
+            });
+
+            modelBuilder.Entity<TransferHeader>(entity =>
+            {
+                entity.HasKey(e => e.TransferNo)
+                    .HasName("PK__Transfer__9548BE632F35F7F7");
+
+                entity.Property(e => e.TransferNo)
+                    .HasMaxLength(11)
+                    .ValueGeneratedNever();
+
+                entity.Property(e => e.BillNo).HasMaxLength(50);
+
+                entity.Property(e => e.EmpId).HasMaxLength(10);
+
+                entity.Property(e => e.LastModified)
+                    .HasColumnName("last_modified")
+                    .HasColumnType("datetime");
+
+                entity.Property(e => e.Note1)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.TransferDate).HasMaxLength(10);
+
+                entity.Property(e => e.TransferStatus).HasMaxLength(1);
+
+                entity.Property(e => e.TransferTime).HasMaxLength(5);
+
+                entity.Property(e => e.TrnasferType)
+                    .IsRequired()
+                    .HasMaxLength(3);
             });
         }
     }

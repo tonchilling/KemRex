@@ -7,6 +7,8 @@ namespace Kemrex.Core.Database.Models
     {
         public TeamOperation()
         {
+            TblJobOrder = new HashSet<TblJobOrder>();
+            TblSaleOrder = new HashSet<TblSaleOrder>();
             TeamOperationDetail = new HashSet<TeamOperationDetail>();
         }
 
@@ -19,6 +21,8 @@ namespace Kemrex.Core.Database.Models
         public DateTime UpdatedDate { get; set; }
 
         public virtual SysAccount Manager { get; set; }
+        public virtual ICollection<TblJobOrder> TblJobOrder { get; set; }
+        public virtual ICollection<TblSaleOrder> TblSaleOrder { get; set; }
         public virtual ICollection<TeamOperationDetail> TeamOperationDetail { get; set; }
     }
 }

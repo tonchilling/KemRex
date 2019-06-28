@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.28803.156
+# Visual Studio 15
+VisualStudioVersion = 15.0.28307.421
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "Kemrex.Database.MSSQL", "Kemrex.Database.MSSQL\Kemrex.Database.MSSQL.sqlproj", "{50183840-A9AF-4C1B-9AB7-B1D90BFB147F}"
 EndProject

@@ -1,0 +1,1201 @@
+﻿@using Kemrex.Core.Common.Helper
+@using Kemrex.Core.Database.Models
+@using Kemrex.Web.Common.Controllers
+@using Kemrex.Web.Common.Models
+@using Kemrex.Web.Main.Models
+@model List<CalendarDayModel>
+@{
+    KemrexController kemrex = ((KemrexController)this.ViewContext.Controller);
+    Layout = kemrex.PathViewShared("_lyDefault");
+    WidgetAlertModel AlertModel = (WidgetAlertModel)ViewBag.Alert;
+    DateTime focusDt = (DateTime)ViewBag.FocusDate;
+}
+
+
+    <link rel="stylesheet" href="~/themes/@kemrex.GetCurrentTheme()/libs/fullcalendar/fullcalendar.min.css" />
+    <link rel="stylesheet" href="~/themes/@kemrex.GetCurrentTheme()/css/calendar.min.css" />
+    <style type="text/css">
+
+        #SaleOrderModal {
+
+        }
+        ul.tabs {
+            margin: 0px;
+            padding: 0px;
+            list-style: none;
+        }
+
+            ul.tabs li {
+                background: none;
+                color: #222;
+                display: inline-block;
+                padding: 10px 15px;
+                cursor: pointer;
+                background: #ededed;
+            }
+
+                ul.tabs li.current {
+                    background: #ffffff;
+                    color: #222;
+                }
+
+        .tab-content {
+            display: none;
+            background: #ffffff;
+            padding: 15px;
+        }
+
+            .tab-content.current {
+                display: inherit;
+            }
+
+
+        .modal-lg, .modal-xl {
+            max-width: 800px;
+        }
+
+        .tfooter {
+            background-color: #e6f2ff;
+            font-size:large;
+            font-weight:bold;
+            color:#000000;
+        }
+
+        .tsummary {
+            background-color: #b3d6ff;
+            text-align: right;
+        }
+    </style>
+
+
+
+@section Scripts {
+    <script type="text/javascript">
+        $(document).ready(function () {
+            window.setTimeout(function () {
+                $(".alert").fadeTo(1000, 0).slideUp(1000, function () {
+                    $(this).remove();
+                });
+            }, 5000);
+        });
+
+
+        $('ul.tabs li').click(function () {
+            var tab_id = $(this).attr('data-tab');
+
+            $('ul.tabs li').removeClass('current');
+            $('.tab-content').removeClass('current');
+
+            $(this).addClass('current');
+            $("#" + tab_id).addClass('current');
+        })
+
+        
+        $(".btnSaveTime").click(function () {
+            alert('Coming soon');
+            return false;
+        });
+
+        $(".btnViewOrder").click(function () {
+
+
+            $.ajax({
+                type: "get",
+                contentType: 'application/json; charset=utf-8',
+                url: '@Url.Action("SaleOrderService", "api")' +'/GetDetail',
+                data: { id: $(this).attr('dataid'), msg: "", msgType: "" },
+                success: function (obj) {
+                    $("#SaleOrderId").val(obj.SaleOrderNo);
+                    $("#CreatedDate").val(obj.CreateDate);
+                    $("#QuotationNo").val(obj.QuotationNo);
+                    $("#CustomerTaxId").val(obj.Customer.CustomerTaxId);
+                    $("#CustomerName").val(obj.CustomerName);
+                    $("#DeliveryDate").val(obj.DeliveryDate);
+                    $("#ContractName").val(obj.ContractName);
+                    $("#SaleName").val(obj.SaleName);
+                    $("#BillingAddress").val(obj.BillingAddress);
+                    $("#ShippingAddress").val(obj.ShippingAddress);
+                    $("#OperationStartDate").val(obj.OperationStartDate);
+                    $("#OperationEndDate").val(obj.OperationEndDate);
+                    $("#SaleOrderRemark").val(obj.SaleOrderRemark);
+                    $("#StatusId").val(obj.StatusId);
+                    $('.lblSaleOrderId').text($(this).attr('dataid'));
+                    $('#SaleOrderModal').modal('show');
+
+                    var html = '';
+                    $('.pnlOrder').empty();
+                    if (obj != null && obj.TblSaleOrderDetail != null) {
+                        html += '<table class="table table-bordered table-hover"   id="tblSaleorder">';
+                        html += '<thead>';
+                        html += '<tr class="bg-primary" >';
+                        html += '<th>สินค้า</th>';
+                        html += '<th>จำนวน</th>';
+                        html += '<th>ราคา</th>';
+                        html += '<th>ส่วนลด</th>';
+                        html += '<th>รวม</th>';
+                        html += '<th>รวม VAT(7%)</th>';
+
+                        html += ' </tr>';
+                        html += '</thead>';
+                        html += '<tbody>';
+                        $.each(obj.TblSaleOrderDetail, function (x, item) {
+                            html += '<tr>';
+
+                                html += ' <td>' + item.Product.ProductName + '</td>';
+                            html += ' <td  class="text-right">' + item.Quantity + '</td>';
+                            html += ' <td  class="text-right">' + numeral(item.PriceNet).format('0,0.00') + '</td>';
+                            html += ' <td  class="text-right">' + numeral(item.DiscountNet).format('0,0.00') + '</td>';
+                            html += ' <td  class="text-right">' + numeral(item.TotalNet).format('0,0.00') + '</td>';
+                            html += ' <td  class="text-right">' + numeral(item.TotalTot).format('0,0.00') + '</td>';
+
+
+                            html += ' </tr>';
+
+                        });
+
+                        /*
+                            ProductId = q.ProductId,
+                Quantity = q.Quantity,
+                PriceNet = q.PriceNet,
+                PriceVat = q.PriceVat,
+                PriceTot = q.PriceTot,
+                DiscountNet = q.DiscountNet,
+                DiscountVat = q.DiscountVat,
+                DiscountTot = q.DiscountTot,
+                TotalNet = q.TotalNet,
+                TotalVat = q.TotalVat,
+                TotalTot = q.TotalTot,
+                Remark = q.Remark,
+                Product=q.Product
+                         */
+                        html += '</tbody>';
+                        html += '<tfoot class="tfooter">';
+                        html += '<tr class="text-right" >';
+                        html += '<th colspan="5">ยอดก่อนลด :</th>';
+                        html += '<th  class="tsummary">' + numeral(obj.SubTotalNet).format('0,0.00') +'</th>';
+                        html += ' </tr>';
+
+                        html += '<tr class="text-right" >';
+                        html += '<th colspan="5">ส่วนลดในรายการ:</th>';
+                        html += '<th  class="tsummary">' + numeral(obj.DiscountNet).format('0,0.00')+'</th>';
+                        html += ' </tr>';
+                        html += '<tr class="text-right" >';
+                        html += '<th colspan="5">ยอดหลังหักส่วนลด:</th>';
+                        html += '<th  class="tsummary">' + numeral(obj.SummaryNet).format('0,0.00')+'</th>';
+                        html += ' </tr>';
+                        html += '<tr class="text-right" >';
+                        html += '<th colspan="5">อัตราภาษี(7%):</th>';
+                        html += '<th  class="tsummary">' + numeral(obj.SummaryVat).format('0,0.00')+'</th>';
+                        html += ' </tr>';
+                        html += '<tr class="text-right" >';
+                        html += '<th colspan="5">ส่วนลดเงินสด:</th>';
+                        html += '<th  class="tsummary">' + numeral(obj.DiscountCash).format('0,0.00')  +'</th>';
+                        html += ' </tr>';
+                        html += '<tr class="text-right" >';
+                        html += '<th colspan="5">จำนวนทั้งสิ้น:</th>';
+                        html += '<th class="tsummary">' + numeral(obj.SummaryTot).format('0,0.00')  +'</th>';
+                        html += ' </tr>';
+                        html += '<tfoot>';
+                        html += ' </table>';
+
+                        $('.pnlOrder').append(html);
+                    //    $(".pnlOrder table").DataTable();
+                    }
+
+                       var html = '';
+                    $('.pnlAttachFile').empty();
+                    if (obj != null && obj.TblSaleOrderAttachment != null) {
+                        html += '<table class="table table-bordered table-hover"   id="tblAttachment">';
+                        html += '<thead>';
+                        html += '<tr class="bg-primary" >';
+                        html += '<th>No</th>';
+                        html += '<th>FileName</th>';
+                        html += ' </tr>';
+                        html += '</thead>';
+                        html += '<tbody>';
+                        $.each(obj.TblSaleOrderAttachment, function (x, item) {
+                            html += '<tr>';
+
+                            html += ' <td>' + item.AttachmentOrder + '</td>';
+                            html += ' <td>  <a href="@Url.Content("~/")' + item.AttachmentPath + '" target="_blank">' + item.AttachmentPath.split('/')[item.AttachmentPath.split('/').length-1]+'</a></td>';
+
+
+
+                            html += ' </tr>';
+
+                        });
+                        html += '</tbody>';
+                       
+                        html += ' </table>';
+
+                        $('.pnlAttachFile').append(html);
+                      //  $(".pnlAttachFile table").DataTable();
+                    }
+
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    alert(errorThrown);
+                    //or you can put jqXHR.responseText somewhere as complete response. Its html.
+                }
+            });
+
+
+
+            /**/
+          /*  $.get('http://localhost:62805/SaleOrder/GetDetail', { id: $(this).attr('dataid'), msg: "", msgType: "" }, function (data) {
+
+            alert("Load was performed.");
+        }).fail(function (error) {
+            alert(error); // or whatever
+        });*/
+
+
+
+        // alert($(this).attr('dataid'))
+
+        });
+
+        function ClearData() {
+
+        }
+    $(CalendarMenu).slideToggle();
+    </script>
+}
+
+
+    <script type="text/javascript" charset="utf8" src="http://ajax.aspnetcdn.com/ajax/jquery.dataTables/1.9.0/jquery.dataTables.min.js"></script>
+<div class="page">
+    <div class="page-header">
+        <h1 class="page-title">ปฏิทินงาน</h1>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                <a href="@Url.Action("Index", new { controller = "Home", are = "" })" })">หน้าแรก</a>
+            </li>
+            <li class="breadcrumb-item">ฝ่ายติดตั้ง</li>
+            <li class="breadcrumb-item active">ปฏิทินงาน</li>
+        </ol>
+    </div>
+    @*<div class="page-aside">
+            <div class="page-aside-switch">
+                <i class="icon wb-chevron-left" aria-hidden="true"></i>
+                <i class="icon wb-chevron-right" aria-hidden="true"></i>
+            </div>
+            <div class="page-aside-inner page-aside-scroll scrollable is-enabled scrollable-vertical" style="position: relative;">
+                <div data-role="container" class="scrollable-container" style="height: 646px; width: 276px;">
+                    <div data-role="content" class="scrollable-content" style="width: 259px;">
+                        <section class="page-aside-section">
+                            <h5 class="page-aside-title">CALENDAR LIST</h5>
+                            <div class="list-group has-actions">
+                                <div class="list-group-item" data-plugin="editlist">
+                                    <div class="list-content">
+                                        <span class="item-right">10</span>
+                                        <span class="list-text">Admin Calendar</span>
+                                        <div class="item-actions">
+                                            <span class="btn btn-pure btn-icon" data-toggle="list-editable"><i class="icon wb-edit" aria-hidden="true"></i></span>
+                                            <span class="btn btn-pure btn-icon" data-toggle="list-delete"><i class="icon wb-trash" aria-hidden="true"></i></span>
+                                        </div>
+                                    </div>
+                                    <div class="list-editable">
+                                        <div class="form-group form-material">
+                                            <input type="text" class="form-control empty" name="label" value="Admin Calendar">
+                                            <button type="button" class="input-editable-close icon wb-close" data-toggle="list-editable-close" aria-label="Close" aria-expanded="true"></button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="list-group-item" data-plugin="editlist">
+                                    <div class="list-content">
+                                        <span class="item-right">5</span>
+                                        <span class="list-text">Home Calendar</span>
+                                        <div class="item-actions">
+                                            <span class="btn btn-pure btn-icon" data-toggle="list-editable"><i class="icon wb-edit" aria-hidden="true"></i></span>
+                                            <span class="btn btn-pure btn-icon" data-toggle="list-delete"><i class="icon wb-trash" aria-hidden="true"></i></span>
+                                        </div>
+                                    </div>
+                                    <div class="list-editable">
+                                        <div class="form-group form-material">
+                                            <input type="text" class="form-control empty" name="label" value="Home Calendar">
+                                            <button type="button" class="input-editable-close icon wb-close" data-toggle="list-editable-close" aria-label="Close" aria-expanded="true"></button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="list-group-item" data-plugin="editlist">
+                                    <div class="list-content">
+                                        <span class="item-right">16</span>
+                                        <span class="list-text">Work Calendar</span>
+                                        <div class="item-actions">
+                                            <span class="btn btn-pure btn-icon" data-toggle="list-editable"><i class="icon wb-edit" aria-hidden="true"></i></span>
+                                            <span class="btn btn-pure btn-icon" data-toggle="list-delete"><i class="icon wb-trash" aria-hidden="true"></i></span>
+                                        </div>
+                                    </div>
+                                    <div class="list-editable">
+                                        <div class="form-group form-material">
+                                            <input type="text" class="form-control empty" name="label" value="Work Calendar">
+                                            <button type="button" class="input-editable-close icon wb-close" data-toggle="list-editable-close" aria-label="Close" aria-expanded="true"></button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="list-group-item" data-plugin="editlist">
+                                    <div class="list-content">
+                                        <span class="item-right">30</span>
+                                        <span class="list-text">Calendar One</span>
+                                        <div class="item-actions">
+                                            <span class="btn btn-pure btn-icon" data-toggle="list-editable"><i class="icon wb-edit" aria-hidden="true"></i></span>
+                                            <span class="btn btn-pure btn-icon" data-toggle="list-delete"><i class="icon wb-trash" aria-hidden="true"></i></span>
+                                        </div>
+                                    </div>
+                                    <div class="list-editable">
+                                        <div class="form-group form-material">
+                                            <input type="text" class="form-control empty" name="label" value="Calendar One">
+                                            <button type="button" class="input-editable-close icon wb-close" data-toggle="list-editable-close" aria-label="Close" aria-expanded="true"></button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+                        <section class="page-aside-section">
+                            <h5 class="page-aside-title">EVENTS</h5>
+                            <div class="list-group calendar-list">
+                                <a class="list-group-item calendar-event ui-draggable ui-draggable-handle" data-title="Meeting" data-stick="true" data-color="red-600" href="javascript:void(0)">
+                                    <i class="wb-medium-point red-600 mr-10" aria-hidden="true"></i>Meeting
+                                </a>
+                                <a class="list-group-item calendar-event ui-draggable ui-draggable-handle" data-title="Birthday Party" data-stick="true" data-color="green-600" href="javascript:void(0)">
+                                    <i class="wb-medium-point green-600 mr-10" aria-hidden="true"></i>Birthday Party
+                                </a>
+                                <a class="list-group-item calendar-event ui-draggable ui-draggable-handle" data-title="Call Jimba" data-stick="true" data-color="orange-600" href="javascript:void(0)">
+                                    <i class="wb-medium-point orange-600 mr-10" aria-hidden="true"></i>Call Jimba
+                                </a>
+                                <a class="list-group-item calendar-event ui-draggable ui-draggable-handle" data-title="Dinner with Team" data-stick="true" data-color="cyan-600" href="javascript:void(0)">
+                                    <i class="wb-medium-point cyan-600 mr-10" aria-hidden="true"></i>Dinner with Team
+                                </a>
+                                <a id="addNewEventBtn" class="list-group-item" href="javascript:void(0)"> <i class="icon wb-plus" aria-hidden="true"></i> Add New Event </a>
+                            </div>
+                        </section>
+                    </div>
+                </div>
+                <div class="scrollable-bar scrollable-bar-vertical is-disabled scrollable-bar-hide" draggable="false"><div class="scrollable-bar-handle"></div></div>
+            </div>
+        </div>*@
+
+    <div class="page-content container-fluid">
+        <div class="card">
+            <div class="calendar-container">
+                <div id="calendar" class="fc fc-unthemed fc-ltr">
+                    <div class="fc-toolbar fc-header-toolbar">
+                        <div class="fc-left"></div>
+                        @*<div class="fc-right">
+                                <div class="fc-button-group">
+                                    <button type="button" class="fc-month-button fc-button fc-state-default fc-corner-left fc-state-active">month</button>
+                                    <button type="button" class="fc-agendaWeek-button fc-button fc-state-default">week</button>
+                                    <button type="button" class="fc-agendaDay-button fc-button fc-state-default fc-corner-right">day</button>
+                                </div>
+                            </div>*@
+                        <div class="fc-center" style="padding-top:10px;">
+                            <div>
+                                <a href="@Url.RouteUrl("Calendar", new { year = focusDt.AddMonths(-1).Year, month = focusDt.AddMonths(-1).Month })" class="fc-prev-button fc-button fc-state-default" aria-label="prev"><span class="fc-icon fc-icon-left-single-arrow"></span></a>
+                                <h2>@SystemHelper.GetMonthNameThai(focusDt.Month) @focusDt.Year</h2>
+                                <a href="@Url.RouteUrl("Calendar", new { year = focusDt.AddMonths(1).Year, month = focusDt.AddMonths(1).Month })" class="fc-next-button fc-button fc-state-default" aria-label="next"><span class="fc-icon fc-icon-right-single-arrow"></span></a>
+                            </div>
+                        </div>
+                        <div class="fc-clear"></div>
+                    </div>
+                    <div class="fc-view-container" style="">
+                        <div class="fc-view fc-month-view fc-basic-view" style="">
+                            <table class="">
+                                <thead class="fc-head">
+                                    <tr>
+                                        <td class="fc-head-container fc-widget-header">
+                                            <div class="fc-row fc-widget-header">
+                                                <table class="">
+                                                    <thead>
+                                                        <tr>
+                                                            <th class="fc-day-header fc-widget-header fc-sun">
+                                                                <span>Sun</span>
+                                                            </th>
+                                                            <th class="fc-day-header fc-widget-header fc-mon">
+                                                                <span>Mon</span>
+                                                            </th>
+                                                            <th class="fc-day-header fc-widget-header fc-tue">
+                                                                <span>Tue</span>
+                                                            </th>
+                                                            <th class="fc-day-header fc-widget-header fc-wed">
+                                                                <span>Wed</span>
+                                                            </th>
+                                                            <th class="fc-day-header fc-widget-header fc-thu">
+                                                                <span>Thu</span>
+                                                            </th>
+                                                            <th class="fc-day-header fc-widget-header fc-fri">
+                                                                <span>Fri</span>
+                                                            </th>
+                                                            <th class="fc-day-header fc-widget-header fc-sat">
+                                                                <span>Sat</span>
+                                                            </th>
+                                                        </tr>
+                                                    </thead>
+                                                </table>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </thead>
+                                <tbody class="fc-body">
+                                    <tr>
+                                        <td class="fc-widget-content">
+                                            <div class="fc-scroller fc-day-grid-container" style="overflow: hidden; min-height: 519px;">
+                                                <div class="fc-day-grid fc-unselectable">
+                                                    @{
+                                                        int calendarIndex = 0;
+                                                        string[] weekDays = new string[] { "sun", "mon", "tue", "wed", "thu", "fri", "sat" };
+                                                    }
+                                                    @for (int week = 1; week <= 6; week++)
+                                                    {
+                                                        <div class="fc-row fc-week fc-widget-content fc-rigid" style="min-height: 86px;">
+                                                            <div class="fc-bg">
+                                                                <table class="">
+                                                                    <tbody>
+                                                                        <tr>
+                                                                            @for (int day = 0; day <= 6; day++)
+                                                                            {
+                                                                                CalendarDayModel md = Model[calendarIndex + day];
+                                                                                <td class="fc-day fc-widget-content fc-@weekDays[day] fc-past@(focusDt.Month != md.Date.Month ? " fc-other-month" : "")"
+                                                                                    data-date="@md.Date.ToString("yyyy-MM-dd")"></td>
+                                                                            }
+                                                                        </tr>
+                                                                    </tbody>
+                                                                </table>
+                                                            </div>
+                                                            <div class="fc-content-skeleton">
+                                                                <table>
+                                                                    <thead>
+                                                                        <tr>
+                                                                            @for (int day = 0; day <= 6; day++)
+                                                                            {
+                                                                                CalendarDayModel md = Model[calendarIndex + day];
+                                                                                <td class="fc-day-top fc-@weekDays[day] fc-past@(focusDt.Month != md.Date.Month ? " fc-other-month" : "")"
+                                                                                    data-date="@md.Date.ToString("yyyy-MM-dd")">
+                                                                                    <span class="fc-day-number">@md.Date.Day</span>
+                                                                                </td>
+                                                                            }
+                                                                        </tr>
+                                                                    </thead>
+                                                                    <tbody>
+                                                                        <tr>
+                                                                            @for (int day = 0; day <= 6; day++)
+                                                                            {
+                                                                                CalendarDayModel md = Model[calendarIndex + day];
+                                                                                if (md.Jobs.Count > 0)
+                                                                                {
+                                                                                    
+                                                                                    <td class="fc-event-container">
+                                                                                        @foreach (TblSaleOrder it in md.Jobs)
+                                                                                        {
+                                                                                            var bgColor = "bg-primary";
+                                                                                            switch (it.StatusId)
+                                                                                            {
+
+                                                                                                case 2:
+                                                                                                    bgColor = "bg-warning";
+                                                                                                    break;
+                                                                                                case 3: bgColor = "bg-success";
+                                                                                                    break;
+                                                                                            }
+                                                                                            <a class="fc-day-grid-event fc-h-event fc-event fc-start fc-end @bgColor btnViewOrder"
+                                                                                               href="#" dataid="@it.SaleOrderId">
+                                                                                                <div class="fc-content  ">
+                                                                                                    <span class="fc-title">@it.SaleOrderNo</span>
+                                                                                                </div>
+                                                                                            </a>
+                                                                                        }
+                                                                                    </td>
+                                                                                }
+                                                                                else
+                                                                                {
+                                                                                    <td></td>
+                                                                                }
+                                                                            }
+                                                                        </tr>
+                                                                    </tbody>
+                                                                </table>
+                                                            </div>
+                                                        </div>
+                                                        calendarIndex = calendarIndex + 7;
+                                                    }
+                                                    @*<div class="fc-row fc-week fc-widget-content fc-rigid" style="height: 86px;">
+                                                            <div class="fc-bg">
+                                                                <table class="">
+                                                                    <tbody>
+                                                                        <tr>
+                                                                            <td class="fc-day fc-widget-content fc-sun fc-other-month fc-past" data-date="2016-09-25"></td>
+                                                                            <td class="fc-day fc-widget-content fc-mon fc-other-month fc-past" data-date="2016-09-26"></td>
+                                                                            <td class="fc-day fc-widget-content fc-tue fc-other-month fc-past" data-date="2016-09-27"></td>
+                                                                            <td class="fc-day fc-widget-content fc-wed fc-other-month fc-past" data-date="2016-09-28"></td>
+                                                                            <td class="fc-day fc-widget-content fc-thu fc-other-month fc-past" data-date="2016-09-29"></td>
+                                                                            <td class="fc-day fc-widget-content fc-fri fc-other-month fc-past" data-date="2016-09-30"></td>
+                                                                            <td class="fc-day fc-widget-content fc-sat fc-past" data-date="2016-10-01"></td>
+                                                                        </tr>
+                                                                    </tbody>
+                                                                </table>
+                                                            </div>
+                                                            <div class="fc-content-skeleton">
+                                                                <table>
+                                                                    <thead>
+                                                                        <tr>
+                                                                            <td class="fc-day-top fc-sun fc-other-month fc-past" data-date="2016-09-25">
+                                                                                <span class="fc-day-number">25</span>
+                                                                            </td>
+                                                                            <td class="fc-day-top fc-mon fc-other-month fc-past" data-date="2016-09-26">
+                                                                                <span class="fc-day-number">26</span>
+                                                                            </td>
+                                                                            <td class="fc-day-top fc-tue fc-other-month fc-past" data-date="2016-09-27">
+                                                                                <span class="fc-day-number">27</span>
+                                                                            </td>
+                                                                            <td class="fc-day-top fc-wed fc-other-month fc-past" data-date="2016-09-28">
+                                                                                <span class="fc-day-number">28</span>
+                                                                            </td>
+                                                                            <td class="fc-day-top fc-thu fc-other-month fc-past" data-date="2016-09-29">
+                                                                                <span class="fc-day-number">29</span>
+                                                                            </td>
+                                                                            <td class="fc-day-top fc-fri fc-other-month fc-past" data-date="2016-09-30">
+                                                                                <span class="fc-day-number">30</span>
+                                                                            </td>
+                                                                            <td class="fc-day-top fc-sat fc-past" data-date="2016-10-01">
+                                                                                <span class="fc-day-number">1</span>
+                                                                            </td>
+                                                                        </tr>
+                                                                    </thead>
+                                                                    <tbody>
+                                                                        <tr>
+                                                                            <td></td>
+                                                                            <td></td>
+                                                                            <td></td>
+                                                                            <td></td>
+                                                                            <td></td>
+                                                                            <td></td>
+                                                                            <td class="fc-event-container">
+                                                                                <a class="fc-day-grid-event fc-h-event fc-event fc-start fc-end fc-draggable fc-resizable">
+                                                                                    <div class="fc-content">
+                                                                                        <span class="fc-title">All Day Event</span>
+                                                                                    </div>
+                                                                                    <div class="fc-resizer fc-end-resizer"></div>
+                                                                                </a>
+                                                                            </td>
+                                                                        </tr>
+                                                                    </tbody>
+                                                                </table>
+                                                            </div>
+                                                        </div>
+                                                        <div class="fc-row fc-week fc-widget-content fc-rigid" style="height: 86px;">
+                                                            <div class="fc-bg">
+                                                                <table class="">
+                                                                    <tbody>
+                                                                        <tr>
+                                                                            <td class="fc-day fc-widget-content fc-sun fc-past" data-date="2016-10-02"></td>
+                                                                            <td class="fc-day fc-widget-content fc-mon fc-past" data-date="2016-10-03"></td>
+                                                                            <td class="fc-day fc-widget-content fc-tue fc-past" data-date="2016-10-04"></td>
+                                                                            <td class="fc-day fc-widget-content fc-wed fc-past" data-date="2016-10-05"></td>
+                                                                            <td class="fc-day fc-widget-content fc-thu fc-past" data-date="2016-10-06"></td>
+                                                                            <td class="fc-day fc-widget-content fc-fri fc-past" data-date="2016-10-07"></td>
+                                                                            <td class="fc-day fc-widget-content fc-sat fc-past" data-date="2016-10-08"></td>
+                                                                        </tr>
+                                                                    </tbody>
+                                                                </table>
+                                                            </div>
+                                                            <div class="fc-content-skeleton">
+                                                                <table>
+                                                                    <thead>
+                                                                        <tr>
+                                                                            <td class="fc-day-top fc-sun fc-past" data-date="2016-10-02">
+                                                                                <span class="fc-day-number">2</span>
+                                                                            </td>
+                                                                            <td class="fc-day-top fc-mon fc-past" data-date="2016-10-03">
+                                                                                <span class="fc-day-number">3</span>
+                                                                            </td>
+                                                                            <td class="fc-day-top fc-tue fc-past" data-date="2016-10-04">
+                                                                                <span class="fc-day-number">4</span>
+                                                                            </td>
+                                                                            <td class="fc-day-top fc-wed fc-past" data-date="2016-10-05">
+                                                                                <span class="fc-day-number">5</span>
+                                                                            </td>
+                                                                            <td class="fc-day-top fc-thu fc-past" data-date="2016-10-06">
+                                                                                <span class="fc-day-number">6</span>
+                                                                            </td>
+                                                                            <td class="fc-day-top fc-fri fc-past" data-date="2016-10-07">
+                                                                                <span class="fc-day-number">7</span>
+                                                                            </td>
+                                                                            <td class="fc-day-top fc-sat fc-past" data-date="2016-10-08">
+                                                                                <span class="fc-day-number">8</span>
+                                                                            </td>
+                                                                        </tr>
+                                                                    </thead>
+                                                                    <tbody>
+                                                                        <tr>
+                                                                            <td></td>
+                                                                            <td></td>
+                                                                            <td></td>
+                                                                            <td></td>
+                                                                            <td></td>
+                                                                            <td class="fc-event-container" colspan="2">
+                                                                                <a class="fc-day-grid-event fc-h-event fc-event fc-start fc-not-end fc-draggable" style="background-color:#0bb2d4;border-color:#0bb2d4">
+                                                                                    <div class="fc-content">
+                                                                                        <span class="fc-title">Long Event</span>
+                                                                                    </div>
+                                                                                </a>
+                                                                            </td>
+                                                                        </tr>
+                                                                    </tbody>
+                                                                </table>
+                                                            </div>
+                                                        </div>
+                                                        <div class="fc-row fc-week fc-widget-content fc-rigid" style="height: 86px;">
+                                                            <div class="fc-bg">
+                                                                <table class="">
+                                                                    <tbody>
+                                                                        <tr>
+                                                                            <td class="fc-day fc-widget-content fc-sun fc-past" data-date="2016-10-09"></td>
+                                                                            <td class="fc-day fc-widget-content fc-mon fc-past" data-date="2016-10-10"></td>
+                                                                            <td class="fc-day fc-widget-content fc-tue fc-past" data-date="2016-10-11"></td>
+                                                                            <td class="fc-day fc-widget-content fc-wed fc-past" data-date="2016-10-12"></td>
+                                                                            <td class="fc-day fc-widget-content fc-thu fc-past" data-date="2016-10-13"></td>
+                                                                            <td class="fc-day fc-widget-content fc-fri fc-past" data-date="2016-10-14"></td>
+                                                                            <td class="fc-day fc-widget-content fc-sat fc-past" data-date="2016-10-15"></td>
+                                                                        </tr>
+                                                                    </tbody>
+                                                                </table>
+                                                            </div>
+                                                            <div class="fc-content-skeleton">
+                                                                <table>
+                                                                    <thead>
+                                                                        <tr>
+                                                                            <td class="fc-day-top fc-sun fc-past" data-date="2016-10-09">
+                                                                                <span class="fc-day-number">9</span>
+                                                                            </td>
+                                                                            <td class="fc-day-top fc-mon fc-past" data-date="2016-10-10">
+                                                                                <span class="fc-day-number">10</span>
+                                                                            </td>
+                                                                            <td class="fc-day-top fc-tue fc-past" data-date="2016-10-11">
+                                                                                <span class="fc-day-number">11</span>
+                                                                            </td>
+                                                                            <td class="fc-day-top fc-wed fc-past" data-date="2016-10-12">
+                                                                                <span class="fc-day-number">12</span>
+                                                                            </td>
+                                                                            <td class="fc-day-top fc-thu fc-past" data-date="2016-10-13">
+                                                                                <span class="fc-day-number">13</span>
+                                                                            </td>
+                                                                            <td class="fc-day-top fc-fri fc-past" data-date="2016-10-14">
+                                                                                <span class="fc-day-number">14</span>
+                                                                            </td>
+                                                                            <td class="fc-day-top fc-sat fc-past" data-date="2016-10-15">
+                                                                                <span class="fc-day-number">15</span>
+                                                                            </td>
+                                                                        </tr>
+                                                                    </thead>
+                                                                    <tbody>
+                                                                        <tr>
+                                                                            <td class="fc-event-container">
+                                                                                <a class="fc-day-grid-event fc-h-event fc-event fc-not-start fc-end fc-draggable fc-resizable" style="background-color:#0bb2d4;border-color:#0bb2d4">
+                                                                                    <div class="fc-content">
+                                                                                        <span class="fc-title">Long Event</span>
+                                                                                    </div>
+                                                                                    <div class="fc-resizer fc-end-resizer"></div>
+                                                                                </a>
+                                                                            </td>
+                                                                            <td rowspan="6"></td>
+                                                                            <td class="fc-event-container" colspan="2">
+                                                                                <a class="fc-day-grid-event fc-h-event fc-event fc-start fc-end fc-draggable fc-resizable">
+                                                                                    <div class="fc-content">
+                                                                                        <span class="fc-title">Conference</span>
+                                                                                    </div>
+                                                                                    <div class="fc-resizer fc-end-resizer"></div>
+                                                                                </a>
+                                                                            </td>
+                                                                            <td class="fc-event-container" rowspan="6">
+                                                                                <a class="fc-day-grid-event fc-h-event fc-event fc-start fc-end fc-draggable">
+                                                                                    <div class="fc-content">
+                                                                                        <span class="fc-time">7a</span>
+                                                                                        <span class="fc-title">Birthday Party</span>
+                                                                                    </div>
+                                                                                </a>
+                                                                            </td>
+                                                                            <td rowspan="6"></td>
+                                                                            <td rowspan="6"></td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <td class="fc-event-container" rowspan="5">
+                                                                                <a class="fc-day-grid-event fc-h-event fc-event fc-start fc-end fc-draggable" style="background-color:#ff4c52;border-color:#ff4c52">
+                                                                                    <div class="fc-content">
+                                                                                        <span class="fc-time">4p</span>
+                                                                                        <span class="fc-title">Repeating Event</span>
+                                                                                    </div>
+                                                                                </a>
+                                                                            </td>
+                                                                            <td rowspan="5"></td>
+                                                                            <td class="fc-event-container">
+                                                                                <a class="fc-day-grid-event fc-h-event fc-event fc-start fc-end fc-draggable">
+                                                                                    <div class="fc-content">
+                                                                                        <span class="fc-time">10:30a</span>
+                                                                                        <span class="fc-title">Meeting</span>
+                                                                                    </div>
+                                                                                </a>
+                                                                            </td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <td class="fc-event-container fc-limited">
+                                                                                <a class="fc-day-grid-event fc-h-event fc-event fc-start fc-end fc-draggable">
+                                                                                    <div class="fc-content">
+                                                                                        <span class="fc-time">12p</span>
+                                                                                        <span class="fc-title">Lunch</span>
+                                                                                    </div>
+                                                                                </a>
+                                                                            </td>
+                                                                            <td class="fc-more-cell" rowspan="1">
+                                                                                <div>
+                                                                                    <a class="fc-more">+4 more</a>
+                                                                                </div>
+                                                                            </td>
+                                                                        </tr>
+                                                                        <tr class="fc-limited">
+                                                                            <td class="fc-event-container">
+                                                                                <a class="fc-day-grid-event fc-h-event fc-event fc-start fc-end fc-draggable">
+                                                                                    <div class="fc-content">
+                                                                                        <span class="fc-time">2:30p</span>
+                                                                                        <span class="fc-title">Meeting</span>
+                                                                                    </div>
+                                                                                </a>
+                                                                            </td>
+                                                                        </tr>
+                                                                        <tr class="fc-limited">
+                                                                            <td class="fc-event-container">
+                                                                                <a class="fc-day-grid-event fc-h-event fc-event fc-start fc-end fc-draggable">
+                                                                                    <div class="fc-content">
+                                                                                        <span class="fc-time">5:30p</span>
+                                                                                        <span class="fc-title">Happy Hour</span>
+                                                                                    </div>
+                                                                                </a>
+                                                                            </td>
+                                                                        </tr>
+                                                                        <tr class="fc-limited">
+                                                                            <td class="fc-event-container">
+                                                                                <a class="fc-day-grid-event fc-h-event fc-event fc-start fc-end fc-draggable">
+                                                                                    <div class="fc-content">
+                                                                                        <span class="fc-time">8p</span>
+                                                                                        <span class="fc-title">Dinner</span>
+                                                                                    </div>
+                                                                                </a>
+                                                                            </td>
+                                                                        </tr>
+                                                                    </tbody>
+                                                                </table>
+                                                            </div>
+                                                        </div>
+                                                        <div class="fc-row fc-week fc-widget-content fc-rigid" style="height: 86px;">
+                                                            <div class="fc-bg">
+                                                                <table class="">
+                                                                    <tbody>
+                                                                        <tr>
+                                                                            <td class="fc-day fc-widget-content fc-sun fc-past" data-date="2016-10-16"></td>
+                                                                            <td class="fc-day fc-widget-content fc-mon fc-past" data-date="2016-10-17"></td>
+                                                                            <td class="fc-day fc-widget-content fc-tue fc-past" data-date="2016-10-18"></td>
+                                                                            <td class="fc-day fc-widget-content fc-wed fc-past" data-date="2016-10-19"></td>
+                                                                            <td class="fc-day fc-widget-content fc-thu fc-past" data-date="2016-10-20"></td>
+                                                                            <td class="fc-day fc-widget-content fc-fri fc-past" data-date="2016-10-21"></td>
+                                                                            <td class="fc-day fc-widget-content fc-sat fc-past" data-date="2016-10-22"></td>
+                                                                        </tr>
+                                                                    </tbody>
+                                                                </table>
+                                                            </div>
+                                                            <div class="fc-content-skeleton">
+                                                                <table>
+                                                                    <thead>
+                                                                        <tr>
+                                                                            <td class="fc-day-top fc-sun fc-past" data-date="2016-10-16">
+                                                                                <span class="fc-day-number">16</span>
+                                                                            </td>
+                                                                            <td class="fc-day-top fc-mon fc-past" data-date="2016-10-17">
+                                                                                <span class="fc-day-number">17</span>
+                                                                            </td>
+                                                                            <td class="fc-day-top fc-tue fc-past" data-date="2016-10-18">
+                                                                                <span class="fc-day-number">18</span>
+                                                                            </td>
+                                                                            <td class="fc-day-top fc-wed fc-past" data-date="2016-10-19">
+                                                                                <span class="fc-day-number">19</span>
+                                                                            </td>
+                                                                            <td class="fc-day-top fc-thu fc-past" data-date="2016-10-20">
+                                                                                <span class="fc-day-number">20</span>
+                                                                            </td>
+                                                                            <td class="fc-day-top fc-fri fc-past" data-date="2016-10-21">
+                                                                                <span class="fc-day-number">21</span>
+                                                                            </td>
+                                                                            <td class="fc-day-top fc-sat fc-past" data-date="2016-10-22">
+                                                                                <span class="fc-day-number">22</span>
+                                                                            </td>
+                                                                        </tr>
+                                                                    </thead>
+                                                                    <tbody>
+                                                                        <tr>
+                                                                            <td></td>
+                                                                            <td></td>
+                                                                            <td></td>
+                                                                            <td></td>
+                                                                            <td></td>
+                                                                            <td></td>
+                                                                            <td></td>
+                                                                        </tr>
+                                                                    </tbody>
+                                                                </table>
+                                                            </div>
+                                                        </div>
+                                                        <div class="fc-row fc-week fc-widget-content fc-rigid" style="height: 86px;">
+                                                            <div class="fc-bg">
+                                                                <table class="">
+                                                                    <tbody>
+                                                                        <tr>
+                                                                            <td class="fc-day fc-widget-content fc-sun fc-past" data-date="2016-10-23"></td>
+                                                                            <td class="fc-day fc-widget-content fc-mon fc-past" data-date="2016-10-24"></td>
+                                                                            <td class="fc-day fc-widget-content fc-tue fc-past" data-date="2016-10-25"></td>
+                                                                            <td class="fc-day fc-widget-content fc-wed fc-past" data-date="2016-10-26"></td>
+                                                                            <td class="fc-day fc-widget-content fc-thu fc-past" data-date="2016-10-27"></td>
+                                                                            <td class="fc-day fc-widget-content fc-fri fc-past" data-date="2016-10-28"></td>
+                                                                            <td class="fc-day fc-widget-content fc-sat fc-past" data-date="2016-10-29"></td>
+                                                                        </tr>
+                                                                    </tbody>
+                                                                </table>
+                                                            </div>
+                                                            <div class="fc-content-skeleton">
+                                                                <table>
+                                                                    <thead>
+                                                                        <tr>
+                                                                            <td class="fc-day-top fc-sun fc-past" data-date="2016-10-23">
+                                                                                <span class="fc-day-number">23</span>
+                                                                            </td>
+                                                                            <td class="fc-day-top fc-mon fc-past" data-date="2016-10-24">
+                                                                                <span class="fc-day-number">24</span>
+                                                                            </td>
+                                                                            <td class="fc-day-top fc-tue fc-past" data-date="2016-10-25">
+                                                                                <span class="fc-day-number">25</span>
+                                                                            </td>
+                                                                            <td class="fc-day-top fc-wed fc-past" data-date="2016-10-26">
+                                                                                <span class="fc-day-number">26</span>
+                                                                            </td>
+                                                                            <td class="fc-day-top fc-thu fc-past" data-date="2016-10-27">
+                                                                                <span class="fc-day-number">27</span>
+                                                                            </td>
+                                                                            <td class="fc-day-top fc-fri fc-past" data-date="2016-10-28">
+                                                                                <span class="fc-day-number">28</span>
+                                                                            </td>
+                                                                            <td class="fc-day-top fc-sat fc-past" data-date="2016-10-29">
+                                                                                <span class="fc-day-number">29</span>
+                                                                            </td>
+                                                                        </tr>
+                                                                    </thead>
+                                                                    <tbody>
+                                                                        <tr>
+                                                                            <td></td>
+                                                                            <td></td>
+                                                                            <td></td>
+                                                                            <td></td>
+                                                                            <td></td>
+                                                                            <td></td>
+                                                                            <td></td>
+                                                                        </tr>
+                                                                    </tbody>
+                                                                </table>
+                                                            </div>
+                                                        </div>
+                                                        <div class="fc-row fc-week fc-widget-content fc-rigid" style="height: 89px;">
+                                                            <div class="fc-bg">
+                                                                <table class="">
+                                                                    <tbody>
+                                                                        <tr>
+                                                                            <td class="fc-day fc-widget-content fc-sun fc-past" data-date="2016-10-30"></td>
+                                                                            <td class="fc-day fc-widget-content fc-mon fc-past" data-date="2016-10-31"></td>
+                                                                            <td class="fc-day fc-widget-content fc-tue fc-other-month fc-past" data-date="2016-11-01"></td>
+                                                                            <td class="fc-day fc-widget-content fc-wed fc-other-month fc-past" data-date="2016-11-02"></td>
+                                                                            <td class="fc-day fc-widget-content fc-thu fc-other-month fc-past" data-date="2016-11-03"></td>
+                                                                            <td class="fc-day fc-widget-content fc-fri fc-other-month fc-past" data-date="2016-11-04"></td>
+                                                                            <td class="fc-day fc-widget-content fc-sat fc-other-month fc-past" data-date="2016-11-05"></td>
+                                                                        </tr>
+                                                                    </tbody>
+                                                                </table>
+                                                            </div>
+                                                            <div class="fc-content-skeleton">
+                                                                <table>
+                                                                    <thead>
+                                                                        <tr>
+                                                                            <td class="fc-day-top fc-sun fc-past" data-date="2016-10-30">
+                                                                                <span class="fc-day-number">30</span>
+                                                                            </td>
+                                                                            <td class="fc-day-top fc-mon fc-past" data-date="2016-10-31">
+                                                                                <span class="fc-day-number">31</span>
+                                                                            </td>
+                                                                            <td class="fc-day-top fc-tue fc-other-month fc-past" data-date="2016-11-01">
+                                                                                <span class="fc-day-number">1</span>
+                                                                            </td>
+                                                                            <td class="fc-day-top fc-wed fc-other-month fc-past" data-date="2016-11-02">
+                                                                                <span class="fc-day-number">2</span>
+                                                                            </td>
+                                                                            <td class="fc-day-top fc-thu fc-other-month fc-past" data-date="2016-11-03">
+                                                                                <span class="fc-day-number">3</span>
+                                                                            </td>
+                                                                            <td class="fc-day-top fc-fri fc-other-month fc-past" data-date="2016-11-04">
+                                                                                <span class="fc-day-number">4</span>
+                                                                            </td>
+                                                                            <td class="fc-day-top fc-sat fc-other-month fc-past" data-date="2016-11-05">
+                                                                                <span class="fc-day-number">5</span>
+                                                                            </td>
+                                                                        </tr>
+                                                                    </thead>
+                                                                    <tbody>
+                                                                        <tr>
+                                                                            <td></td>
+                                                                            <td></td>
+                                                                            <td></td>
+                                                                            <td></td>
+                                                                            <td></td>
+                                                                            <td></td>
+                                                                            <td></td>
+                                                                        </tr>
+                                                                    </tbody>
+                                                                </table>
+                                                            </div>
+                                                        </div>*@
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="SaleOrderModal" tabindex="-1" role="dialog" aria-labelledby="confirm" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
+      
+            <div class="modal-content modal-primary">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="ConfirmModalTitle"><label class="lblSaleOrderId"></label></h5>
+
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+
+                <div class="modal-body" style="background-color:#f1f4f5">
+                    <div data-tabs="myTabPage">
+                        <ul class="tabs">
+                            <li class="tab-link current" data-tab="tab-1">ข้อมูลพื้นฐาน</li>
+                            <li class="tab-link" data-tab="tab-2">รายการสินค้า</li>
+                            <li class="tab-link" data-tab="tab-3">เอกสารแนบ</li>
+                        </ul>
+                        <div id="tab-1" class="tab-content current">
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label for="SaleOrderId" class="col-form-label">เลขที่ใบสั่งงาน</label>
+
+                                        <div class="input-group ">
+                                            <input type="text" class="form-control" id="SaleOrderId" name="SaleOrderId"
+                                                   placeholder="เลขทที่ใบสั่งงาน" readonly />
+
+                                        </div>
+
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label for="CreateDate" class="col-form-label">วันที่ออกเอกสาร</label>
+                                        <div class="input-group ">
+
+                                            <input type="text" class="form-control" id="CreatedDate" name="CreatedDate" value="" placeholder="dd/MM/yyyy ค.ศ." readonly autocomplete="off" />
+                                            <span class="input-group-addon">
+                                                <i class="icon wb-calendar icon-2-5x text-success" aria-hidden="true"></i>
+                                            </span>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label for="QuotationNo" class="col-form-label">เลขที่ใบเสนอราคา</label>
+
+                                        <div class="input-group ">
+                                            <input type="text" class="form-control" id="QuotationNo" name="QuotationNo"
+                                                   placeholder="เลขที่ใบเสนอราคา" readonly />
+
+                                        </div>
+
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label for="CustomerTaxId" class="col-form-label">เลขประจำตัวผู้เสียภาษี</label>
+
+                                        <div class="input-group ">
+                                            <input type="text" class="form-control" id="CustomerTaxId" name="CustomerTaxId"
+                                                   placeholder="เลขประจำตัวผู้เสียภาษี" readonly />
+
+                                        </div>
+
+                                    </div>
+
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label for="CustomerName" class="col-form-label">ชื่อลูกค้า</label>
+
+                                        <div class="input-group ">
+                                            <input type="text" class="form-control" id="CustomerName" name="CustomerName"
+                                                   placeholder="ชื่อลูกค้า" readonly />
+
+                                        </div>
+
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label for="DeliveryDate" class="col-form-label">วันที่สั่งขาย</label>
+                                        <div class="input-group ">
+
+                                            <input type="text" id="DeliveryDate" class="form-control" name="DeliveryDate" value="" placeholder="dd/MM/yyyy ค.ศ." readonly autocomplete="off" />
+                                            <span class="input-group-addon">
+                                                <i class="icon wb-calendar icon-2-5x text-success" aria-hidden="true"></i>
+                                            </span>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label for="ContractName" class="col-form-label">ชื่อผู้ติดต่อ</label>
+
+                                        <div class="input-group ">
+                                            <input type="text" class="form-control" id="ContractName" name="ContractName"
+                                                   placeholder="ชื่อลูกค้า" readonly />
+
+                                        </div>
+
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label for="SaleName" class="col-form-label">พนักงานงาน</label>
+
+                                        <div class="input-group ">
+                                            <input type="text" class="form-control" id="SaleName" name="SaleName"
+                                                   placeholder="ชื่อลูกค้า" readonly />
+
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label for="BillingAddress" class="col-form-label">ที่อยู่ออกบิล</label>
+
+                                        <div class="input-group ">
+                                            <input type="text" class="form-control" id="BillingAddress" name="BillingAddress"
+                                                   placeholder="ที่อยู่ออกบิล" readonly />
+
+                                        </div>
+
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label for="ShippingAddress" class="col-form-label">ที่อยู่ที่จัดส่ง</label>
+
+                                        <div class="input-group ">
+                                            <input type="text" class="form-control" id="ShippingAddress" name="ShippingAddress"
+                                                   placeholder="ที่อยู่ที่จัดส่ง" readonly />
+
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label for="OperationStartDate" class="col-form-label">วันที่เริ่มงาน</label>
+                                        <div class="input-group ">
+
+                                            <input type="text" class="form-control" id="OperationStartDate" name="OperationStartDate" value="" placeholder="dd/MM/yyyy ค.ศ." autocomplete="off" />
+                                            <span class="input-group-addon">
+                                                <i class="icon wb-calendar icon-2-5x text-success" aria-hidden="true"></i>
+                                            </span>
+                                        </div>
+
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label for="OperationEndDate" class="col-form-label">วันที่สิ้นสุดงาน</label>
+                                        <div class="input-group ">
+
+                                            <input type="text" class="form-control" id="OperationEndDate" name="OperationEndDate" value="" placeholder="dd/MM/yyyy ค.ศ." autocomplete="off" />
+                                            <span class="input-group-addon">
+                                                <i class="icon wb-calendar icon-2-5x text-success" aria-hidden="true"></i>
+                                            </span>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label for="OperationStartDate" class="col-form-label">หมายเหตุ</label>
+                                        <div class="input-group ">
+
+                                            <textarea rows="4" cols="47" class="form-control" name="SaleOrderRemark"></textarea>
+                                        </div>
+
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label for="PriceValidity" class="col-form-label">สถานะเอกสาร</label>
+                                       
+                                            <select name="StatusId" id="StatusId" class="form-control">
+                                                <option class="text-primary" value="1">เปิด</option>
+                                                <option class="text-success" value="2">ปิด</option>
+                                                <option class="text-muted" value="3">ยกเลิก</option>
+                                            </select>
+                                        
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        </div>
+                        <div id="tab-2" class="tab-content">
+                           <div class="pnlOrder"></div>
+                        </div>
+                        <div id="tab-3" class="tab-content">
+                            <div class="pnlAttachFile"></div>
+                        </div>
+                
+
+
+                    <input type="hidden" id="lbPreSONo" name="lbPreSONo" value="-" />
+                    <input type="hidden" id="lbQuotationId" name="lbQuotationId" value="" />
+                    <input type="hidden" id="lbSaleOrderId" name="lbSaleOrderId" value="" />
+                </div>
+                <div class="modal-footer">
+                    <button type="submit"  class="btn btn-primary btnSaveTime">บันทึก</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">ยกเลิก</button>
+                </div>
+
+            </div>
+       
+    </div>
+
+</div>

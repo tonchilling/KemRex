@@ -48,10 +48,9 @@ namespace Kemrex.Core.Common.Modules
                          join p in db.TblProduct
                          on qd.ProductId equals p.ProductId
                          where qd.QuotationId == QuotationId
-                         select qd);               
-             return query.ToList();
+                         select qd).ToList();
+            return query;
         }
-
         bool IModule<TblQuotationDetail, int>.IsExist(int id) => throw new NotImplementedException();
 
         public void Set(TblQuotationDetail ob)

@@ -2,7 +2,7 @@
 @using Kemrex.Web.Common.Controllers
 @using Kemrex.Web.Common.Models
 
-@model List<TblSaleOrder>
+@model List<TblJobOrder>
 @{
     ViewBag.Title = "Index";
     KemrexController kemrex = ((KemrexController)this.ViewContext.Controller);
@@ -20,6 +20,8 @@
                 });
             }, 5000);
         });
+
+        $(EngineerMenu).slideToggle();
     </script>
 }
 
@@ -79,29 +81,17 @@
                                             }
                                             @foreach (var ob in Model)
                                             {
-                                                var total = ob.SummaryTot - ob.DiscountCash;
-                                                <tr id="@ob.StatusId"
-                                                    @if (ob.StatusId == 1) { @Html.Raw("class=\"table-light text-primary\"")  } else if (ob.StatusId == 2) { @Html.Raw("class=\"table-primary text-success\"")  } else if (ob.StatusId == 3) { @Html.Raw("class=\"table-dark text-white\"") }>
-                                                    <td>@ob.CustomerName</td>
-                                                    <td>@ob.SaleOrderNo</td>
-                                                    <td align="center">@ob.CreatedDate</td>
+                                             //   var total = ob.SaleOrder.SummaryTot - ob.SaleOrder.DiscountCash;
+                                                <tr id="@ob.JobOrderId">
+                                                  
+                                                    <td>@ob.JobName</td>
+                                                    <td>@ob.JobOrderNo</td>
+                                                    <td align="center">@ob.CreateDateToString</td>
                                                     <td align="center">
-                                                        @{ if (ob.StatusId == 1)
-                                                            {
-                                                                @("เปิด");
-                                                            }
-                                                            else if (ob.StatusId == 2)
-                                                            {
-                                                                @("ปิด");
-                                                            }
-                                                            else
-                                                            {
-                                                                @("ยกเลิก");
-                                                            }
-                                                        }
+                                                     
                                                     </td>
                                                     <td align="center">
-                                                        <a href="@Url.Action("Detail", new { controller="JobOrder" , area="" , id=ob.SaleOrderId })"
+                                                        <a href="@Url.Action("Detail", new { controller="JobOrder" , area="" , id=ob.JobOrderId })"
                                                            class="btn btn-xs btn-primary">
                                                             <i class="fa fa-pencil" aria-hidden="true"></i>&nbsp;แก้ไข
                                                         </a>

@@ -233,7 +233,9 @@
     <Content Include="fonts\foundation\foundation.min.css" />
     <Content Include="fonts\foundation\foundation.svg" />
     <Content Include="fonts\framework7\framework7.min.css" />
+    <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="fonts\glyphicons\glyphicons-halflings-regular.svg" />
+    <Content Include="fonts\glyphicons\glyphicons.css" />
     <Content Include="fonts\glyphicons\glyphicons.min.css" />
     <Content Include="fonts\ionicons\ionicons.min.css" />
     <Content Include="fonts\ionicons\ionicons.svg" />
@@ -877,6 +879,7 @@
     <Content Include="themes\RemarkClassicBase\css\calendar.min.css">
       <DependentUpon>calendar.css</DependentUpon>
     </Content>
+    <Content Include="themes\RemarkClassicBase\css\datatable.boostrap.css" />
     <Content Include="themes\RemarkClassicBase\css\login.css" />
     <Content Include="themes\RemarkClassicBase\css\login.min.css">
       <DependentUpon>login.css</DependentUpon>
@@ -917,6 +920,7 @@
     <Content Include="themes\RemarkClassicBase\js\Plugin\card.js" />
     <Content Include="themes\RemarkClassicBase\js\Plugin\clockpicker.js" />
     <Content Include="themes\RemarkClassicBase\js\Plugin\closeable-tabs.js" />
+    <Content Include="themes\RemarkClassicBase\js\Plugin\datatable.boostrap4.js" />
     <Content Include="themes\RemarkClassicBase\js\Plugin\dataTables.bootstrap-1.10.19.min.js" />
     <Content Include="themes\RemarkClassicBase\js\Plugin\datatables.js" />
     <Content Include="themes\RemarkClassicBase\js\Plugin\datatables.min.js" />
@@ -1138,6 +1142,8 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\AccountController.cs" />
+    <Compile Include="Controllers\api\CommonController.cs" />
+    <Compile Include="Controllers\api\DefaultController.cs" />
     <Compile Include="Controllers\api\SaleOrderServiceController.cs" />
     <Compile Include="Controllers\api\TestController.cs" />
     <Compile Include="Controllers\AuthenController.cs" />
@@ -1148,6 +1154,8 @@
     <Compile Include="Controllers\CustomerGroupController.cs" />
     <Compile Include="Controllers\DepartmentController.cs" />
     <Compile Include="Controllers\EmployeeController.cs" />
+    <Compile Include="Controllers\EmptyController.cs" />
+    <Compile Include="Controllers\ExportController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\InvoiceController.cs" />
     <Compile Include="Controllers\JobOrderController.cs" />
@@ -1161,6 +1169,7 @@
     <Compile Include="Controllers\QuotationController.cs" />
     <Compile Include="Controllers\RoleController.cs" />
     <Compile Include="Controllers\SaleOrderController.cs" />
+    <Compile Include="Controllers\StockController.cs" />
     <Compile Include="Controllers\SystemController.cs" />
     <Compile Include="Controllers\TeamOperationController.cs" />
     <Compile Include="Controllers\TeamSaleController.cs" />
@@ -1260,6 +1269,20 @@
     <Content Include="libs\popper-js\popper-utils.min.js.map" />
     <Content Include="libs\popper-js\popper.min.js.map" />
     <None Include="bundleconfig.json" />
+    <Content Include="fonts\browa.ttf" />
+    <Content Include="fonts\browab.ttf" />
+    <Content Include="fonts\browai.ttf" />
+    <Content Include="fonts\browaz.ttf" />
+    <Content Include="fonts\glyphicons-halflings-regular.eot" />
+    <Content Include="fonts\glyphicons-halflings-regular.ttf" />
+    <Content Include="fonts\glyphicons-halflings-regular.woff" />
+    <Content Include="fonts\glyphicons-halflings-regular.woff2" />
+    <Content Include="fonts\tahoma.ttf" />
+    <Content Include="fonts\tahomabd.ttf" />
+    <Content Include="fonts\verdana.ttf" />
+    <Content Include="fonts\verdanab_0.ttf" />
+    <Content Include="fonts\verdanai_0.ttf" />
+    <Content Include="fonts\verdanaz_0.ttf" />
     <None Include="packages.config" />
     <Content Include="themes\RemarkClassicBase\libs\breakpoints\breakpoints.min.js.map" />
     <Content Include="themes\RemarkClassicBase\libs\jquery-placeholder\jquery.placeholder.min.js.map" />
@@ -1307,6 +1330,7 @@
     <Content Include="Views\RemarkClassicBase\Base\TeamOperation\Detail.cshtml" />
     <Content Include="Views\RemarkClassicBase\Base\TeamOperation\Index.cshtml" />
     <Content Include="Views\RemarkClassicBase\Base\Calendar\Index.cshtml" />
+    <Content Include="Views\RemarkClassicBase\Base\Calendar\Index_bk_20190627.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
