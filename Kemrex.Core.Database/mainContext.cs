@@ -1551,6 +1551,8 @@ namespace Kemrex.Core.Database
                     .HasForeignKey(d => d.ManagerId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_TeamOperation_Manager");
+
+
             });
 
             modelBuilder.Entity<TeamOperationDetail>(entity =>
