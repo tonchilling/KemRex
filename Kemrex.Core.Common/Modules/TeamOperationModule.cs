@@ -38,11 +38,29 @@ namespace Kemrex.Core.Common.Modules
 
         public TeamOperation Get(int id)
         {
-            return db.TeamOperation
+            TeamOperation teamOperation = db.TeamOperation
                 .Where(x => x.TeamId == id)
                 .Include(x => x.Manager)
                 .Include(x => x.TeamOperationDetail)
                 .FirstOrDefault() ?? new TeamOperation();
+
+            teamOperation.TeamOperationDetail = (from team in db.TeamOperationDetail.Where(o=> o.TeamId== teamOperation.TeamId) select new TeamOperationDetail {
+               Id= team.Id,
+        TeamId = team.TeamId,
+                AccountId = team.AccountId,
+                TeamRemark = team.TeamRemark,
+                CreatedBy = team.CreatedBy,
+                CreatedDate = team.CreatedDate,
+                UpdatedBy = team.UpdatedBy,
+                UpdatedDate = team.UpdatedDate,
+                Account = db.SysAccount.Where(o=>o.AccountId==team.AccountId).FirstOrDefault()
+    }).ToList();
+
+
+
+            return teamOperation;
+
+
         }
 
         public List<TeamOperation> Gets(int page = 1, int size = 0
@@ -67,6 +85,16 @@ namespace Kemrex.Core.Common.Modules
                // .Include(x => x.TeamOperationDetail)
                 //.AsQueryable();
         
+            return data.ToList();
+        }
+
+        public List<TeamOperation> GetTeamNotIn(List<int> notinTeam)
+        {
+            var data = db.TeamOperation.Where(o=> !notinTeam.Contains(o.TeamId));
+            //  .Include(x => x.Manager)
+            // .Include(x => x.TeamOperationDetail)
+            //.AsQueryable();
+
             return data.ToList();
         }
 
