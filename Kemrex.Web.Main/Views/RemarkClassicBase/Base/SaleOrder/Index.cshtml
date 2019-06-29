@@ -86,7 +86,7 @@
                                             {
                                                 var total = ob.SummaryTot - ob.DiscountCash;
                                                 <tr id="@ob.StatusId"
-                                                    @if (ob.StatusId == 1) { @Html.Raw("class=\"table-light text-primary\"")  } else if (ob.StatusId == 2) { @Html.Raw("class=\"table-primary text-success\"")  } else if (ob.StatusId == 3) { @Html.Raw("class=\"table-dark text-white\"")  }>
+                                                    @if (ob.StatusId == 1) { @Html.Raw("class=\"table-light text-primary\"")  } else if (ob.StatusId == 2) { @Html.Raw("class=\"table-primary text-success\"")  } else if (ob.StatusId == 3) { @Html.Raw("class=\"table-dark text-white\"") }>
                                                     <td>@ob.SaleOrderNo</td>
                                                     <td>@ob.CustomerName</td>
                                                     <td align="center">@ob.QuotationNo</td>
@@ -112,7 +112,12 @@
                                                            class="btn btn-xs btn-primary">
                                                             <i class="fa fa-pencil" aria-hidden="true"></i>&nbsp;แก้ไข
                                                         </a>
+                                                        <a href="@Url.Action("PDFSaleOrder", new { controller = "export", area = "", id=ob.SaleOrderId  })"
+                                                           class="btn btn-xs btn-warning">
+                                                            <i class="fa fa-file-pdf-o" aria-hidden="true"></i>&nbsp;PDF
+                                                        </a>
                                                     </td>
+                                                   
                                                 </tr>
                                             }
                                         </tbody>

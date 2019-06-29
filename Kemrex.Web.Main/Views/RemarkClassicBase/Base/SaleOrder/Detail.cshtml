@@ -488,6 +488,18 @@ optEmployee = (List<TblEmployee>
                 <div id="tab-1" class="tab-content current">
                     <div class="card-block" data-tab-page="navInfo">
                         <div class="col-12">
+                            <table width="100%" style="margin:-10px 0 0 0;">
+                                <tr>
+                                    <td align="right">
+                                        <div style="text-align:right;">
+                                            <a href="@Url.Action("PDFSaleOrder", new { controller = "export", area = "", id = Model.SaleOrderId  })"
+                                               class="btn btn-xs btn-warning">
+                                                <i class="fa fa-file-pdf-o" aria-hidden="true"></i>&nbsp;PDF
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </table>
                             <div class="panel">
                                 <form method="post" action="@Url.Action("Detail", "SaleOrder")" enctype="multipart/form-data">
                                     @Html.AntiForgeryToken()
@@ -500,7 +512,7 @@ optEmployee = (List<TblEmployee>
                                             <div class="col-md-6">
                                                 <div class="form-group">
                                                     <label for="SaleOrderNo" class="col-
-                                                       sm-4 col-form-label">เลขที่ใบสั่งงาน</label>
+                                                       sm-4 col-form-label">เลขที่ใบสั่งขาย</label>
                                                     <div class="col-sm-10">
                                                         <div class="input-group mb-3">
                                                             @if (Model.SaleOrderId == 0)
@@ -565,7 +577,6 @@ optEmployee = (List<TblEmployee>
                                                                    placeholder="ชื่อ" value="@Model.ContractName" />
                                                             <div class="input-group-append">
                                                                 <button class="btn btn-outline-secondary btn-primary " type="button"
-                                                                       
                                                                         id="button-contact">
                                                                     ...
                                                                 </button>
@@ -582,7 +593,6 @@ optEmployee = (List<TblEmployee>
 
                                                             <div class="input-group-append">
                                                                 <button class="btn btn-outline-secondary btn-primary" type="button"
-                                                                       
                                                                         id="button-BillingAddress">
                                                                     ...
                                                                 </button>
@@ -597,7 +607,6 @@ optEmployee = (List<TblEmployee>
                                                             <input type="text" class="form-control" id="ShippingAddress" name="ShippingAddress" value="@Model.ShippingAddress" />
                                                             <div class="input-group-append">
                                                                 <button class="btn btn-outline-secondary btn-primary" type="button"
-                                                                        
                                                                         id="button-ShippingAddress">
                                                                     ...
                                                                 </button>
@@ -675,13 +684,13 @@ optEmployee = (List<TblEmployee>
                                                                 <option value="@it.ConditionId" @(selected ? " selected=\" selected\"" : "" )>@it.ConditionName</option>
                                                             }
                                                             @*<option value="1" @(Model.ConditionId == 1 ? " selected=\" selected\"" : "" )>จ่าย 100% หลังติดตั้งงาน</option>
-                    <option value="2" @(Model.ConditionId == 2 ? " selected=\" selected\"" : "" )>มัดจำ 100% ก่อนติดตั้งงาน</option>
-                    <option value="3" @(Model.ConditionId == 3 ? " selected=\" selected\"" : "" )>2 งวด 50/50</option>*@
+                                        <option value="2" @(Model.ConditionId == 2 ? " selected=\" selected\"" : "" )>มัดจำ 100% ก่อนติดตั้งงาน</option>
+                                        <option value="3" @(Model.ConditionId == 3 ? " selected=\" selected\"" : "" )>2 งวด 50/50</option>*@
                                                         </select>
                                                     </div>
                                                 </div>
 
-                                             
+
 
                                                 <div class="form-group">
                                                     <label for="CreditDate" class="col-sm-5 col-form-label">จำนวนวันเครดิต</label>
@@ -709,9 +718,9 @@ optEmployee = (List<TblEmployee>
                                                 <div class="form-group">
                                                     <button type="submit" id="btnNextStep" class="btn btn-primary">@(Model.SaleOrderId > 0 ? "บันทึก" : "ต่อไป")</button>&nbsp;
                                                     <a href="@Url.Action("Index", "SaleOrder" )" class="btn btn-default">ยกเลิก</a>
-                                                    @if(Model.SaleOrderId > 0)
-                                                    { 
-                                                    <a href="@Url.Action("Detail", new { controller="JobOrder" , area="" , SaleOrderId=Model.SaleOrderId } )" class="btn btn-success">สร้างใบสั่งงาน</a>
+                                                    @if (Model.SaleOrderId > 0)
+                                                    {
+                                                        <a href="@Url.Action("Detail", new { controller="JobOrder" , area="" , SaleOrderId=Model.SaleOrderId } )" class="btn btn-success">สร้างใบสั่งงาน</a>
                                                     }
                                                 </div>
                                             </div>

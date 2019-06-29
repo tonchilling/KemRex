@@ -27,7 +27,9 @@ namespace Kemrex.Core.Common.Modules
         }
         public EnmPaymentCondition Get(int id)
         {
-            throw new System.NotImplementedException();
+            return db.EnmPaymentCondition
+               .Where(x => x.ConditionId == id)
+               .FirstOrDefault();
         }
 
         public bool IsExist(int id)
