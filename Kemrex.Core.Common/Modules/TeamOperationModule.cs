@@ -38,11 +38,14 @@ namespace Kemrex.Core.Common.Modules
 
         public TeamOperation Get(int id)
         {
+
             TeamOperation teamOperation = db.TeamOperation
+
                 .Where(x => x.TeamId == id)
                 .Include(x => x.Manager)
                 .Include(x => x.TeamOperationDetail)
                 .FirstOrDefault() ?? new TeamOperation();
+
 
             teamOperation.TeamOperationDetail = (from team in db.TeamOperationDetail.Where(o=> o.TeamId== teamOperation.TeamId) select new TeamOperationDetail {
                Id= team.Id,
@@ -61,19 +64,37 @@ namespace Kemrex.Core.Common.Modules
             return teamOperation;
 
 
+
         }
 
         public List<TeamOperation> Gets(int page = 1, int size = 0
             , string src = "", int managerId = 0)
         {
-            var data = db.TeamOperation
-                .Include(x => x.Manager)
-                .Include(x => x.TeamOperationDetail)
-                .AsQueryable();
+            List<TeamOperation> teamList = null;
+            var data = (from team in db.TeamOperation
+                 .Include(x => x.Manager)
+                 select new TeamOperation {
+                  TeamId= team.TeamId,
+                     TeamName = team.TeamName,
+        ManagerId = team.ManagerId,
+    CreatedBy= team.CreatedBy ,
+CreatedDate = team.CreatedDate,
+      UpdatedBy = team.UpdatedBy,
+    UpdatedDate= team.UpdatedDate,
+      Manager = team.Manager,
+      TeamOperationDetail=db.TeamOperationDetail.Where(detail=>detail.TeamId==team.TeamId).ToList()
+    })
+
+                       //   .Include(x => x.TeamOperationDetail.Where(d=>d.TeamId==x.TeamId))
+                       .AsQueryable();
+           
             data = Filter(data, src)
                 .OrderBy(x => x.TeamName);
             if (size > 0)
             { data = data.Skip((page - 1) * size).Take(size); }
+
+            teamList = data.ToList();
+           
             return data.ToList();
         }
 

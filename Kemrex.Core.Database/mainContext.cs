@@ -847,10 +847,10 @@ namespace Kemrex.Core.Database
                     .HasForeignKey(d => d.SubDistrictId)
                     .HasConstraintName("FK__TblJobOrd__SubDi__3FDB6521");
 
-                entity.HasOne(d => d.Team)
-                    .WithMany(p => p.TblJobOrder)
-                    .HasForeignKey(d => d.TeamId)
-                    .HasConstraintName("FK__TblJobOrd__TeamI__477C86E9");
+                //entity.HasOne(d => d.Team)
+                //    .WithMany(p => p.TblJobOrder)
+                //    .HasForeignKey(d => d.TeamId)
+                //    .HasConstraintName("FK__TblJobOrd__TeamI__477C86E9");
             });
 
             modelBuilder.Entity<TblJobOrderAttachmentType>(entity =>
@@ -1551,6 +1551,8 @@ namespace Kemrex.Core.Database
                     .HasForeignKey(d => d.ManagerId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_TeamOperation_Manager");
+
+
             });
 
             modelBuilder.Entity<TeamOperationDetail>(entity =>
