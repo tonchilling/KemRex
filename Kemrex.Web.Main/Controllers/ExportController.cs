@@ -293,7 +293,7 @@ namespace Kemrex.Web.Main.Controllers
                 cb.AddImage(png);
                 int top_margin = 820;
                 // Start with the invoice type header
-                writeText(cb, "ใบสั่งขาย", 350, top_margin, f_cb, 16);
+                writeText(cb, "Sale Order", 350, top_margin, f_cb, 16);
                 // HEader details; invoice number, invoice date, due date and customer Id
                 writeText(cb, "เลขที่ใบสั่งขาย", 350, top_margin - 20, f_cb, 12);
                 writeText(cb, tblS.SaleOrderNo, 430, top_margin - 20, f_cn, 12);
@@ -450,9 +450,32 @@ namespace Kemrex.Web.Main.Controllers
                 cb.ShowTextAligned(PdfContentByte.ALIGN_RIGHT, tblS.SummaryVat.Value.ToString(), left_margin, top_margin - 45, 0);
                 cb.ShowTextAligned(PdfContentByte.ALIGN_RIGHT, tblS.SummaryTot.Value.ToString(), left_margin, top_margin - 65, 0);
 
+
+
+                left_margin = 130;
+                top_margin -= 380;
+                cb.ShowTextAligned(PdfContentByte.ALIGN_CENTER, "_________________________", left_margin, top_margin, 0);
+                cb.ShowTextAligned(PdfContentByte.ALIGN_CENTER, "(       " + tblS.SaleName + "      )", left_margin, top_margin - 15, 0);
+                cb.ShowTextAligned(PdfContentByte.ALIGN_CENTER, "พนักงานขาย", left_margin, top_margin - 30, 0);
+                cb.ShowTextAligned(PdfContentByte.ALIGN_CENTER, "วันที่                              ", left_margin, top_margin - 45, 0);
+
+                cb.ShowTextAligned(PdfContentByte.ALIGN_CENTER, "_________________________", left_margin + 180, top_margin, 0);
+                cb.ShowTextAligned(PdfContentByte.ALIGN_CENTER, "(                                          )", left_margin + 180, top_margin - 15, 0);
+                cb.ShowTextAligned(PdfContentByte.ALIGN_CENTER, "ผู้จัดการฝ่ายขาย", left_margin + 180, top_margin - 30, 0);
+                cb.ShowTextAligned(PdfContentByte.ALIGN_CENTER, "วันที่                             ", left_margin + 180, top_margin - 45, 0);
+
+                cb.ShowTextAligned(PdfContentByte.ALIGN_CENTER, "_________________________", left_margin + 360, top_margin, 0);
+                cb.ShowTextAligned(PdfContentByte.ALIGN_CENTER, "(                                          )", left_margin + 360, top_margin - 15, 0);
+                cb.ShowTextAligned(PdfContentByte.ALIGN_CENTER, "พนักงานบัญชี", left_margin + 360, top_margin - 30, 0);
+                cb.ShowTextAligned(PdfContentByte.ALIGN_CENTER, "วันที่                              ", left_margin + 360, top_margin - 45, 0);
+
+                
                 // End the writing of text
                 cb.EndText();
 
+                cb.MoveTo(30, 60);
+                cb.LineTo(570, 60);
+                cb.Stroke();
                 // Close the document, the writer and the filestream!
                 document.Close();
                 writer.Close();
