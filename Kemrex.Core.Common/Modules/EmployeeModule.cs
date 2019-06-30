@@ -59,6 +59,33 @@ namespace Kemrex.Core.Common.Modules
             return data.ToList();
         }
 
+        public List<TblEmployee> GetByEmployeeCode(string id)
+        {
+            //return db.TblEmployee
+            //    .Where(x => x.EmpCode == EmpCode).ToList();
+            var empList = (from emp in db.TblEmployee.Where(c => c.EmpCode.Contains(id) || c.EmpNameTh.Contains(id) || c.EmpNameEn.Contains(id))
+                           select new TblEmployee
+                           {
+                               EmpId = emp.EmpId,
+                               EmpCode = emp.EmpCode,
+                               EmpNameTh = emp.EmpNameTh,
+                               EmpNameEn = emp.EmpNameEn,
+                               EmpEmail = emp.EmpEmail,
+                               EmpMobile = emp.EmpMobile,
+                               Status = emp.Status
+                           }).ToList();
+
+
+            return empList;
+        }
+        public TblEmployee GetEmployeeByEmpCode(string id)
+        {
+            return db.TblEmployee
+                .Where(x => x.EmpCode == id)
+
+                .FirstOrDefault() ?? new TblEmployee() { Prefix = new EnmPrefix() };
+        }
+
         private IQueryable<TblEmployee> Filter(IQueryable<TblEmployee> data, string src, string phone, string email)
         {
             if (!string.IsNullOrWhiteSpace(src))

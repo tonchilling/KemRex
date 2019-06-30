@@ -31,230 +31,406 @@
                 });
             }
         }
+
+        //event
+        $("#buttonEmp").click(function () {
+            //$("#SearchEmpIDModal").style.display = "show";
+            $('.divEmp').empty();
+            $('#SearchEmpIDModal').modal('show');
+            //_contact = getContact();
+            //showSelectModal(_contact, "SearchEmployee");
+
+
+            //if (AddrValidation()) {
+            //    $('#SearchEmpIDModal').modal('show');
+            //}
+            //   #AddressModa        
+        });
+
+        $('.btnSearchEmp').click(function () {
+
+
+            $('.divEmp').empty();
+            var html = '';
+            html += '<table class="table table-hover">';
+            html += '<thead> ';
+            html += '<tr>';
+            html += '<th>กรุณาเลือก</th>';
+            html += '<th>รหัสพนักงาน</th>';
+            html += '<th>ชื่อ-สกุล</th>';
+            html += '</tr>';
+            html += '</thead>';
+            html += '<tbody>';
+
+
+
+            var url = '@Url.Action("GetEmployee", "Employee")';
+                   $.ajax({
+                type: "get",
+                url: url,
+                       data: { fieldSearch: $("#FieldSearchEmp").val() },
+                       success: function (obj) {
+                           $.each(obj, function (index, item) {
+
+                               html += '<tr data=' + item.EmpCode + ' empNameTH=' + item.EmpNameTh + ' empNameEn=' + item.EmpNameEn + ' empEmail=' + item.EmpEmail + '>';
+                               html += '<td><button type="button" class="btn btn-primary btnSellectEmployee">เลิอก</button></td>';
+                               html += '<td>' + item.EmpCode + '</td>';
+                               html += '<td>' + item.EmpNameTh + '</td>';
+                               html += '</tr>';
+                           });
+
+                           html += '</tbody>';
+                           html += '</table>';
+                           html += ' </div>';
+
+
+                           $('.divEmp').append(html);
+                           $('.divEmp table').DataTable();
+                       },
+                       error: function (jqXHR, textStatus, errorThrown) {
+                           alert(errorThrown);
+                           //or you can put jqXHR.responseText somewhere as complete response. Its html.
+                       }
+                   });
+        });
+
+        $(document).on("click", ".btnSellectEmployee", function () {
+            $('#EmployeeCode').val($(this).closest('tr').attr('data'));
+            $('#account_firstname').val($(this).closest('tr').attr('empNameTH'));
+            //('#account_lastname').val($(this).closest('tr').attr('empNameTH'));
+            $('#account_username').val($(this).closest('tr').attr('data'));
+            $('#account_email').val($(this).closest('tr').attr('empEmail'));
+            //$('#empNameTH').val($(this).closest('td').next().html());
+
+
+            @*var url = '@Url.Action("GetEmployeeByCode", "Employee")';
+            $.ajax({
+                type: "get",
+                contentType: 'application/json; charset=utf-8',
+                url: url,
+                data: { id: $(this).closest('tr').attr('data') },
+                success: function (obj) {
+
+                    $('#EmployeeCode').val(obj.EmpCode);
+                    $('#account_firstname').val(obj.EmpNameTh);
+                    //$('#account_lastname').val(obj.Customer.CustomerEmail);
+                    $('#account_username').val(obj.EmpCode);
+                    $('#account_email').val(obj.EmpEmail);
+
+                    
+                }
+            });*@
+
+            $('#SearchEmpIDModal').modal('hide');
+        });
     </script>
 }
 
-<div class="page">
-    <div class="page-header">
-        <h1 class="page-title">บัญชีผู้ใช้งาน</h1>
-        <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="@Url.Action("Index", new { controller = "Home", are = "" })" })">Home</a></li>
-            <li class="breadcrumb-item"><a href="javascript:void(0)">Data</a></li>
-            <li class="breadcrumb-item"><a href="@Url.Action("Index", new { controller = "Account", are = "" })" })">รายชื่อผู้ใช้งาน</a></li>
-            <li class="breadcrumb-item active">@(Model.AccountId > 0 ? "แก้ไข" : "เพิ่ม")</li>
-        </ol>
-    </div>
-
-    <div class="page-content container-fluid">
-        <div class="row">
-            <div class="col-md-12">
-                @if (ViewBag.Alert != null)
-                {
-                    @Html.Partial(kemrex.PathViewShared("_wgAlert"), AlertModel)
-                }
-                <div class="panel">
-                    <div class="panel-heading">
-                        <h3 class="panel-title">บัญชีผู้ใช้งาน</h3>
-                    </div>
-                    <form role="form" method="post" action="@Url.Action("Detail", new { are = "", controller = "Account" })" enctype="multipart/form-data">
-                        @Html.AntiForgeryToken()
-                        <input type="hidden" name="account_id" value="@Model.AccountId" />
-                        <div class="panel-body">
-                            <div class="row">
-                                <div class="col-6">
-                                    <div class="form-group">
-                                        <label for="account_firstname" class="mandatory">ชื่อ</label>
-                                        <input type="text" class="form-control" name="account_firstname" value="@Model.AccountFirstName" />
-                                    </div>
-                                </div>
-                                <div class="col-6">
-                                    <div class="form-group">
-                                        <label for="account_lastname" class="mandatory">นามสกุล</label>
-                                        <input type="text" class="form-control" name="account_lastname" value="@Model.AccountLastName" />
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-6">
-                                    <div class="form-group">
-                                        <label for="account_username" class="mandatory">ชื่อผู้ใช้งาน</label>
-                                        <input type="text" class="form-control" name="account_username" value="@Model.AccountUsername" autocomplete="off"@(Model.AccountId > 0 ? " disabled=\"disabled\"" : "") />
-                                    </div>
-                                </div>
-                                <div class="col-6">
-                                    <div class="form-group">
-                                        <label for="account_email" class="mandatory">อีเมล์</label>
-                                        <input type="text" class="form-control" name="account_email" value="@Model.AccountEmail"@(Model.AccountId > 0 ? " disabled=\"disabled\"" : "") />
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-6">
-                                    <div class="form-group">
-                                        <label for="AccountAvatar" class="form-control-label">รูปผู้ใช้งาน</label>
-                                        <input type="file" name="AccountAvatar" class="form-control" />
-                                        @if (!string.IsNullOrWhiteSpace(Model.AccountAvatar))
-                                        {
-                                            <span class="help-block"><a href="@Url.Content("~/" + Model.AccountAvatar)" target="_blank">กดที่นี่</a> เพื่อดูรูปปัจจุบัน</span>
-                                        }
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-6">
-                                    <div class="form-group">
-                                        <label for="role_id" class="mandatory">สิทธิ์การใช้งาน</label>
-                                        <select name="role_id" class="form-control">
-                                            @foreach (SysRole role in optRole)
-                                            {
-                                                bool selected = false;
-                                                <option value="@role.RoleId" @(selected ? " selected=\"\"" : "")>@role.RoleName</option>
-                                            }
-                                        </select>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-6">
-                                    <div class="form-group">
-                                        <label for="account_password" class="mandatory">รหัสผ่าน</label>
-                                        <input type="password" class="form-control" name="account_password" autocomplete="off" />
-                                        @if (Model.AccountId > 0)
-                                        {
-                                            <span class="help-block">ปล่อยว่างหากไม่ต้องการเปลี่ยนแปลงรหัสผ่าน</span>
-                                        }
-                                    </div>
-                                </div>
-                                <div class="col-6">
-                                    <div class="form-group">
-                                        <label for="account_passwordre" class="mandatory">ยืนยันรหัสผ่าน</label>
-                                        <input type="password" class="form-control" name="account_passwordre" autocomplete="off" />
-                                        @if (Model.AccountId > 0)
-                                        {
-                                            <span class="help-block">ปล่อยว่างหากไม่ต้องการเปลี่ยนแปลงรหัสผ่าน</span>
-                                        }
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-6">
-                                    <label for="flag_status" class="mandatory">สถานะ</label>
-                                    <div>
-                                        <label class="radio-inline">
-                                            <input type="radio"
-                                                   name="flag_status" value="0"
-                                                   @(Model.FlagStatus == 0 ? " checked=\"checked\"" : "") />ไม่ใช้งาน
-                                        </label>
-                                        <label class="radio-inline">
-                                            <input type="radio"
-                                                   name="flag_status" value="1"
-                                                   @(Model.FlagStatus == 1 ? " checked=\"checked\"" : "") />ใช้งาน
-                                        </label>
-                                    </div>
-                                </div>
-                            </div>
-                            @*<div class="row">
-                                <div class="col-6">
-                                    <label for="flag_admin_calc" class="control-label">สิทธิ์ในการดูข้อมูลระบบ</label>
-                                    <div>
-                                        <label class="radio-inline">
-                                            <input type="radio"
-                                                   name="flag_admin_calc" value="0"
-                                                   @(!Model.FlagAdminCalc ? " checked=\"checked\"" : "") />สามารถดูข้อมูลตามรายชื่อ (ด้านล่าง)
-                                        </label>
-                                        <label class="radio-inline">
-                                            <input type="radio"
-                                                   name="flag_admin_calc" value="1"
-                                                   @(Model.FlagAdminCalc ? " checked=\"checked\"" : "") />ผู้ดูแล (ดูข้อมูลได้ทุกคน)
-                                        </label>
-                                    </div>
-                                </div>
-                            </div>*@
-                        </div>
-                        <div class="box-footer">
-                            <button type="submit" class="btn btn-primary">บันทึก</button>
-                            <a href="@Url.Action("Index", new { controller = "Account", are = "" })" class="btn btn-default">ยกเลิก</a>
-                        </div>
-                    </form>
-                </div>
-            </div>
+    <div class="page">
+        <div class="page-header">
+            <h1 class="page-title">บัญชีผู้ใช้งาน</h1>
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="@Url.Action("Index", new { controller = "Home", are = "" })" })">Home</a></li>
+                <li class="breadcrumb-item"><a href="javascript:void(0)">Data</a></li>
+                <li class="breadcrumb-item"><a href="@Url.Action("Index", new { controller = "Account", are = "" })" })">รายชื่อผู้ใช้งาน</a></li>
+                <li class="breadcrumb-item active">@(Model.AccountId > 0 ? "แก้ไข" : "เพิ่ม")</li>
+            </ol>
         </div>
-        @*@if (Model.AccountId > 0 && !Model.FlagAdminCalc)
-        {
+
+        <div class="page-content container-fluid">
             <div class="row">
                 <div class="col-md-12">
+                    @if (ViewBag.Alert != null)
+                    {
+                        @Html.Partial(kemrex.PathViewShared("_wgAlert"), AlertModel)
+                    }
                     <div class="panel">
                         <div class="panel-heading">
-                            <h3 class="panel-title">สิทธิในการดูข้อมูลคนอื่น</h3>
+                            <h3 class="panel-title">บัญชีผู้ใช้งาน</h3>
                         </div>
-                        <div class="panel-body">
-                            <div class="row">
-                                <div class="col-12">
-                                    <div class="table-responsive">
-                                        <table class="table table-bordered table-hover">
-                                            <thead>
-                                                <tr>
-                                                    <th>อีเมล์</th>
-                                                    <th>ชื่อผู้ใช้งาน</th>
-                                                    <th>เครื่องมือ</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                @if (Model.Staffs().Count() <= 0)
-                                                {
-                                                    <tr>
-                                                        <td colspan="3">ไม่พบข้อมูล</td>
-                                                    </tr>
-                                                }
-                                                @foreach (var ob in Model.Staffs())
-                                                {
-                                                    <tr>
-                                                        <td>@ob.SysAccount1.AccountEmail</td>
-                                                        <td>@ob.SysAccount1.AccountName</td>
-                                                        <td>
-                                                            <form method="post" action="@Url.Action("DeleteStaff", new { controller = "Account", are = "", id = ob.AccountId })"
-                                                                  class="fnc-delete inline-block">
-                                                                <input type="hidden" name="account_id" value="@ob.AccountId" />
-                                                                <input type="hidden" name="staff_id" value="@ob.StaffId" />
-                                                                @Html.AntiForgeryToken()
-                                                                <button type="submit" class="btn btn-danger btn-xs"><i class="fa fa-trash" aria-hidden="true"></i>&nbsp;ลบ</button>
-                                                            </form>
-                                                        </td>
-                                                    </tr>
-                                                }
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="panel-footer">
-                            <form method="post" action="@Url.Action("SetStaff", new { controller = "Account"})">
-                                @Html.AntiForgeryToken()
-                                <input type="hidden" name="account_id" value="@Model.AccountId" />
+                        <form role="form" method="post" action="@Url.Action("Detail", new { are = "", controller = "Account" })" enctype="multipart/form-data">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="account_id" value="@Model.AccountId" />
+                            <div class="panel-body">
                                 <div class="row">
                                     <div class="col-6">
                                         <div class="form-group">
-                                            <label for="staff_id" class="mandatory">สิทธิ์การใช้งาน</label>
-                                            <select name="staff_id" class="form-control">
-                                                @foreach (SysAccount it in optStaff)
+                                            <label for="EmployeeCode">รหัสพนักงาน</label>
+                                            <div>
+                                                <div class="input-group mb-3">
+                                                    <input type="text" class="form-control" id="EmployeeCode" name="EmployeeCode"
+                                                           placeholder="รหัสพนักงาน" value="" readonly />
+                                                    <div class="input-group-append">
+                                                        <button class="btn btn-outline-secondary btn-info" type="button" name="buttonEmp"
+                                                                id="buttonEmp">
+                                                            ...
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-6">
+                                        <div class="form-group">
+                                            <label for="account_firstname" class="mandatory">ชื่อ</label>
+                                            <input type="text" class="form-control" name="account_firstname" id="account_firstname" value="@Model.AccountFirstName" />
+                                        </div>
+                                    </div>
+                                    @*<div class="col-6">
+                                        <div class="form-group">
+                                            <label for="account_lastname" class="mandatory">นามสกุล</label>
+                                            <input type="text" class="form-control" name="account_lastname" id="account_lastname" value="@Model.AccountLastName" />
+                                        </div>
+                                    </div>*@
+                                    <div class="col-6">
+                                        <div class="form-group">
+                                            <label for="account_email" class="mandatory">อีเมล์</label>
+                                            <input type="text" class="form-control" name="account_email" id="account_email" value="@Model.AccountEmail" @(Model.AccountId > 0 ? " disabled=\"disabled\"" : "") />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-6">
+                                        <div class="form-group">
+                                            <label for="account_username" class="mandatory">ชื่อผู้ใช้งาน</label>
+                                            <input type="text" class="form-control" name="account_username" id="account_username" value="@Model.AccountUsername" autocomplete="off" @(Model.AccountId > 0 ? " disabled=\"disabled\"" : "") />
+                                        </div>
+                                    </div>
+                                 
+                                </div>
+                                <div class="row">
+                                    <div class="col-6">
+                                        <div class="form-group">
+                                            <label for="AccountAvatar" class="form-control-label">รูปผู้ใช้งาน</label>
+                                            <input type="file" name="AccountAvatar" class="form-control" />
+                                            @if (!string.IsNullOrWhiteSpace(Model.AccountAvatar))
+                                            {
+                                                <span class="help-block"><a href="@Url.Content("~/" + Model.AccountAvatar)" target="_blank">กดที่นี่</a> เพื่อดูรูปปัจจุบัน</span>
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-6">
+                                        <div class="form-group">
+                                            <label for="role_id" class="mandatory">สิทธิ์การใช้งาน</label>
+                                            <select name="role_id" class="form-control">
+                                                @foreach (SysRole role in optRole)
                                                 {
-                                                    <option value="@it.AccountId">@it.AccountName</option>
+                                                    bool selected = false;
+                                                    <option value="@role.RoleId" @(selected ? " selected=\"\"" : "")>@role.RoleName</option>
                                                 }
                                             </select>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="row">
-                                    <div class="col-12">
-                                        <button type="submit" class="btn btn-primary">บันทึก</button>
+                                    <div class="col-6">
+                                        <div class="form-group">
+                                            <label for="account_password" class="mandatory">รหัสผ่าน</label>
+                                            <input type="password" class="form-control" name="account_password" autocomplete="off" />
+                                            @if (Model.AccountId > 0)
+                                            {
+                                                <span class="help-block">ปล่อยว่างหากไม่ต้องการเปลี่ยนแปลงรหัสผ่าน</span>
+                                            }
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="form-group">
+                                            <label for="account_passwordre" class="mandatory">ยืนยันรหัสผ่าน</label>
+                                            <input type="password" class="form-control" name="account_passwordre" autocomplete="off" />
+                                            @if (Model.AccountId > 0)
+                                            {
+                                                <span class="help-block">ปล่อยว่างหากไม่ต้องการเปลี่ยนแปลงรหัสผ่าน</span>
+                                            }
+                                        </div>
                                     </div>
                                 </div>
-                            </form>
-                        </div>
+                                <div class="row">
+                                    <div class="col-6">
+                                        <label for="flag_status" class="mandatory">สถานะ</label>
+                                        <div>
+                                            <label class="radio-inline">
+                                                <input type="radio"
+                                                       name="flag_status" value="0"
+                                                       @(Model.FlagStatus == 0 ? " checked=\"checked\"" : "") />ไม่ใช้งาน
+                                            </label>
+                                            <label class="radio-inline">
+                                                <input type="radio"
+                                                       name="flag_status" value="1"
+                                                       @(Model.FlagStatus == 1 ? " checked=\"checked\"" : "") />ใช้งาน
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                                @*<div class="row">
+                                    <div class="col-6">
+                                        <label for="flag_admin_calc" class="control-label">สิทธิ์ในการดูข้อมูลระบบ</label>
+                                        <div>
+                                            <label class="radio-inline">
+                                                <input type="radio"
+                                                       name="flag_admin_calc" value="0"
+                                                       @(!Model.FlagAdminCalc ? " checked=\"checked\"" : "") />สามารถดูข้อมูลตามรายชื่อ (ด้านล่าง)
+                                            </label>
+                                            <label class="radio-inline">
+                                                <input type="radio"
+                                                       name="flag_admin_calc" value="1"
+                                                       @(Model.FlagAdminCalc ? " checked=\"checked\"" : "") />ผู้ดูแล (ดูข้อมูลได้ทุกคน)
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>*@
+                            </div>
+                            <div class="box-footer">
+                                <button type="submit" class="btn btn-primary">บันทึก</button>
+                                <a href="@Url.Action("Index", new { controller = "Account", are = "" })" class="btn btn-default">ยกเลิก</a>
+                            </div>
+                        </form>
                     </div>
                 </div>
             </div>
-        }*@
+            @*@if (Model.AccountId > 0 && !Model.FlagAdminCalc)
+            {
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="panel">
+                            <div class="panel-heading">
+                                <h3 class="panel-title">สิทธิในการดูข้อมูลคนอื่น</h3>
+                            </div>
+                            <div class="panel-body">
+                                <div class="row">
+                                    <div class="col-12">
+                                        <div class="table-responsive">
+                                            <table class="table table-bordered table-hover">
+                                                <thead>
+                                                    <tr>
+                                                        <th>อีเมล์</th>
+                                                        <th>ชื่อผู้ใช้งาน</th>
+                                                        <th>เครื่องมือ</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @if (Model.Staffs().Count() <= 0)
+                                                    {
+                                                        <tr>
+                                                            <td colspan="3">ไม่พบข้อมูล</td>
+                                                        </tr>
+                                                    }
+                                                    @foreach (var ob in Model.Staffs())
+                                                    {
+                                                        <tr>
+                                                            <td>@ob.SysAccount1.AccountEmail</td>
+                                                            <td>@ob.SysAccount1.AccountName</td>
+                                                            <td>
+                                                                <form method="post" action="@Url.Action("DeleteStaff", new { controller = "Account", are = "", id = ob.AccountId })"
+                                                                      class="fnc-delete inline-block">
+                                                                    <input type="hidden" name="account_id" value="@ob.AccountId" />
+                                                                    <input type="hidden" name="staff_id" value="@ob.StaffId" />
+                                                                    @Html.AntiForgeryToken()
+                                                                    <button type="submit" class="btn btn-danger btn-xs"><i class="fa fa-trash" aria-hidden="true"></i>&nbsp;ลบ</button>
+                                                                </form>
+                                                            </td>
+                                                        </tr>
+                                                    }
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="panel-footer">
+                                <form method="post" action="@Url.Action("SetStaff", new { controller = "Account"})">
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="account_id" value="@Model.AccountId" />
+                                    <div class="row">
+                                        <div class="col-6">
+                                            <div class="form-group">
+                                                <label for="staff_id" class="mandatory">สิทธิ์การใช้งาน</label>
+                                                <select name="staff_id" class="form-control">
+                                                    @foreach (SysAccount it in optStaff)
+                                                    {
+                                                        <option value="@it.AccountId">@it.AccountName</option>
+                                                    }
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-12">
+                                            <button type="submit" class="btn btn-primary">บันทึก</button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }*@
+        </div>
+        <!-- Address Modal -->
+        <div class="modal fade" id="SearchEmpIDModal" tabindex="-1" role="dialog" aria-labelledby="เชื่อมต่อพนักงาน" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="EmpModalTitle"><label id="lbEmpId" hidden></label></h5>
+                        <h2><label id="lbEmployeeSearchTitleModal">ค้นหาพนักงาน</label></h2>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+
+                    </div>
+                    <div class="modal-body">
+
+                        <div class="row">
+                            
+                            <div class="col-md-5">
+                                <div class="form-group">
+                                    <label for="FieldSearchEmp" class="form-control-label">รหัสพนักงาน/ชื่อ-สกุล</label>
+                                    <div class="input-group">
+                                            <input id="FieldSearchEmp" type="text" class="form-control" placeholder="" name="FieldSearchEmp" />
+                                            <button class="btn btn-primary btnSearchEmp" type="button" style="padding-left:13px;"
+                                                    id="btnSearchEmp">
+                                                ค้นหา
+                                            </button>
+
+                                    </div>
+                                </div>
+
+                            </div>
+                            <div class="col-sm-4">
+
+                                
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-sm-12">
+
+                                <div class="table-responsive divEmp">
+                                    <table class="table table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th>กรุณาเลือก</th>
+                                                <th>รหัสพนักงาน</th>
+                                                <th>ชื่อ-สกุล</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody></tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                        </div>
+
+
+
+                    </div>
+                    <div class="modal-footer">
+                    </div>
+
+                </div>
+            </div>
+        </div>
     </div>
-</div>
