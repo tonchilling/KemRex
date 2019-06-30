@@ -141,6 +141,8 @@
     <Build Include="Tables\TeamOperation.sql" />
     <Build Include="Tables\TeamSaleDetail.sql" />
     <Build Include="Tables\TeamOperationDetail.sql" />
+    <Build Include="Tables\TransferHeader.sql" />
+    <Build Include="Tables\TransferDetail.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="LABS.publish.xml" />

@@ -5,8 +5,12 @@ namespace Kemrex.Core.Database.Models
 {
     public partial class TransferDetail
     {
-        public string TransferNo { get; set; }
-        public short Seq { get; set; }
+
+    
+
+        public int TransferId { get; set; }
+     
+        public int? Seq { get; set; }
         public int? ProductId { get; set; }
         public string CurrentQty { get; set; }
         public int? RequestQty { get; set; }
@@ -15,5 +19,6 @@ namespace Kemrex.Core.Database.Models
         public DateTime? LastModified { get; set; }
 
         public virtual TblProduct Product { get; set; }
+        public virtual TransferHeader TransferHeader { get; set; }
     }
 }

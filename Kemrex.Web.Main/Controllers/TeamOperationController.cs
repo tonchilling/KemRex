@@ -182,17 +182,43 @@ namespace Kemrex.Web.Main.Controllers
 
         [HttpGet]
       
-        public JsonResult GetAllTeam(int? id)
+        public JsonResult GetAllTeamNotIn(string StartDate,string EndDate)
         {
+            DateTime stDate, enDate;
 
-           List<TeamOperation> teamOperations= uow.Modules.TeamOperation.GetAll();
+            stDate = Converting.StringToDate(StartDate,"dd/MM/yyyy");
+            enDate = Converting.StringToDate(EndDate, "dd/MM/yyyy");
+            List<int> teamId= uow.Modules.JobOrder.GetTeamByPeriod(stDate, enDate);
+            List<TeamOperation> teamOperations = uow.Modules.TeamOperation.GetTeamNotIn(teamId);
+
+         
             // ob.TblSaleOrderDetail = uow.Modules.SaleOrderDetail.Gets(id ?? 0);
             // TblCustomer objCustomer = uow.Modules.Customer.Get(Convert.ToInt32(ob.CustomerId));
-         
+
 
 
             return Json(teamOperations, JsonRequestBehavior.AllowGet);
         }
+
+        [HttpGet]
+
+        public JsonResult GetAllTeam()
+        {
+            DateTime stDate, enDate;
+
+
+
+            List<TeamOperation> teamOperations = uow.Modules.TeamOperation.GetAll();
+
+
+            // ob.TblSaleOrderDetail = uow.Modules.SaleOrderDetail.Gets(id ?? 0);
+            // TblCustomer objCustomer = uow.Modules.Customer.Get(Convert.ToInt32(ob.CustomerId));
+
+
+
+            return Json(teamOperations, JsonRequestBehavior.AllowGet);
+        }
+
 
 
 
@@ -203,6 +229,7 @@ namespace Kemrex.Web.Main.Controllers
                 if (ob == null)
                 { throw new Exception("ไม่พบข้อมูลที่ต้องการ, กรุณาลองใหม่อีกครั้ง"); }
 
+               
                 if (!string.IsNullOrWhiteSpace(msg))
                 {
                     WidgetAlertModel alert = new WidgetAlertModel() { Message = msg };

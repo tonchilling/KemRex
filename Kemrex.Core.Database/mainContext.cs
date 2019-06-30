@@ -802,6 +802,8 @@ namespace Kemrex.Core.Database
 
                 entity.Property(e => e.Adapter).HasMaxLength(100);
 
+                entity.Property(e => e.CreateDate).HasColumnType("datetime");
+
                 entity.Property(e => e.CustomerEmail).HasMaxLength(50);
 
                 entity.Property(e => e.CustomerName).HasMaxLength(50);
@@ -834,23 +836,19 @@ namespace Kemrex.Core.Database
 
                 entity.Property(e => e.StartWorkingTime).HasMaxLength(10);
 
+                entity.Property(e => e.UpdateDate).HasColumnType("datetime");
+
                 entity.Property(e => e.VillageNo).HasMaxLength(50);
 
-            /*    entity.HasOne(d => d.SaleOrder)
+          /*      entity.HasOne(d => d.SaleOrder)
                     .WithMany(p => p.TblJobOrder)
                     .HasForeignKey(d => d.SaleOrderId)
                     .HasConstraintName("FK__TblJobOrd__SaleO__3EE740E8");
-                    */
 
                 entity.HasOne(d => d.SubDistrict)
                     .WithMany(p => p.TblJobOrder)
                     .HasForeignKey(d => d.SubDistrictId)
-                    .HasConstraintName("FK__TblJobOrd__SubDi__3FDB6521");
-
-                //entity.HasOne(d => d.Team)
-                //    .WithMany(p => p.TblJobOrder)
-                //    .HasForeignKey(d => d.TeamId)
-                //    .HasConstraintName("FK__TblJobOrd__TeamI__477C86E9");
+                    .HasConstraintName("FK__TblJobOrd__SubDi__3FDB6521");*/
             });
 
             modelBuilder.Entity<TblJobOrderAttachmentType>(entity =>
@@ -1323,10 +1321,11 @@ namespace Kemrex.Core.Database
 
                 entity.Property(e => e.UpdateDate).HasColumnType("datetime");
 
-              /*  entity.HasOne(d => d.Customer)
+            /*    entity.HasOne(d => d.Customer)
                     .WithMany(p => p.TblQuotation)
                     .HasForeignKey(d => d.CustomerId)
-                    .HasConstraintName("FK_TblQuotation_Customer");*/
+                    .HasConstraintName("FK_TblQuotation_Customer");
+                    */
 
                 entity.HasOne(d => d.Sale)
                     .WithMany(p => p.TblQuotation)
@@ -1450,15 +1449,11 @@ namespace Kemrex.Core.Database
 
                 entity.Property(e => e.UpdateDate).HasColumnType("datetime");
 
-             /*   entity.HasOne(d => d.Customer)
+               /* entity.HasOne(d => d.Customer)
                     .WithMany(p => p.TblSaleOrder)
                     .HasForeignKey(d => d.CustomerId)
-                    .HasConstraintName("FK_TblSaleOrder_Customer");*/
-
-             /*   entity.HasOne(d => d.Team)
-                    .WithMany(p => p.TblSaleOrder)
-                    .HasForeignKey(d => d.TeamId)
-                    .HasConstraintName("FK__TblSaleOrder__Team");*/
+                    .HasConstraintName("FK_TblSaleOrder_Customer");
+                    */
             });
 
             modelBuilder.Entity<TblSaleOrderAttachment>(entity =>
@@ -1551,8 +1546,6 @@ namespace Kemrex.Core.Database
                     .HasForeignKey(d => d.ManagerId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_TeamOperation_Manager");
-
-
             });
 
             modelBuilder.Entity<TeamOperationDetail>(entity =>
@@ -1614,10 +1607,10 @@ namespace Kemrex.Core.Database
 
             modelBuilder.Entity<TransferDetail>(entity =>
             {
-                entity.HasKey(e => new { e.TransferNo, e.Seq })
+                entity.HasKey(e => new { e.TransferId, e.Seq })
                     .HasName("PK__Transfer__09E95DAB26E6103B");
 
-                entity.Property(e => e.TransferNo).HasMaxLength(11);
+               // entity.Property(e => e.TransferId).HasMaxLength(11);
 
                 entity.Property(e => e.CurrentQty)
                     .HasMaxLength(50)
@@ -1641,34 +1634,47 @@ namespace Kemrex.Core.Database
 
             modelBuilder.Entity<TransferHeader>(entity =>
             {
-                entity.HasKey(e => e.TransferNo)
+                entity.HasKey(e => e.TransferId)
                     .HasName("PK__Transfer__9548BE632F35F7F7");
-
-                entity.Property(e => e.TransferNo)
-                    .HasMaxLength(11)
-                    .ValueGeneratedNever();
 
                 entity.Property(e => e.BillNo).HasMaxLength(50);
 
-                entity.Property(e => e.EmpId).HasMaxLength(10);
+                entity.Property(e => e.CarBrand).HasMaxLength(10);
 
-                entity.Property(e => e.LastModified)
-                    .HasColumnName("last_modified")
-                    .HasColumnType("datetime");
+                entity.Property(e => e.CarNo).HasMaxLength(10);
+
+                entity.Property(e => e.Company).HasMaxLength(100);
+
+                entity.Property(e => e.CreateDate).HasColumnType("datetime");
+
+                entity.Property(e => e.EmpId).HasMaxLength(10);
 
                 entity.Property(e => e.Note1)
                     .HasMaxLength(50)
                     .IsUnicode(false);
 
-                entity.Property(e => e.TransferDate).HasMaxLength(10);
+                entity.Property(e => e.Reason).HasMaxLength(100);
 
-                entity.Property(e => e.TransferStatus).HasMaxLength(1);
+                entity.Property(e => e.ReceiveTo).HasMaxLength(50);
+
+                entity.Property(e => e.Remark).HasMaxLength(100);
+
+                entity.Property(e => e.TransferDate).HasColumnType("datetime");
+
+                entity.Property(e => e.TransferNo)
+                    .IsRequired()
+                    .HasMaxLength(15);
 
                 entity.Property(e => e.TransferTime).HasMaxLength(5);
 
-                entity.Property(e => e.TrnasferType)
+                entity.Property(e => e.TransferType)
                     .IsRequired()
                     .HasMaxLength(3);
+
+                entity.Property(e => e.UpdateDate).HasColumnType("datetime");
+
+                
+
             });
         }
     }

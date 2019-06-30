@@ -118,7 +118,7 @@ namespace Kemrex.Web.Main.Controllers
             string hddUndergroundType = this.Request.Form["hddUndergroundType"];
             string hddObstructionType = this.Request.Form["hddObstructionType"];
             string hddAttachmentType = this.Request.Form["hddAttachmentType"];
-
+            jobOrder.ProductId= this.Request.Form["ProductId"].ParseInt();
             jobOrder.StartWorkingTime = StartHH + ":" + StartMM;
             jobOrder.EndWorkingTime = EndHH + ":" + EndMM;
             if (JobOrderId == "" || JobOrderId == "0")
@@ -298,7 +298,8 @@ namespace Kemrex.Web.Main.Controllers
                 ViewData["Saleorder"] =  saleOrder = uow.Modules.SaleOrder.Get(ob.SaleOrderId.HasValue? ob.SaleOrderId.Value:-1);
                 ViewData["TeamOperation"] = uow.Modules.TeamOperation.Gets();
                 ViewData["optCustomer"] = customer = uow.Modules.Customer.Get(saleOrder.CustomerId.HasValue ? saleOrder.CustomerId.Value : -1);
-            //    ViewData["optCustomerAddress"] = uow.Modules.CustomerAddress.Get(customer.addHasValue ? saleOrder.CustomerId.Value : -1); 
+                ViewData["optProduct"] = uow.Modules.Product.Gets();
+                //    ViewData["optCustomerAddress"] = uow.Modules.CustomerAddress.Get(customer.addHasValue ? saleOrder.CustomerId.Value : -1); 
                 return View(ob);
             }
             catch (Exception ex)

@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace Kemrex.Core.Common.Modules
 {
-   public class TransferModule
+   public class TransferModule 
     {
         private readonly mainContext db;
         public TransferModule(mainContext context)
@@ -34,23 +34,23 @@ namespace Kemrex.Core.Common.Modules
                     .Where(n=>n.TransferNo.Contains(pre))
                     select q.TransferNo).Max();
         }
-        public TransferHeader Get(string id)
+        public TransferHeader Get(int id)
         {
           
                 
                 
                TransferHeader transferHeader= db.TransferHeader
-                   .Where(x => x.TransferNo == id)
+                   .Where(x => x.TransferId == id)
                    .FirstOrDefault() ?? new TransferHeader()
                    {
                        
                    };
 
             transferHeader.TransferDetail = (from q in db.TransferDetail.Include(x => x.Product)
-                                 where q.TransferNo == id
+                                 where q.TransferId == id
                                  select new TransferDetail
                                  {
-                                    TransferNo=q.TransferNo,
+                                     TransferId=q.TransferId,
                                      Seq = q.Seq,
                                    ProductId= q.ProductId,
                                      CurrentQty = q.CurrentQty,
@@ -66,9 +66,28 @@ namespace Kemrex.Core.Common.Modules
 
         }
 
-     
 
-        public List<TransferHeader> Gets(int page = 1, int size = 0, int month = 0, string src = "")
+        public TransferDetail GetDetail(int id = 0)
+        {
+           // var detail = (from d in db.TransferDetail.Where(x => x.TransferId == id) select d);
+
+          //  if (detail == null)
+              //  detail = new TransferDetail();
+
+            return new TransferDetail();
+        }
+
+        public int GetDetails(int id)
+        {
+
+            return (from detail in db.TransferDetail.Where(x => x.TransferId == id) select detail.ProductId).Count();
+            //return db.TransferDetail
+              //  .Where(x => x.TransferId == id).ToList();
+        }
+
+
+
+        public List<TransferHeader> Gets(int page = 1, int size = 0, string src = "")
         {
             var data = db.TransferHeader
                         .OrderByDescending(c => c.TransferNo)
@@ -87,8 +106,15 @@ namespace Kemrex.Core.Common.Modules
 
         public void Set(TransferHeader ob)
         {
-            if (ob.TransferNo !="")
+            if (ob.TransferId == 0)
             { db.TransferHeader.Add(ob); }
+            else { db.Entry(ob).State = EntityState.Modified; }
+        }
+
+        public void SetDetail(TransferDetail ob)
+        {
+            if (ob.TransferId == 0)
+            { db.TransferDetail.Add(ob); }
             else { db.Entry(ob).State = EntityState.Modified; }
         }
     }
