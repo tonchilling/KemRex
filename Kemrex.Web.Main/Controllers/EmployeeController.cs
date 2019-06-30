@@ -59,6 +59,25 @@ namespace Kemrex.Web.Main.Controllers
             return ViewDetail(ob, msg, msgType);
         }
 
+        [HttpGet]
+        public JsonResult GetEmployee(string fieldSearch)
+        {
+
+            List<TblEmployee> EmployeeList = uow.Modules.Employee.GetByEmployeeCode(fieldSearch);
+            // ob.TblSaleOrderDetail = uow.Modules.SaleOrderDetail.Gets(id ?? 0);
+            // TblCustomer objCustomer = uow.Modules.Customer.Get(Convert.ToInt32(ob.CustomerId));
+
+
+
+            return Json(EmployeeList, JsonRequestBehavior.AllowGet);
+        }
+        [HttpGet]
+        public JsonResult GetEmployeeByCode(string GetByEmpCode)
+        {
+            TblEmployee Employee = uow.Modules.Employee.GetEmployeeByEmpCode(GetByEmpCode);
+
+            return Json(Employee, JsonRequestBehavior.AllowGet);
+        }
         [ValidateAntiForgeryToken]
         [HttpPost, ActionName("Detail")]
         public ActionResult SetDetail()

@@ -95,7 +95,7 @@
                                             @foreach (EnmPrefix it in optPrefix)
                                             {
                                                 bool selected = Model.PrefixId.HasValue && it.PrefixId == Model.PrefixId;
-                                                <option value="@it.PrefixId" @(selected ? " selected=\"selected\"" : "")>@it.PrefixNameTh</option>
+                                                <option value="@it.PrefixId" @(selected ? " selected=\"selected\"" : "")>@it.PrefixNameEn</option>
                                             }
                                         </select>
                                     </div>
