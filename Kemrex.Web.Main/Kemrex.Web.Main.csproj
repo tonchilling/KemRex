@@ -1145,7 +1145,6 @@
     <Compile Include="Controllers\api\CommonController.cs" />
     <Compile Include="Controllers\api\DefaultController.cs" />
     <Compile Include="Controllers\api\SaleOrderServiceController.cs" />
-    <Compile Include="Controllers\api\TestController.cs" />
     <Compile Include="Controllers\AuthenController.cs" />
     <Compile Include="Controllers\CalendarController.cs" />
     <Compile Include="Controllers\CustomerAddressController.cs" />
