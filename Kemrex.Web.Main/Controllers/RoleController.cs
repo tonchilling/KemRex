@@ -88,17 +88,70 @@ namespace Kemrex.Web.Main.Controllers
                 {
                     ob.FlagActive = Request.Form["flag_active"].ParseBoolean();
                     List<SysMenu> menus = uow.Modules.System.GetMenuBase(ob.SiteId);
-
-                    foreach (SysMenu menu in menus)
+                    SysRolePermission rolePermission = null;
+                    int rol = 1;
+                    foreach (SysMenu menu in menus.FindAll(o=>o.ParentId==null))
                     {
-                        foreach (SysMenuPermission permission in menu.SysMenuPermission)
+                        rolePermission  = uow.Modules.RolePermission.Get(ob.RoleId, menu.MenuId,1);
+
+                        if (rolePermission == null)
                         {
-                            SysRolePermission rolePermission = uow.Modules.RolePermission.Get(ob.RoleId, menu.MenuId, permission.PermissionId);
-                            rolePermission.Role = ob;
-                            rolePermission.PermissionFlag = Request.Form[string.Format("permission-{0}-{1}", menu.MenuId, permission.PermissionId)].ParseBoolean();
-                            uow.Modules.RolePermission.Set(rolePermission);
+                            rolePermission = new SysRolePermission();
+                            rolePermission.RoleId = ob.RoleId;
+                            rolePermission.MenuId = menu.MenuId;
+                            rolePermission.PermissionId = 1;
                         }
-                    }
+                        rolePermission.PermissionFlag = Request.Form[string.Format("permission-{0}-{1}", menu.MenuId, rolePermission.PermissionId)].ParseBoolean();
+                        uow.Modules.RolePermission.Set(rolePermission);
+
+                        foreach (SysMenu subMenu in uow.Modules.System.GetMenuChild(menu.MenuId))
+                        {
+                            for (rol = 1; rol <= 3; rol++)
+                            {
+                                rolePermission = uow.Modules.RolePermission.Get(ob.RoleId, menu.MenuId, rol);
+
+                                if (rolePermission == null)
+                                {
+                                    rolePermission = new SysRolePermission();
+                                    rolePermission.RoleId = ob.RoleId;
+                                    rolePermission.MenuId = subMenu.MenuId;
+                                    rolePermission.PermissionId = rol;
+                                    rolePermission.PermissionFlag = Request.Form[string.Format("permission-{0}-{1}", menu.MenuId, rol)].ParseBoolean();
+                                    uow.Modules.RolePermission.Add(rolePermission);
+                                }
+                                else {
+                                    rolePermission.PermissionFlag = Request.Form[string.Format("permission-{0}-{1}", menu.MenuId, rol)].ParseBoolean();
+                                    uow.Modules.RolePermission.Set(rolePermission);
+                                }
+                              
+                              
+                            }
+                          
+                        }
+
+                            /* foreach (SysMenuPermission permission in menu.SysMenuPermission)
+                             {
+                                 SysRolePermission rolePermission = uow.Modules.RolePermission.Get(ob.RoleId, menu.MenuId, permission.PermissionId);
+
+
+                                 rolePermission.Role = ob;
+                                 rolePermission.PermissionFlag = Request.Form[string.Format("permission-{0}-{1}", menu.MenuId, permission.PermissionId)].ParseBoolean();
+                                 uow.Modules.RolePermission.Set(rolePermission);
+                             }*/
+                        }
+
+                    /*  foreach (SysMenu menu in menus)
+                      {
+                          foreach (SysMenuPermission permission in menu.SysMenuPermission)
+                          {
+                              SysRolePermission rolePermission = uow.Modules.RolePermission.Get(ob.RoleId, menu.MenuId, permission.PermissionId);
+
+
+                              rolePermission.Role = ob;
+                              rolePermission.PermissionFlag = Request.Form[string.Format("permission-{0}-{1}", menu.MenuId, permission.PermissionId)].ParseBoolean();
+                              uow.Modules.RolePermission.Set(rolePermission);
+                          }
+                      }*/
                 }
 
                 uow.Modules.Role.Set(ob);

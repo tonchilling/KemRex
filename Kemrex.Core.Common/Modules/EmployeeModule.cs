@@ -51,7 +51,7 @@ namespace Kemrex.Core.Common.Modules
         public List<TblEmployee> Gets(int page = 1, int size = 0
             , string src = "", string phone = "", string email = "")
         {
-            var data = db.TblEmployee
+            var data = db.TblEmployee.Include(a=>a.Department)
                 .AsQueryable();
             data = Filter(data, src, phone, email);
             if (size > 0)
@@ -99,6 +99,12 @@ namespace Kemrex.Core.Common.Modules
             return data;
         }
 
+
+        public string GetLastEmpCode()
+        {
+            return (from emp in db.TblEmployee.OrderByDescending(o => o.EmpId) select emp.EmpCode).FirstOrDefault();
+
+        }
         public bool IsExist(int id)
         { return db.TblEmployee.Where(x => x.EmpId == id).Count() > 0 ? true : false; }
 

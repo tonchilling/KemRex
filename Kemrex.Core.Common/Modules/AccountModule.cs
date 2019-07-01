@@ -34,7 +34,7 @@ namespace Kemrex.Core.Common.Modules
 
         public SysAccount Get(long id)
         {
-            return db.SysAccount
+            return db.SysAccount.Include(e=>e.TblEmployee)
                 .Where(x => x.AccountId == id)
                 .FirstOrDefault() ?? new SysAccount();
         }

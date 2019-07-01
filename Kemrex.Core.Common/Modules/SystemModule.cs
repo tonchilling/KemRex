@@ -33,6 +33,23 @@ namespace Kemrex.Core.Common.Modules
                 .Include(x => x.SysMenuPermission);
             return data.ToList() ?? new List<SysMenu>();
         }
+
+        public List<SysMenu> GetMenuChild(int parentId)
+        {
+            var data = db.SysMenu
+                .Where(x =>
+                    x.ParentId == parentId)
+                .Include(x => x.InverseParent)
+                    .ThenInclude(x => x.InverseParent)
+                        .ThenInclude(x => x.SysMenuPermission)
+                .Include(x => x.InverseParent)
+                    .ThenInclude(x => x.SysMenuPermission)
+                .Include(x => x.SysMenuPermission);
+            return data.ToList() ?? new List<SysMenu>();
+        }
+
+
+
         public List<SysMenu> GetMenus(int siteId)
         {
             var data = db.SysMenu

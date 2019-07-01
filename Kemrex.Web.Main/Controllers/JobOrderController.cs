@@ -291,7 +291,7 @@ namespace Kemrex.Web.Main.Controllers
                     ViewBag.Alert = alert;
                 }
 
-                
+
                 ViewData["JobOrderDetail"] = uow.Modules.JobOrder.Gets();
                 ViewData["SysCategoryDetail"] = uow.Modules.SysCategory.Gets();
                 ViewData["SaleorderDetail"] = uow.Modules.SaleOrder.Gets();
