@@ -44,6 +44,34 @@ namespace Kemrex.Core.Common.Modules
                    };
         }
 
+        public List<SaleOrderHeader> GetHeader(DateTime dateTime)
+        {
+            List<SaleOrderHeader> result = new List<SaleOrderHeader>();
+
+            result = db.TblSaleOrder
+                  .Where(x => x.SaleOrderDate.Value.ToString("yyyyMMdd") == dateTime.ToString("yyyyMMdd")).Select(o => new SaleOrderHeader {
+
+                      SaleOrderId=o.SaleOrderId,
+                      SaleOrderNo= o.SaleOrderNo,
+                      SaleOrderDate = Converting.ToDDMMYYYY(o.SaleOrderDate),
+                      SaleName = o.SaleName,
+                      QuotationNo = o.QuotationNo,
+                      //QuotationDate  = Converting.ToDDMMYYYY(o.q),
+                      CustomerId = o.CustomerId,
+                      CustomerName = o.CustomerName,
+                      JobOrderId = o.JobOrder!=null ?o.JobOrder.JobOrderId.ToString():"",
+                      JobOrderNo = o.JobOrder != null ? o.JobOrder.JobOrderNo.ToString() : "",
+                      JobOrderName = o.JobOrder != null ? o.JobOrder.JobName : "",
+                      JobOrderDate = o.JobOrder != null ? Converting.ToDDMMYYYY(o.JobOrder.StartDate) : "",
+                      StatusId = o.StatusId,
+                      Status = Converting.SaleOrderStatus(o.StatusId)
+                  }).ToList();
+
+
+
+            return result;
+        }
+
         public TblSaleOrder GetFull(int id)
         {
             TblSaleOrder tblSaleOrder= db.TblSaleOrder
@@ -162,7 +190,10 @@ namespace Kemrex.Core.Common.Modules
 
         public List<TblSaleOrder> Gets(int page = 1, int size = 0, int month = 0, string src = "")
         {
-            var data = (from order in db.TblSaleOrder select new TblSaleOrder {
+
+        
+
+var data = (from order in db.TblSaleOrder select new TblSaleOrder {
                 SaleOrderId = order.SaleOrderId,
                 SaleOrderNo = order.SaleOrderNo,
                 SaleOrderDate = order.SaleOrderDate,
@@ -201,6 +232,7 @@ namespace Kemrex.Core.Common.Modules
                 DeliveryDate = order.DeliveryDate,
                 DeliveryDateToString = order.DeliveryDateToString,
                 SaleOrderCreditDay = order.SaleOrderCreditDay,
+                JobOrder = db.TblJobOrder.Where(o => o.SaleOrderId == order.SaleOrderId).FirstOrDefault(),
                 HasJob = db.TblJobOrder.Where(o=>o.SaleOrderId==order.SaleOrderId).Count()
 
             })

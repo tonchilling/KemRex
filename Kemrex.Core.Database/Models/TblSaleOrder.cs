@@ -8,7 +8,7 @@ namespace Kemrex.Core.Database.Models
         public TblSaleOrder()
         {
             TblInvoice = new HashSet<TblInvoice>();
-            
+
             TblSaleOrderAttachment = new HashSet<TblSaleOrderAttachment>();
             TblSaleOrderDetail = new HashSet<TblSaleOrderDetail>();
         }
@@ -55,15 +55,37 @@ namespace Kemrex.Core.Database.Models
         [NotMapped]
         public virtual int HasJob { get; set; }
         public int SaleOrderCreditDay { get; set; }
-        public  TblEmployee Sale { get; set; }
+        public TblEmployee Sale { get; set; }
         public virtual TblCustomer Customer { get; set; }
         public virtual TblJobOrder JobOrder { get; set; }
         public virtual ICollection<TblInvoice> TblInvoice { get; set; }
-       
+
         public virtual ICollection<TblSaleOrderAttachment> TblSaleOrderAttachment { get; set; }
         public virtual ICollection<TblSaleOrderDetail> TblSaleOrderDetail { get; set; }
-       
+
     }
+
+    public class SaleOrderHeader
+        { 
+
+        public int SaleOrderId { get; set; }
+    public string SaleOrderNo { get; set; }
+    public string SaleOrderDate { get; set; }
+        public string SaleName { get; set; }
+        public string QuotationNo { get; set; }
+        public string QuotationDate { get; set; }
+        public int? CustomerId { get; set; }
+        public string CustomerName { get; set; }
+        public string JobOrderId { get; set; }
+        public string JobOrderNo { get; set; }
+        public string JobOrderName { get; set; }
+        public string JobOrderDate { get; set; }
+        public int StatusId { get; set; }
+        public string Status { get; set; }
+    }
+
+
+
 
 
 

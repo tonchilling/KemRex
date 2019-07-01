@@ -70,6 +70,15 @@ namespace Kemrex.Core.Common.Modules
                 .FirstOrDefault() ?? new TblJobOrder() { };
         }
 
+        public List<int> GetTeamByPeriod(System.DateTime tempStartDate,System.DateTime tempEndDate)
+        {
+            return (from job in db.TblJobOrder.Where(o => (o.StartDate>= tempStartDate  && o.EndDate<= tempEndDate))
+                    select job.TeamId.Value).ToList();
+                   
+                 
+        }
+
+
         public List<TblJobOrder> Gets(int page = 1, int size = 0
             , string src = "", int id = 0)
         {

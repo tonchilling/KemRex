@@ -12,7 +12,7 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Script.Serialization;
-
+using Kemrex.Core.Common.Helper;
 using IOFile = System.IO.File;
 
 namespace Kemrex.Web.Main.Controllers
@@ -227,6 +227,24 @@ namespace Kemrex.Web.Main.Controllers
             
             return Json(ob, JsonRequestBehavior.AllowGet);
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="saleOrderDate">yyyy-mm-dd</param>
+        /// <returns></returns>
+        [HttpGet]
+        public JsonResult GetSaleOrderByDate(string saleOrderDate)
+        {
+            string formateDate = "yyyy-MM-dd";
+            DateTime searchOrderDate = Converting.StringToDate(saleOrderDate, formateDate);
+            List<SaleOrderHeader> ob = uow.Modules.SaleOrder.GetHeader(searchOrderDate);
+            var js = new JavaScriptSerializer();
+
+
+            return Json(ob, JsonRequestBehavior.AllowGet);
+        }
+
 
 
         [HttpPost]

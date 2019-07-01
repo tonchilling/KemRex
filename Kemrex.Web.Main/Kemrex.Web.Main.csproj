@@ -1153,7 +1153,6 @@
     <Compile Include="Controllers\CustomerGroupController.cs" />
     <Compile Include="Controllers\DepartmentController.cs" />
     <Compile Include="Controllers\EmployeeController.cs" />
-    <Compile Include="Controllers\EmptyController.cs" />
     <Compile Include="Controllers\ExportController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\InvoiceController.cs" />
@@ -1172,6 +1171,7 @@
     <Compile Include="Controllers\SystemController.cs" />
     <Compile Include="Controllers\TeamOperationController.cs" />
     <Compile Include="Controllers\TeamSaleController.cs" />
+    <Compile Include="Controllers\TransferInController.cs" />
     <Compile Include="Controllers\UnitController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
@@ -1330,6 +1330,8 @@
     <Content Include="Views\RemarkClassicBase\Base\TeamOperation\Index.cshtml" />
     <Content Include="Views\RemarkClassicBase\Base\Calendar\Index.cshtml" />
     <Content Include="Views\RemarkClassicBase\Base\Calendar\Index_bk_20190627.cshtml" />
+    <Content Include="Views\RemarkClassicBase\Base\TransferIn\Index.cshtml" />
+    <Content Include="Views\RemarkClassicBase\Base\TransferIn\Detail.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -1340,6 +1342,7 @@
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Views\RemarkClassicBase\Base\System\" />
+    <Folder Include="Views\TransferIn\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Kemrex.Core.Common\Kemrex.Core.Common.csproj">
