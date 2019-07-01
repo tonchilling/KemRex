@@ -163,6 +163,8 @@
     <Compile Include="Models\EnmStatusQuotation.cs" />
     <Compile Include="Models\SysAccount.cs" />
     <Compile Include="Models\SysAccountRole.cs" />
+    <Compile Include="Models\SysCategory.cs" />
+    <Compile Include="Models\SysCategoryType.cs" />
     <Compile Include="Models\SysDistrict.cs" />
     <Compile Include="Models\SysGeography.cs" />
     <Compile Include="Models\SysMenu.cs" />
@@ -187,6 +189,13 @@
     <Compile Include="Models\TblDepartmentPosition.cs" />
     <Compile Include="Models\TblEmployee.cs" />
     <Compile Include="Models\TblInvoice.cs" />
+    <Compile Include="Models\TblJobOrder.cs" />
+    <Compile Include="Models\TblJobOrderAttachmentType.cs" />
+    <Compile Include="Models\TblJobOrderEquipmentType.cs" />
+    <Compile Include="Models\TblJobOrderLandType.cs" />
+    <Compile Include="Models\TblJobOrderObstructionType.cs" />
+    <Compile Include="Models\TblJobOrderProjectType.cs" />
+    <Compile Include="Models\TblJobOrderUndergroundType.cs" />
     <Compile Include="Models\TblKpt.cs" />
     <Compile Include="Models\TblKptAttachment.cs" />
     <Compile Include="Models\TblKptDetail.cs" />
@@ -210,6 +219,8 @@
     <Compile Include="Models\TeamOperationDetail.cs" />
     <Compile Include="Models\TeamSale.cs" />
     <Compile Include="Models\TeamSaleDetail.cs" />
+    <Compile Include="Models\TransferDetail.cs" />
+    <Compile Include="Models\TransferHeader.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SqlServerTypes\Loader.cs" />
   </ItemGroup>
