@@ -571,11 +571,11 @@ namespace Kemrex.Web.Main.Controllers
             TransferHeader transferH = uow.Modules.Transfer.Get(id);
 
             String html = string.Empty;
-            html = System.IO.File.ReadAllText(HttpContext.Server.MapPath("/html/" + "TransferOutHTML.html"));
+            html = System.IO.File.ReadAllText(HttpContext.Server.MapPath("~/html/" + "TransferOutHTML.html"));
             using (MemoryStream stream = new System.IO.MemoryStream())
             {
-                html = html.Replace("@@ImageBanner@@", HttpContext.Server.MapPath("/images/logo-banner.png"));
-                html = html.Replace("@@ImageCheckbox@@", HttpContext.Server.MapPath("/html/img/checkbox_0.gif"));
+                html = html.Replace("@@ImageBanner@@", HttpContext.Server.MapPath("~/images/logo-banner.png"));
+                html = html.Replace("@@ImageCheckbox@@", HttpContext.Server.MapPath("~/html/img/checkbox_0.gif"));
 
                 html = html.Replace("@@TransferNo@@", transferH.TransferNo);
                 html = html.Replace("@@Goto@@", transferH.ReceiveTo);
@@ -620,11 +620,11 @@ namespace Kemrex.Web.Main.Controllers
             TransferHeader transferH = uow.Modules.Transfer.Get(id);
 
             String html = string.Empty;
-            html = System.IO.File.ReadAllText(HttpContext.Server.MapPath("/html/" + "TransferOutHTML.html"));
+            html = System.IO.File.ReadAllText(HttpContext.Server.MapPath("~/html/" + "TransferInHTML.html"));
             using (MemoryStream stream = new System.IO.MemoryStream())
             {
-                html = html.Replace("@@ImageBanner@@", HttpContext.Server.MapPath("/images/logo-banner.png"));
-                html = html.Replace("@@ImageCheckbox@@", HttpContext.Server.MapPath("/html/img/checkbox_0.gif"));
+                html = html.Replace("@@ImageBanner@@", HttpContext.Server.MapPath("~/images/logo-banner.png"));
+                html = html.Replace("@@ImageCheckbox@@", HttpContext.Server.MapPath("~/html/img/checkbox_0.gif"));
 
                 html = html.Replace("@@TransferNo@@", transferH.TransferNo);
                 html = html.Replace("@@Goto@@", transferH.ReceiveTo);
@@ -650,6 +650,28 @@ namespace Kemrex.Web.Main.Controllers
                 else if (transferH.SendToDepartment == 4) SendToDepartment = "Warehouse";
                 else if (transferH.SendToDepartment == 5) SendToDepartment = "Other";
                 html = html.Replace("@@SendTo@@", SendToDepartment);
+
+                string tagItem = "";
+                int num = 0;
+                foreach (var d in transferH.TransferDetail.ToList())
+                {
+                    num++;
+                    tagItem += "<tr>";
+                    tagItem += "<td  align='center'>" + d.Seq + "</td>";
+                    tagItem += "<td>" + d.Product.ProductCode + " " + d.Product.ProductName + "</td>";
+                    tagItem += "<td align='center'>" + d.RequestQty + "</td>";
+                    tagItem += "</tr>";
+                }
+                for (int i = 0; i <= 20 - num; i++)
+                {
+                    tagItem += "<tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>";
+                }
+                tagItem += "<tr>";
+                tagItem += "<td></td>";
+                tagItem += "<td align='right'>รวมจำนวน</td>";
+                tagItem += "<td align='center'></td>";
+                tagItem += "</tr>";
+                html = html.Replace("@@item@@", tagItem);
 
 
 
