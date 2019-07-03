@@ -55,6 +55,20 @@ namespace Kemrex.Web.Common.Controllers
             return md;
         }
 
+        public MenuLayoutModel GetMenuByRole()
+        {
+            List<SysMenu> sysMenu = new List<SysMenu>();
+            MenuLayoutModel md = new MenuLayoutModel();
+            md.ActiveMenuId = uow.Modules.System.GetMenuActiveList(MVCArea, MVCController, MVCAction);
+            md.Menus = new List<MenuModel>();
+
+            sysMenu = uow.Modules.RolePermission.GetMenuByRole(CurrentUser.SysAccountRole.RoleId);
+            foreach (SysMenu menu in sysMenu.Where(o => o.ParentId == 0 && o.View == 1))
+            { md.Menus.Add(ConvertToMenuModel(menu, sysMenu)); }
+            return md;
+        }
+
+
         #region Business Function
 
         public string CustomerAddressText(TblCustomerAddress ob)
@@ -79,6 +93,37 @@ namespace Kemrex.Web.Common.Controllers
                 MvcController = ob.MvcController,
                 MvcAction = ob.MvcAction,
                 SubMenus = ob.InverseParent.Select(x => ConvertToMenuModel(x)).OrderBy(o=>o.MenuOrder).ToList()
+            };
+            return rs;
+        }
+
+        private MenuModel ConvertToMenuModel2(SysMenu ob)
+        {
+            MenuModel rs = new MenuModel()
+            {
+                MenuId = ob.MenuId,
+                MenuIcon = ob.MenuIcon,
+                MenuName = ob.MenuName,
+                MenuOrder = ob.MenuOrder,
+                MvcArea = ob.MvcArea,
+                MvcController = ob.MvcController,
+                MvcAction = ob.MvcAction,
+                //  SubMenus = ob.InverseParent.Select(x => ConvertToMenuModel(x)).OrderBy(o => o.MenuOrder).ToList()
+            };
+            return rs;
+        }
+        private MenuModel ConvertToMenuModel(SysMenu ob, List<SysMenu> menuAll)
+        {
+            MenuModel rs = new MenuModel()
+            {
+                MenuId = ob.MenuId,
+                MenuIcon = ob.MenuIcon,
+                MenuName = ob.MenuName,
+                MenuOrder = ob.MenuOrder,
+                MvcArea = ob.MvcArea,
+                MvcController = ob.MvcController,
+                MvcAction = ob.MvcAction,
+                SubMenus = menuAll.Where(o => o.ParentId == ob.MenuId).Select(x => ConvertToMenuModel2(x)).OrderBy(o => o.MenuOrder).ToList()
             };
             return rs;
         }

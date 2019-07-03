@@ -222,12 +222,7 @@ namespace Kemrex.Core.Database
 
             modelBuilder.Entity<SysAccountRole>(entity =>
             {
-                entity.HasOne(d => d.Account)
-                    .WithMany(p => p.SysAccountRole)
-                    .HasForeignKey(d => d.AccountId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_SysAccountRole_User");
-
+             
                 entity.HasOne(d => d.Role)
                     .WithMany(p => p.SysAccountRole)
                     .HasForeignKey(d => d.RoleId)

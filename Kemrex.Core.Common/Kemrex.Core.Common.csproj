@@ -143,6 +143,7 @@
     <Compile Include="Extensions\Database\SysRoleExtension.cs" />
     <Compile Include="Extensions\Database\TeamOperationExtension.cs" />
     <Compile Include="Extensions\Database\TeamSaleExtension.cs" />
+    <Compile Include="Helper\Coverting.cs" />
     <Compile Include="Helper\PathHelper.cs" />
     <Compile Include="Helper\SystemHelper.cs" />
     <Compile Include="Interfaces\IModule.cs" />
@@ -173,6 +174,9 @@
     <Compile Include="Modules\RolePermissionModule.cs" />
     <Compile Include="Modules\SaleOrderDetailModule.cs" />
     <Compile Include="Modules\SaleOrderAttachmentModule .cs" />
+    <Compile Include="Modules\JobOrderModule.cs" />
+    <Compile Include="Modules\AttachmentTypeModule.cs" />
+    <Compile Include="Modules\TransferModule.cs" />
     <Compile Include="Modules\SaleOrderModule.cs" />
     <Compile Include="Modules\SubDistrictModule.cs" />
     <Compile Include="Modules\SystemModule.cs" />
@@ -180,9 +184,11 @@
     <Compile Include="Modules\TeamOperationModule.cs" />
     <Compile Include="Modules\TeamSaleDetailModule.cs" />
     <Compile Include="Modules\TeamSaleModule.cs" />
+    <Compile Include="Modules\SysCategoryModule.cs" />
     <Compile Include="Modules\UnitModule.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="UnitOfWork.cs" />
+    <Compile Include="WebDB.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Kemrex.Core.Database\Kemrex.Core.Database.csproj">

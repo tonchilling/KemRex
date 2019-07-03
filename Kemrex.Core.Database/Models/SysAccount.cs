@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-
+using System.ComponentModel.DataAnnotations.Schema;
 namespace Kemrex.Core.Database.Models
 {
     public partial class SysAccount
@@ -9,8 +9,8 @@ namespace Kemrex.Core.Database.Models
         {
             CalcAccountStaffAccount = new HashSet<CalcAccountStaff>();
             CalcAccountStaffStaff = new HashSet<CalcAccountStaff>();
-            SysAccountRole = new HashSet<SysAccountRole>();
-            TblEmployee = new HashSet<TblEmployee>();
+           
+          
             TeamOperation = new HashSet<TeamOperation>();
             TeamOperationDetail = new HashSet<TeamOperationDetail>();
             TeamSale = new HashSet<TeamSale>();
@@ -33,10 +33,15 @@ namespace Kemrex.Core.Database.Models
         public long UpdatedBy { get; set; }
         public DateTime UpdatedDate { get; set; }
 
+        [NotMapped]
+        public string DepartmentName { get; set; }
+        [NotMapped]
+        public string PositionName { get; set; }
+
         public virtual ICollection<CalcAccountStaff> CalcAccountStaffAccount { get; set; }
         public virtual ICollection<CalcAccountStaff> CalcAccountStaffStaff { get; set; }
-        public virtual ICollection<SysAccountRole> SysAccountRole { get; set; }
-        public virtual ICollection<TblEmployee> TblEmployee { get; set; }
+        public virtual SysAccountRole SysAccountRole { get; set; }
+        public virtual TblEmployee TblEmployee { get; set; }
         public virtual ICollection<TeamOperation> TeamOperation { get; set; }
         public virtual ICollection<TeamOperationDetail> TeamOperationDetail { get; set; }
         public virtual ICollection<TeamSale> TeamSale { get; set; }

@@ -240,11 +240,15 @@ namespace Kemrex.Web.Main.Controllers
               
                 uow.Modules.Account.SetRole(SiteId, roleId, ob);
                 uow.SaveChanges();
-                TblEmployee employee = uow.Modules.Employee.Get(empId);
-              
-                employee.AccountId = ob.AccountId;
 
-                uow.Modules.Employee.Set(employee);
+                if (empId > 0)
+                {
+                    TblEmployee employee = uow.Modules.Employee.Get(empId);
+
+                    employee.AccountId = ob.AccountId;
+
+                    uow.Modules.Employee.Set(employee);
+                }
                 uow.SaveChanges();
                 return RedirectToAction("Index", new
                 {

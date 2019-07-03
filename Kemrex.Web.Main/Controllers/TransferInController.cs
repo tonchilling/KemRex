@@ -26,7 +26,7 @@ namespace Kemrex.Web.Main.Controllers
                     if (msgType.HasValue) { alert.Type = msgType.Value; }
                     ViewBag.Alert = alert;
                 }
-                int total = uow.Modules.JobOrder.Count(src, 0);
+                int total = uow.Modules.Transfer.Count(0, "I");
                 WidgetPaginationModel Pagination = new WidgetPaginationModel("Index", "TransferIn", "")
                 {
                     Page = (page ?? 1),
@@ -39,7 +39,7 @@ namespace Kemrex.Web.Main.Controllers
                     Total = total
                 };
                 ViewBag.Pagination = Pagination;
-                lst = uow.Modules.Transfer.Gets(Pagination.Page, Pagination.Size, src);
+                lst = uow.Modules.Transfer.Gets(Pagination.Page, Pagination.Size, src,"I");
             }
             catch (Exception ex)
             {
@@ -56,14 +56,14 @@ namespace Kemrex.Web.Main.Controllers
 
         private string getId(string type)
         {
-            string qid = "T"+ type;
+            string qid = "T" + type;
             System.Globalization.CultureInfo _cultureTHInfo = new System.Globalization.CultureInfo("en-US");
             var dt = DateTime.Now.ToString("yyMMdd", _cultureTHInfo);
             string Id = uow.Modules.Transfer.GetLastId(qid + dt);
 
             if (Id == null)
             {
-                Id = string.Format("{0}{1}-0000",qid , dt);
+                Id = string.Format("{0}{1}-0000", qid, dt);
             }
 
             string preid = Id.Split('-')[0];
@@ -86,26 +86,26 @@ namespace Kemrex.Web.Main.Controllers
         public ActionResult SetDetail(TransferHeader obj)
         {
             System.Globalization.CultureInfo _cultureTHInfo = new System.Globalization.CultureInfo("en-US");
-         
+
 
             string TransferId = this.Request.Form["TransferId"];
 
-          /*  string StartHH = this.Request.Form["StartHH"];
-            string StartMM = this.Request.Form["StartMM"];
-            string EndHH = this.Request.Form["EndHH"];
-            string EndMM = this.Request.Form["EndMM"];
-            string SaleName = this.Request.Form["SaleName"];
-            string SaleMobile = this.Request.Form["SaleMobile"];
-            string hddProject = this.Request.Form["hddProject"];
-            string hddEquipmentType = this.Request.Form["hddEquipmentType"];
-            string hddLandType = this.Request.Form["hddLandType"];
-            string hddUndergroundType = this.Request.Form["hddUndergroundType"];
-            string hddObstructionType = this.Request.Form["hddObstructionType"];
-            string hddAttachmentType = this.Request.Form["hddAttachmentType"];
-        */
+            /*  string StartHH = this.Request.Form["StartHH"];
+              string StartMM = this.Request.Form["StartMM"];
+              string EndHH = this.Request.Form["EndHH"];
+              string EndMM = this.Request.Form["EndMM"];
+              string SaleName = this.Request.Form["SaleName"];
+              string SaleMobile = this.Request.Form["SaleMobile"];
+              string hddProject = this.Request.Form["hddProject"];
+              string hddEquipmentType = this.Request.Form["hddEquipmentType"];
+              string hddLandType = this.Request.Form["hddLandType"];
+              string hddUndergroundType = this.Request.Form["hddUndergroundType"];
+              string hddObstructionType = this.Request.Form["hddObstructionType"];
+              string hddAttachmentType = this.Request.Form["hddAttachmentType"];
+          */
             if (TransferId == "" || TransferId == "0")
             {
-                obj.TransferNo = getId("I");
+                obj.TransferNo = getId("TI");
                 obj.CreateDate = DateTime.Now;
             }
             else
@@ -117,7 +117,7 @@ namespace Kemrex.Web.Main.Controllers
             obj.TransferType = "I";
             if (Request.Form["TransferDate"].ToString() != "")
             {
-                var dd = Request.Form["TransferDate"] ;
+                var dd = Request.Form["TransferDate"];
 
                 obj.TransferDate = dd.ParseDate(DateFormat.ddMMyyyy, culInfo: _cultureTHInfo);
             }
@@ -144,11 +144,11 @@ namespace Kemrex.Web.Main.Controllers
 
 
 
-              //  uow.Modules.Transfer.Set(obj);
+                //  uow.Modules.Transfer.Set(obj);
 
-              //  uow.SaveChanges();
+                //  uow.SaveChanges();
 
-              
+
             }
             catch (Exception ex)
             {
@@ -183,7 +183,7 @@ namespace Kemrex.Web.Main.Controllers
                     ViewBag.Alert = alert;
                 }
 
-           
+
                 ViewData["optCustomer"] = uow.Modules.Customer.GetAllAddress();
                 ViewData["optCustomerAddress"] = uow.Modules.CustomerAddress.Gets();
                 ViewData["optProduct"] = uow.Modules.Product.Gets();
@@ -207,13 +207,13 @@ namespace Kemrex.Web.Main.Controllers
             int qid = Request.Form["TransferId"].ParseInt();
             var id = Request.Form["selProduct"].Split(':');  //  ProductId:PriceNet
             int qty = Request.Form["RequestQty"].ParseInt();
-          
-          
+
+
 
             if (id.Count() > 0)
             {
                 int pid = int.Parse(id[0]);
-                int seq= uow.Modules.Transfer.GetDetails(qid)+1;
+                int seq = uow.Modules.Transfer.GetDetails(qid) + 1;
                 TransferDetail ob = uow.Modules.Transfer.GetDetail(0);
 
                 ob.TransferId = qid;
@@ -228,7 +228,27 @@ namespace Kemrex.Web.Main.Controllers
 
 
             }
-            return RedirectToAction("Detail", MVCController, new { id = qid, tab = "Product", msg = "", msgType = AlertMsgType.Success });
+            return RedirectToAction("Detail", MVCController, new { id = qid, tab = "Product", msg = "บันทึกข้อมูลสินค้าเรียบร้อยแล้ว", msgType = AlertMsgType.Success });
+        }
+
+        [HttpPost]
+        //[Authorized]
+        public ActionResult DetailDelete()
+        {
+            int qid = Request.Form["TransferId"].ParseInt();
+            try
+            {
+                int Seq = Request.Form["Seq"].ParseInt();
+                TransferDetail ob = uow.Modules.Transfer.GetDetail(qid, Seq);
+                if (ob == null)
+                { return RedirectToAction("Detail", MVCController, new { id = qid, tab = "Product", msg = "ไม่พบข้อมูลที่ต้องการ", msgType = AlertMsgType.Warning }); }
+
+                uow.Modules.Transfer.DeleteDetail(ob);
+                uow.SaveChanges();
+                return RedirectToAction("Detail", MVCController, new { id = qid, tab = "Product", msg = "ลบข้อมูลเรียบร้อยแล้ว", msgType = AlertMsgType.Success });
+            }
+            catch (Exception ex)
+            { return RedirectToAction("Detail", MVCController, new { id = qid, tab = "Product", msg = ex.GetMessage(), msgType = AlertMsgType.Danger }); }
         }
     }
 }
