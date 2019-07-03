@@ -151,6 +151,7 @@
     <Compile Include="Models\PathModel.cs" />
     <Compile Include="Models\Select2Model.cs" />
     <Compile Include="Modules\AccountModule.cs" />
+    <Compile Include="Modules\AttachmentTypeModule.cs" />
     <Compile Include="Modules\CustomerAddressModule.cs" />
     <Compile Include="Modules\CustomerContactModule.cs" />
     <Compile Include="Modules\CustomerGroupModule.cs" />
@@ -160,6 +161,7 @@
     <Compile Include="Modules\EmployeeModule.cs" />
     <Compile Include="Modules\EnumModule.cs" />
     <Compile Include="Modules\InvoiceModule.cs" />
+    <Compile Include="Modules\JobOrderModule.cs" />
     <Compile Include="Modules\PaymentConditionMudule.cs" />
     <Compile Include="Modules\PileModule.cs" />
     <Compile Include="Modules\PileSeriesModule.cs" />
@@ -179,11 +181,13 @@
     <Compile Include="Modules\TransferModule.cs" />
     <Compile Include="Modules\SaleOrderModule.cs" />
     <Compile Include="Modules\SubDistrictModule.cs" />
+    <Compile Include="Modules\SysCategoryModule.cs" />
     <Compile Include="Modules\SystemModule.cs" />
     <Compile Include="Modules\TeamOperationDetailModule.cs" />
     <Compile Include="Modules\TeamOperationModule.cs" />
     <Compile Include="Modules\TeamSaleDetailModule.cs" />
     <Compile Include="Modules\TeamSaleModule.cs" />
+    <Compile Include="Modules\TransferModule.cs" />
     <Compile Include="Modules\SysCategoryModule.cs" />
     <Compile Include="Modules\UnitModule.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
