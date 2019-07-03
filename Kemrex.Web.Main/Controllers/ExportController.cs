@@ -13,6 +13,12 @@ using Kemrex.Web.Common.ActionFilters;
 using Kemrex.Web.Common.Constraints;
 using Kemrex.Web.Common.Controllers;
 using Kemrex.Web.Common.Models;
+using System.Data;
+using System.Web.UI;
+using System.Web.UI.WebControls;
+using System.IO;
+using iTextSharp.text.html.simpleparser;
+using iTextSharp.tool.xml;
 
 namespace Kemrex.Web.Main.Controllers
 {
@@ -485,6 +491,181 @@ namespace Kemrex.Web.Main.Controllers
             }
 
         }
+        
+        public FileResult PDFJobOrder(int id)
+        {
+            TblJobOrder tbl = uow.Modules.JobOrder.Get(id);
+            tbl.SaleOrder = uow.Modules.SaleOrder.Get(tbl.SaleOrderId.HasValue ? tbl.SaleOrderId.Value : -1);
+            tbl.SaleOrder.Sale = uow.Modules.Employee.Get(tbl.SaleOrder.SaleId.HasValue ? tbl.SaleOrder.SaleId.Value : -1);
+            DataTable dtCate = new DataTable();
+            dtCate.Columns.Add("CategoryID", typeof(int));
+            dtCate.Columns.Add("CategoryTypID", typeof(int));
+            dtCate.Columns.Add("CategoryName", typeof(String));
+            foreach (var ptype in tbl.ProjectType.ToList())
+            {
+                DataRow row = dtCate.NewRow();
+                row["CategoryID"] = uow.Modules.SysCategory.Get(ptype.ProjectTypeId).CategoryId;
+                row["CategoryTypID"] = uow.Modules.SysCategory.Get(ptype.ProjectTypeId).CategoryTypeId;
+                row["CategoryName"] = uow.Modules.SysCategory.Get(ptype.ProjectTypeId).CategoryName;
+                dtCate.Rows.Add(row);
+            }
+            TblProduct prd = uow.Modules.Product.Get(tbl.ProductId.HasValue ? tbl.ProductId.Value : -1);
+
+            String html = string.Empty;
+            html = System.IO.File.ReadAllText(HttpContext.Server.MapPath("/html/" + "JobOrderHTML.html"));
+            using (MemoryStream stream = new System.IO.MemoryStream())
+            {
+                html = html.Replace("@@ImageBanner@@", HttpContext.Server.MapPath("/images/logo-banner.png"));
+                html = html.Replace("@@ImageCheckbox@@", HttpContext.Server.MapPath("/html/img/checkbox_0.gif"));
+
+                html = html.Replace("@@JobName@@", tbl.JobName);
+                html = html.Replace("@@JobOrderNo@@", tbl.JobOrderNo);
+                string txtStartDate = tbl.StartDate == null ? "_______________" : tbl.StartDate.Value.Day.ToString("00") + "/" + tbl.StartDate.Value.Month.ToString("00") + "/" + tbl.StartDate.Value.Year;
+                string txtEndtDate = tbl.EndDate == null ? "_______________" : tbl.EndDate.Value.Day.ToString("00") + "/" + tbl.EndDate.Value.Month.ToString("00") + "/" + tbl.EndDate.Value.Year;
+                html = html.Replace("@@StartDate@@", txtStartDate);
+                html = html.Replace("@@EndDate@@", txtEndtDate);
+                html = html.Replace("@@StartWorkingTime@@", tbl.StartWorkingTime); 
+                html = html.Replace("@@EndWorkingTime@@", tbl.EndWorkingTime);
+                html = html.Replace("@@ProjectName@@", tbl.ProjectName);
+                html = html.Replace("@@SaleName@@", tbl.SaleOrder.SaleName);
+                html = html.Replace("@@SaleMobile@@", tbl.SaleOrder.Sale.EmpMobile);
+                html = html.Replace("@@CustomerName@@", tbl.CustomerName);
+                html = html.Replace("@@CustomerPhone@@", tbl.CustomerPhone);
+                html = html.Replace("@@CustomerEmail@@", tbl.CustomerEmail);
+
+                int rowcheck = 0;
+                string CategoryName = ""; 
+                foreach (DataRow dr in dtCate.Rows)
+                {
+                    rowcheck++;
+                    if (rowcheck <= 3)
+                    {
+                        CategoryName += dr["CategoryName"].ToString() + "&nbsp; &nbsp; &nbsp;";
+                    }
+                }
+                html = html.Replace("@@CategoryName@@", CategoryName); 
+                html = html.Replace("@@ProductSaftyFactory@@", tbl.ProductSaftyFactory == null?"_____": tbl.ProductSaftyFactory.ToString());
+                html = html.Replace("@@ProductModel@@", prd.ProductCode + " " + prd.ProductName);
+                html = html.Replace("@@ProductQuantity@@", tbl.ProductQty.HasValue ? tbl.ProductQty.Value.ToString() : "_________");
+
+                html = html.Replace("@@ProductWeight@@", tbl.ProductWeight.HasValue ? tbl.ProductWeight.Value.ToString() : "_________________");
+                html = html.Replace("@@Adapter@@", tbl.Adapter);
+                html = html.Replace("@@HouseNo@@", tbl.HouseNo);
+                html = html.Replace("@@VillageNo@@", tbl.VillageNo);
+
+                html = html.Replace("@@District@@", "____________________________________________________________");
+
+
+
+                StringReader sr = new StringReader(html);
+                Document pdfDoc = new Document(PageSize.A4, 10f, 10f, 10f, 0f);
+                PdfWriter writer = PdfWriter.GetInstance(pdfDoc, stream);
+                pdfDoc.Open();
+                XMLWorkerHelper.GetInstance().ParseXHtml(writer, pdfDoc, sr);
+                pdfDoc.Close();
+                return File(stream.ToArray(), "application/pdf", "JobOrder_"+ tbl.JobOrderNo + ".pdf");
+            }
+        }
+        public FileResult PDFTransferOut(int id)
+        {
+            TransferHeader transferH = uow.Modules.Transfer.Get(id);
+
+            String html = string.Empty;
+            html = System.IO.File.ReadAllText(HttpContext.Server.MapPath("/html/" + "TransferOutHTML.html"));
+            using (MemoryStream stream = new System.IO.MemoryStream())
+            {
+                html = html.Replace("@@ImageBanner@@", HttpContext.Server.MapPath("/images/logo-banner.png"));
+                html = html.Replace("@@ImageCheckbox@@", HttpContext.Server.MapPath("/html/img/checkbox_0.gif"));
+
+                html = html.Replace("@@TransferNo@@", transferH.TransferNo);
+                html = html.Replace("@@Goto@@", transferH.ReceiveTo);
+                string txtTransferDate = transferH.TransferDate == null ? "__________" : transferH.TransferDate.Value.Day.ToString("00") + "/" + transferH.TransferDate.Value.Month.ToString("00") + "/" + transferH.TransferDate.Value.Year;
+                string txtTransferTime = transferH.TransferTime;
+
+                html = html.Replace("@@TransferDateTime@@", txtTransferDate + " " + txtTransferTime);
+                html = html.Replace("@@For@@", transferH.Reason);
+                html = html.Replace("@@PersonName@@", transferH.EmpId);
+                string carType = "";
+                if (transferH.CarType == 1) carType = "รถกระบะ";
+                else if (transferH.CarType == 2) carType = "รถบรรทุก";
+                else if (transferH.CarType == 3) carType = "รถเทรลเลอร์";
+                html = html.Replace("@@CarType@@", carType);
+                html = html.Replace("@@CompName@@", transferH.Company);
+                html = html.Replace("@@CarRegistration@@", transferH.CarNo);
+                html = html.Replace("@@CarBrand@@", transferH.CarBrand);
+
+                string SendToDepartment = "";
+                if (transferH.SendToDepartment == 1) SendToDepartment = "Office";
+                else if (transferH.SendToDepartment == 2) SendToDepartment = "Engineer";
+                else if (transferH.SendToDepartment == 3) SendToDepartment = "Factory";
+                else if (transferH.SendToDepartment == 4) SendToDepartment = "Warehouse";
+                else if (transferH.SendToDepartment == 5) SendToDepartment = "Other";
+                html = html.Replace("@@SendTo@@", SendToDepartment);
+
+
+
+
+
+                StringReader sr = new StringReader(html);
+                Document pdfDoc = new Document(PageSize.A4, 10f, 10f, 10f, 0f);
+                PdfWriter writer = PdfWriter.GetInstance(pdfDoc, stream);
+                pdfDoc.Open();
+                XMLWorkerHelper.GetInstance().ParseXHtml(writer, pdfDoc, sr);
+                pdfDoc.Close();
+                return File(stream.ToArray(), "application/pdf", "TransferOut.pdf");
+            }
+        }
+        public FileResult PDFTransferIn(int id)
+        {
+            TransferHeader transferH = uow.Modules.Transfer.Get(id);
+
+            String html = string.Empty;
+            html = System.IO.File.ReadAllText(HttpContext.Server.MapPath("/html/" + "TransferOutHTML.html"));
+            using (MemoryStream stream = new System.IO.MemoryStream())
+            {
+                html = html.Replace("@@ImageBanner@@", HttpContext.Server.MapPath("/images/logo-banner.png"));
+                html = html.Replace("@@ImageCheckbox@@", HttpContext.Server.MapPath("/html/img/checkbox_0.gif"));
+
+                html = html.Replace("@@TransferNo@@", transferH.TransferNo);
+                html = html.Replace("@@Goto@@", transferH.ReceiveTo);
+                string txtTransferDate = transferH.TransferDate == null ? "__________" : transferH.TransferDate.Value.Day.ToString("00") + "/" + transferH.TransferDate.Value.Month.ToString("00") + "/" + transferH.TransferDate.Value.Year;
+                string txtTransferTime = transferH.TransferTime;
+
+                html = html.Replace("@@TransferDateTime@@", txtTransferDate + " " + txtTransferTime);
+                html = html.Replace("@@For@@", transferH.Reason);
+                html = html.Replace("@@PersonName@@", transferH.EmpId);
+                string carType = "";
+                if (transferH.CarType == 1) carType = "รถกระบะ";
+                else if (transferH.CarType == 2) carType = "รถบรรทุก";
+                else if (transferH.CarType == 3) carType = "รถเทรลเลอร์";
+                html = html.Replace("@@CarType@@", carType);
+                html = html.Replace("@@CompName@@", transferH.Company);
+                html = html.Replace("@@CarRegistration@@", transferH.CarNo);
+                html = html.Replace("@@CarBrand@@", transferH.CarBrand);
+
+                string SendToDepartment = "";
+                if (transferH.SendToDepartment == 1) SendToDepartment = "Office";
+                else if (transferH.SendToDepartment == 2) SendToDepartment = "Engineer";
+                else if (transferH.SendToDepartment == 3) SendToDepartment = "Factory";
+                else if (transferH.SendToDepartment == 4) SendToDepartment = "Warehouse";
+                else if (transferH.SendToDepartment == 5) SendToDepartment = "Other";
+                html = html.Replace("@@SendTo@@", SendToDepartment);
+
+
+
+
+
+                StringReader sr = new StringReader(html);
+                Document pdfDoc = new Document(PageSize.A4, 10f, 10f, 10f, 0f);
+                PdfWriter writer = PdfWriter.GetInstance(pdfDoc, stream);
+                pdfDoc.Open();
+                XMLWorkerHelper.GetInstance().ParseXHtml(writer, pdfDoc, sr);
+                pdfDoc.Close();
+                return File(stream.ToArray(), "application/pdf", "TransferOut.pdf");
+            }
+        }
+
+
         private void writeText(PdfContentByte cb, string Text, int X, int Y, BaseFont font, int Size)
         {
             cb.SetFontAndSize(font, Size);
