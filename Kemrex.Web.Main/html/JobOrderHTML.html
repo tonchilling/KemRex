@@ -1,0 +1,129 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Index</title>
+    <style type="text/css">
+        body {
+            font-family: tahoma;
+            font-size: 10pt;
+            width:1024px;
+            padding-left:10px;
+            padding-right:10px;
+            background-color:gainsboro;
+            line-height:28px;
+            
+        }
+    </style>
+</head>
+<body>
+    <div style="width: 100%; padding-left: 30px; padding-right: 30px; background-color: white;">
+        <div>
+            <center>
+                <table style="background-color: white; margin-top:10px;">
+                    <tr>
+                        <td width="30%">&nbsp;</td>
+                        <td><img src="@@ImageBanner@@" width="220" /></td>
+                        <td width="30%">&nbsp;</td>
+                    </tr>
+                </table>
+            </center>
+        </div>
+        <br />
+        <div style="float:left;">รายละเอียดงานก่อนติดตั้ง (Check List) JOB : @@JobName@@</div>
+        <div style="float:right;">เลขที่ใบสั่งงาน : @@JobOrderNo@@</div>
+        <div>1. รายละเอียดโครงการ</div>
+        <div>
+            วันที่ติดตั้ง &nbsp;@@StartDate@@ &nbsp;&nbsp;&nbsp;&nbsp;กำหนดเสร็จวันที่ &nbsp;@@EndDate@@ &nbsp;&nbsp;&nbsp;&nbsp;เวลาปฏิบัติงาน &nbsp;@@StartWorkingTime@@ น. - @@EndWorkingTime@@ น.
+        </div>
+        <div>
+            โครงการ : @@ProjectName@@ &nbsp;&nbsp;&nbsp;&nbsp;ฝ่ายขายผู้รับผิดชอบ : @@SaleName@@ &nbsp;&nbsp;&nbsp;&nbsp;โทร : @@SaleMobile@@
+        </div>
+        <div>
+            ชื่อลกค้า/บริษัท : @@CustomerName@@ &nbsp;&nbsp;&nbsp;&nbsp;โทร : @@CustomerPhone@@ &nbsp;&nbsp;&nbsp;&nbsp;Email : @@CustomerEmail@@
+        </div>
+        <div>2. ลักษณะโครงการ</div>
+        <div style="padding-left:20px;">2.1 @@CategoryName@@</div>
+        <!--<div style="padding-left:20px;">@@CategoryName@@</div>-->
+        <div style="padding-left:20px;">อื่นๆ ___________________________________________________</div>
+        <div style="padding-left:20px;">2.2 Safety ก่อนเริ่มงาน ( รองเท้า / หมวก / แว่นตา / เสื้อสะท้อนแสง ) : @@ProductSaftyFactory@@</div>
+        <div>3. รายละเอียดเข็มเหล็กเพิ่มเติม</div>
+        <div style="padding-left:20px;">3.1 เข็มเหล็กรุ่น (Model) : </div>
+        <div style="padding-left:8px;">
+            <table style="font-size:10pt; background-color:white" cellspacing="8" cellpadding="5" border="0">
+                <tr>
+                    <td align="right">รุ่น :</td>
+                    <td align="center">@@ProductModel@@</td>
+                    <td align="center">จำนวน (Quantity) : </td>
+                    <td align="center">@@ProductQuantity@@</td>
+                    <td>ต้น</td>
+                </tr>
+                <tr>
+                    <td align="right">รุ่น :</td>
+                    <td>___________________________</td>
+                    <td align="center">จำนวน (Quantity) : </td>
+                    <td align="center">_____</td>
+                    <td>ต้น</td>
+                </tr>
+                <tr>
+                    <td align="right">รุ่น :</td>
+                    <td>___________________________</td>
+                    <td align="center">จำนวน (Quantity) : </td>
+                    <td align="center">_____</td>
+                    <td>ต้น</td>
+                </tr>
+                <tr>
+                    <td colspan="3" align="right">จำนวนทั้งหมด (Quantity) : </td>
+                    <td align="center">_____</td>
+                    <td>ต้น</td>
+                </tr>
+            </table>
+        </div>
+        <div>อุปกรณ์สำหรับหน้างาน &nbsp; &nbsp; &nbsp; <img src="@@ImageCheckbox@@" width="18" /> คอลลิ่ง &nbsp;&nbsp;&nbsp; <img src="@@ImageCheckbox@@" width="18" /> แย็ก</div>
+        <div style="padding-left:20px;"><img src="@@ImageCheckbox@@" width="18" /> คอลลิ่ง , แย็ก โดยเข็มเหล็ก &nbsp; &nbsp; คอลลิ่ง _______________ จุด</div>
+        <div style="padding-left:20px;"><img src="@@ImageCheckbox@@" width="18" /> คอลลิ่ง , แย็ก โดยลูกค้า &nbsp; &nbsp; &nbsp; &nbsp; คอลลิ่ง _______________ จุด</div>
+        <div style="padding-left:20px;">3.2 ระดับความสูงของหัวเข็มเหล็กในการติดตั้ง : ____________________ ซม.</div>
+        <div style="padding-left:25px;">น้ำหนักลงเข็ม : @@ProductWeight@@ </div>
+        <div style="padding-left:20px;">3.3 Adapter/Plate รุ่น : @@Adapter@@</div>
+        <div style="padding-left:20px;">3.4 เครื่องมือการติดตั้ง &nbsp;&nbsp;&nbsp;<img src="@@ImageCheckbox@@" width="18" /> รถ MDG &nbsp;&nbsp;&nbsp; <img src="@@ImageCheckbox@@" width="18" /> Hand Drive &nbsp;&nbsp;&nbsp; <img src="@@ImageCheckbox@@" width="18" /> Hand Drill</div>
+        <div>4. รายละเอียดพื้นที่ติดตั้งหน้างาน</div>
+        <div style="padding-left:20px;">4.1 เลขที่ @@HouseNo@@&nbsp;&nbsp;&nbsp;หมู่บ้าน @@VillageNo@@ &nbsp;&nbsp;&nbsp;ถนน </div>
+        <div style="padding-left:20px;">ตำบล/อำเภอ/จังหวัด @@District@@</div>
+        <div style="padding-left:20px;">อื่นๆ _____________________________________________________________</div>
+        <div style="padding-left:20px;">4.2 ไฟฟ้าหน้างาน&nbsp; &nbsp; &nbsp;<img src="@@ImageCheckbox@@" width="18" /> มีไฟฟ้า &nbsp;&nbsp;&nbsp; <img src="@@ImageCheckbox@@" width="18" /> ไม่มีไฟฟ้า(ใช้ชุดเครื่องปั่นไฟ)</div>
+        <div style="padding-left:20px;">4.3 การเทส KPT(Kunze stab Penetration Test)</div>
+        <div style="padding-left:20px;"> <img src="@@ImageCheckbox@@" width="18" /> เทสแล้ว(แนบเอกสารระบผลเทส) &nbsp;&nbsp;&nbsp; <img src="@@ImageCheckbox@@" width="18" /> ยังไม่ได้เทส</div>
+        <div style="padding-left:20px;">ข้อมูลเพิ่มเติม ____________________________________________________</div>
+        <div style="padding-left:20px;">4.4 ลักษณะพื้นดินสำหรับการติดตั้ง</div>
+        <div style="padding-left:8px;">
+            <table style="font-size:10pt;width:100%;" cellspacing="10" cellpadding="5">
+                <tr>
+                    <td><img src="@@ImageCheckbox@@" width="18" />พื้นดินเดิม</td>
+                    <td style="margin-left:10px;"><img src="@@ImageCheckbox@@" width="18" />พื้นดินอ่อนถมใหม่ / น้ำท่วมขัง</td>
+                    <td style="margin-left:10px;"><img src="@@ImageCheckbox@@" width="18" />พื้นที่บ่อน้ำ/คลอง</td>
+                </tr>
+                <tr>
+
+                    <td><img src="@@ImageCheckbox@@" width="18" />พื้นยางมะตอย หนา ______ ซม.</td>
+                    <td><img src="@@ImageCheckbox@@" width="18" />พื้นคอนกรีต หนา ______ ซม.</td>
+                    <td></td>
+                </tr>
+            </table>
+        </div>
+        <div style="padding-left:20px;"><img src="@@ImageCheckbox@@" width="18" /> คอลลิ่ง , แย็ก โดยเข็มเหล็ก &nbsp; &nbsp; คอลลิ่ง _______________ จุด</div>
+        <div style="padding-left:20px;"><img src="@@ImageCheckbox@@" width="18" /> คอลลิ่ง , แย็ก โดยลูกค้า &nbsp; &nbsp; &nbsp; &nbsp; คอลลิ่ง _______________ จุด</div>
+        <div style="padding-left:20px;">4.5 วัสดุใต้ดิน</div>
+        <div style="padding-left:20px;"><img src="@@ImageCheckbox@@" width="18" /> ท่อปะปา &nbsp;&nbsp;&nbsp; <img src="@@ImageCheckbox@@" width="18" /> สายไฟ &nbsp;&nbsp;&nbsp; <img src="@@ImageCheckbox@@" width="18" /> รากฐานเดิม &nbsp;&nbsp;&nbsp; <img src="@@ImageCheckbox@@" width="18" /> หินและกรวด</div>
+        <div style="padding-left:20px;"><img src="@@ImageCheckbox@@" width="18" /> อื่นๆ _______________________</div>
+        <div style="padding-left:20px;">4.6 ปัญหาและอปสรรคหน้างาน</div>
+        <div style="padding-left:20px;"><img src="@@ImageCheckbox@@" width="18" /> มีสิ่งกีดขวางต้องเคลื่อนย้าย &nbsp;&nbsp;&nbsp; <img src="@@ImageCheckbox@@" width="18" /> มีต้นไม้ / วัชพืช &nbsp;&nbsp;&nbsp; <img src="@@ImageCheckbox@@" width="18" /> อื่นๆ _______________________</div>
+        <div style="padding-left:20px;"><img src="@@ImageCheckbox@@" width="18" /> อื่นๆ _______________________</div>
+        <div style="padding-left:20px;">4.7 สิ่งที่แนบมาด้วย</div>
+        <div style="padding-left:20px;"><img src="@@ImageCheckbox@@" width="18" /> ภาพถ่ายหน้างาน / บ้านเลขที่ &nbsp;&nbsp;&nbsp; <img src="@@ImageCheckbox@@" width="18" /> ภาพถ่ายทางเข้า-ออกหน้างาน &nbsp;&nbsp;&nbsp; <img src="@@ImageCheckbox@@" width="18" /> แผนที่</div>
+        <div style="padding-left:20px;"><img src="@@ImageCheckbox@@" width="18" /> แบบแปลน &nbsp;&nbsp;&nbsp; <img src="@@ImageCheckbox@@" width="18" /> อื่นๆ _______________________</div>
+
+
+        </div>
+        <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+</body>
+</html>
