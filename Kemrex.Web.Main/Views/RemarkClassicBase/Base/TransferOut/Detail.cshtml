@@ -33,14 +33,16 @@
 }
 
 @section Styles {
-  
 
+<link href="~/themes/RemarkClassicBase/css/bootstrap-datepicker.min.css" rel="stylesheet" />
 
 }
 
 @section Scripts {
+    <script src="~/themes/RemarkClassicBase/js/Plugin/bootstrap-datepicker.min.js"></script>
 
-   
+    <script src="~/themes/RemarkClassicBase/js/Plugin/datepair.js"></script>
+    <script src="~/themes/RemarkClassicBase/js/Plugin/bootstrap-datepicker.js"></script>
     <script type="text/javascript">
 
         var _contact = [];
@@ -54,7 +56,7 @@
             }, 5000);
 
 
-          
+
             $('.datepair-date').datepicker({
                 startDate: '-3d',
                 format: "mm/dd/yyyy"
