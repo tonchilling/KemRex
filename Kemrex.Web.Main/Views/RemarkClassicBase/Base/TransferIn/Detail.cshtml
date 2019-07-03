@@ -33,14 +33,18 @@
 }
 
 @section Styles {
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.8.0/css/bootstrap-datepicker.min.css" rel="stylesheet" type="text/css" />
 
 
+<link href="~/themes/RemarkClassicBase/css/bootstrap-datepicker.min.css" rel="stylesheet" />
 
 }
 
 @section Scripts {
- 
+    <script src="~/themes/RemarkClassicBase/js/Plugin/bootstrap-datepicker.min.js"></script>
+
+    <script src="~/themes/RemarkClassicBase/js/Plugin/datepair.js"></script>
+    <script src="~/themes/RemarkClassicBase/js/Plugin/bootstrap-datepicker.js"></script>
+
     <script type="text/javascript">
 
         var _contact = [];
@@ -292,7 +296,7 @@
             }
 
 
-         
+
 
 
             return chkValidate;
@@ -776,7 +780,7 @@
                                                             <th>ลำดับที่</th>
                                                             <th>สินค้า</th>
                                                             <th>จำนวน</th>
-                                                      
+
 
                                                             <th>เครื่องมือ</th>
                                                         </tr>
@@ -797,12 +801,12 @@
                                                                     <td>@row</td>
                                                                     <td>@ob.Product.ProductCode @ob.Product.ProductName</td>
                                                                     <td>@ob.RequestQty</td>
-                                                               
+
 
                                                                     <td>
                                                                         <form method="post" action="@Url.Action("DetailDelete", new { controller = "TransferIn" })"
                                                                               class="fnc-delete inline-block">
-                                                                            
+
                                                                             <input type="hidden" id="TransferId" name="TransferId" value="@Model.TransferId" />
                                                                             <input type="hidden" id="Seq" name="Seq" value="@ob.Seq" />
                                                                             @* @Html.AntiForgeryToken()*@
@@ -846,7 +850,7 @@
                                                         <label for="Price" class="form-control-label">ราคา</label>
                                                         <input type="text" class="form-control Number" readonly id="ProductPrice" name="ProductPrice" />
                                                     </div>
-                                                 
+
                                                 </div>
 
                                                 <button type="submit" id="btnAddProduct" class="btn btn-primary">เพิ่ม</button>&nbsp;
