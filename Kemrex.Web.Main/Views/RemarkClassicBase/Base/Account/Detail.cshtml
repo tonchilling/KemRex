@@ -72,7 +72,7 @@
                        success: function (obj) {
                            $.each(obj, function (index, item) {
 
-                               html += '<tr data=' + item.EmpCode + ' empNameTH=' + item.EmpNameTh + ' empNameEn=' + item.EmpNameEn + ' empEmail=' + item.EmpEmail + '>';
+                               html += '<tr  empid=' + item.EmpId+ ' data=' + item.EmpCode + ' empNameTH=' + item.EmpNameTh + ' empNameEn=' + item.EmpNameEn + ' empEmail=' + item.EmpEmail + '>';
                                html += '<td><button type="button" class="btn btn-primary btnSellectEmployee">เลิอก</button></td>';
                                html += '<td>' + item.EmpCode + '</td>';
                                html += '<td>' + item.EmpNameTh + '</td>';
@@ -96,9 +96,12 @@
 
         $(document).on("click", ".btnSellectEmployee", function () {
             $('#EmployeeCode').val($(this).closest('tr').attr('data'));
+            $('#EmpId').val($(this).closest('tr').attr('empid'));
+            
+            
             $('#account_firstname').val($(this).closest('tr').attr('empNameTH'));
             //('#account_lastname').val($(this).closest('tr').attr('empNameTH'));
-            $('#account_username').val($(this).closest('tr').attr('data'));
+            $('#account_username').val($(this).closest('tr').attr('empEmail'));
             $('#account_email').val($(this).closest('tr').attr('empEmail'));
             //$('#empNameTH').val($(this).closest('td').next().html());
 
@@ -151,6 +154,7 @@
                         <form role="form" method="post" action="@Url.Action("Detail", new { are = "", controller = "Account" })" enctype="multipart/form-data">
                             @Html.AntiForgeryToken()
                             <input type="hidden" name="account_id" value="@Model.AccountId" />
+                            <input type="hidden" name="EmpId" id="EmpId" value="@(Model.TblEmployee!=null?Model.TblEmployee.EmpId:0)" />
                             <div class="panel-body">
                                 <div class="row">
                                     <div class="col-6">
@@ -158,8 +162,8 @@
                                             <label for="EmployeeCode">รหัสพนักงาน</label>
                                             <div>
                                                 <div class="input-group mb-3">
-                                                    <input type="text" class="form-control" id="EmployeeCode" name="EmployeeCode"
-                                                           placeholder="รหัสพนักงาน" value="" readonly />
+                                                    <input type="text" class="form-control" id="EmployeeCode" name="EmployeeCode"  
+                                                           placeholder="รหัสพนักงาน" value="@(Model.TblEmployee!=null?Model.TblEmployee.EmpCode:null)" readonly />
                                                     <div class="input-group-append">
                                                         <button class="btn btn-outline-secondary btn-info" type="button" name="buttonEmp"
                                                                 id="buttonEmp">
@@ -179,11 +183,11 @@
                                         </div>
                                     </div>
                                     @*<div class="col-6">
-                                        <div class="form-group">
-                                            <label for="account_lastname" class="mandatory">นามสกุล</label>
-                                            <input type="text" class="form-control" name="account_lastname" id="account_lastname" value="@Model.AccountLastName" />
-                                        </div>
-                                    </div>*@
+                    <div class="form-group">
+                        <label for="account_lastname" class="mandatory">นามสกุล</label>
+                        <input type="text" class="form-control" name="account_lastname" id="account_lastname" value="@Model.AccountLastName" />
+                    </div>
+                </div>*@
                                     <div class="col-6">
                                         <div class="form-group">
                                             <label for="account_email" class="mandatory">อีเมล์</label>
@@ -198,7 +202,7 @@
                                             <input type="text" class="form-control" name="account_username" id="account_username" value="@Model.AccountUsername" autocomplete="off" @(Model.AccountId > 0 ? " disabled=\"disabled\"" : "") />
                                         </div>
                                     </div>
-                                 
+
                                 </div>
                                 <div class="row">
                                     <div class="col-6">
@@ -219,7 +223,9 @@
                                             <select name="role_id" class="form-control">
                                                 @foreach (SysRole role in optRole)
                                                 {
-                                                    bool selected = false;
+                                                    bool selected = Model.SysAccountRole!=null && role.RoleId == Model.SysAccountRole.RoleId;
+
+                                                  
                                                     <option value="@role.RoleId" @(selected ? " selected=\"\"" : "")>@role.RoleName</option>
                                                 }
                                             </select>
@@ -266,22 +272,22 @@
                                     </div>
                                 </div>
                                 @*<div class="row">
-                                    <div class="col-6">
-                                        <label for="flag_admin_calc" class="control-label">สิทธิ์ในการดูข้อมูลระบบ</label>
-                                        <div>
-                                            <label class="radio-inline">
-                                                <input type="radio"
-                                                       name="flag_admin_calc" value="0"
-                                                       @(!Model.FlagAdminCalc ? " checked=\"checked\"" : "") />สามารถดูข้อมูลตามรายชื่อ (ด้านล่าง)
-                                            </label>
-                                            <label class="radio-inline">
-                                                <input type="radio"
-                                                       name="flag_admin_calc" value="1"
-                                                       @(Model.FlagAdminCalc ? " checked=\"checked\"" : "") />ผู้ดูแล (ดูข้อมูลได้ทุกคน)
-                                            </label>
-                                        </div>
-                                    </div>
-                                </div>*@
+                <div class="col-6">
+                    <label for="flag_admin_calc" class="control-label">สิทธิ์ในการดูข้อมูลระบบ</label>
+                    <div>
+                        <label class="radio-inline">
+                            <input type="radio"
+                                   name="flag_admin_calc" value="0"
+                                   @(!Model.FlagAdminCalc ? " checked=\"checked\"" : "") />สามารถดูข้อมูลตามรายชื่อ (ด้านล่าง)
+                        </label>
+                        <label class="radio-inline">
+                            <input type="radio"
+                                   name="flag_admin_calc" value="1"
+                                   @(Model.FlagAdminCalc ? " checked=\"checked\"" : "") />ผู้ดูแล (ดูข้อมูลได้ทุกคน)
+                        </label>
+                    </div>
+                </div>
+            </div>*@
                             </div>
                             <div class="box-footer">
                                 <button type="submit" class="btn btn-primary">บันทึก</button>

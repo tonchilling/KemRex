@@ -18,7 +18,7 @@
             <ul class="site-menu-sub" id="@it.MenuId">
                 @foreach (MenuModel sub in it.SubMenus)
                 {
-                    bool hasChild = sub.SubMenus.Count() > 0;
+                    bool hasChild = sub.SubMenus!=null && sub.SubMenus.Count() > 0;
                     <li class="site-menu-item@(hasChild ? " has-sub" : "")">
                         <a href="@(hasChild ? "javascript:void(0);" : Url.Action(sub.MvcAction, new { area = sub.MvcArea, controller = sub.MvcController}))">
                             <span class="site-menu-title">@sub.MenuName</span>

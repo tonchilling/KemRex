@@ -1,0 +1,936 @@
+﻿@using Kemrex.Core.Database.Models
+@using Kemrex.Web.Common.Controllers
+@using Kemrex.Web.Common.Models
+@using Kemrex.Core.Common.Helper
+
+@model TransferHeader
+@{
+    ViewBag.Title = "Index";
+    KemrexController kemrex = ((KemrexController)this.ViewContext.Controller);
+    Layout = kemrex.PathViewShared("_lyDefault");
+    WidgetAlertModel Alert = (WidgetAlertModel)ViewBag.Alert;
+
+    List<TblCustomer>
+    optCustomer = (List<TblCustomer>
+        )ViewData["optCustomer"];
+    List<TblCustomerAddress>
+        optCustomerAddress = (List<TblCustomerAddress>
+            )ViewData["optCustomerAddress"];
+    List<TblQuotationDetail>
+        optQtDetail = (List<TblQuotationDetail>
+            )ViewData["optQtDetail"];
+    List<TblProduct>
+    optProduct = (List<TblProduct>
+        )ViewData["optProduct"];
+    List<TblCustomerContact>
+    optContact = (List<TblCustomerContact>
+    )ViewData["optContact"];
+    List<TblEmployee>
+    optEmployee = (List<TblEmployee>
+    )ViewData["optEmployee"];
+
+
+}
+
+@section Styles {
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.8.0/css/bootstrap-datepicker.min.css" rel="stylesheet" type="text/css" />
+
+
+
+}
+
+@section Scripts {
+ 
+    <script type="text/javascript">
+
+        var _contact = [];
+
+        $(document).ready(function () {
+
+            window.setTimeout(function () {
+                $(".alert").fadeTo(1000, 0).slideUp(1000, function () {
+                    $(this).remove();
+                });
+            }, 5000);
+
+
+            if (getUrlVars()["tab"] == "Product") {
+                $('ul.tabs li').removeClass('current');
+                $('.tab-content').removeClass('current');
+                $("#tab-2").addClass('current');
+                $("li[data-tab='tab-2']").addClass('current');
+              //  data-tab="tab-2"
+
+            }
+
+
+            $(EngineerMenu).slideToggle();
+
+
+            $('ul.tabs li').click(function () {
+                var tab_id = $(this).attr('data-tab');
+
+                $('ul.tabs li').removeClass('current');
+                $('.tab-content').removeClass('current');
+
+                $(this).addClass('current');
+                $("#" + tab_id).addClass('current');
+            })
+
+       //     var tab = TabPages.init('myTabPage');
+            //tab.selectTab('navInfo');
+
+          //  var myTabElement = new TabPages('myTabPage');
+          //  myTabElement.initTabs();
+         //   myTabElement.selectTab('navInfo');
+
+
+
+            calDiscount();
+        });
+
+        function getUrlVars() {
+            var vars = [], hash;
+            var hashes = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');
+            for (var i = 0; i < hashes.length; i++) {
+                hash = hashes[i].split('=');
+                vars.push(hash[0]);
+                vars[hash[0]] = hash[1];
+            }
+            return vars;
+        }
+
+        function calDiscount() {
+            var st = document.getElementById("SummaryTot").value.replace(",","");
+            var dc = document.getElementById("DiscountCash").value.replace(",", "");
+            if (dc > 0)
+            {
+                document.getElementById("SummaryTot").value = numeral(st - dc).format('0,0.00');
+            }
+        }
+
+        // Get CustomerAddress by customer id
+        function getAddress(e) {
+           var _customerAddress = [];
+            var myArray = [];
+            var id = document.getElementById("CustomerId").value;
+            @foreach (var d in optCustomerAddress.ToArray())
+            {
+                @:myArray.push("@d.CustomerId:@d.AddressId:@d.AddressName-@d.AddressText");
+            }
+            var addr = [];
+            myArray.forEach(function (e) {
+                var i = e.split(':');
+                if (i[0] == id)
+                    _customerAddress.push(e);
+            })
+            return _customerAddress.toString();
+        }
+
+        // Get CustomerContact by customer id
+        function getContact(e) {
+
+            var myArray = [];
+            var con = [];
+            var id = document.getElementById("CustomerId").value;
+            @foreach (var d in optContact.ToArray())
+            {
+                @:myArray.push("@d.CustomerId:@d.ContactId:@d.ContactName:@d.ContactPhone:@d.ContactEmail");
+            }
+            var addr = [];
+            myArray.forEach(function (e) {
+                var i = e.split(':');
+                if (i[0] == id)
+                    con.push(e);
+            })
+            return con.toString();
+        }
+        // Modal customer address
+        function showSelectModal(addr,name) {
+            var id = document.getElementById("CustomerId").value;
+
+            document.getElementById("lbCustomerId").innerText = id;
+            document.getElementById("lbCustomerName").innerText = document.getElementById("CustomerName").value;
+
+            var msg = "";
+            var a = addr.split(',');
+
+            if (a != "") {
+                a.forEach(function (e) {
+                    var x = e.split(':');
+                    msg += '<tr> ';
+
+                    msg += '<td>';
+                    msg += '<input type="hidden" name="AddressId" value=\'' + x[1] + '\' />';
+                    msg += ' <a data-dismiss="modal" onclick="setSelectToText(\'' + name + '\',\'' + x[2] + '\')"';
+                    msg += ' class="btn btn-info btn-sm" " style="color:white;">';
+                    msg += ' เลือก';
+                    msg += '  </a>';
+                    msg += '</td >';
+                    msg += '<td>' + x[2] + ' </td>  ';
+                    msg += '</tr>';
+                }
+                );
+            } else {
+                msg = "<h4>ไม่พบข้อมูล</h4>";
+            }
+            //alert(msg);
+            document.getElementById("manageCustomerAddress").innerHTML = msg;
+        }
+        function setSelectToText(name, val) {
+            //  alert(name + ' ' + val);
+            document.getElementById(name).value = val;
+
+            // Set phone and email
+            if (name == "ContractName")
+            {
+
+                var i = _contact.split(',');
+                i.forEach(function (e) {
+                    x = e.split(':');
+                    if (x[2]==val)
+                    {
+                        setSelectToText("ContractPhone", x[3]);
+                        setSelectToText("ContractEmail", x[4]);
+                    }
+                })
+
+            }
+        }
+
+
+
+        function AddrValidation() {
+            var chkValidate = true;
+            if ($("#CustomerId").val() == "") {
+                $("#CustomerId").addClass("has-error");
+                chkValidate = false;
+            } else {
+                $("#CustomerId").removeClass("has-error");
+            }
+
+
+
+
+
+
+            return chkValidate;
+
+        }
+
+
+        function ValidationAll() {
+
+            var selected=[];
+            var chkValidate = true;
+            if ($("#CustomerId").val() == "") {
+                $("#CustomerId").addClass("has-error");
+                chkValidate = false;
+            } else {
+                $("#CustomerId").removeClass("has-error");
+            }
+
+            if ($("#BillingAddress").val() == "") {
+                $("#BillingAddress").addClass("has-error");
+                chkValidate = false;
+            } else {
+                $("#BillingAddress").removeClass("has-error");
+            }
+
+
+            if ($("#DeliveryDate").val() == "") {
+                $("#DeliveryDate").addClass("has-error");
+                chkValidate = false;
+            } else {
+                $("#BilliDeliveryDatengAddress").removeClass("has-error");
+            }
+
+
+
+            $('.CarType:checked').each(function () {
+                selected.push($(this).val());
+            });
+            $("#CarType").val(selected.join(","));
+            selected = [];
+
+            $('.SendToDepartment:checked').each(function () {
+                selected.push($(this).val());
+            });
+            $("#SendToDepartment").val(selected.join(","));
+
+
+
+
+            return chkValidate;
+
+        }
+
+
+
+        function AddProductValidation() {
+
+           /* selProduct
+            ProductQty
+            ProductPrice
+            ProductDiscount*/
+
+            var chkValidate = true;
+
+
+            if ($("#selProduct").val() == "") {
+                $("#selProduct").addClass("has-error");
+                chkValidate = false;
+            } else {
+                $("#RequestQty").removeClass("has-error");
+            }
+
+            if ($("#RequestQty").val() == "") {
+                $("#RequestQty").addClass("has-error");
+                chkValidate = false;
+            } else {
+                $("#RequestQty").removeClass("has-error");
+            }
+
+
+         
+
+
+            return chkValidate;
+
+        }
+
+
+        // Event
+
+        $("#CustomerId").change(function () {
+            var id = document.getElementById("CustomerId").value;
+            document.getElementById("CustomerName").value = $(this).find("option:selected").text();
+        })
+
+        $("#SaleId").change(function () {
+            var id = document.getElementById("SaleId").value;
+            document.getElementById("SaleName").value = $(this).find("option:selected").text();
+        })
+
+        $("#button-BillingAddress").click(function () {
+            document.getElementById("bnAddnewAddress").style.display = "show";
+            document.getElementById("bnAddnewContact").style.display = "none";
+            showSelectModal(getAddress(), "BillingAddress");
+            if (AddrValidation()) {
+                $('#AddressModal').modal('show');
+            }
+        })
+        $("#button-ShippingAddress").click(function () {
+            document.getElementById("bnAddnewAddress").style.display = "show";
+            document.getElementById("bnAddnewContact").style.display = "none";
+            showSelectModal(getAddress(), "ShippingAddress");
+            if (AddrValidation()) {
+                $('#AddressModal').modal('show');
+            }
+        })
+
+
+
+
+        $("#button-contact").click(function () {
+            document.getElementById("bnAddnewAddress").style.display = "none";
+            document.getElementById("bnAddnewContact").style.display = "show";
+            _contact = getContact();
+            showSelectModal(_contact, "ContractName");
+
+
+            if (AddrValidation()) {
+                $('#AddressModal').modal('show');
+            }
+         //   #AddressModal
+        })
+
+
+        $("#btnAddProduct").click(function () {
+
+
+        //   return false;
+           return AddProductValidation();
+          /*  selProduct
+            ProductQty
+            ProductPrice
+            ProductDiscount
+            */
+        });
+
+        $("#btnNextStep").click(function () {
+
+            return ValidationAll();
+        });
+
+
+
+
+        // Product section
+        $("#selProduct").change(function () {
+            var dt = document.getElementById("selProduct").value;
+            var price = 0;
+            var p = dt.split(':');
+            if (p[1] != null) {
+                price = parseFloat(p[1]);
+            }
+            document.getElementById("ProductQty").value = 1;
+            document.getElementById("ProductPrice").value = price;
+            document.getElementById("ProductDiscount").value = 0;
+        })
+
+        $("#button-EditCustomerAddress").click(function () {
+            var id = document.getElementById("CustomerId").value;
+            document.getElementById("caCustomerId").value = id;
+            document.getElementById("lbcaCustomerName").innerHTML = document.getElementById("lbCustomerName").innerText;
+        });
+    </script>
+}
+
+<style type="text/css">
+
+    ul.tabs {
+        margin: 0px;
+        padding: 0px;
+        list-style: none;
+    }
+
+        ul.tabs li {
+            background: none;
+            color: #222;
+            display: inline-block;
+            padding: 10px 15px;
+            cursor: pointer;
+            background: #ededed;
+        }
+
+            ul.tabs li.current {
+                background: #ffffff;
+                color: #222;
+            }
+
+    .tab-content {
+        display: none;
+        background: #ffffff;
+        padding: 15px;
+    }
+
+        .tab-content.current {
+            display: inherit;
+        }
+
+    .input-daterange .input-group {
+        float: left;
+        width: 50%;
+    }
+
+    .input-daterange .input-group-addon {
+        width: auto;
+        min-width: 16px;
+        font-weight: 300;
+        line-height: 1.571429;
+        text-align: center;
+        vertical-align: middle;
+        background-color: #e4eaec;
+        border: solid #e4eaec;
+        border-width: 1px 0;
+    }
+
+    .input-group-addon {
+        padding: .429rem 1rem;
+        margin-bottom: 0;
+        font-size: 1rem;
+        font-weight: 300;
+        line-height: 1.571429;
+        color: #76838f;
+        text-align: center;
+        background-color: #e4eaec;
+        border: 1px solid #e4eaec;
+        border-radius: .215rem;
+    }
+</style>
+
+<body data-spy="scroll" data-target="#myTap" data-offset="300">
+
+    <div class="page">
+        <div class="page-header">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="@Url.Action("Index", new { controller = "TransferIn", area = "" })" })">ย้อนกลับ</a></li>
+            </ol>
+        </div>
+        <div class="page-content container-fluid">
+            @if (ViewBag.Alert != null)
+            {
+                <div class="row">
+                    <div class="col-12">
+                        @Html.Partial(kemrex.PathViewShared("_wgAlert"), Alert)
+                    </div>
+                </div>
+            }
+            <div class="panel-heading">
+                <h3 class="panel-title">
+                    @(Model.TransferId > 0 ? "แก้ไข" : "เพิ่ม")เอกสาร
+                    <span class="panel-desc">ใบอนุญาตนำวัสดุ/สิ่งของ เข้า</span>
+                </h3>
+            </div>
+            <div data-tabs="myTabPage">
+
+                <ul class="tabs">
+                    <li class="tab-link current" data-tab="tab-1">ข้อมูลพื้นฐาน</li>
+                    @if (Model.TransferId > 0)
+                    {
+                        <li class="tab-link" data-tab="tab-2">รายการสินค้า</li>
+                    }
+                </ul>
+
+                <div id="tab-1" class="tab-content current">
+
+                    <div class="card-block" id="navInfo" data-tab-page="navInfo">
+
+                        <div class="col-12">
+                            <table width="100%" style="margin:-10px 0 0 0;">
+                                <tr>
+                                    <td align="right">
+                                        <div style="text-align:right;">
+                                            <a href="@Url.Action("PDFQuatation", new { controller = "export", area = "", id = Model.TransferId })"
+                                               class="btn btn-xs btn-warning">
+                                                <i class="fa fa-file-pdf-o" aria-hidden="true"></i>&nbsp;PDF
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </table>
+                            <div class="panel">
+                                <form method="post" action="@Url.Action("SetDetail", "TransferIn")" enctype="multipart/form-data">
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" id="TransferId" name="TransferId" value="@Model.TransferId" />
+
+                                    <div class="panel-body">
+                                        <div class="row">
+                                            @*Left panel*@
+                                            <div class="col-md-6">
+
+
+                                                <div class="form-group row">
+                                                    <label class="col-md-3 form-control-label">เลขที่  : </label>
+                                                    <div class="col-md-9">
+                                                        <input type="text" class="form-control" id="TransferNo"
+                                                               value="@Model.TransferNo"
+                                                               name="TransferNo" placeholder="กรุณากรอกเลขที่ (ปล่อยว่าง จะแสดงเล่มที่ อัตโนมัติ)">
+                                                    </div>
+                                                </div>
+                                                <div class="form-group row">
+                                                    <label class="col-md-3 form-control-label">วันที่  :</label>
+                                                    <div class="col-md-9">
+                                                        <div class="example datepair-wrap" data-plugin="datepair">
+                                                            <div class="input-daterange-wrap">
+                                                                <div class="input-daterange">
+                                                                    <div class="input-group">
+                                                                        <span class="input-group-addon">
+                                                                            <i class="icon wb-calendar" aria-hidden="true"></i>
+                                                                        </span>
+                                                                        <input type="text"
+                                                                               class="form-control datepair-date datepair-start"
+                                                                               id="TransferDate"
+                                                                               name="TransferDate"
+                                                                               value="@Converting.ToDDMMYYYY(Model.TransferDate)"
+                                                                               data-plugin="datepicker">
+                                                                    </div>
+                                                                    <div class="input-group">
+                                                                        <span class="input-group-addon">
+                                                                            <i class="icon wb-time" aria-hidden="true"></i>
+                                                                        </span>
+                                                                        <input type="text" id="TransferTime"
+                                                                               name="TransferTime" class="form-control datepair-time datepair-start"
+                                                                               value="@Model.TransferTime"
+                                                                               data-plugin="timepicker" />
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group row">
+                                                    <label class="col-md-3 form-control-label">อนุญาติให้  : </label>
+                                                    <div class="col-md-9">
+                                                        <input type="text" class="form-control" id="EmpId"
+                                                               value="@Model.EmpId"
+                                                               name="EmpId" placeholder="กรุณากรอกชื่อ/ตำแหน่ง">
+                                                    </div>
+                                                </div>
+                                                <div class="form-group row">
+                                                    <label class="col-md-3 form-control-label">บริษัท/ห้างร้าน :</label>
+                                                    <div class="col-md-9">
+                                                        <input type="text" class="form-control"
+                                                               value="@Model.Company"
+                                                               id="Company" name="Company" placeholder="Kemrex">
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            @*Right panel*@
+
+                                            <div class="col-md-5 col-sm-8">
+                                                <div class="form-group row">
+                                                    <label class="col-md-3 form-control-label">ไปยัง  : </label>
+                                                    <div class="col-md-9">
+                                                        <input type="text" class="form-control"
+                                                               value="@Model.ReceiveTo"
+                                                               id="ReceiveTo" name="ReceiveTo" placeholder="กรุณากรอกข้อมูล">
+                                                    </div>
+                                                </div>
+                                                <div class="form-group row">
+                                                    <label class="col-md-3 form-control-label">เพื่อ  : </label>
+                                                    <div class="col-md-9">
+                                                        <input type="text" class="form-control"
+                                                               value="@Model.Reason"
+                                                               id="Reason" name="Reason" placeholder="ติดตั้งฐานราก Kemrex ปรับระดับ">
+                                                    </div>
+                                                </div>
+                                                <div class="form-group row">
+                                                    <label class="col-md-3 form-control-label">โดยรถประเภท  : </label>
+                                                    <div class="col-md-9">
+                                                        <div class="radio-custom radio-primary">
+                                                            <ul>
+                                                                @{
+                                                                    bool selected = false;
+                                                                    if (Model.CarType == 1)
+                                                                    {
+                                                                        selected = true;
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        selected = false;
+                                                                    }
+
+
+
+                                                                    <li>
+                                                                        <input type="radio" id="inputRadiosChecked" value="1" class="CarType" name="inputRadios" @(selected ? "Checked" : "") />
+                                                                        <label class="col-md-3" for="inputRadiosChecked">รถกระบะ</label>
+                                                                    </li>
+                                                                    if (Model.CarType == 2)
+                                                                    {
+                                                                        selected = true;
+                                                                    }
+                                                                    else { selected = false; }
+
+
+                                                                    <li>
+                                                                        <input type="radio" id="inputRadiosChecked" value="2" class="CarType" name="inputRadios" @(selected ? "Checked" : "") />
+                                                                        <label class="col-md-3" for="inputRadiosChecked">รถบรรทุก</label>
+                                                                        <input type="text" class="col-md-3" name=" " placeholder=" ">ล้อ
+                                                                    </li>
+                                                                    if (Model.CarType == 3)
+                                                                    {
+                                                                        selected = true;
+                                                                    }
+                                                                    else { selected = false; }
+
+                                                                    <li>
+                                                                        <input type="radio" id="inputRadiosChecked" value="3" class="CarType" name="inputRadios" @(selected ? "Checked" : "") />
+                                                                        <label class="col-md-6" for="inputRadiosChecked">รถเทรลเลอร์</label>
+                                                                    </li>
+                                                                }
+                                                            </ul>
+                                                        </div>
+                                                    </div>
+
+                                                    <input type="hidden" id="CarType" name="CarType" value="@Model.CarType" />
+                                                </div>
+
+                                                <div class="form-group row">
+                                                    <label class="col-md-3 form-control-label">ทะเบียนเลขที่  : </label>
+                                                    <div class="col-md-9">
+                                                        <input type="text" class="form-control" value="@Model.CarNo" id="CarNo" name="CarNo" placeholder="กรุณากรอกทะเบียนรถ">
+                                                    </div>
+                                                </div>
+
+                                                <div class="form-group row">
+                                                    <label class="col-md-3 form-control-label">ยี่ห้อ  : </label>
+                                                    <div class="col-md-9">
+                                                        <input type="text" class="form-control" id="CarBrand" value="@Model.CarBrand" name="CarBrand" placeholder="กรุณากรอกยี่ห้อ">
+                                                    </div>
+                                                </div>
+
+                                                <div class="form-group row">
+                                                    <label class="col-md-3 form-control-label">ส่วนงานที่นำวัสดุ/สิ่งของ เข้า โรงงาน  : </label>
+                                                    <div class="col-md-9">
+                                                        <div class="radio-custom radio-primary">
+                                                            <ul>
+                                                                @{
+                                                                    selected = false;
+                                                                    if (Model.SendToDepartment == 1)
+                                                                    {
+                                                                        selected = true;
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        selected = false;
+                                                                    }
+
+                                                                    <li>
+                                                                        <input type="radio" id="inputRadiosChecked2" value="1" class="SendToDepartment" name="inputRadios2" @(selected ? "Checked" : "") />
+                                                                        <label class="col-md-3" for="inputRadiosChecked2">Office</label>
+                                                                    </li>
+
+                                                                    if (Model.SendToDepartment == 2)
+                                                                    {
+                                                                        selected = true;
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        selected = false;
+                                                                    }
+
+                                                                    <li>
+                                                                        <input type="radio" id="inputRadiosChecked2" value="2" class="SendToDepartment" name="inputRadios2" @(selected ? "Checked" : "") />
+                                                                        <label class="col-md-3" for="inputRadiosChecked2">Engineer</label>
+
+                                                                    </li>
+
+                                                                    if (Model.SendToDepartment == 3)
+                                                                    {
+                                                                        selected = true;
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        selected = false;
+                                                                    }
+
+                                                                    <li>
+                                                                        <input type="radio" id="inputRadiosChecked2" value="3" class="SendToDepartment" name="inputRadios2" @(selected ? "Checked" : "") />
+                                                                        <label class="col-md-6" for="inputRadiosChecked2">Factory</label>
+                                                                    </li>
+
+                                                                    if (Model.SendToDepartment == 4)
+                                                                    {
+                                                                        selected = true;
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        selected = false;
+                                                                    }
+                                                                    <li>
+                                                                        <input type="radio" id="inputRadiosChecked2" value="4" class="SendToDepartment" name="inputRadios2" @(selected ? "Checked" : "") />
+                                                                        <label class="col-md-6" for="inputRadiosChecked2">Warehouse</label>
+                                                                    </li>
+
+                                                                    if (Model.SendToDepartment == 5)
+                                                                    {
+                                                                        selected = true;
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        selected = false;
+                                                                    }
+                                                                    <li>
+                                                                        <input type="radio" id="inputRadiosChecked2" value="5" class="SendToDepartment" name="inputRadios2" @(selected ? "Checked" : "") />
+                                                                        <label class="col-md-6" for="inputRadiosChecked2">Other</label>
+                                                                        <textarea class="form-control" id="Remark" name="Remark" value="@Model.Remark" rows="3"></textarea>
+                                                                    </li>
+                                                                }
+                                                            </ul>
+
+                                                            <input type="hidden" id="SendToDepartment" name="SendToDepartment" value="@Model.SendToDepartment" />
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="panel-footer">
+                                        <div class="row">
+                                            <div class="col-12">
+                                                <div class="form-group">
+                                                    <button type="submit" id="btnNextStep" class="btn btn-primary">@(Model.TransferId > 0 ? "บันทึก" : "ต่อไป")</button>&nbsp;
+                                                    <a href="@Url.Action("Index", "TransferIn")" class="btn btn-default">ยกเลิก</a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div id="tab-2" class="tab-content">
+
+                    <div class="card-block" id="navProducts" data-tab-page="navProducts">
+                        <div class="col-12">
+                            <div class="panel">
+                                <div class="panel-heading">
+                                    <h3 class="panel-title">
+                                        รายการสินค้า&nbsp;
+                                    </h3>
+                                </div>
+                                <div class="panel-body">
+                                    <div class="row">
+                                        <div class="col-12">
+                                            <div class="table-responsive">
+                                                <table class="table table-hover table-striped">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>ลำดับที่</th>
+                                                            <th>สินค้า</th>
+                                                            <th>จำนวน</th>
+                                                      
+
+                                                            <th>เครื่องมือ</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+
+                                                        @if (Model.TransferDetail.Count() <= 0)
+                                                        {
+                                                            <tr>
+                                                                <td colspan="7">ไม่พบข้อมูล</td>
+                                                            </tr>
+                                                        }
+                                                        @{int row = 1;
+
+                                                            foreach (var ob in Model.TransferDetail)
+                                                            {
+                                                                <tr>
+                                                                    <td>@row</td>
+                                                                    <td>@ob.Product.ProductCode @ob.Product.ProductName</td>
+                                                                    <td>@ob.RequestQty</td>
+                                                               
+
+                                                                    <td>
+                                                                        <form method="post" action="@Url.Action("DetailDelete", new { controller = "TransferIn" })"
+                                                                              class="fnc-delete inline-block">
+                                                                            
+                                                                            <input type="hidden" id="TransferId" name="TransferId" value="@Model.TransferId" />
+                                                                            <input type="hidden" id="Seq" name="Seq" value="@ob.Seq" />
+                                                                            @* @Html.AntiForgeryToken()*@
+                                                                            <button type="submit" class="btn btn-danger btn-xs"><i class="fa fa-trash" aria-hidden="true"></i>&nbsp;ลบ</button>
+                                                                        </form>
+                                                                    </td>
+                                                                </tr>
+                                                                row++;
+                                                            }
+                                                        }
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="panel-footer">
+                                    <div class="row">
+                                        <div class="col-12">
+                                            <form method="post" action="@Url.Action("AddProduct", "TransferIn")" enctype="multipart/form-data">
+                                                <input type="hidden" name="TransferId" value="@Model.TransferId" />         <div class="row">
+                                                    <div class="col-4 col-md-4 form-group">
+                                                        <label for="PileId" class="form-control-label">รหัสสินค้า</label>
+                                                        <select class="form-control" id="selProduct" data-live-search="true"
+                                                                name="selProduct">
+                                                            <option value="">กรุณาเลือก</option>
+
+                                                            @foreach (var it in optProduct)
+                                                            {
+                                                                <option value="@it.ProductId:@it.PriceNet">@it.ProductCode @it.ProductName  Qty:@it.QtyStock</option>
+                                                            }
+
+
+
+                                                        </select>
+                                                    </div><div class="col-2 col-md-2 form-group">
+                                                        <label for="Qty" class="form-control-label">จำนวน</label>
+                                                        <input type="number" class="form-control" id="RequestQty" name="RequestQty" value="1" />
+                                                    </div>
+                                                    <div class="col-2 col-md-2 form-group">
+                                                        <label for="Price" class="form-control-label">ราคา</label>
+                                                        <input type="text" class="form-control Number" readonly id="ProductPrice" name="ProductPrice" />
+                                                    </div>
+                                                 
+                                                </div>
+
+                                                <button type="submit" id="btnAddProduct" class="btn btn-primary">เพิ่ม</button>&nbsp;
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="panel">
+
+                                <div class="col-md-auto">
+                                    ผลรวม
+                                    <hr size=2>
+                                    <form method="post" action="@Url.Action("saveDiscount", "TransferIn")" enctype="multipart/form-data">
+                                        <input type="hidden" name="QuotationId" value="@Model.TransferId" />
+
+
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+
+
+
+
+                @*Panel Address*@
+                <div class="card-block" data-tab-page="navAddress">
+
+                </div>
+                @*End Panel Address*@
+
+                @*panel Add Product*@
+
+
+                @*End panel Add product*@
+            </div>
+        </div>
+    </div>
+
+    <!-- Address Modal -->
+    <div class="modal fade" id="AddressModal" tabindex="-1" role="dialog" aria-labelledby="จัดการที่อยู่" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="AddressModalTitle"><label id="lbCustomerId" hidden></label></h5>
+                    <h2><label id="lbCustomerName">ไม่พบข้อมูลลูกค้า</label></h2>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+
+                </div>
+                <div class="modal-body">
+                    @*<a href="@Url.Action("Detail", new { area = "", cusId = Model.CustomerId, qtid = Model.QuotationId, controller = "CustomerAddress" })"
+                        class="btn btn-xs btn-primary" style="color:white;" id="bnAddnewAddress">เพิ่ม</a>*@
+                    <a href="#"
+                       onclick="location.href='@Url.Action("Detail", "CustomerAddress")?cusId=' + $('#CustomerId').val() + '&qtid=' + $('#QuotationId').val()"
+                       class="btn btn-xs btn-primary" style="color:white;" id="bnAddnewAddress">เพิ่ม</a>
+
+                    @*<a href="@Url.Action("Detail", "CustomerContact", new { area = "",cusId=Model.CustomerId,qtid=Model.QuotationId })"*@
+
+                    <a href="#"
+                       onclick="location.href='@Url.Action("Detail", "CustomerContact")?cusId=' + $('#CustomerId').val() + '&qtid=' + $('#QuotationId').val()"
+                       class="btn btn-xs btn-primary" style="color:white;" id="bnAddnewContact">เพิ่ม</a>
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>กรุณาเลือก</th>
+                                    <th>รายการ</th>
+                                </tr>
+                            </thead>
+                            <tbody id="manageCustomerAddress"></tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+</body>

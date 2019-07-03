@@ -64,6 +64,7 @@
                                         <thead>
                                             <tr>
                                                 <th>ชื่อ</th>
+                                                <th>ตำแหน่ง</th>
                                                 <th>เบอร์โทร</th>
                                                 <th>อีเมล์</th>
                                                 <th>เครื่องมือ</th>
@@ -80,6 +81,7 @@
                                             {
                                                 <tr>
                                                     <td>@ob.EmpNameTh</td>
+                                                    <td>@(ob.Department!=null ? ob.Department.DepartmentName:"")</td>
                                                     <td>@ob.EmpMobile</td>
                                                     <td>@ob.EmpEmail</td>
                                                     <td>
@@ -87,7 +89,7 @@
                                                            class="btn btn-xs btn-primary">
                                                             <i class="fa fa-pencil" aria-hidden="true"></i>&nbsp;แก้ไข
                                                         </a>
-                                                        <form method="post" action="@Url.Action("Delete", new { controller = "Employee", are = "" })"
+                                                        <form method="post" action="@Url.Action("Delete", new { controller = "Employee", are = "", id = ob.EmpId })"
                                                               class="fnc-delete inline-block">
                                                             <input type="hidden" name="EmpId" value="@ob.EmpId" />
                                                             @Html.AntiForgeryToken()
