@@ -5,7 +5,7 @@
 @{
     Layout = null;
     KemrexController kemrex = ((KemrexController)ViewContext.Controller);
-    MenuLayoutModel menus = kemrex.GetMenus();
+    MenuLayoutModel menus = kemrex.GetMenuByRole();
     SysAccount usr = kemrex.CurrentUser;
     string usrAvatar = string.Format("~/{0}", usr.AccountId > 0 && !string.IsNullOrWhiteSpace(usr.AccountAvatar) && File.Exists(Server.MapPath(usr.AccountAvatar)) ?
         usr.AccountAvatar : "images/avatar/guest.png");
@@ -112,10 +112,10 @@
                             </span>
                         </a>
                         <div class="dropdown-menu" role="menu">
-                            <a class="dropdown-item" href="javascript:void(0)" role="menuitem"><i class="icon wb-user" aria-hidden="true"></i> ข้อมูลส่วนตัว</a>
-                            <a class="dropdown-item" href="javascript:void(0)" role="menuitem"><i class="icon fa-key" aria-hidden="true"></i> เปลี่ยนรหัสผ่าน</a>
+                            <a class="dropdown-item" href="@Url.Action("Profile", new { area = "", controller = "Account" })" role="menuitem"><i class="icon wb-user text-success" aria-hidden="true"></i> @usr.AccountName</a>
+                            <a class="dropdown-item" href="javascript:void(0)" role="menuitem"><i class="icon fa-key text-primary" aria-hidden="true"></i> เปลี่ยนรหัสผ่าน</a>
                             <div class="dropdown-divider" role="presentation"></div>
-                            <a class="dropdown-item" href="@kemrex.UrlAction(PathHelper.SignOut)" role="menuitem"><i class="icon wb-power" aria-hidden="true"></i> ออกจากระบบ</a>
+                            <a class="dropdown-item" href="@kemrex.UrlAction(PathHelper.SignOut)" role="menuitem"><i class="icon wb-power text-danger" aria-hidden="true"></i> ออกจากระบบ</a>
                         </div>
                     </li>
                 </ul>

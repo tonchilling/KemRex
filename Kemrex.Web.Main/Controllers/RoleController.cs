@@ -9,6 +9,18 @@ using Kemrex.Web.Common.Models;
 using System;
 using System.Collections.Generic;
 using System.Web.Mvc;
+using Kemrex.Web.Common.Models.Layouts;
+
+
+using DMN.Standard.Common.Utils;
+using Kemrex.Core.Common;
+using Kemrex.Core.Common.Constraints;
+using Kemrex.Core.Common.Helper;
+
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
 
 namespace Kemrex.Web.Main.Controllers
 {
@@ -69,6 +81,8 @@ namespace Kemrex.Web.Main.Controllers
         {
             int roleId = Request.Form["role_id"].ParseInt();
             SysRole ob = uow.Modules.Role.Get(roleId);
+
+            List<SysRolePermission> result = new List<SysRolePermission>(); 
             if (ob.RoleId <= 0)
             {
                 ob.CreatedBy = CurrentUID;
@@ -86,23 +100,50 @@ namespace Kemrex.Web.Main.Controllers
 
                 if (!ob.FlagSystem)
                 {
-                    ob.FlagActive = Request.Form["flag_active"].ParseBoolean();
-                    List<SysMenu> menus = uow.Modules.System.GetMenuBase(ob.SiteId);
 
+                    MenuLayoutModel md = new MenuLayoutModel();
+                    ob.FlagActive = Request.Form["flag_active"].ParseBoolean();
+
+
+                     List<SysMenu> menus = uow.Modules.System.GetMenuBase(ob.SiteId);
+
+
+                    md.Menus = new List<MenuModel>();
                     foreach (SysMenu menu in menus)
+                    { md.Menus.Add(ConvertToMenuModel(menu)); }
+
+                    int permissionId = 1;
+                    SysRolePermission rolePermission = null;
+                    foreach (MenuModel menu in md.Menus)
                     {
-                        foreach (SysMenuPermission permission in menu.SysMenuPermission)
+                        rolePermission = new SysRolePermission();
+                        rolePermission.RoleId = ob.RoleId;
+                        rolePermission.MenuId = menu.MenuId;
+                        rolePermission.PermissionId = 1;
+                        rolePermission.PermissionFlag = Request.Form[string.Format("permission-{0}-{1}", menu.MenuId, rolePermission.PermissionId)].ParseBoolean();
+                        result.Add(rolePermission);
+
+                        foreach (MenuModel permission in menu.SubMenus)
                         {
-                            SysRolePermission rolePermission = uow.Modules.RolePermission.Get(ob.RoleId, menu.MenuId, permission.PermissionId);
-                            rolePermission.Role = ob;
-                            rolePermission.PermissionFlag = Request.Form[string.Format("permission-{0}-{1}", menu.MenuId, permission.PermissionId)].ParseBoolean();
-                            uow.Modules.RolePermission.Set(rolePermission);
+                           
+
+                            for (permissionId = 1; permissionId <= 3; permissionId++)
+                            {
+                                 rolePermission = new SysRolePermission();
+                                rolePermission.RoleId = ob.RoleId;
+                                rolePermission.MenuId = permission.MenuId;
+                                rolePermission.PermissionId = permissionId;
+                                rolePermission.PermissionFlag = Request.Form[string.Format("permission-{0}-{1}", permission.MenuId, permissionId)].ParseBoolean();
+
+                                result.Add(rolePermission);
+                            }
+                         //   uow.Modules.RolePermission.Set(rolePermission);
                         }
                     }
                 }
-
+                uow.Modules.RolePermission.Add(result);
                 uow.Modules.Role.Set(ob);
-                uow.SaveChanges();
+                  uow.SaveChanges();
 
                 return RedirectToAction("Index", new { area = "", controller = "Role", msg = "บันทึกข้อมูลเรียบร้อยแล้ว", msgType = AlertMsgType.Success });
             }
@@ -113,7 +154,8 @@ namespace Kemrex.Web.Main.Controllers
             }
         }
 
-        [HttpPost]
+        [HttpPost] 
+
         [Authorized]
         public ActionResult Delete()
         {
@@ -135,6 +177,9 @@ namespace Kemrex.Web.Main.Controllers
             { return RedirectToAction("Index", "Role", new { msg = ex.GetMessage(), msgType = AlertMsgType.Danger }); }
         }
 
+
+     
+
         #region Private Action
         private ActionResult ViewDetail(SysRole ob, string msg, AlertMsgType? msgType)
         {
@@ -154,6 +199,22 @@ namespace Kemrex.Web.Main.Controllers
             }
             catch (Exception ex)
             { return RedirectToAction("Index", new { area = "", controller = "Role", msg = ex.GetMessage(), msgType = AlertMsgType.Danger }); }
+        }
+
+        private MenuModel ConvertToMenuModel(SysMenu ob)
+        {
+            MenuModel rs = new MenuModel()
+            {
+                MenuId = ob.MenuId,
+                MenuIcon = ob.MenuIcon,
+                MenuName = ob.MenuName,
+                MenuOrder = ob.MenuOrder,
+                MvcArea = ob.MvcArea,
+                MvcController = ob.MvcController,
+                MvcAction = ob.MvcAction,
+                SubMenus = ob.InverseParent.Select(x => ConvertToMenuModel(x)).OrderBy(o => o.MenuOrder).ToList()
+            };
+            return rs;
         }
         #endregion
     }

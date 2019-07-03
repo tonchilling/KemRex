@@ -12,10 +12,10 @@ using System.Web.Mvc;
 
 namespace Kemrex.Web.Main.Controllers
 {
-    public class TransferInController : KemrexController
+    public class TransferOutController : KemrexController
     {
         public ActionResult Index(int? page, int? size, string msg, AlertMsgType? msgType,
-                    string src = "")
+                 string src = "")
         {
             List<TransferHeader> lst = new List<TransferHeader>();
             try
@@ -26,8 +26,8 @@ namespace Kemrex.Web.Main.Controllers
                     if (msgType.HasValue) { alert.Type = msgType.Value; }
                     ViewBag.Alert = alert;
                 }
-                int total = uow.Modules.Transfer.Count(0, "I");
-                WidgetPaginationModel Pagination = new WidgetPaginationModel("Index", "TransferIn", "")
+                int total = uow.Modules.Transfer.Count(0,"O");
+                WidgetPaginationModel Pagination = new WidgetPaginationModel("Index", "TransferOut", "")
                 {
                     Page = (page ?? 1),
                     Size = (size ?? 10),
@@ -39,7 +39,7 @@ namespace Kemrex.Web.Main.Controllers
                     Total = total
                 };
                 ViewBag.Pagination = Pagination;
-                lst = uow.Modules.Transfer.Gets(Pagination.Page, Pagination.Size, src,"I");
+                lst = uow.Modules.Transfer.Gets(Pagination.Page, Pagination.Size, src, "O");
             }
             catch (Exception ex)
             {
@@ -105,7 +105,7 @@ namespace Kemrex.Web.Main.Controllers
           */
             if (TransferId == "" || TransferId == "0")
             {
-                obj.TransferNo = getId("TI");
+                obj.TransferNo = getId("O");
                 obj.CreateDate = DateTime.Now;
             }
             else
@@ -114,7 +114,7 @@ namespace Kemrex.Web.Main.Controllers
                 obj.UpdateDate = DateTime.Now;
             }
 
-            obj.TransferType = "I";
+            obj.TransferType = "O";
             if (Request.Form["TransferDate"].ToString() != "")
             {
                 var dd = Request.Form["TransferDate"];
@@ -122,7 +122,7 @@ namespace Kemrex.Web.Main.Controllers
                 obj.TransferDate = dd.ParseDate(DateFormat.ddMMyyyy, culInfo: _cultureTHInfo);
             }
 
-            obj.EmpId = "1";
+         //   obj.EmpId = "1";
 
 
 

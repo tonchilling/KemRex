@@ -23,11 +23,18 @@ namespace Kemrex.Core.Common.Modules
             if (IsExist(ob.TransferNo))
             { db.TransferHeader.Remove(ob); }
         }
-        public int Count(int groupId = 0, string src = "")
+        public void DeleteDetail(TransferDetail ob)
         {
-            var data = db.TransferHeader.AsQueryable();
+            if (IsExist(ob.TransferId))
+            { db.TransferDetail.Remove(ob); }
+        }
+        public int Count(int groupId = 0, string TransferType = "")
+        {
+            var data = db.TransferHeader.Where(o=>o.TransferType== TransferType).AsQueryable();
             return data.Count();
         }
+       
+
         public string GetLastId(string pre)
         {
             return (from q in db.TransferHeader
@@ -57,7 +64,8 @@ namespace Kemrex.Core.Common.Modules
                                      RequestQty = q.RequestQty,
                                      RequestUnit = q.RequestUnit,
                                      RequestUnitFactor = q.RequestUnitFactor,
-                                     LastModified = q.LastModified
+                                     LastModified = q.LastModified,
+                                     Product=db.TblProduct.Where(p=>p.ProductId== q.ProductId).FirstOrDefault()
       
     }).ToList();
 
@@ -77,6 +85,17 @@ namespace Kemrex.Core.Common.Modules
             return new TransferDetail();
         }
 
+
+        public TransferDetail GetDetail(int transferId,int seq)
+        {
+             var detail = (from d in db.TransferDetail.Where(x => x.TransferId == transferId && x.Seq== seq) select d);
+
+            //  if (detail == null)
+            //  detail = new TransferDetail();
+
+            return detail.FirstOrDefault();
+        }
+
         public int GetDetails(int id)
         {
 
@@ -87,9 +106,9 @@ namespace Kemrex.Core.Common.Modules
 
 
 
-        public List<TransferHeader> Gets(int page = 1, int size = 0, string src = "")
+        public List<TransferHeader> Gets(int page = 1, int size = 0, string src = "",string TransferType="")
         {
-            var data = db.TransferHeader
+            var data = db.TransferHeader.Where(o=>o.TransferType== TransferType)
                         .OrderByDescending(c => c.TransferNo)
                 .AsQueryable();
 
@@ -104,6 +123,11 @@ namespace Kemrex.Core.Common.Modules
              return db.TransferHeader.Where(x => x.TransferNo == id).Count() > 0 ? true : false; 
         }
 
+        public bool IsExist(int id)
+        {
+            return db.TransferHeader.Where(x => x.TransferId == id).Count() > 0 ? true : false;
+        }
+
         public void Set(TransferHeader ob)
         {
             if (ob.TransferId == 0)
@@ -113,9 +137,10 @@ namespace Kemrex.Core.Common.Modules
 
         public void SetDetail(TransferDetail ob)
         {
-            if (ob.TransferId == 0)
-            { db.TransferDetail.Add(ob); }
-            else { db.Entry(ob).State = EntityState.Modified; }
+            db.TransferDetail.Add(ob);
+            /* if (ob.TransferId == 0)
+             { db.TransferDetail.Add(ob); }
+             else { db.Entry(ob).State = EntityState.Modified; }*/
         }
     }
 }

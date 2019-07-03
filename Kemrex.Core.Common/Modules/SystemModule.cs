@@ -33,6 +33,8 @@ namespace Kemrex.Core.Common.Modules
                 .Include(x => x.SysMenuPermission);
             return data.ToList() ?? new List<SysMenu>();
         }
+
+     
         public List<SysMenu> GetMenus(int siteId)
         {
             var data = db.SysMenu
@@ -45,6 +47,8 @@ namespace Kemrex.Core.Common.Modules
                 .Include(x => x.SysMenuPermission);
             return data.ToList() ?? new List<SysMenu>();
         }
+
+
 
         public List<int> GetMenuActiveList(string MVCArea, string MVCController, string MVCAction)
         {

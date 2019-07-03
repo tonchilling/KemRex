@@ -34,9 +34,20 @@ namespace Kemrex.Core.Common.Modules
 
         public SysAccount Get(long id)
         {
-            return db.SysAccount
-                .Where(x => x.AccountId == id)
-                .FirstOrDefault() ?? new SysAccount();
+            SysAccount account = db.SysAccount.Where(e => e.AccountId == id).Include(e => e.TblEmployee).FirstOrDefault();
+            if (account != null)
+            {
+                account.SysAccountRole = db.SysAccountRole.Where(e => e.AccountId == id).FirstOrDefault();
+
+                if (account.TblEmployee != null)
+                {
+                    if (account.TblEmployee.DepartmentId != null)
+                        account.TblEmployee.Department = db.TblDepartment.Where(o => o.DepartmentId == account.TblEmployee.DepartmentId).FirstOrDefault();
+                    if (account.TblEmployee.PositionId != null)
+                        account.TblEmployee.Position = db.TblPosition.Where(o => o.PositionId == account.TblEmployee.PositionId).FirstOrDefault();
+                }
+            }
+            return account ?? new SysAccount();
         }
 
         public SysAccount GetByUsernameOrEmail(string src)
@@ -49,10 +60,27 @@ namespace Kemrex.Core.Common.Modules
         public List<SysAccount> Gets(int page = 1, int size = 0, int siteId = 0
             , string src = "", string username = "", string email = "")
         {
-            var data = db.SysAccount
+            var data = db.SysAccount.Include(o=>o.TblEmployee).Include(o=>o.SysAccountRole)
                 .AsQueryable();
+            foreach (SysAccount obj in data)
+            {
+                obj.SysAccountRole = db.SysAccountRole.Where(o => o.AccountId == obj.AccountId).Include(x=>x.Role).FirstOrDefault();
+                     }
+
+            /*
+               public long AccountId { get; set; }
+        public string AccountAvatar { get; set; }
+        public string AccountUsername { get; set; }
+        public string AccountPassword { get; set; }
+        public string AccountFirstName { get; set; }
+        public string AccountLastName { get; set; }
+        public string AccountEmail { get; set; }
+        public string AccountRemark { get; set; }
+             */
+
             data = Filter(data, siteId, src, username, email);
             if (size > 0)
+                
             { data = data.Skip((page - 1) * size).Take(size); }
             return data.ToList();
         }
@@ -64,6 +92,8 @@ namespace Kemrex.Core.Common.Modules
                 var role = db.SysRole.Where(x => x.SiteId == siteId);
                 var acc = db.SysAccountRole.Where(x => role.Select(y => y.RoleId).Contains(x.RoleId));
                 data = data.Where(x => acc.Select(y => y.AccountId).Contains(x.AccountId));
+
+                
             }
             if (!string.IsNullOrWhiteSpace(src))
             {

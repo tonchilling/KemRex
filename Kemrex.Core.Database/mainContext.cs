@@ -222,12 +222,7 @@ namespace Kemrex.Core.Database
 
             modelBuilder.Entity<SysAccountRole>(entity =>
             {
-                entity.HasOne(d => d.Account)
-                    .WithMany(p => p.SysAccountRole)
-                    .HasForeignKey(d => d.AccountId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_SysAccountRole_User");
-
+             
                 entity.HasOne(d => d.Role)
                     .WithMany(p => p.SysAccountRole)
                     .HasForeignKey(d => d.RoleId)
@@ -440,7 +435,7 @@ namespace Kemrex.Core.Database
             {
                 entity.HasKey(e => new { e.RoleId, e.MenuId, e.PermissionId });
 
-                entity.HasOne(d => d.Menu)
+              /*  entity.HasOne(d => d.Menu)
                     .WithMany(p => p.SysRolePermission)
                     .HasForeignKey(d => d.MenuId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
@@ -457,6 +452,7 @@ namespace Kemrex.Core.Database
                     .HasForeignKey(d => d.RoleId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_SysRolePermission_Id");
+                    */
             });
 
             modelBuilder.Entity<SysSite>(entity =>
@@ -738,10 +734,10 @@ namespace Kemrex.Core.Database
 
                 entity.Property(e => e.UpdatedDate).HasColumnType("datetime");
 
-                entity.HasOne(d => d.Account)
+              /*  entity.HasOne(d => d.Account)
                     .WithMany(p => p.TblEmployee)
                     .HasForeignKey(d => d.AccountId)
-                    .HasConstraintName("FK_TblEmployee_Account");
+                    .HasConstraintName("FK_TblEmployee_Account"); */
 
                 entity.HasOne(d => d.Department)
                     .WithMany(p => p.TblEmployee)
@@ -1610,8 +1606,6 @@ namespace Kemrex.Core.Database
                 entity.HasKey(e => new { e.TransferId, e.Seq })
                     .HasName("PK__Transfer__09E95DAB26E6103B");
 
-               // entity.Property(e => e.TransferId).HasMaxLength(11);
-
                 entity.Property(e => e.CurrentQty)
                     .HasMaxLength(50)
                     .IsUnicode(false);
@@ -1630,6 +1624,11 @@ namespace Kemrex.Core.Database
                     .WithMany(p => p.TransferDetail)
                     .HasForeignKey(d => d.ProductId)
                     .HasConstraintName("FK__TransferD__Produ__2803DB90");
+
+                entity.HasOne(d => d.TransferHeader)
+                   .WithMany(p => p.TransferDetail)
+                   .HasForeignKey(d => d.TransferId)
+                   .HasConstraintName("FK_TransferDetail_TransferHeader");
             });
 
             modelBuilder.Entity<TransferHeader>(entity =>
@@ -1672,10 +1671,8 @@ namespace Kemrex.Core.Database
                     .HasMaxLength(3);
 
                 entity.Property(e => e.UpdateDate).HasColumnType("datetime");
-
-                
-
             });
+
         }
     }
 }

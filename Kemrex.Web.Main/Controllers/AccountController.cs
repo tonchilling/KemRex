@@ -173,7 +173,9 @@ namespace Kemrex.Web.Main.Controllers
         [HttpPost, ActionName("Detail")]
         public ActionResult SetDetail()
         {
+
             int accountId = Request.Form["account_id"].ParseInt();
+            int empId = Request.Form["EmpId"].ParseInt();
             SysAccount ob = uow.Modules.Account.Get(accountId);
             if (ob.AccountId <= 0)
             {
@@ -230,10 +232,24 @@ namespace Kemrex.Web.Main.Controllers
                 else if (ob.AccountId > 0 && !string.IsNullOrWhiteSpace(Request.Form["account_password"]))
                 { ob.AccountPassword = Crypto.HashPassword(Request.Form["account_password"]); }
 
+               
                 uow.Modules.Account.Set(ob);
+
+             
+              //  employee.UpdatedDate = DateTime.Now;
+              
                 uow.Modules.Account.SetRole(SiteId, roleId, ob);
                 uow.SaveChanges();
 
+                if (empId > 0)
+                {
+                    TblEmployee employee = uow.Modules.Employee.Get(empId);
+
+                    employee.AccountId = ob.AccountId;
+
+                    uow.Modules.Employee.Set(employee);
+                }
+                uow.SaveChanges();
                 return RedirectToAction("Index", new
                 {
                     area = "",
@@ -255,12 +271,14 @@ namespace Kemrex.Web.Main.Controllers
         {
             try
             {
-                long id = Request.Form["id"].ParseLong();
+                long id = Request.Form["account_id"].ParseLong();
                 SysAccount ob = uow.Modules.Account.Get(id);
+              
                 if (ob == null)
                 { return RedirectToAction("Index", "Account", new { msg = "ไม่พบข้อมูลที่ต้องการ", msgType = AlertMsgType.Warning }); }
 
                 uow.Modules.Account.Delete(ob);
+                uow.SaveChanges();
                 return RedirectToAction("Index", "Account", new { msg = "ลบข้อมูลเรียบร้อยแล้ว", msgType = AlertMsgType.Success });
             }
             catch (Exception ex)

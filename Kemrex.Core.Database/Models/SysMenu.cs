@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-
+using System.ComponentModel.DataAnnotations.Schema;
 namespace Kemrex.Core.Database.Models
 {
     public partial class SysMenu
@@ -26,6 +26,13 @@ namespace Kemrex.Core.Database.Models
         public bool? FlagActive { get; set; }
         public long UpdatedBy { get; set; }
         public DateTime UpdatedDate { get; set; }
+
+        [NotMapped]
+        public int View { get; set; }
+        [NotMapped]
+        public int Edit { get; set; }
+        [NotMapped]
+        public int Delete { get; set; }
 
         public virtual SysMenu Parent { get; set; }
         public virtual SysSite Site { get; set; }

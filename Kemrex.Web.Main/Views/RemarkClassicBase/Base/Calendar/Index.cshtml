@@ -65,12 +65,67 @@
             background-color: #b3d6ff;
             text-align: right;
         }
+
+        .list-group-item {
+            border: 1px solid #eee;
+        }
+        .fa-2x {
+        font-size:2rem;
+        }
+        .btnViewOrder {
+        
+        cursor:pointer;
+        color:#ffffff;
+        }
+
+        .btnViewOrder:hover {
+           font-weight:200;
+        }
+
+        .list-group-item:hover, .list-group-item:focus {
+            background-color: #00ff21;
+        }
+
+        .popover {
+            min-width:300px;
+        }
+        .btnSelectDay {
+        font-weight:bold
+        }
+
+        .fc-event {
+             border-radius: 2px;
+            background-color: #3e8ef7;
+            border-color: transparent; 
+        }
+        .selectItem:hover {
+        cursor:pointer;
+        background-color:#77ddeb;
+        }
+
+        .bg-onprocess {
+        
+        background-color:#3e8ef7;
+        color:#ffffff;
+        }
+
+        .bg-onclose {
+            background-color: #51eb5e;
+            color: #ffffff;
+        }
+
+        .bg-onwaiting {
+            background-color: #dc3545;
+        }
+
     </style>
 
 
 
 @section Scripts {
     <script type="text/javascript">
+
+        var selectDay;
         $(document).ready(function () {
             window.setTimeout(function () {
                 $(".alert").fadeTo(1000, 0).slideUp(1000, function () {
@@ -95,6 +150,80 @@
             alert('Coming soon');
             return false;
         });
+
+
+         
+
+        $(document).on("click", ".popover-header", function () {
+            $(this).closest(".popover").popover('hide');
+        });
+        
+        $(document).on("click", ".btnSelectDay", function () {
+
+
+            /*   public int SaleOrderId { get; set; }
+    public string SaleOrderNo { get; set; }
+    public string SaleOrderDate { get; set; }
+        public string SaleName { get; set; }
+        public string QuotationNo { get; set; }
+        public string QuotationDate { get; set; }
+        public int ? CustomerId { get; set; }
+        public string CustomerName { get; set; }
+        public string JobOrderId { get; set; }
+        public string JobOrderNo { get; set; }
+        public string JobOrderName { get; set; }
+        public string JobOrderDate { get; set; }
+        public int StatusId { get; set; }
+        public string Status { get; set; }*/
+            var html = '';
+            var url = '@Url.Action("GetSaleOrderByDate", "SaleOrder", new { saleOrderDate = "__id__" })';
+            selectDay = $(this);
+            $.get(url.replace('__id__', $(this).attr("data-date")), function (obj) {
+              
+                html = '<div class="col-md-12"><ul class="list-group">';
+
+                if (obj != null) {
+
+                    $.each(obj, function (i, orderHeader) {
+
+                        var bgColor = "bg-secondary";
+                        var link = "";
+                        switch (orderHeader.StatusId) {
+                            case 1: bgColor = "bg-onprocess"; break;
+                            case 2: bgColor = "bg-onclose"; break;
+                            case 3: bgColor = "bg-secondary"; break;
+                        }
+
+                        if (orderHeader.JobOrderNo != null && orderHeader.JobOrderNo != "") {
+                            html += '<li class="list-group-item selectItem  ' + bgColor+' " ><a href="#" class="btnViewOrder" title="' + orderHeader.SaleOrderId + '"> [' + orderHeader.Status + '] ' + orderHeader.SaleOrderNo + ' / ' + orderHeader.JobOrderNo + '[' + orderHeader.JobOrderName + ']' + '</a></li>';
+                        } else {
+                            bgColor = "bg-onwaiting";
+                            html += '<li class="list-group-item selectItem  ' + bgColor +' " ><a href="#" class="btnViewOrder" title="' + orderHeader.SaleOrderId + '"> [' + orderHeader.Status + '] ' + orderHeader.SaleOrderNo + '</a></li>';
+                        }
+
+
+                    });
+
+                    /* html += '<li class="list-group-item list-group-item-primary">This is a primary list group item</li>';
+                     html += '<li class="list-group-item list-group-item-secondary">This is a secondary list group item</li>';
+                     html += '<li class="list-group-item list-group-item-success">This is a success list group item</li>';
+                     html += '<li class="list-group-item list-group-item-danger">This is a danger list group item</li>';
+                     html += '<li class="list-group-item list-group-item-warning">This is a warning list group item</li>';
+                     html += '<li class="list-group-item list-group-item-info">This is a info list group item</li>';
+                     html += '<li class="list-group-item list-group-item-light">This is a light list group item</li>';
+                     html += '<li class="list-group-item list-group-item-dark">This is a dark list group item</li>';*/
+                    html += '</div></ul>';
+
+                    selectDay.attr("data-content", html)
+                    selectDay.attr("title", "รายการใบสั่งขาย/ใบสั่งงาน")
+                    $("[data-toggle=popover]").popover({ container: 'body' });
+                    selectDay.popover('show');
+
+                }
+            });
+
+        });
+
         $(document).on("click", ".btnJobOrder", function () {
 
          
@@ -111,31 +240,61 @@
         
 
         hddID*/
+        $(document).on("click", ".btnViewOrder", function () {
 
-        $(".btnViewOrder").click(function () {
+            var orderId = "";
+
+
+            if ($(this).attr('dataid') != null) {
+                orderId = $(this).attr('dataid');
+            } else if ($(this).attr('title') != null) {
+                orderId = $(this).attr('title');
+            }
+
+            $("#JobOrderNo").val("");
+
+            $("#JobOrderDate").val("");
+            $("#OperationStartDate").val("");
+            $("#OperationEndDate").val("");
+            $("#JobOrderId").val("");
+            $("#JobOrderTeam").val("");
+            $("#SaleOrderNo").val("");
+            $("#SaleName").val("");
+            $("#SaleDate").val("");
+            $("#CustomerName").val("");
+            $("#CustomerPhone").val("");
+            $("#SaleOrderRemark").val("");
 
 
             $.ajax({
                 type: "get",
                 contentType: 'application/json; charset=utf-8',
                 url: '@Url.Action("SaleOrderService", "api")' +'/GetDetail',
-                data: { id: $(this).attr('dataid'), msg: "", msgType: "" },
+                data: { id: orderId, msg: "", msgType: "" },
                 success: function (obj) {
 
+
+                    $("[data-toggle=popover]").popover('hide');
                     if (obj.JobOrder != null) {
                         $("#JobOrderNo").val(obj.JobOrder.JobOrderNo);
-                        $("#JobOrderTeam").val(obj.JobOrder.Team.TeamName);
+                     
                         $("#JobOrderDate").val(obj.JobOrder.CreateDateToString);
                         $("#OperationStartDate").val(obj.JobOrder.StartDateToString);
                         $("#OperationEndDate").val(obj.JobOrder.EndDateToString);
                         $("#JobOrderId").val(obj.JobOrder.JobOrderId);
                         $(".btnJobOrder").css('visibility', 'visible');
+
+                        if (obj.JobOrder.Team != null) {
+                            $("#JobOrderTeam").val(obj.JobOrder.Team.TeamName);
+                        }
+
                     } else {
                         $(".btnJobOrder").css('visibility', 'hidden');
                         
 
                     }
 
+                   
                     $("#SaleOrderNo").val(obj.SaleOrderNo);
                     $("#SaleName").val(obj.SaleName);
                     $("#SaleDate").val(obj.CreatedDateToString);
@@ -395,8 +554,13 @@
                                                                             @for (int day = 0; day <= 6; day++)
                                                                             {
                                                                                 CalendarDayModel md = Model[calendarIndex + day];
-                                                                                <td class="fc-day fc-widget-content fc-@weekDays[day] fc-past@(focusDt.Month != md.Date.Month ? " fc-other-month" : "")"
-                                                                                    data-date="@md.Date.ToString("yyyy-MM-dd")"></td>
+                                                                                <td class=" fc-day fc-widget-content fc-@weekDays[day] fc-past@(focusDt.Month != md.Date.Month ? " fc-other-month" : "")"
+                                                                                    data-date="@Converting.ToYYYYMMDD(md.Date)"
+                                                                                    data-toggle="popover"
+                                             data-html="true" 
+                                                                                   
+                                                                                    title="View"
+                                                                                    ></td>
                                                                             }
                                                                         </tr>
                                                                     </tbody>
@@ -407,10 +571,13 @@
                                                                     <thead>
                                                                         <tr>
                                                                             @for (int day = 0; day <= 6; day++)
-                                                                            {
-                                                                                CalendarDayModel md = Model[calendarIndex + day];
-                                                                                <td class="fc-day-top fc-@weekDays[day] fc-past@(focusDt.Month != md.Date.Month ? " fc-other-month" : "")"
-                                                                                    data-date="@md.Date.ToString("yyyy-MM-dd")">
+                                                                            { 
+                                                                            CalendarDayModel md = Model[calendarIndex + day];
+                                                                                <td class=" fc-day-top fc-@weekDays[day] fc-past@(focusDt.Month != md.Date.Month ? " fc-other-month" : "")"
+                                                                                    data-date="@Converting.ToYYYYMMDD(md.Date)"
+                                                                                    data-toggle="popover"
+             data-html="true"  title="ใบสั่งขาย/ใบสั่งงาน" 
+                                                                                    >
                                                                                     <span class="fc-day-number">@md.Date.Day</span>
                                                                                 </td>
                                                                             }
@@ -424,31 +591,54 @@
                                                                                 if (md.Jobs.Count > 0)
                                                                                 {
                                                                                     
-                                                                                    <td class="fc-event-container">
-                                                                                        @foreach (TblSaleOrder it in md.Jobs)
-                                                                                        {
-                                                                                            var bgColor = "bg-primary";
-                                                                                            switch (it.StatusId)
-                                                                                            {
+                                                                            <td class="fc-event-container">
+                                                                                @foreach (TblSaleOrder it in md.Jobs.Take(2))
+                                                                                {
+                                                                                    var bgColor = "bg-primary";
+                                                                                    switch (it.StatusId)
+                                                                                    {
 
-                                                                                                case 2:
-                                                                                                    bgColor = "bg-success";
-                                                                                                    break;
-                                                                                                case 3: bgColor = "bg-success";
-                                                                                                    break;
-                                                                                            }
-                                                                                            if (it.HasJob == 0)
+                                                                                        case 2:
+                                                                                            bgColor = "bg-success";
+                                                                                            break;
+                                                                                        case 3:
+                                                                                            bgColor = "bg-success";
+                                                                                            break;
+                                                                                    }
+                                                                                    if (it.HasJob == 0)
+                                                                                    {
+                                                                                        bgColor = "bg-danger";
+                                                                                    }
+                                                                                    <a class="fc-day-grid-event fc-h-event fc-event fc-start fc-end @bgColor btnViewOrder"
+                                                                                       href="#" dataid="@it.SaleOrderId">
+                                                                                        <div class="fc-content  ">
+
+                                                                                            @if (@it.JobOrder != null)
                                                                                             {
-                                                                                                bgColor = "bg-danger";
+                                                                                                <span class="fc-title">@it.SaleOrderNo [@it.CustomerName]</span>
                                                                                             }
-                                                                                            <a class="fc-day-grid-event fc-h-event fc-event fc-start fc-end @bgColor btnViewOrder"
-                                                                                               href="#" dataid="@it.SaleOrderId">
-                                                                                                <div class="fc-content  ">
-                                                                                                    <span class="fc-title">@it.SaleOrderNo</span>
-                                                                                                </div>
-                                                                                            </a>
-                                                                                        }
-                                                                                    </td>
+                                                                                            else
+                                                                                            {
+                                                                                                <span class="fc-title">@it.SaleOrderNo [@it.CustomerName] </span>
+                                                                                            }
+
+                                                                                        </div>
+                                                                                    </a>
+                                                                                }
+
+                                                                                @if (md.Jobs.Count > 2)
+                                                                                {
+                                                                                    <a class="  btnSelectDay "
+                                                                                       href="#"
+                                                                                       data-date="@Converting.ToYYYYMMDD(md.Date)"
+                                                                                       data-toggle="popover"
+                                                                                       data-html="true" title="ใบสั่งขาย/ใบสั่งงาน" data-trigger="focus">
+                                                                                        + @(md.Jobs.Count - 2) เพิ่มเติม
+                                                                                    </a>
+                                                                                }
+                                                                            </td>
+
+                                                                                   
                                                                                 }
                                                                                 else
                                                                                 {

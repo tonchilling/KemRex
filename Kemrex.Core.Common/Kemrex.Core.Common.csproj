@@ -176,6 +176,9 @@
     <Compile Include="Modules\RolePermissionModule.cs" />
     <Compile Include="Modules\SaleOrderDetailModule.cs" />
     <Compile Include="Modules\SaleOrderAttachmentModule .cs" />
+    <Compile Include="Modules\JobOrderModule.cs" />
+    <Compile Include="Modules\AttachmentTypeModule.cs" />
+    <Compile Include="Modules\TransferModule.cs" />
     <Compile Include="Modules\SaleOrderModule.cs" />
     <Compile Include="Modules\SubDistrictModule.cs" />
     <Compile Include="Modules\SysCategoryModule.cs" />
@@ -185,9 +188,11 @@
     <Compile Include="Modules\TeamSaleDetailModule.cs" />
     <Compile Include="Modules\TeamSaleModule.cs" />
     <Compile Include="Modules\TransferModule.cs" />
+    <Compile Include="Modules\SysCategoryModule.cs" />
     <Compile Include="Modules\UnitModule.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="UnitOfWork.cs" />
+    <Compile Include="WebDB.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Kemrex.Core.Database\Kemrex.Core.Database.csproj">

@@ -25,7 +25,7 @@ namespace Kemrex.Web.Main.Controllers
                     ViewBag.Alert = alert;
                 }
                 int total = uow.Modules.Department.Counts(src);
-                WidgetPaginationModel Pagination = new WidgetPaginationModel("Index", "Account", "")
+                WidgetPaginationModel Pagination = new WidgetPaginationModel("Index", "Department", "")
                 {
                     Page = (page ?? 1),
                     Size = (size ?? 10),

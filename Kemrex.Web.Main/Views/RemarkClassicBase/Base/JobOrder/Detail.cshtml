@@ -27,7 +27,9 @@
     List<TeamOperation>
     TeamOperationList = (List<TeamOperation>
     )ViewData["TeamOperation"];
-
+    List<TblProduct>
+ optProduct = (List<TblProduct>
+     )ViewData["optProduct"];
 
 }
 
@@ -195,14 +197,23 @@
             html += '</thead>';
             html += '<tbody>';
 
+            $('#TeamStartDate').css('border-color', '');
+            $('#TeamEndDate').css('border-color', '');
+            if ($('#TeamStartDate').val() == "" || $('#TeamEndDate').val() == "")
+            {
+                $('#TeamStartDate').css('border-color', 'red');
+                $('#TeamEndDate').css('border-color', 'red');
+                return false;
+
+            }
 
 
-            var url = '@Url.Action("GetAllTeam", "TeamOperation")';
+            var url = '@Url.Action("GetAllTeamNotIn", "TeamOperation")';
                    $.ajax({
                 type: "get",
                 contentType: 'application/json; charset=utf-8',
                 url: url,
-                data: { id:0 },
+                       data: { StartDate: $('#TeamStartDate').val(), EndDate: $('#TeamEndDate').val() },
                        success: function (obj) {
                            $.each(obj, function (index, item) {
 
@@ -644,16 +655,25 @@
                                             <div class="col-md-5">
                                                 <div class="form-group">
                                                     <label for="" class="form-control-label">3.1 เข็มเหล็กรุ่น (Model)</label>
-                                                    <input type="text" class="form-control" name="ProductId" value="@Model.ProductId" />
+                                                    <select class="form-control" id="ProductId" data-live-search="true"
+                                                            name="ProductId">
+                                                        <option value="">กรุณาเลือก</option>
+                                                        @foreach (TblProduct it in optProduct)
+                                                        {
+                                                            bool selected = it.ProductId == Model.ProductId;
+                                                            <option @(selected ? " selected=\" selected\"" : "" ) value="@it.ProductId">@it.ProductCode @it.ProductName</option>
+                                                        }
+                                                    </select>
+                                                </div>
+                                                   
+                                                </div>
+                                                <div class="col-md-2 col-sm-8">
+                                                    <div class="form-group">
+                                                        <label for="" class="form-control-label">จำนวน</label>
+                                                        <input type="number" class="form-control" name="ProductQty" value="@Model.ProductQty" />
+                                                    </div>
                                                 </div>
                                             </div>
-                                            <div class="col-md-2 col-sm-8">
-                                                <div class="form-group">
-                                                    <label for="" class="form-control-label">จำนวน</label>
-                                                    <input type="number" class="form-control" name="ProductQty" value="@Model.ProductQty" />
-                                                </div>
-                                            </div>
-                                        </div>
                                         <div class="row">
                                             <div class="col-md-5">
                                                 <div class="form-group">

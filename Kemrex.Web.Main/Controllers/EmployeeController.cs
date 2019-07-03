@@ -25,7 +25,7 @@ namespace Kemrex.Web.Main.Controllers
                     ViewBag.Alert = alert;
                 }
                 int total = uow.Modules.Employee.Counts(src, phone, email);
-                WidgetPaginationModel Pagination = new WidgetPaginationModel("Index", "Account", "")
+                WidgetPaginationModel Pagination = new WidgetPaginationModel("Index", "Employee", "")
                 {
                     Page = (page ?? 1),
                     Size = (size ?? 10),
@@ -78,6 +78,9 @@ namespace Kemrex.Web.Main.Controllers
 
             return Json(Employee, JsonRequestBehavior.AllowGet);
         }
+
+      
+
         [ValidateAntiForgeryToken]
         [HttpPost, ActionName("Detail")]
         public ActionResult SetDetail()
@@ -86,10 +89,11 @@ namespace Kemrex.Web.Main.Controllers
             TblEmployee ob = uow.Modules.Employee.Get(id);
             if (ob.EmpId <= 0)
             {
+                ob.EmpCode = GetNewId();
                 ob.CreatedBy = CurrentUID;
                 ob.CreatedDate = CurrentDate;
             }
-            ob.EmpCode = Request.Form["EmpCode"];
+           
 
             if (Request.Form["AccountId"].ParseInt() <= 0)
             {
@@ -168,6 +172,28 @@ namespace Kemrex.Web.Main.Controllers
                 return ViewDetail(ob, msg, AlertMsgType.Danger);
             }
         }
+
+        private string GetNewId()
+        {
+            string qid = "E";
+            string Id = uow.Modules.Employee.GetLastEmpCode();
+
+            if (Id == null)
+            {
+                Id = string.Format("{0}-000000", qid);
+            }
+
+          
+            int runid = int.Parse(Id.Replace(qid, ""));
+
+            runid++;
+
+            qid = qid + runid.ToString("D6");
+            return qid;
+        }
+
+
+
 
         [HttpPost]
         [Authorized]
