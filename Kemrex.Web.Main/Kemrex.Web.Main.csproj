@@ -267,6 +267,12 @@
     <Content Include="Global.asax" />
     <Content Include="images\apple-touch-icon.png" />
     <Content Include="images\avatar\guest.png" />
+    <Content Include="images\Dashboard\1.jpg" />
+    <Content Include="images\Dashboard\2.jpg" />
+    <Content Include="images\Dashboard\3.jpg" />
+    <Content Include="images\Dashboard\4.jpg" />
+    <Content Include="images\Dashboard\5.jpg" />
+    <Content Include="images\Dashboard\6.jpg" />
     <Content Include="images\favicon.ico" />
     <Content Include="images\logo%402x.png" />
     <Content Include="images\logo-banner.png" />
@@ -867,6 +873,7 @@
     <Content Include="SqlServerTypes\x86\SqlServerSpatial140.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="themes\RemarkClassicBase\css\bootstrap-datepicker.min.css" />
     <Content Include="themes\RemarkClassicBase\css\bootstrap-extend.css" />
     <Content Include="themes\RemarkClassicBase\css\bootstrap-extend.min.css">
       <DependentUpon>bootstrap-extend.css</DependentUpon>
@@ -910,6 +917,7 @@
     <Content Include="themes\RemarkClassicBase\js\Plugin\asspinner.js" />
     <Content Include="themes\RemarkClassicBase\js\Plugin\bootbox.js" />
     <Content Include="themes\RemarkClassicBase\js\Plugin\bootstrap-datepicker.js" />
+    <Content Include="themes\RemarkClassicBase\js\Plugin\bootstrap-datepicker.min.js" />
     <Content Include="themes\RemarkClassicBase\js\Plugin\bootstrap-maxlength.js" />
     <Content Include="themes\RemarkClassicBase\js\Plugin\bootstrap-select.js" />
     <Content Include="themes\RemarkClassicBase\js\Plugin\bootstrap-sweetalert.js" />
@@ -1172,6 +1180,7 @@
     <Compile Include="Controllers\TeamOperationController.cs" />
     <Compile Include="Controllers\TeamSaleController.cs" />
     <Compile Include="Controllers\TransferInController.cs" />
+    <Compile Include="Controllers\TransferOutController.cs" />
     <Compile Include="Controllers\UnitController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
@@ -1332,6 +1341,8 @@
     <Content Include="Views\RemarkClassicBase\Base\Calendar\Index_bk_20190627.cshtml" />
     <Content Include="Views\RemarkClassicBase\Base\TransferIn\Index.cshtml" />
     <Content Include="Views\RemarkClassicBase\Base\TransferIn\Detail.cshtml" />
+    <Content Include="Views\RemarkClassicBase\Base\TransferOut\Detail.cshtml" />
+    <Content Include="Views\RemarkClassicBase\Base\TransferOut\Index.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -1343,6 +1354,7 @@
     <Folder Include="App_Data\" />
     <Folder Include="Views\RemarkClassicBase\Base\System\" />
     <Folder Include="Views\TransferIn\" />
+    <Folder Include="Views\TransferOut\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Kemrex.Core.Common\Kemrex.Core.Common.csproj">
