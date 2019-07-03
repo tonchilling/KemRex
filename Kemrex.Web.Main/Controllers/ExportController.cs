@@ -512,11 +512,11 @@ namespace Kemrex.Web.Main.Controllers
             TblProduct prd = uow.Modules.Product.Get(tbl.ProductId.HasValue ? tbl.ProductId.Value : -1);
 
             String html = string.Empty;
-            html = System.IO.File.ReadAllText(HttpContext.Server.MapPath("/html/" + "JobOrderHTML.html"));
+            html = System.IO.File.ReadAllText(HttpContext.Server.MapPath("~/html/" + "JobOrderHTML.html"));
             using (MemoryStream stream = new System.IO.MemoryStream())
             {
-                html = html.Replace("@@ImageBanner@@", HttpContext.Server.MapPath("/images/logo-banner.png"));
-                html = html.Replace("@@ImageCheckbox@@", HttpContext.Server.MapPath("/html/img/checkbox_0.gif"));
+                html = html.Replace("@@ImageBanner@@", HttpContext.Server.MapPath("~/images/logo-banner.png"));
+                html = html.Replace("@@ImageCheckbox@@", HttpContext.Server.MapPath("~/html/img/checkbox_0.gif"));
 
                 html = html.Replace("@@JobName@@", tbl.JobName);
                 html = html.Replace("@@JobOrderNo@@", tbl.JobOrderNo);
