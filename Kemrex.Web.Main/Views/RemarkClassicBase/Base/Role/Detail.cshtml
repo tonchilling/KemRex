@@ -120,7 +120,7 @@
                                                                     @if (menu.SysMenuPermission.Where(x => x.PermissionId == i).Count() > 0)
                                                                     {
                                                                         var permission = Model.RoleId > 0 ? Model.SysRolePermission.Where(x => x.MenuId == menu.MenuId && x.PermissionId == i).FirstOrDefault() : null;
-                                                                        bool flagChecked = Model.RoleId > 0 ? (permission == null ? true : permission.PermissionFlag) : true;
+                                                                        bool flagChecked = Model.RoleId > 0 ? (permission == null ? false : permission.PermissionFlag) : false;
                                                                         <input type="checkbox" name="permission-@menu.MenuId-@i" value="1" @(flagChecked ? " checked=\"checked\"" : "")>
                                                                     }
                                                                 </td>
