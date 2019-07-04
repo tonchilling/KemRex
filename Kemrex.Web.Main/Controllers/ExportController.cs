@@ -602,7 +602,27 @@ namespace Kemrex.Web.Main.Controllers
                 else if (transferH.SendToDepartment == 5) SendToDepartment = "Other";
                 html = html.Replace("@@SendTo@@", SendToDepartment);
 
-
+                string tagItem = "";
+                int num = 0;
+                foreach (var d in transferH.TransferDetail.ToList())
+                {
+                    num++;
+                    tagItem += "<tr>";
+                    tagItem += "<td align='center' style='background-color:white;'>" + d.Seq + "</td>";
+                    tagItem += "<td style='background-color:white;'>" + d.Product.ProductCode + " " + d.Product.ProductName + "</td>";
+                    tagItem += "<td align='center' style='background-color:white;'>" + d.RequestQty + "</td>";
+                    tagItem += "</tr>";
+                }
+                for (int i = 0; i <= 18 - num; i++)
+                {
+                    tagItem += "<tr><td style='background-color:white;'>&nbsp;</td><td style='background-color:white;'>&nbsp;</td><td style='background-color:white;'>&nbsp;</td></tr>";
+                }
+                tagItem += "<tr>";
+                tagItem += "<td style='background-color:white;'></td>";
+                tagItem += "<td align='right' style='background-color:white;'>รวม</td>";
+                tagItem += "<td align='center' style='background-color:white;'></td>";
+                tagItem += "</tr>";
+                html = html.Replace("@@item@@", tagItem);
 
 
 
@@ -657,19 +677,19 @@ namespace Kemrex.Web.Main.Controllers
                 {
                     num++;
                     tagItem += "<tr>";
-                    tagItem += "<td  align='center'>" + d.Seq + "</td>";
-                    tagItem += "<td>" + d.Product.ProductCode + " " + d.Product.ProductName + "</td>";
-                    tagItem += "<td align='center'>" + d.RequestQty + "</td>";
+                    tagItem += "<td  align='center' style='background-color:white;'>" + d.Seq + "</td>";
+                    tagItem += "<td style='background-color:white;'>" + d.Product.ProductCode + " " + d.Product.ProductName + "</td>";
+                    tagItem += "<td align='center' style='background-color:white;'>" + d.RequestQty + "</td>";
                     tagItem += "</tr>";
                 }
-                for (int i = 0; i <= 20 - num; i++)
+                for (int i = 0; i <= 18 - num; i++)
                 {
-                    tagItem += "<tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>";
+                    tagItem += "<tr><td style='background-color:white;'>&nbsp;</td><td style='background-color:white;'>&nbsp;</td><td style='background-color:white;'>&nbsp;</td></tr>";
                 }
                 tagItem += "<tr>";
-                tagItem += "<td></td>";
-                tagItem += "<td align='right'>รวมจำนวน</td>";
-                tagItem += "<td align='center'></td>";
+                tagItem += "<td style='background-color:white;'></td>";
+                tagItem += "<td align='right' style='background-color:white;'>รวม</td>";
+                tagItem += "<td align='center' style='background-color:white;'></td>";
                 tagItem += "</tr>";
                 html = html.Replace("@@item@@", tagItem);
 
