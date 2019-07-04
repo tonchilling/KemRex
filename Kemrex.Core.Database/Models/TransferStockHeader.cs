@@ -5,7 +5,7 @@ namespace Kemrex.Core.Database.Models
 {
     public partial class TransferStockHeader
     {
-        public int TransferId { get; set; }
+        public int TransferStockId { get; set; }
         public string TransferNo { get; set; }
         public string TransferType { get; set; }
         public DateTime? TransferDate { get; set; }
@@ -25,5 +25,7 @@ namespace Kemrex.Core.Database.Models
         public DateTime? CreateDate { get; set; }
         public DateTime? UpdateDate { get; set; }
         public bool? Status { get; set; }
+
+        public List<TransferStockDetail> TransferStockDetail { get; set; }
     }
 }

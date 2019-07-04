@@ -93,9 +93,8 @@ namespace Kemrex.Core.Common
             private AttachmentTypeModule _AttachmentTypeModule;
             private SysCategoryModule _SysCategoryModule;
             private JobOrderModule _JobOrderModule;
-
             private TransferModule _Transfer;
-
+            private TransferStockModule _TransferStock;
 
             public AccountModule Account => _Account ?? (_Account = new AccountModule(db));
             public CustomerAddressModule CustomerAddress => _CustomerAddress ?? (_CustomerAddress = new CustomerAddressModule(db));
@@ -132,6 +131,7 @@ namespace Kemrex.Core.Common
             public SysCategoryModule SysCategory => _SysCategoryModule ?? (_SysCategoryModule = new SysCategoryModule(db));
             public JobOrderModule JobOrder => _JobOrderModule ?? (_JobOrderModule = new JobOrderModule(db));
             public TransferModule Transfer => _Transfer ?? (_Transfer = new TransferModule(db));
+            public TransferStockModule TransferStock => _TransferStock ?? (_TransferStock = new TransferStockModule(db));
         }
         #endregion
     }
