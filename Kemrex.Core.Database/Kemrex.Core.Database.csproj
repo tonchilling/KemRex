@@ -191,6 +191,7 @@
     <Compile Include="Models\TblInvoice.cs" />
     <Compile Include="Models\TblJobOrder.cs" />
     <Compile Include="Models\TblJobOrderAttachmentType.cs" />
+    <Compile Include="Models\TblJobOrderDetail.cs" />
     <Compile Include="Models\TblJobOrderEquipmentType.cs" />
     <Compile Include="Models\TblJobOrderLandType.cs" />
     <Compile Include="Models\TblJobOrderObstructionType.cs" />
@@ -221,11 +222,14 @@
     <Compile Include="Models\TeamSaleDetail.cs" />
     <Compile Include="Models\TransferDetail.cs" />
     <Compile Include="Models\TransferHeader.cs" />
+    <Compile Include="Models\TransferStockDetail.cs" />
+    <Compile Include="Models\TransferStockHeader.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SqlServerTypes\Loader.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
+    <None Include="Models\TblJobOrder.zip" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>

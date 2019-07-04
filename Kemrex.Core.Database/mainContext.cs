@@ -62,6 +62,7 @@ namespace Kemrex.Core.Database
         public virtual DbSet<TblInvoice> TblInvoice { get; set; }
         public virtual DbSet<TblJobOrder> TblJobOrder { get; set; }
         public virtual DbSet<TblJobOrderAttachmentType> TblJobOrderAttachmentType { get; set; }
+        public virtual DbSet<TblJobOrderDetail> TblJobOrderDetail { get; set; }
         public virtual DbSet<TblJobOrderEquipmentType> TblJobOrderEquipmentType { get; set; }
         public virtual DbSet<TblJobOrderLandType> TblJobOrderLandType { get; set; }
         public virtual DbSet<TblJobOrderObstructionType> TblJobOrderObstructionType { get; set; }
@@ -92,6 +93,10 @@ namespace Kemrex.Core.Database
         public virtual DbSet<TeamSaleDetail> TeamSaleDetail { get; set; }
         public virtual DbSet<TransferDetail> TransferDetail { get; set; }
         public virtual DbSet<TransferHeader> TransferHeader { get; set; }
+        public virtual DbSet<TransferStockDetail> TransferStockDetail { get; set; }
+        public virtual DbSet<TransferStockHeader> TransferStockHeader { get; set; }
+
+        // Unable to generate entity type for table 'dbo.Product_Temp'. Please see the warning messages.
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -222,7 +227,6 @@ namespace Kemrex.Core.Database
 
             modelBuilder.Entity<SysAccountRole>(entity =>
             {
-             
                 entity.HasOne(d => d.Role)
                     .WithMany(p => p.SysAccountRole)
                     .HasForeignKey(d => d.RoleId)
@@ -434,25 +438,6 @@ namespace Kemrex.Core.Database
             modelBuilder.Entity<SysRolePermission>(entity =>
             {
                 entity.HasKey(e => new { e.RoleId, e.MenuId, e.PermissionId });
-
-              /*  entity.HasOne(d => d.Menu)
-                    .WithMany(p => p.SysRolePermission)
-                    .HasForeignKey(d => d.MenuId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_SysRolePermission_Menu");
-
-                entity.HasOne(d => d.Permission)
-                    .WithMany(p => p.SysRolePermission)
-                    .HasForeignKey(d => d.PermissionId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_SysRolePermission_Detail");
-
-                entity.HasOne(d => d.Role)
-                    .WithMany(p => p.SysRolePermission)
-                    .HasForeignKey(d => d.RoleId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_SysRolePermission_Id");
-                    */
             });
 
             modelBuilder.Entity<SysSite>(entity =>
@@ -710,7 +695,7 @@ namespace Kemrex.Core.Database
 
                 entity.Property(e => e.EmpMobile)
                     .IsRequired()
-                    .HasMaxLength(10);
+                    .HasMaxLength(15);
 
                 entity.Property(e => e.EmpNameEn)
                     .IsRequired()
@@ -733,11 +718,6 @@ namespace Kemrex.Core.Database
                 entity.Property(e => e.EmpSignature).HasMaxLength(300);
 
                 entity.Property(e => e.UpdatedDate).HasColumnType("datetime");
-
-              /*  entity.HasOne(d => d.Account)
-                    .WithMany(p => p.TblEmployee)
-                    .HasForeignKey(d => d.AccountId)
-                    .HasConstraintName("FK_TblEmployee_Account"); */
 
                 entity.HasOne(d => d.Department)
                     .WithMany(p => p.TblEmployee)
@@ -836,15 +816,10 @@ namespace Kemrex.Core.Database
 
                 entity.Property(e => e.VillageNo).HasMaxLength(50);
 
-          /*      entity.HasOne(d => d.SaleOrder)
+             /*   entity.HasOne(d => d.SaleOrder)
                     .WithMany(p => p.TblJobOrder)
                     .HasForeignKey(d => d.SaleOrderId)
-                    .HasConstraintName("FK__TblJobOrd__SaleO__3EE740E8");
-
-                entity.HasOne(d => d.SubDistrict)
-                    .WithMany(p => p.TblJobOrder)
-                    .HasForeignKey(d => d.SubDistrictId)
-                    .HasConstraintName("FK__TblJobOrd__SubDi__3FDB6521");*/
+                    .HasConstraintName("FK__TblJobOrd__SaleO__3EE740E8");*/
             });
 
             modelBuilder.Entity<TblJobOrderAttachmentType>(entity =>
@@ -863,6 +838,21 @@ namespace Kemrex.Core.Database
                     .HasForeignKey(d => d.AttachmentTypeId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK__TblJobOrd__Attac__3C0AD43D");
+            });
+
+            modelBuilder.Entity<TblJobOrderDetail>(entity =>
+            {
+                entity.HasKey(e => new { e.JobOrderId, e.No });
+
+                entity.Property(e => e.JobOrderId).HasColumnName("JobOrderID");
+
+                entity.Property(e => e.Weight).HasColumnType("decimal(8, 2)");
+
+           /*     entity.HasOne(d => d.JobOrder)
+                    .WithMany(p => p.TblJobOrderDetail)
+                    .HasForeignKey(d => d.JobOrderId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK__TblJobOrd__JobOr__066DDD9B");*/
             });
 
             modelBuilder.Entity<TblJobOrderEquipmentType>(entity =>
@@ -1150,7 +1140,7 @@ namespace Kemrex.Core.Database
 
                 entity.Property(e => e.ProductCode)
                     .IsRequired()
-                    .HasMaxLength(20);
+                    .HasMaxLength(50);
 
                 entity.Property(e => e.ProductName)
                     .IsRequired()
@@ -1317,11 +1307,10 @@ namespace Kemrex.Core.Database
 
                 entity.Property(e => e.UpdateDate).HasColumnType("datetime");
 
-            /*    entity.HasOne(d => d.Customer)
+             /*   entity.HasOne(d => d.Customer)
                     .WithMany(p => p.TblQuotation)
                     .HasForeignKey(d => d.CustomerId)
-                    .HasConstraintName("FK_TblQuotation_Customer");
-                    */
+                    .HasConstraintName("FK_TblQuotation_Customer");*/
 
                 entity.HasOne(d => d.Sale)
                     .WithMany(p => p.TblQuotation)
@@ -1445,11 +1434,10 @@ namespace Kemrex.Core.Database
 
                 entity.Property(e => e.UpdateDate).HasColumnType("datetime");
 
-               /* entity.HasOne(d => d.Customer)
+            /*    entity.HasOne(d => d.Customer)
                     .WithMany(p => p.TblSaleOrder)
                     .HasForeignKey(d => d.CustomerId)
-                    .HasConstraintName("FK_TblSaleOrder_Customer");
-                    */
+                    .HasConstraintName("FK_TblSaleOrder_Customer");*/
             });
 
             modelBuilder.Entity<TblSaleOrderAttachment>(entity =>
@@ -1625,10 +1613,11 @@ namespace Kemrex.Core.Database
                     .HasForeignKey(d => d.ProductId)
                     .HasConstraintName("FK__TransferD__Produ__2803DB90");
 
-                entity.HasOne(d => d.TransferHeader)
-                   .WithMany(p => p.TransferDetail)
-                   .HasForeignKey(d => d.TransferId)
-                   .HasConstraintName("FK_TransferDetail_TransferHeader");
+             /*   entity.HasOne(d => d.Transfer)
+                    .WithMany(p => p.TransferDetail)
+                    .HasForeignKey(d => d.TransferId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_TransferDetail_TransferHeader");*/
             });
 
             modelBuilder.Entity<TransferHeader>(entity =>
@@ -1673,6 +1662,72 @@ namespace Kemrex.Core.Database
                 entity.Property(e => e.UpdateDate).HasColumnType("datetime");
             });
 
+            modelBuilder.Entity<TransferStockDetail>(entity =>
+            {
+                entity.HasKey(e => new { e.TransferStockId, e.Seq })
+                    .HasName("PK__TransferStockDetail");
+
+                entity.Property(e => e.CurrentQty)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.LastModified)
+                    .HasColumnName("last_modified")
+                    .HasColumnType("datetime");
+
+                entity.Property(e => e.RequestUnit)
+                    .HasMaxLength(20)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.RequestUnitFactor).HasColumnType("decimal(8, 3)");
+
+          /*      entity.HasOne(d => d.Product)
+                    .WithMany(p => p.TransferStockDetail)
+                    .HasForeignKey(d => d.ProductId)
+                    .HasConstraintName("FK__TransferStockDetail__Product");*/
+            });
+
+            modelBuilder.Entity<TransferStockHeader>(entity =>
+            {
+                entity.HasKey(e => e.TransferId)
+                    .HasName("PK__Transfer__Stock");
+
+                entity.Property(e => e.BillNo).HasMaxLength(50);
+
+                entity.Property(e => e.CarBrand).HasMaxLength(10);
+
+                entity.Property(e => e.CarNo).HasMaxLength(10);
+
+                entity.Property(e => e.Company).HasMaxLength(100);
+
+                entity.Property(e => e.CreateDate).HasColumnType("datetime");
+
+                entity.Property(e => e.EmpId).HasMaxLength(10);
+
+                entity.Property(e => e.Note1)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Reason).HasMaxLength(100);
+
+                entity.Property(e => e.ReceiveTo).HasMaxLength(50);
+
+                entity.Property(e => e.Remark).HasMaxLength(100);
+
+                entity.Property(e => e.TransferDate).HasColumnType("datetime");
+
+                entity.Property(e => e.TransferNo)
+                    .IsRequired()
+                    .HasMaxLength(15);
+
+                entity.Property(e => e.TransferTime).HasMaxLength(5);
+
+                entity.Property(e => e.TransferType)
+                    .IsRequired()
+                    .HasMaxLength(3);
+
+                entity.Property(e => e.UpdateDate).HasColumnType("datetime");
+            });
         }
     }
 }
