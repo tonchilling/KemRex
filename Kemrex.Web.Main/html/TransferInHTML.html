@@ -1,0 +1,100 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Index</title>
+    <style type="text/css">
+        body {
+            font-family: tahoma;
+            font-size: 10pt;
+            width: 1024px;
+            padding-left: 10px;
+            padding-right: 10px;
+            line-height: 28px;
+        }
+    </style>
+</head>
+<body>
+    <div style="width: 100%; padding-left: 30px; padding-right: 30px;">
+        <div>
+            <center>
+                <table style="background-color: white; margin-top:10px;">
+                    <tr>
+                        <td width="30%">&nbsp;</td>
+                        <td><img src="@@ImageBanner@@" width="220" /></td>
+                        <td width="30%">&nbsp;</td>
+                    </tr>
+                </table>
+            </center>
+        </div>
+        <div><h3 style="text-align:center;">ใบอนุญาตนำวัสดุ/สิ่งของ เข้า (GatePass-in)</h3></div>
+        <div>
+            <table style="font-size:10pt;width:100%;" cellspacing="0" cellpadding="5">
+                <tr>
+                    <td><b>เลขที่ : </b></td>
+                    <td>@@TransferNo@@</td>
+                    <td><b>ไปยัง : </b></td>
+                    <td>@@Goto@@</td>
+                </tr>
+                <tr>
+                    <td><b>วันที่ : </b></td>
+                    <td>@@TransferDateTime@@</td>
+                    <td><b>เพื่อ : </b></td>
+                    <td>@@For@@</td>
+                </tr>
+                <tr>
+                    <td><b>อนุญาติให้ : </b></td>
+                    <td>@@PersonName@@</td>
+                    <td><b>โดยรถประเภท : </b></td>
+                    <td>@@CarType@@</td>
+                </tr>
+                <tr>
+                    <td><b>บริษัท/ห้างร้าน : </b></td>
+                    <td>@@CompName@@</td>
+                    <td><b>ทะเบียนเลขที่ : </b></td>
+                    <td>@@CarRegistration@@</td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td><b>ยี่ห้อ : </b></td>
+                    <td>@@CarBrand@@</td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td><b>ส่วนงานที่นำวัสดุ/สิ่งของ <br /> เข้า โรงงาน : </b></td>
+                    <td valign="top">@@SendTo@@</td>
+                </tr>
+            </table>
+        </div>
+        <div>
+            <table style="font-size:10pt;width:90%;margin-top:20px;" cellspacing="0" cellpadding="7" border="1" align="center" >
+                <tr>
+                    <th align="center" width="10%">ลำดับ</th>
+                    <th align="center"width="80%">รายการ</th>
+                    <th align="center" width="15%">จำนวน</th>
+                </tr>
+                @@item@@
+            </table>
+        </div>
+        <div style="position:fixed; bottom: 20px;">
+            <table style="margin-top:50px;font-size:10pt;width:80%;" cellspacing="0" cellpadding="7" border="0" align="center">
+                <tr>
+                    <td>ลงชื่อ.......................................</td>
+                    <td>ลงชื่อ.......................................</td>
+                </tr>
+                <tr>
+                    <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(.....................................)</td>
+                    <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(.....................................)</td>
+                </tr>
+                <tr>
+                    <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ผู้นำส่งคืน</td>
+                    <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ผู้รับคืน</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+</body>
+</html>
