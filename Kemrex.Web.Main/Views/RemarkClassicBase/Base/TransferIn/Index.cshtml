@@ -65,9 +65,9 @@
                                     <table class="table table-bordered table-hover">
                                         <thead>
                                             <tr align="center">
-                                                <th>ชื่องาน</th>
                                                 <th>หมายเลข</th>
                                                 <th>ลงวันที่</th>
+                                                <th>เครื่องมือ</th>
                                                 @*<th>สถานะ</th>
                                                     <th>เครื่องมือ</th>*@
                                             </tr>
@@ -75,14 +75,14 @@
                                         <tbody>
                                             @if (Model.Count() <= 0)
                                             {
-                                                <tr>
+                                                <tr align="center">
                                                     <td colspan="5">ไม่พบข้อมูล</td>
                                                 </tr>
                                             }
                                             @foreach (var ob in Model)
                                             {
                                                 //   var total = ob.SaleOrder.SummaryTot - ob.SaleOrder.DiscountCash;
-                                                <tr id="@ob.TransferNo">
+                                                <tr id="@ob.TransferNo" align="center">
 
                                                     <td>@ob.TransferNo </td>
                                                     <td>@Converting.ToDDMMYYYY(ob.TransferDate)</td>
@@ -92,6 +92,10 @@
                                                         <a href="@Url.Action("Detail", new { controller="TransferIn" , area="" , id=ob.TransferId })"
                                                            class="btn btn-xs btn-primary">
                                                             <i class="fa fa-pencil" aria-hidden="true"></i>&nbsp;แก้ไข
+                                                        </a>
+                                                        <a href="@Url.Action("PDFTransferIn", new { controller = "export", area = "", id=ob.TransferId  })"
+                                                           class="btn btn-xs btn-warning">
+                                                            <i class="fa fa-file-pdf-o" aria-hidden="true"></i>&nbsp;PDF
                                                         </a>
                                                     </td>
                                                 </tr>
