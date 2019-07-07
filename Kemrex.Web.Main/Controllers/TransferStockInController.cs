@@ -61,7 +61,7 @@ namespace Kemrex.Web.Main.Controllers
 
         private string getId(string type)
         {
-            string qid = "T" + type;
+            string qid = "S" + type;
             System.Globalization.CultureInfo _cultureTHInfo = new System.Globalization.CultureInfo("en-US");
             var dt = DateTime.Now.ToString("yyMMdd", _cultureTHInfo);
             string Id = uow.Modules.TransferStock.GetLastId(qid + dt);
@@ -97,7 +97,7 @@ namespace Kemrex.Web.Main.Controllers
             string TransferStockId = this.Request.Form["TransferStockId"];
             if (TransferStockId == "" || TransferStockId == "0")
             {
-                obj.TransferNo = getId("TI");
+                obj.TransferNo = getId("SI");
                 obj.CreateDate = DateTime.Now;
                 obj.TransferStatus = 0;
             }
@@ -203,7 +203,7 @@ namespace Kemrex.Web.Main.Controllers
         public ActionResult ConfirmProduct()
         {
             int qid = Request.Form["TransferStockId"].ParseInt();
-            bool result = uow.Modules.TransferStock.TransferInApprove(qid);
+            bool result = uow.Modules.TransferStock.TransferStockInApprove(qid);
 
             return RedirectToAction("Detail", MVCController, new { id = qid, tab = "Product", msg = "บันทึกข้อมูลสินค้าเรียบร้อยแล้ว", msgType = AlertMsgType.Success });
         }
@@ -220,8 +220,12 @@ namespace Kemrex.Web.Main.Controllers
                 if (ob == null)
                 { return RedirectToAction("Detail", MVCController, new { id = qid, tab = "Product", msg = "ไม่พบข้อมูลที่ต้องการ", msgType = AlertMsgType.Warning }); }
 
-                uow.Modules.TransferStock.DeleteDetail(ob);
-                uow.SaveChanges();
+                ob.TransferStockId = qid;
+                ob.Seq = Seq;
+
+                bool result = uow.Modules.TransferStock.Del(ob);
+                //uow.Modules.TransferStock.DeleteDetail(ob);
+                //uow.SaveChanges();
                 return RedirectToAction("Detail", MVCController, new { id = qid, tab = "Product", msg = "ลบข้อมูลเรียบร้อยแล้ว", msgType = AlertMsgType.Success });
             }
             catch (Exception ex)

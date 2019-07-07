@@ -123,7 +123,13 @@ namespace Kemrex.Core.Common.Modules
 
         public TransferStockDetail GetDetail(int transferStockId, int seq)
         {
-             var detail = (from d in db.TransferStockDetail.Where(x => x.TransferStockId == transferStockId && x.Seq== seq) select d);
+             var detail = (from d in db.TransferStockDetail
+                           .Where(x => x.TransferStockId == transferStockId && x.Seq== seq)
+                           select new TransferStockDetail
+                           {
+                               TransferStockId = d.TransferStockId,
+                               Seq = d.Seq
+                           });
 
             //  if (detail == null)
             //  detail = new TransferDetail();
@@ -202,9 +208,31 @@ namespace Kemrex.Core.Common.Modules
             finally
             { }
             return result;
-
         }
-        public bool TransferInApprove(int transferstockid)
+        public bool Del(TransferStockDetail dto)
+        {
+            bool result = false;
+            string sql = "sp_TransferStockDetail_Delete";
+
+
+            List<SqlParameter> paramList = new List<SqlParameter>();
+
+            paramList.Add(new SqlParameter("@TransferStockId", dto.TransferStockId));
+            paramList.Add(new SqlParameter("@Seq", dto.Seq));
+            try
+            {
+
+                result = webdb.ExcecuteNonQuery(sql, paramList);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("sp_TransferStockDetail_Delete::" + ex.ToString());
+            }
+            finally
+            { }
+            return result;
+        }
+        public bool TransferStockInApprove(int transferstockid)
         {
             bool result = false;
             string sql = "sp_TransferStockInHeader_Approve";
@@ -224,7 +252,7 @@ namespace Kemrex.Core.Common.Modules
             { }
             return result;
         }
-        public bool TransferOutApprove(int transferstockid)
+        public bool TransferStockOutApprove(int transferstockid)
         {
             bool result = false;
             string sql = "sp_TransferStockOutHeader_Approve";

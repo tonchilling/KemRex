@@ -61,7 +61,7 @@ namespace Kemrex.Web.Main.Controllers
 
         private string getId(string type)
         {
-            string qid = "T" + type;
+            string qid = "S" + type;
             System.Globalization.CultureInfo _cultureTHInfo = new System.Globalization.CultureInfo("en-US");
             var dt = DateTime.Now.ToString("yyMMdd", _cultureTHInfo);
             string Id = uow.Modules.TransferStock.GetLastId(qid + dt);
@@ -92,20 +92,25 @@ namespace Kemrex.Web.Main.Controllers
         {
             System.Globalization.CultureInfo _cultureTHInfo = new System.Globalization.CultureInfo("en-US");
 
+            TransferStockHeader old = uow.Modules.TransferStock.GetHeader(obj.TransferStockId);
 
             string TransferStockId = this.Request.Form["TransferStockId"];
             if (TransferStockId == "" || TransferStockId == "0")
             {
-                obj.TransferNo = getId("TI");
+                obj.TransferNo = getId("SO");
                 obj.CreateDate = DateTime.Now;
+                obj.TransferStatus = 0;
             }
             else
             {
-                obj.TransferStockId = Convert.ToInt32(TransferStockId);
+                //obj.TransferStockId = Convert.ToInt32(TransferStockId);
                 obj.UpdateDate = DateTime.Now;
+                obj.CreateDate = old.CreateDate;
+                obj.TransferStatus = old.TransferStatus;
             }
 
             obj.TransferType = "O";
+
             if (Request.Form["TransferDate"].ToString() != "")
             {
                 var dd = Request.Form["TransferDate"];
@@ -114,34 +119,10 @@ namespace Kemrex.Web.Main.Controllers
             }
 
             obj.CreateBy = Convert.ToInt32(CurrentUID);
-
-            //obj.EmpId = "1";
-
-
-
-            /*# hddProject
-            # hddEquipmentType
-            # hddLandType
-            # hddUndergroundType
-            # hddObstructionType
-            # hddAttachmentType
-                        */
-
-
             try
             {
-
                 uow.Modules.TransferStock.Set(obj);
                 uow.SaveChanges();
-
-
-
-
-                //  uow.Modules.Transfer.Set(obj);
-
-                //  uow.SaveChanges();
-
-
             }
             catch (Exception ex)
             {
@@ -200,9 +181,6 @@ namespace Kemrex.Web.Main.Controllers
             int qid = Request.Form["TransferStockId"].ParseInt();
             var id = Request.Form["selProduct"].Split(':');  //  ProductId:PriceNet
             int qty = Request.Form["RequestQty"].ParseInt();
-
-
-
             if (id.Count() > 0)
             {
                 int pid = int.Parse(id[0]);
@@ -218,9 +196,15 @@ namespace Kemrex.Web.Main.Controllers
 
                 //uow.Modules.TransferStock.SetDetail(ob);
                 //uow.SaveChanges();
-
-
             }
+            return RedirectToAction("Detail", MVCController, new { id = qid, tab = "Product", msg = "บันทึกข้อมูลสินค้าเรียบร้อยแล้ว", msgType = AlertMsgType.Success });
+        }
+        [HttpPost]
+        public ActionResult ConfirmProduct()
+        {
+            int qid = Request.Form["TransferStockId"].ParseInt();
+            bool result = uow.Modules.TransferStock.TransferStockOutApprove(qid);
+
             return RedirectToAction("Detail", MVCController, new { id = qid, tab = "Product", msg = "บันทึกข้อมูลสินค้าเรียบร้อยแล้ว", msgType = AlertMsgType.Success });
         }
 
@@ -236,8 +220,12 @@ namespace Kemrex.Web.Main.Controllers
                 if (ob == null)
                 { return RedirectToAction("Detail", MVCController, new { id = qid, tab = "Product", msg = "ไม่พบข้อมูลที่ต้องการ", msgType = AlertMsgType.Warning }); }
 
-                uow.Modules.TransferStock.DeleteDetail(ob);
-                uow.SaveChanges();
+                ob.TransferStockId = qid;
+                ob.Seq = Seq;
+
+                bool result = uow.Modules.TransferStock.Del(ob);
+                //uow.Modules.TransferStock.DeleteDetail(ob);
+                //uow.SaveChanges();
                 return RedirectToAction("Detail", MVCController, new { id = qid, tab = "Product", msg = "ลบข้อมูลเรียบร้อยแล้ว", msgType = AlertMsgType.Success });
             }
             catch (Exception ex)

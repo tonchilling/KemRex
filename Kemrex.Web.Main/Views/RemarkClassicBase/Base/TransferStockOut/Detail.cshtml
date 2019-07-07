@@ -79,7 +79,7 @@
                 $("#" + tab_id).addClass('current');
             })
             $("#btnConfirmProduct").click(function () {
-                $('#frmftr').attr('action', '@Url.Action("ConfirmProduct", "TransferStockIn")');
+                $('#frmftr').attr('action', '@Url.Action("ConfirmProduct", "TransferStockOut")');
                 //tblProduct
             });
 
@@ -107,8 +107,6 @@
         }
 
       
-
-
         //Validate require field
         $("#frm1").validate({
             highlight: function (element) {
@@ -120,9 +118,9 @@
                 $(element).parents('.input-group').removeClass('has-error');
             },
             messages: {
-                BillNo: {
-                    required: "",
-                },
+                //BillNo: {
+                //    required: "",
+                //},
                 Note1: {
                     required: "",
                 },
@@ -136,7 +134,7 @@
 
         function ValidationAll() {
 
-            var selected = [];
+            var selected=[];
             var chkValidate = true;
             if ($("#EmpId").val() == "-1") {
                 $("#EmpId").parents('.form-group').addClass('has-error');
@@ -182,7 +180,7 @@
 
         }
 
-
+        
 
         function AddProductValidation() {
 
@@ -331,7 +329,7 @@
         <div class="page">
             <div class="page-header">
                 <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="@Url.Action("Index", new { controller = "TransferStockIn", area = "" })" })">ย้อนกลับ</a></li>
+                    <li class="breadcrumb-item"><a href="@Url.Action("Index", new { controller = "TransferStockOut", area = "" })" })">ย้อนกลับ</a></li>
                 </ol>
             </div>
             <div class="page-content container-fluid">
@@ -346,7 +344,7 @@
                 <div class="panel-heading">
                     <h3 class="panel-title">
                         @(Model.TransferStockId > 0 ? "แก้ไข" : "เพิ่ม")เอกสาร
-                        <span class="panel-desc">รับสินค้าเข้า (Stock In) </span>
+                        <span class="panel-desc">โอนสินค้าออก (Stock Out) </span>
                     </h3>
                 </div>
                 <div data-tabs="myTabPage">
@@ -360,7 +358,7 @@
                     </ul>
 
                     <div id="tab-1" class="tab-content current">
-                        <form method="post" action="@Url.Action("SetDetail", "TransferStockIn")" enctype="multipart/form-data">
+                        <form method="post" id="frm1" action="@Url.Action("SetDetail", "TransferStockOut")" enctype="multipart/form-data">
                             <div class="card-block" id="navInfo" data-tab-page="navInfo">
 
                                 <div class="col-12">
@@ -375,7 +373,7 @@
                                                 <div class="col-md-6">
 
                                                     <div class="form-group">
-                                                        <label for="TransferNo" class="col-sm-4 col-form-label">เลขที่นำเข้าสินค้า</label>
+                                                        <label for="TransferNo" class="col-sm-4 col-form-label">เลขที่โอนสินค้าออก</label>
                                                         <div class="col-sm-6">
                                                             <input type="text" class="form-control" name="TransferNo" id="TransferNo"
                                                                    placeholder="บันทึกเพื่อสร้าง" value="@Model.TransferNo" readonly />
@@ -393,16 +391,16 @@
                                                             </div>
                                                         </div>
                                                     </div>
-                                                    <div class="form-group">
+                                                    @*<div class="form-group">
                                                         <label for="ReceiveTo" class="col-sm-5 col-form-label">รับสินค้าจาก</label>
                                                         <div class="col-sm-9">
                                                             <input type="text" class="form-control" name="ReceiveTo" id="ReceiveTo" value="@Model.ReceiveTo" />
                                                         </div>
-                                                    </div>
+                                                    </div>*@
                                                     <div class="form-group">
                                                         <label for="Note1" class="col-sm-4 col-form-label">Note</label>
                                                         <div class="col-sm-9">
-                                                            <textarea rows="4" cols="47" class="form-control" name="Note1" id="Note1">@Model.Note1</textarea>
+                                                            <textarea rows="4" cols="47" class="form-control" name="Note1" id="Note1" required>@Model.Note1</textarea>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -421,10 +419,10 @@
 
                                                     </div>
                                                     <div class="form-group">
-                                                        <label for="TransferDate" class="col-sm-5 col-form-label">วันที่นำสินค้าเข้าคลัง</label>
+                                                        <label for="TransferDate" class="col-sm-5 col-form-label">วันที่โอนสินค้าออกจากคลัง</label>
                                                         <div class="input-group col-sm-6 date" data-provide="datepicker" data-date-format="dd/mm/yyyy">
                                                             <input id="TransferDate" type="text" class="form-control" placeholder="dd/MM/yyyy ค.ศ." name="TransferDate"
-                                                                   value="@(Model.TransferDate.HasValue ? Model.TransferDate.Value.ToString("dd/MM/yyyy"):"")" />
+                                                                   value="@(Model.TransferDate.HasValue ? Model.TransferDate.Value.ToString("dd/MM/yyyy"):"")" required/>
                                                             <span class="input-group-addon">
                                                                 <i class="icon wb-calendar icon-2-5x text-success" aria-hidden="true"></i>
                                                             </span>
@@ -432,13 +430,13 @@
 
                                                     </div>
                                                     <div class="form-group">
-                                                        <label for="EmpId" class="col-sm-5 col-form-label">ผู้นำสินค้าเข้า</label>
+                                                        <label for="EmpId" class="col-sm-5 col-form-label">ผู้โอนสินค้าออก</label>
                                                         @*<div class="col-sm-6">
                                         <input type="text" class="form-control" name="EmpId" value="@Model.EmpId" />
                                     </div>*@
                                                         <div class="col-sm-6">
                                                             <select class="form-control" id="EmpId" data-live-search="true"
-                                                                    name="EmpId">
+                                                                    name="EmpId" required>
                                                                 <option value="-1" )></option>
                                                                 @foreach (TblEmployee it in optEmployee)
                                                                 {
@@ -469,7 +467,7 @@
                                                         {
                                                             <button type="submit" id="btnNextStep" class="btn btn-primary" >@(Model.TransferStockId > 0 ? "บันทึก" : "ต่อไป")</button>
                                                         }
-                                                        <a href="@Url.Action("Index", "TransferStockIn")" class="btn btn-default">ยกเลิก</a>
+                                                        <a href="@Url.Action("Index", "TransferStockOut")" class="btn btn-default">ยกเลิก</a>
                                                     </div>
                                                 </div>
                                             </div>
@@ -525,7 +523,7 @@
 
 
                                                                         <td>
-                                                                            <form method="post" action="@Url.Action("DetailDelete", new { controller = "TransferStockIn" })"
+                                                                            <form method="post" action="@Url.Action("DetailDelete", new { controller = "TransferStockOut" })"
                                                                                   class="fnc-delete inline-block">
 
                                                                                 <input type="hidden" id="TransferStockId" name="TransferStockId" value="@Model.TransferStockId" />
@@ -550,7 +548,7 @@
                                     <div class="panel-footer">
                                         <div class="row">
                                             <div class="col-12">
-                                                <form method="post" id="frmftr" action="@Url.Action("AddProduct", "TransferStockIn")" enctype="multipart/form-data">
+                                                <form method="post" id="frmftr" action="@Url.Action("AddProduct", "TransferStockOut")" enctype="multipart/form-data">
                                                     <input type="hidden" name="TransferStockId" value="@Model.TransferStockId" />
                                                     <div class="row">
                                                         <div class="col-4 col-md-4 form-group">

@@ -28,11 +28,11 @@
 
 <div class="page">
     <div class="page-header">
-        <h1 class="page-title">รับสินค้าเข้า (Stock In) </h1>
+        <h1 class="page-title">โอนสินค้าออก (Stock Out) </h1>
         <ol class="breadcrumb">
             <li class="breadcrumb-item"><a href="@Url.Action("Index", new { controller = "Home", area = "" })" })">หน้าแรก</a></li>
             <li class="breadcrumb-item"><a href="javascript:void(0)">คลังสินค้า</a></li>
-            <li class="breadcrumb-item active">รับสินค้าเข้า (Stock In)</li>
+            <li class="breadcrumb-item active">โอนสินค้าออก (Stock Out)</li>
         </ol>
     </div>
     <div class="page-content container-fluid">
@@ -44,7 +44,7 @@
                 }
                 <div class="panel">
                     <div class="panel-heading">
-                        <h3 class="panel-title">รับสินค้าเข้า (Stock In)<a href="@Url.Action("Detail", new { area = "", controller = "TransferStockIn" })" class="btn btn-xs btn-primary" style="color:white;">เพิ่มข้อมูล</a></h3>
+                        <h3 class="panel-title">โอนสินค้าออก (Stock Out)<a href="@Url.Action("Detail", new { area = "", controller = "TransferStockOut" })" class="btn btn-xs btn-primary" style="color:white;">เพิ่มข้อมูล</a></h3>
                     </div>
                     <!-- /.box-header -->
                     <div class="panel-body dataTables_wrapper">
@@ -66,14 +66,14 @@
                                     <table class="table table-bordered table-hover">
                                         <thead>
                                             <tr align="center">
-                                                <th>เลขที่นำเข้าสินค้า</th>
-                                                <th>เลขที่อ้างอิง/เลขที่ใบเสร็จ</th>
-                                                <th>ผู้นำสินค้าเข้า</th>
-                                                <th>วันที่นำสินค้าเข้า</th>
+                                                <th>เลขที่โอนสินค้าออก</th>
+                                                <th>เลขที่อ้างอิง</th>
+                                                <th>ผู้โอนสินค้าออก</th>
+                                                <th>วันที่โอนสินค้าออก</th>
                                                 <th>วันที่สร้างรายการ</th>
                                                 <th>เครื่องมือ</th>
                                                 @*<th>สถานะ</th>
-        <th>เครื่องมือ</th>*@
+                                                <th>เครื่องมือ</th>*@
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -95,7 +95,7 @@
                                                     <td>@Converting.ToDDMMYYYY(ob.CreateDate)</td>
 
                                                     <td align="center">
-                                                        <a href="@Url.Action("Detail", new { controller="TransferStockIn" , area="" , id=ob.TransferStockId })"
+                                                        <a href="@Url.Action("Detail", new { controller="TransferStockOut" , area="" , id=ob.TransferStockId })"
                                                            class="btn btn-xs btn-primary">
                                                             <i class="fa fa-pencil" aria-hidden="true"></i>&nbsp;แก้ไข
                                                         </a>
