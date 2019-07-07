@@ -18,14 +18,17 @@ namespace Kemrex.Core.Database.Models
         public string CarBrand { get; set; }
         public int? SendToDepartment { get; set; }
         public string Remark { get; set; }
-        public string EmpId { get; set; }
+        public int EmpId { get; set; }
         public string BillNo { get; set; }
         public int? TransferStatus { get; set; }
         public string Note1 { get; set; }
         public DateTime? CreateDate { get; set; }
+        public int CreateBy { get; set; }
         public DateTime? UpdateDate { get; set; }
         public bool? Status { get; set; }
-
+        
         public List<TransferStockDetail> TransferStockDetail { get; set; }
+        public virtual TblEmployee Employee { get; set; }
+
     }
 }

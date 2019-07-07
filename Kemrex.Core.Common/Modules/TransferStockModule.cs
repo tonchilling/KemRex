@@ -7,16 +7,19 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
-
+using System.Data.SqlClient;
+using System.Data;
+using Kemrex.Core.Common.Helper;
 namespace Kemrex.Core.Common.Modules
 {
-   public class TransferStockModule 
+   public class TransferStockModule
     {
         private readonly mainContext db;
+        private WebDB webdb;
         public TransferStockModule(mainContext context)
         {
             db = context;
+            webdb = new WebDB();
         }
         public void Delete(TransferStockHeader ob)
         {
@@ -40,6 +43,38 @@ namespace Kemrex.Core.Common.Modules
             return (from q in db.TransferStockHeader
                     .Where(n=>n.TransferNo.Contains(pre))
                     select q.TransferNo).Max();
+        }
+        public TransferStockHeader GetHeader(int id)
+        {
+            TransferStockHeader transferStockHeader = (from q in db.TransferStockHeader
+                .Where(x => x.TransferStockId == id) select new TransferStockHeader {
+                    TransferStockId=q.TransferStockId,
+                    TransferNo = q.TransferNo,
+                    TransferType = q.TransferType,
+                    TransferDate = q.TransferDate,
+                    TransferTime = q.TransferTime,
+                    ReceiveTo = q.ReceiveTo,
+                    Reason = q.Reason,
+                    CarType = q.CarType,
+                    Company = q.Company,
+                    CarNo = q.CarNo,
+                    CarBrand = q.CarBrand,
+                    SendToDepartment = q.SendToDepartment,
+                    Remark = q.Remark,
+                    EmpId = q.EmpId,
+                    BillNo = q.BillNo,
+                    TransferStatus = q.TransferStatus,
+                    Note1 = q.Note1,
+                    CreateDate = q.CreateDate,
+                    CreateBy = q.CreateBy,
+                    UpdateDate = q.UpdateDate,
+                    Status = q.Status
+                })
+                .FirstOrDefault() ?? new TransferStockHeader()
+                {
+
+                };
+            return transferStockHeader;
         }
         public TransferStockHeader Get(int id)
         {
@@ -141,6 +176,73 @@ namespace Kemrex.Core.Common.Modules
             /* if (ob.TransferId == 0)
              { db.TransferDetail.Add(ob); }
              else { db.Entry(ob).State = EntityState.Modified; }*/
+        }
+
+        public bool Add(TransferStockDetail dto)
+        {
+            bool result = false;
+            string sql = "sp_TransferStockDetail_Insert";
+
+
+            List<SqlParameter> paramList = new List<SqlParameter>();
+
+            paramList.Add(new SqlParameter("@TransferStockId", dto.TransferStockId)); 
+            paramList.Add(new SqlParameter("@ProductId", dto.ProductId));
+            paramList.Add(new SqlParameter("@RequestQty", dto.RequestQty));
+            paramList.Add(new SqlParameter("@Seq", dto.Seq));
+            try
+            {
+
+                result = webdb.ExcecuteNonQuery(sql, paramList);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("sp_TransferStockDetail_Insert::" + ex.ToString());
+            }
+            finally
+            { }
+            return result;
+
+        }
+        public bool TransferInApprove(int transferstockid)
+        {
+            bool result = false;
+            string sql = "sp_TransferStockInHeader_Approve";
+            List<SqlParameter> paramList = new List<SqlParameter>();
+            try
+            {
+                paramList = new List<SqlParameter>();
+                paramList.Add(new SqlParameter("@TransferStockId", transferstockid));
+
+                result = webdb.ExcecuteNonQuery(sql, paramList);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("TransferStockInApprove.Approve::" + ex.ToString());
+            }
+            finally
+            { }
+            return result;
+        }
+        public bool TransferOutApprove(int transferstockid)
+        {
+            bool result = false;
+            string sql = "sp_TransferStockOutHeader_Approve";
+            List<SqlParameter> paramList = new List<SqlParameter>();
+            try
+            {
+                paramList = new List<SqlParameter>();
+                paramList.Add(new SqlParameter("@TransferStockId", transferstockid));
+
+                result = webdb.ExcecuteNonQuery(sql, paramList);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("TransferStockOutApprove.Approve::" + ex.ToString());
+            }
+            finally
+            { }
+            return result;
         }
     }
 }

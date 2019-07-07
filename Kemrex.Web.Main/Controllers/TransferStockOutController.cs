@@ -12,9 +12,9 @@ using System.Web.Mvc;
 
 namespace Kemrex.Web.Main.Controllers
 {
-    public class TransferStockInController : KemrexController
+    public class TransferStockOutController : KemrexController
     {
-        // GET: TransferStockIn
+        // GET: TransferStockOut
         public ActionResult Index(int? page, int? size, string msg, AlertMsgType? msgType,
                     string src = "")
         {
@@ -27,8 +27,8 @@ namespace Kemrex.Web.Main.Controllers
                     if (msgType.HasValue) { alert.Type = msgType.Value; }
                     ViewBag.Alert = alert;
                 }
-                int total = uow.Modules.TransferStock.Count(0, "I");
-                WidgetPaginationModel Pagination = new WidgetPaginationModel("Index", "TransferStockIn", "")
+                int total = uow.Modules.TransferStock.Count(0, "O");
+                WidgetPaginationModel Pagination = new WidgetPaginationModel("Index", "TransferStockOut", "")
                 {
                     Page = (page ?? 1),
                     Size = (size ?? 10),
@@ -40,7 +40,7 @@ namespace Kemrex.Web.Main.Controllers
                     Total = total
                 };
                 ViewBag.Pagination = Pagination;
-                lst = uow.Modules.TransferStock.Gets(Pagination.Page, Pagination.Size, src, "I");
+                lst = uow.Modules.TransferStock.Gets(Pagination.Page, Pagination.Size, src, "O");
                 foreach (var ls in lst.ToList())
                 {
                     ls.Employee = uow.Modules.Employee.GetByCondition(ls.EmpId);
@@ -92,25 +92,20 @@ namespace Kemrex.Web.Main.Controllers
         {
             System.Globalization.CultureInfo _cultureTHInfo = new System.Globalization.CultureInfo("en-US");
 
-            TransferStockHeader old = uow.Modules.TransferStock.GetHeader(obj.TransferStockId);
 
             string TransferStockId = this.Request.Form["TransferStockId"];
             if (TransferStockId == "" || TransferStockId == "0")
             {
                 obj.TransferNo = getId("TI");
                 obj.CreateDate = DateTime.Now;
-                obj.TransferStatus = 0;
             }
             else
             {
-                //obj.TransferStockId = Convert.ToInt32(TransferStockId);
+                obj.TransferStockId = Convert.ToInt32(TransferStockId);
                 obj.UpdateDate = DateTime.Now;
-                obj.CreateDate = old.CreateDate;
-                obj.TransferStatus = old.TransferStatus;
             }
 
-            obj.TransferType = "I";
-            
+            obj.TransferType = "O";
             if (Request.Form["TransferDate"].ToString() != "")
             {
                 var dd = Request.Form["TransferDate"];
@@ -119,10 +114,34 @@ namespace Kemrex.Web.Main.Controllers
             }
 
             obj.CreateBy = Convert.ToInt32(CurrentUID);
+
+            //obj.EmpId = "1";
+
+
+
+            /*# hddProject
+            # hddEquipmentType
+            # hddLandType
+            # hddUndergroundType
+            # hddObstructionType
+            # hddAttachmentType
+                        */
+
+
             try
             {
+
                 uow.Modules.TransferStock.Set(obj);
                 uow.SaveChanges();
+
+
+
+
+                //  uow.Modules.Transfer.Set(obj);
+
+                //  uow.SaveChanges();
+
+
             }
             catch (Exception ex)
             {
@@ -181,6 +200,9 @@ namespace Kemrex.Web.Main.Controllers
             int qid = Request.Form["TransferStockId"].ParseInt();
             var id = Request.Form["selProduct"].Split(':');  //  ProductId:PriceNet
             int qty = Request.Form["RequestQty"].ParseInt();
+
+
+
             if (id.Count() > 0)
             {
                 int pid = int.Parse(id[0]);
@@ -196,15 +218,9 @@ namespace Kemrex.Web.Main.Controllers
 
                 //uow.Modules.TransferStock.SetDetail(ob);
                 //uow.SaveChanges();
-            }
-            return RedirectToAction("Detail", MVCController, new { id = qid, tab = "Product", msg = "บันทึกข้อมูลสินค้าเรียบร้อยแล้ว", msgType = AlertMsgType.Success });
-        }
-        [HttpPost]
-        public ActionResult ConfirmProduct()
-        {
-            int qid = Request.Form["TransferStockId"].ParseInt();
-            bool result = uow.Modules.TransferStock.TransferInApprove(qid);
 
+
+            }
             return RedirectToAction("Detail", MVCController, new { id = qid, tab = "Product", msg = "บันทึกข้อมูลสินค้าเรียบร้อยแล้ว", msgType = AlertMsgType.Success });
         }
 
