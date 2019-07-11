@@ -49,6 +49,16 @@ namespace Kemrex.Core.Common.Modules
                         Model = new TblProductModel()
                     };
         }
+
+        public List<TblProduct> Gets(string categoryType)
+        {
+            return db.TblProduct
+                .Include(x => x.Category)
+                .Include(x => x.Model)
+                .Where(x => x.Category.Accessory == categoryType)
+               .ToList();
+        }
+
         public List<TblProduct> Gets(int page = 1, int size = 0, string src = "")
         {
             var data = db.TblProduct

@@ -4,6 +4,8 @@
 	[TransferType] [nvarchar](3) NOT NULL,
 	[TransferDate] [datetime] NULL,
 	[TransferTime] [nvarchar](5) NULL,
+	[JobOrderId] [int] NULL,
+	RefTransferId  [int] NULL,
 	[ReceiveTo] [nvarchar](50) NULL,
 	[Reason] [nvarchar](100) NULL,
 	[CarType] [int] NULL,

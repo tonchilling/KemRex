@@ -17,7 +17,7 @@ using IOFile = System.IO.File;
 
 namespace Kemrex.Web.Main.Controllers
 {
-    public class JobOrderController : KemrexController
+    public class JobOrderForSaleController : KemrexController
     {
         public ActionResult Index(int? page, int? size, string msg, AlertMsgType? msgType,
                    string src = "")
@@ -31,8 +31,8 @@ namespace Kemrex.Web.Main.Controllers
                     if (msgType.HasValue) { alert.Type = msgType.Value; }
                     ViewBag.Alert = alert;
                 }
-                int total = uow.Modules.JobOrder.Count(src,0 );
-                WidgetPaginationModel Pagination = new WidgetPaginationModel("Index", "JobOrder", "")
+                int total = uow.Modules.JobOrder.Count(src, 0);
+                WidgetPaginationModel Pagination = new WidgetPaginationModel("Index", "JobOrderForSale", "")
                 {
                     Page = (page ?? 1),
                     Size = (size ?? 10),
@@ -44,7 +44,7 @@ namespace Kemrex.Web.Main.Controllers
                     Total = total
                 };
                 ViewBag.Pagination = Pagination;
-                lst = uow.Modules.JobOrder.Gets(Pagination.Page, Pagination.Size, src, 0).ToList();
+                lst = uow.Modules.JobOrder.Gets(Pagination.Page, Pagination.Size, src, 0);
             }
             catch (Exception ex)
             {
@@ -73,9 +73,9 @@ namespace Kemrex.Web.Main.Controllers
             string qid = "J";
             System.Globalization.CultureInfo _cultureTHInfo = new System.Globalization.CultureInfo("en-US");
             var dt = DateTime.Now.ToString("yyMMdd", _cultureTHInfo);
-            string Id = uow.Modules.JobOrder.GetLastId(qid+ dt);
-            
-          
+            string Id = uow.Modules.JobOrder.GetLastId(qid + dt);
+
+
             string preid = Id.Split('-')[0];
             int runid = int.Parse(Id.Split('-')[1]);
 
@@ -104,8 +104,6 @@ namespace Kemrex.Web.Main.Controllers
             List<TblJobOrderObstructionType> ObstructionType = null;
             List<TblJobOrderAttachmentType> AttachmentType = null;
 
-           
-
             string JobOrderId = this.Request.Form["JobOrderId"];
 
             string StartHH = this.Request.Form["StartHH"];
@@ -120,7 +118,7 @@ namespace Kemrex.Web.Main.Controllers
             string hddUndergroundType = this.Request.Form["hddUndergroundType"];
             string hddObstructionType = this.Request.Form["hddObstructionType"];
             string hddAttachmentType = this.Request.Form["hddAttachmentType"];
-            jobOrder.ProductId= this.Request.Form["ProductId"].ParseInt();
+            jobOrder.ProductId = this.Request.Form["ProductId"].ParseInt();
             jobOrder.StartWorkingTime = StartHH + ":" + StartMM;
             jobOrder.EndWorkingTime = EndHH + ":" + EndMM;
             if (JobOrderId == "" || JobOrderId == "0")
@@ -128,15 +126,16 @@ namespace Kemrex.Web.Main.Controllers
                 jobOrder.JobOrderNo = getJobId();
                 jobOrder.CreateDate = DateTime.Now;
             }
-            else {
+            else
+            {
                 jobOrder.UpdateDate = DateTime.Now;
             }
-            
-            if (Request.Form["StartDate"].ToString() !="")
-            {
-                var dd = Request.Form["StartDate"]+ " 00:00:00";
 
-                jobOrder.StartDate = dd.ParseDate(DateFormat.ddMMyyyyHHmmss,culInfo: _cultureTHInfo);
+            if (Request.Form["StartDate"].ToString() != "")
+            {
+                var dd = Request.Form["StartDate"] + " 00:00:00";
+
+                jobOrder.StartDate = dd.ParseDate(DateFormat.ddMMyyyyHHmmss, culInfo: _cultureTHInfo);
             }
 
             if (Request.Form["EndDate"].ToString() != "")
@@ -146,7 +145,7 @@ namespace Kemrex.Web.Main.Controllers
                 jobOrder.EndDate = dd.ParseDate(DateFormat.ddMMyyyyHHmmss, culInfo: _cultureTHInfo);
             }
 
-            
+
 
             /*# hddProject
             # hddEquipmentType
@@ -272,10 +271,10 @@ namespace Kemrex.Web.Main.Controllers
 
         public ActionResult AddProduct()
         {
-            int sid = Request.Form["JobOrderId"]!=null? Request.Form["JobOrderId"].Split(',')[0].ParseInt():0;
+            int sid = Request.Form["JobOrderId"] != null ? Request.Form["JobOrderId"].Split(',')[0].ParseInt() : 0;
             var id = Request.Form["selProduct"].Split(':');  //  ProductId:PriceNet
             int qty = Request.Form["Quantity"].ParseInt();
-           
+
 
             if (id.Count() > 0)
             {
@@ -295,35 +294,7 @@ namespace Kemrex.Web.Main.Controllers
 
 
             }
-            return RedirectToAction("Detail", MVCController, new { id = sid, tab = "Product", msg = "บันทึกข้อมูลรียบร้อยแล้ว", msgType = AlertMsgType.Success });
-        }
-
-        public ActionResult AddProperty()
-        {
-            int sid = Request.Form["JobOrderId"] != null ? Request.Form["JobOrderId"].Split(',')[0].ParseInt() : 0;
-            var id = Request.Form["selProductP"].Split(':');  //  ProductId:PriceNet
-            int qty = Request.Form["QuantityP"].ParseInt();
-
-
-            if (id.Count() > 0)
-            {
-                var detail = uow.Modules.JobOrder.GetProperties(sid);
-                int pid = int.Parse(id[0]);
-
-                TblJobOrderProperties ob = uow.Modules.JobOrder.GetPropertie(0);
-
-                ob.No = detail != null ? detail.Count + 1 : 1;
-                ob.JobOrderId = sid;
-                ob.ProductId = pid;
-                ob.Quantity = qty;
-
-
-                uow.Modules.JobOrder.SetProperty(ob);
-                uow.SaveChanges();
-
-
-            }
-            return RedirectToAction("Detail", MVCController, new { id = sid, tab = "Product", msg = "บันทึกข้อมูลอุปกรณ์เรียบร้อยแล้ว", msgType = AlertMsgType.Success });
+            return RedirectToAction("Detail", MVCController, new { id = sid, tab = "Product", msg = "", msgType = AlertMsgType.Success });
         }
 
         [HttpPost]
@@ -353,10 +324,10 @@ namespace Kemrex.Web.Main.Controllers
                 ViewData["JobOrderDetail"] = uow.Modules.JobOrder.Gets();
                 ViewData["SysCategoryDetail"] = uow.Modules.SysCategory.Gets();
                 ViewData["SaleorderDetail"] = uow.Modules.SaleOrder.Gets();
-                ViewData["Saleorder"] =  saleOrder = uow.Modules.SaleOrder.Get(ob.SaleOrderId.HasValue? ob.SaleOrderId.Value:-1);
+                ViewData["Saleorder"] = saleOrder = uow.Modules.SaleOrder.Get(ob.SaleOrderId.HasValue ? ob.SaleOrderId.Value : -1);
                 ViewData["TeamOperation"] = uow.Modules.TeamOperation.Gets();
                 ViewData["optCustomer"] = customer = uow.Modules.Customer.Get(saleOrder.CustomerId.HasValue ? saleOrder.CustomerId.Value : -1);
-                ViewData["optProduct"] = uow.Modules.Product.Gets().ToList();
+                ViewData["optProduct"] = uow.Modules.Product.Gets().Where(o => o.CategoryId == 1).ToList();
                 ViewData["optAttachment"] = uow.Modules.SaleOrderAttachment.Gets(ob.SaleOrderId.HasValue ? ob.SaleOrderId.Value : -1);
                 //    ViewData["optCustomerAddress"] = uow.Modules.CustomerAddress.Get(customer.addHasValue ? saleOrder.CustomerId.Value : -1); 
                 return View(ob);
@@ -385,28 +356,6 @@ namespace Kemrex.Web.Main.Controllers
                 { return RedirectToAction("Detail", MVCController, new { id = qid, tab = "Product", msg = "ไม่พบข้อมูลที่ต้องการ", msgType = AlertMsgType.Warning }); }
 
                 uow.Modules.JobOrder.DeleteDetail(ob);
-                uow.SaveChanges();
-                return RedirectToAction("Detail", MVCController, new { id = qid, tab = "Product", msg = "ลบข้อมูลเรียบร้อยแล้ว", msgType = AlertMsgType.Success });
-            }
-            catch (Exception ex)
-            { return RedirectToAction("Detail", MVCController, new { id = qid, tab = "Product", msg = ex.GetMessage(), msgType = AlertMsgType.Danger }); }
-        }
-
-
-
-        [HttpPost]
-        //[Authorized]
-        public ActionResult PropertiesDelete()
-        {
-            int qid = Request.Form["JobOrderId"].ParseInt();
-            try
-            {
-                int Seq = Request.Form["No"].ParseInt();
-                TblJobOrderProperties ob = uow.Modules.JobOrder.GetPropertie(qid, Seq);
-                if (ob == null)
-                { return RedirectToAction("Detail", MVCController, new { id = qid, tab = "Product", msg = "ไม่พบข้อมูลที่ต้องการ", msgType = AlertMsgType.Warning }); }
-
-                uow.Modules.JobOrder.DeletePropertie(ob);
                 uow.SaveChanges();
                 return RedirectToAction("Detail", MVCController, new { id = qid, tab = "Product", msg = "ลบข้อมูลเรียบร้อยแล้ว", msgType = AlertMsgType.Success });
             }

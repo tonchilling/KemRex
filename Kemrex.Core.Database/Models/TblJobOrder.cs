@@ -33,6 +33,7 @@ namespace Kemrex.Core.Database.Models
         public int? SubDistrictId { get; set; }
         public string Reason { get; set; }
         public string Solution { get; set; }
+        public string Status { get; set; }
         public int? TeamId { get; set; }
         public DateTime? UpdateDate { get; set; }
         public DateTime? CreateDate { get; set; }
@@ -41,6 +42,8 @@ namespace Kemrex.Core.Database.Models
         public virtual TblSaleOrder SaleOrder { get; set; }
         public virtual SysSubDistrict SubDistrict { get; set; }
         public virtual TeamOperation Team { get; set; }
+        public virtual List<TblJobOrderDetail> JobOrderDetail { get; set; }
+        public virtual List<TblJobOrderProperties> TblJobOrderProperties { get; set; }
         public virtual List<TblJobOrderAttachmentType> AttachmentType { get; set; }
         public virtual List<TblJobOrderEquipmentType> EquipmentType { get; set; }
         public virtual List<TblJobOrderLandType> LandType { get; set; }

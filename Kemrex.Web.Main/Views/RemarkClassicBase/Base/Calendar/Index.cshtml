@@ -161,20 +161,6 @@
         $(document).on("click", ".btnSelectDay", function () {
 
 
-            /*   public int SaleOrderId { get; set; }
-    public string SaleOrderNo { get; set; }
-    public string SaleOrderDate { get; set; }
-        public string SaleName { get; set; }
-        public string QuotationNo { get; set; }
-        public string QuotationDate { get; set; }
-        public int ? CustomerId { get; set; }
-        public string CustomerName { get; set; }
-        public string JobOrderId { get; set; }
-        public string JobOrderNo { get; set; }
-        public string JobOrderName { get; set; }
-        public string JobOrderDate { get; set; }
-        public int StatusId { get; set; }
-        public string Status { get; set; }*/
             var html = '';
             var url = '@Url.Action("GetSaleOrderByDate", "SaleOrder", new { saleOrderDate = "__id__" })';
             selectDay = $(this);
@@ -374,106 +360,7 @@
             <li class="breadcrumb-item active">ปฏิทินงาน</li>
         </ol>
     </div>
-    @*<div class="page-aside">
-            <div class="page-aside-switch">
-                <i class="icon wb-chevron-left" aria-hidden="true"></i>
-                <i class="icon wb-chevron-right" aria-hidden="true"></i>
-            </div>
-            <div class="page-aside-inner page-aside-scroll scrollable is-enabled scrollable-vertical" style="position: relative;">
-                <div data-role="container" class="scrollable-container" style="height: 646px; width: 276px;">
-                    <div data-role="content" class="scrollable-content" style="width: 259px;">
-                        <section class="page-aside-section">
-                            <h5 class="page-aside-title">CALENDAR LIST</h5>
-                            <div class="list-group has-actions">
-                                <div class="list-group-item" data-plugin="editlist">
-                                    <div class="list-content">
-                                        <span class="item-right">10</span>
-                                        <span class="list-text">Admin Calendar</span>
-                                        <div class="item-actions">
-                                            <span class="btn btn-pure btn-icon" data-toggle="list-editable"><i class="icon wb-edit" aria-hidden="true"></i></span>
-                                            <span class="btn btn-pure btn-icon" data-toggle="list-delete"><i class="icon wb-trash" aria-hidden="true"></i></span>
-                                        </div>
-                                    </div>
-                                    <div class="list-editable">
-                                        <div class="form-group form-material">
-                                            <input type="text" class="form-control empty" name="label" value="Admin Calendar">
-                                            <button type="button" class="input-editable-close icon wb-close" data-toggle="list-editable-close" aria-label="Close" aria-expanded="true"></button>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="list-group-item" data-plugin="editlist">
-                                    <div class="list-content">
-                                        <span class="item-right">5</span>
-                                        <span class="list-text">Home Calendar</span>
-                                        <div class="item-actions">
-                                            <span class="btn btn-pure btn-icon" data-toggle="list-editable"><i class="icon wb-edit" aria-hidden="true"></i></span>
-                                            <span class="btn btn-pure btn-icon" data-toggle="list-delete"><i class="icon wb-trash" aria-hidden="true"></i></span>
-                                        </div>
-                                    </div>
-                                    <div class="list-editable">
-                                        <div class="form-group form-material">
-                                            <input type="text" class="form-control empty" name="label" value="Home Calendar">
-                                            <button type="button" class="input-editable-close icon wb-close" data-toggle="list-editable-close" aria-label="Close" aria-expanded="true"></button>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="list-group-item" data-plugin="editlist">
-                                    <div class="list-content">
-                                        <span class="item-right">16</span>
-                                        <span class="list-text">Work Calendar</span>
-                                        <div class="item-actions">
-                                            <span class="btn btn-pure btn-icon" data-toggle="list-editable"><i class="icon wb-edit" aria-hidden="true"></i></span>
-                                            <span class="btn btn-pure btn-icon" data-toggle="list-delete"><i class="icon wb-trash" aria-hidden="true"></i></span>
-                                        </div>
-                                    </div>
-                                    <div class="list-editable">
-                                        <div class="form-group form-material">
-                                            <input type="text" class="form-control empty" name="label" value="Work Calendar">
-                                            <button type="button" class="input-editable-close icon wb-close" data-toggle="list-editable-close" aria-label="Close" aria-expanded="true"></button>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="list-group-item" data-plugin="editlist">
-                                    <div class="list-content">
-                                        <span class="item-right">30</span>
-                                        <span class="list-text">Calendar One</span>
-                                        <div class="item-actions">
-                                            <span class="btn btn-pure btn-icon" data-toggle="list-editable"><i class="icon wb-edit" aria-hidden="true"></i></span>
-                                            <span class="btn btn-pure btn-icon" data-toggle="list-delete"><i class="icon wb-trash" aria-hidden="true"></i></span>
-                                        </div>
-                                    </div>
-                                    <div class="list-editable">
-                                        <div class="form-group form-material">
-                                            <input type="text" class="form-control empty" name="label" value="Calendar One">
-                                            <button type="button" class="input-editable-close icon wb-close" data-toggle="list-editable-close" aria-label="Close" aria-expanded="true"></button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </section>
-                        <section class="page-aside-section">
-                            <h5 class="page-aside-title">EVENTS</h5>
-                            <div class="list-group calendar-list">
-                                <a class="list-group-item calendar-event ui-draggable ui-draggable-handle" data-title="Meeting" data-stick="true" data-color="red-600" href="javascript:void(0)">
-                                    <i class="wb-medium-point red-600 mr-10" aria-hidden="true"></i>Meeting
-                                </a>
-                                <a class="list-group-item calendar-event ui-draggable ui-draggable-handle" data-title="Birthday Party" data-stick="true" data-color="green-600" href="javascript:void(0)">
-                                    <i class="wb-medium-point green-600 mr-10" aria-hidden="true"></i>Birthday Party
-                                </a>
-                                <a class="list-group-item calendar-event ui-draggable ui-draggable-handle" data-title="Call Jimba" data-stick="true" data-color="orange-600" href="javascript:void(0)">
-                                    <i class="wb-medium-point orange-600 mr-10" aria-hidden="true"></i>Call Jimba
-                                </a>
-                                <a class="list-group-item calendar-event ui-draggable ui-draggable-handle" data-title="Dinner with Team" data-stick="true" data-color="cyan-600" href="javascript:void(0)">
-                                    <i class="wb-medium-point cyan-600 mr-10" aria-hidden="true"></i>Dinner with Team
-                                </a>
-                                <a id="addNewEventBtn" class="list-group-item" href="javascript:void(0)"> <i class="icon wb-plus" aria-hidden="true"></i> Add New Event </a>
-                            </div>
-                        </section>
-                    </div>
-                </div>
-                <div class="scrollable-bar scrollable-bar-vertical is-disabled scrollable-bar-hide" draggable="false"><div class="scrollable-bar-handle"></div></div>
-            </div>
-        </div>*@
+   
 
     <div class="page-content container-fluid">
         <div class="card">
@@ -1287,3 +1174,4 @@
             </div>
         </div>
 </div>
+    </div>

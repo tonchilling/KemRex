@@ -193,7 +193,7 @@ namespace Kemrex.Web.Main.Controllers
                                             .ToList();
                 ViewData["optCustomer"] = uow.Modules.Customer.GetAllAddress();
                 ViewData["optCustomerAddress"] = uow.Modules.CustomerAddress.Gets();
-                ViewData["optProduct"] = uow.Modules.Product.Gets();
+                ViewData["optProduct"] = uow.Modules.Product.Gets("0");
                 ViewData["optContact"] = uow.Modules.CustomerContact.Gets();
                 ViewData["optEmployee"] = uow.Modules.Employee.Gets();
                 ViewData["optPayment"] = uow.Modules.PaymentCondition.Gets();

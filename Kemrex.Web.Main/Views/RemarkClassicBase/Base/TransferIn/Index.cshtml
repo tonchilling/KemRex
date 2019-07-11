@@ -65,11 +65,10 @@
                                     <table class="table table-bordered table-hover">
                                         <thead>
                                             <tr align="center">
-                                                <th>ชื่องาน</th>
                                                 <th>หมายเลข</th>
                                                 <th>ลงวันที่</th>
-                                                @*<th>สถานะ</th>
-                                                    <th>เครื่องมือ</th>*@
+                                                <th>สถานะ</th>
+                                                <th>เครื่องมือ</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -82,11 +81,12 @@
                                             @foreach (var ob in Model)
                                             {
                                                 //   var total = ob.SaleOrder.SummaryTot - ob.SaleOrder.DiscountCash;
-                                                <tr id="@ob.TransferNo">
+                                                <tr id="@ob.TransferId"
+                                                    @if (ob.TransferStatus == 1) { @Html.Raw("class=\"table-success text-white\"")  } else if (ob.TransferStatus == 2) { @Html.Raw("class=\"table-second text-second\"") }>
 
                                                     <td>@ob.TransferNo </td>
                                                     <td>@Converting.ToDDMMYYYY(ob.TransferDate)</td>
-
+                                                    <td>@Converting.TransferStatus(ob.TransferStatus.ToString()) </td>
 
                                                     <td align="center">
                                                         <a href="@Url.Action("Detail", new { controller="TransferIn" , area="" , id=ob.TransferId })"

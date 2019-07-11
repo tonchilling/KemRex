@@ -56,6 +56,49 @@ namespace Kemrex.Core.Common.Modules
             return data.ToList();
         }
 
+        public List<TblQuotation> GetList()
+        {
+            var data = (from order in db.TblQuotation
+                        select new TblQuotation
+                        {
+                         QuotationId = order.QuotationId,
+                            QuotationNo = order.QuotationNo,
+       QuotationDate = order.QuotationDate,
+       strQuotationDate=string.Format("{0}/{1}/{2}",order.QuotationDate.Day.ToString("##00"), order.QuotationDate.Month.ToString("##00"), order.QuotationDate.Year.ToString()),
+       SubTotalNet = order.SubTotalNet,
+      SubTotalVat = order.SubTotalVat,
+       SubTotalTot = order.SubTotalTot,
+      DiscountNet = order.DiscountNet,
+       DiscountVat = order.DiscountVat,
+        DiscountTot = order.DiscountTot,
+       DiscountCash = order.DiscountCash,
+       SummaryNet = order.SummaryNet,
+        SummaryVat = order.SummaryVat,
+        SummaryTot = order.SummaryTot,
+        Status= (from emp in db.EnmStatusQuotation.Where(o => o.StatusId == order.StatusId)
+                 select new EnmStatusQuotation
+                 {
+                     StatusId = emp.StatusId,
+                      StatusName = emp.StatusName,
+                 }).FirstOrDefault(),
+                            Customer = (from emp in db.TblCustomer.Where(o => o.CustomerId == order.CustomerId)
+                    select new TblCustomer
+                    {
+                        CustomerId = emp.CustomerId,
+                        CustomerName = emp.CustomerName
+                    }).FirstOrDefault(),
+        Sale = (from emp in db.TblEmployee.Where(o=>o.EmpId==order.SaleId)
+                select new TblEmployee {
+                    EmpId=emp.EmpId,
+                    EmpCode=emp.EmpCode,
+                    EmpNameTh=emp.EmpNameTh
+                }).FirstOrDefault()
+                        });
+            return data.ToList();
+        }
+
+
+
         public string GetStatus(int id)
         {
             return db.EnmStatusQuotation

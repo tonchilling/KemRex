@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-
+using System.ComponentModel.DataAnnotations.Schema;
 namespace Kemrex.Core.Database.Models
 {
     public partial class TransferDetail
@@ -18,7 +18,12 @@ namespace Kemrex.Core.Database.Models
         public decimal? RequestUnitFactor { get; set; }
         public DateTime? LastModified { get; set; }
 
+        [NotMapped]
+        public string ProductName { get; set; }
+        [NotMapped]
+        public string ProductCode { get; set; }
+
         public virtual TblProduct Product { get; set; }
-        public virtual TransferHeader TransferHeader { get; set; }
+      /*  public virtual TransferHeader TransferHeader { get; set; }*/
     }
 }
