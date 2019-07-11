@@ -2,13 +2,14 @@
 @using Kemrex.Web.Common.Controllers
 @using Kemrex.Web.Common.Models
 @using Kemrex.Core.Common.Helper
-@model List<TransferHeader>
+@model List<TransferStockHeader>
 @{
     ViewBag.Title = "Index";
     KemrexController kemrex = ((KemrexController)this.ViewContext.Controller);
     Layout = kemrex.PathViewShared("_lyDefault");
     WidgetAlertModel Alert = (WidgetAlertModel)ViewBag.Alert;
     WidgetPaginationModel Pagination = (WidgetPaginationModel)ViewBag.Pagination;
+
 }
 
 @section Scripts {
@@ -27,11 +28,11 @@
 
 <div class="page">
     <div class="page-header">
-        <h1 class="page-title">Add GatePass-in (ใบอนุญาตนำวัสดุ/สิ่งของ เข้า) </h1>
+        <h1 class="page-title">รับสินค้าเข้า (Stock In) </h1>
         <ol class="breadcrumb">
             <li class="breadcrumb-item"><a href="@Url.Action("Index", new { controller = "Home", area = "" })" })">หน้าแรก</a></li>
-            <li class="breadcrumb-item"><a href="javascript:void(0)">ฝ่ายติดตั้ง</a></li>
-            <li class="breadcrumb-item active">ใบนำวัสดุุเข้า</li>
+            <li class="breadcrumb-item"><a href="javascript:void(0)">คลังสินค้า</a></li>
+            <li class="breadcrumb-item active">รับสินค้าเข้า (Stock In)</li>
         </ol>
     </div>
     <div class="page-content container-fluid">
@@ -43,7 +44,7 @@
                 }
                 <div class="panel">
                     <div class="panel-heading">
-                        <h3 class="panel-title">(ใบอนุญาตนำวัสดุ/สิ่งของ เข้า)&nbsp;<a href="@Url.Action("Detail", new { area = "", controller = "TransferIn" })" class="btn btn-xs btn-primary" style="color:white;">เพิ่มข้อมูล</a></h3>
+                        <h3 class="panel-title">รับสินค้าเข้า (Stock In)<a href="@Url.Action("Detail", new { area = "", controller = "TransferStockIn" })" class="btn btn-xs btn-primary" style="color:white;">เพิ่มข้อมูล</a></h3>
                     </div>
                     <!-- /.box-header -->
                     <div class="panel-body dataTables_wrapper">
@@ -65,39 +66,38 @@
                                     <table class="table table-bordered table-hover">
                                         <thead>
                                             <tr align="center">
-                                                <th>หมายเลข</th>
-                                                <th>ลงวันที่</th>
-                                                <th>สถานะ</th>
+                                                <th>เลขที่นำเข้าสินค้า</th>
+                                                <th>เลขที่อ้างอิง/เลขที่ใบเสร็จ</th>
+                                                <th>ผู้นำสินค้าเข้า</th>
+                                                <th>วันที่นำสินค้าเข้า</th>
+                                                <th>วันที่สร้างรายการ</th>
                                                 <th>เครื่องมือ</th>
-
+                                                @*<th>สถานะ</th>
+        <th>เครื่องมือ</th>*@
                                             </tr>
                                         </thead>
                                         <tbody>
                                             @if (Model.Count() <= 0)
                                             {
                                                 <tr align="center">
-                                                    <td colspan="5">ไม่พบข้อมูล</td>
+                                                    <td colspan="6">ไม่พบข้อมูล</td>
                                                 </tr>
                                             }
                                             @foreach (var ob in Model)
                                             {
                                                 //   var total = ob.SaleOrder.SummaryTot - ob.SaleOrder.DiscountCash;
-                                                <tr id="@ob.TransferId"
-                                                    @if (ob.TransferStatus == 1) { @Html.Raw("class=\"table-success text-white\"")  } else if (ob.TransferStatus == 2) { @Html.Raw("class=\"table-second text-second\"") }>
                                                 <tr id="@ob.TransferNo" align="center">
 
                                                     <td>@ob.TransferNo </td>
+                                                    <td>@ob.BillNo </td>
+                                                    <td>@ob.Employee.EmpNameTh</td>
                                                     <td>@Converting.ToDDMMYYYY(ob.TransferDate)</td>
-                                                    <td>@Converting.TransferStatus(ob.TransferStatus.ToString()) </td>
+                                                    <td>@Converting.ToDDMMYYYY(ob.CreateDate)</td>
 
                                                     <td align="center">
-                                                        <a href="@Url.Action("Detail", new { controller="TransferIn" , area="" , id=ob.TransferId })"
+                                                        <a href="@Url.Action("Detail", new { controller="TransferStockIn" , area="" , id=ob.TransferStockId })"
                                                            class="btn btn-xs btn-primary">
                                                             <i class="fa fa-pencil" aria-hidden="true"></i>&nbsp;แก้ไข
-                                                        </a>
-                                                        <a href="@Url.Action("PDFTransferIn", new { controller = "export", area = "", id=ob.TransferId  })"
-                                                           class="btn btn-xs btn-warning">
-                                                            <i class="fa fa-file-pdf-o" aria-hidden="true"></i>&nbsp;PDF
                                                         </a>
                                                     </td>
                                                 </tr>

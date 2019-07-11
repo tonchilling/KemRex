@@ -1710,6 +1710,7 @@ namespace Kemrex.Core.Database
             modelBuilder.Entity<TransferStockHeader>(entity =>
             {
                  entity.HasKey(e => e.TransferId)
+                entity.HasKey(e => e.TransferStockId)
                     .HasName("PK__Transfer__Stock");
 
                 entity.Property(e => e.BillNo).HasMaxLength(50);
