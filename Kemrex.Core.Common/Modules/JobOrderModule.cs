@@ -41,6 +41,18 @@ namespace Kemrex.Core.Common.Modules
             { db.TblJobOrder.Remove(ob); }
         }
 
+        public void DeleteDetail(TblJobOrderDetail ob)
+        {
+            if (IsExist(ob.JobOrderId))
+            { db.TblJobOrderDetail.Remove(ob); }
+        }
+
+        public void DeletePropertie(TblJobOrderProperties ob)
+        {
+            if (IsExist(ob.JobOrderId))
+            { db.TblJobOrderProperties.Remove(ob); }
+        }
+
         private IQueryable<TblJobOrder> Filter(IQueryable<TblJobOrder> data, string src = "", int JobOrderId = 0)
         {
             if (!string.IsNullOrWhiteSpace(src))
@@ -50,24 +62,76 @@ namespace Kemrex.Core.Common.Modules
             return data;
         }
 
-        public TblJobOrder Get(int id)
+        public List<TblJobOrder> GetByDate(string fromDate,string toDate)
         {
-          /*  public virtual List<TblJobOrderAttachmentType> AttachmentType { get; set; }
-        public virtual List<TblJobOrderEquipmentType> EquipmentType { get; set; }
-        public virtual List<TblJobOrderLandType> LandType { get; set; }
-        public virtual List<TblJobOrderObstructionType> rObstructionType { get; set; }
-        public virtual List<TblJobOrderProjectType> ProjectType { get; set; }
-        public virtual List<TblJobOrderUndergroundType> UndergroundType { get; set; }
-        */
-            return db.TblJobOrder
-                .Where(x => x.JobOrderId == id)
-             .Include(x => x.AttachmentType)
-               .Include(x => x.EquipmentType)
-                 .Include(x => x.LandType)
-                  .Include(x => x.ObstructionType)
-                     .Include(x => x.ProjectType)
-                     .Include(x => x.UndergroundType)
-                .FirstOrDefault() ?? new TblJobOrder() { };
+            List<TblJobOrder> jobOrder = (from q in db.TblJobOrder select q).ToList();
+
+            return jobOrder;
+        }
+
+            public TblJobOrder Get(int id)
+        {
+            /*   public int JobOrderId { get; set; }
+        public int No { get; set; }
+        public int? ProductId { get; set; }
+        public int? Quantity { get; set; }
+        public decimal? Weight { get; set; }
+
+        public virtual TblProduct Product { get; set; }
+          */
+
+            TblJobOrder jobOrder = db.TblJobOrder
+                   .Where(x => x.JobOrderId == id)
+                .Include(x => x.AttachmentType)
+                  .Include(x => x.EquipmentType)
+                    .Include(x => x.LandType)
+                     .Include(x => x.ObstructionType)
+                        .Include(x => x.ProjectType)
+                        .Include(x => x.UndergroundType).FirstOrDefault() ?? new TblJobOrder()
+                        {
+
+                        };
+
+
+            if (jobOrder != null)
+            {
+
+                jobOrder.JobOrderDetail = (from q in db.TblJobOrderDetail.Include(x => x.Product)
+                                           where q.JobOrderId == id
+                                           select new TblJobOrderDetail
+                                           {
+                                               JobOrderId = q.JobOrderId,
+                                               No = q.No,
+                                               ProductId = q.ProductId,
+                                               Quantity = q.Quantity,
+                                               Weight = q.Weight,
+                                               Product = q.Product
+                                           }).ToList();
+
+                jobOrder.SaleOrder = (from q in db.TblSaleOrder.Include(x => x.TblSaleOrderDetail)
+                                      where q.SaleOrderId == jobOrder.SaleOrderId
+                                      select q).FirstOrDefault();
+
+                jobOrder.TblJobOrderProperties = (from q in db.TblJobOrderProperties.Include(x => x.Product)
+                                           where q.JobOrderId == id
+                                           select new TblJobOrderProperties
+                                           {
+                                               JobOrderId = q.JobOrderId,
+                                               No = q.No,
+                                               ProductId = q.ProductId,
+                                               Quantity = q.Quantity,
+                                               Weight = q.Weight,
+                                               Product = q.Product
+                                           }).ToList();
+            }
+            else {
+                jobOrder = new TblJobOrder();
+            }
+
+            return jobOrder;
+
+
+
         }
 
         public List<int> GetTeamByPeriod(System.DateTime tempStartDate,System.DateTime tempEndDate)
@@ -128,5 +192,88 @@ namespace Kemrex.Core.Common.Modules
 
             }
         }
+
+        public TblJobOrderDetail GetDetail(int id = 0)
+        {
+            // var detail = (from d in db.TransferDetail.Where(x => x.TransferId == id) select d);
+
+            //  if (detail == null)
+            //  detail = new TransferDetail();
+
+            return new TblJobOrderDetail();
+        }
+
+
+        public TblJobOrderProperties GetPropertie(int id = 0)
+        {
+            // var detail = (from d in db.TransferDetail.Where(x => x.TransferId == id) select d);
+
+            //  if (detail == null)
+            //  detail = new TransferDetail();
+
+            return new TblJobOrderProperties();
+        }
+
+        public TblJobOrderProperties GetPropertie(int transferId, int seq)
+        {
+            var detail = (from d in db.TblJobOrderProperties.Where(x => x.JobOrderId == transferId && x.No == seq) select d);
+
+            //  if (detail == null)
+            //  detail = new TransferDetail();
+
+            return detail.FirstOrDefault();
+        }
+
+
+        public TblJobOrderDetail GetDetail(int transferId, int seq)
+        {
+            var detail = (from d in db.TblJobOrderDetail.Where(x => x.JobOrderId == transferId && x.No == seq) select d);
+
+            //  if (detail == null)
+            //  detail = new TransferDetail();
+
+            return detail.FirstOrDefault();
+        }
+
+        public List<TblJobOrderDetail> GetDetails(int JobOrderId)
+        {
+            var detail = (from d in db.TblJobOrderDetail.Where(x => x.JobOrderId == JobOrderId) select d).ToList();
+
+         
+            //  if (detail == null)
+            //  detail = new TransferDetail();
+
+            return detail;
+        }
+
+        public List<TblJobOrderProperties> GetProperties(int JobOrderId)
+        {
+            var detail = (from d in db.TblJobOrderProperties.Where(x => x.JobOrderId == JobOrderId) select d).ToList();
+
+
+            //  if (detail == null)
+            //  detail = new TransferDetail();
+
+            return detail;
+        }
+
+
+
+        public void SetDetail(TblJobOrderDetail ob)
+        {
+            db.TblJobOrderDetail.Add(ob);
+            /* if (ob.TransferId == 0)
+             { db.TransferDetail.Add(ob); }
+             else { db.Entry(ob).State = EntityState.Modified; }*/
+        }
+
+        public void SetProperty(TblJobOrderProperties ob)
+        {
+            db.TblJobOrderProperties.Add(ob);
+            /* if (ob.TransferId == 0)
+             { db.TransferDetail.Add(ob); }
+             else { db.Entry(ob).State = EntityState.Modified; }*/
+        }
     }
 }
+

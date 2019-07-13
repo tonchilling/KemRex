@@ -103,6 +103,46 @@ namespace Kemrex.Core.Common.Helper
 
         }
 
+        public static string JobOrderStatus(string StatusId)
+        {
+            string result = "ร่าง";
+
+            try
+            {
+                switch (StatusId)
+                {
+                    case "1": result = "เปิด"; break;
+                    case "2": result = "ปิด"; break;
+                    case "3": result = "ยกเลิก"; break;
+                }
+            }
+            catch
+            { }
+            finally { }
+            return result;
+
+        }
+
+        public static string TransferStatus(string StatusId)
+        {
+            string result = "ร่าง";
+
+            try
+            {
+                switch (StatusId)
+                {
+                    case "1": result = "ปิด"; break;
+                    case "2": result = "ยกเลิก"; break;
+  
+                }
+            }
+            catch
+            { }
+            finally { }
+            return result;
+
+        }
+
         public static string DateOfDDMM(string date)
         {
             string result = date;

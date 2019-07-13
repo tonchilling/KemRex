@@ -1,0 +1,1198 @@
+﻿@using Kemrex.Core.Database.Models
+@using Kemrex.Web.Common.Controllers
+@using Kemrex.Web.Common.Models
+
+@model TblJobOrder
+@{
+    ViewBag.Title = "Index";
+    KemrexController kemrex = ((KemrexController)this.ViewContext.Controller);
+    Layout = kemrex.PathViewShared("_lyDefault");
+    WidgetAlertModel Alert = (WidgetAlertModel)ViewBag.Alert;
+
+
+    List<TblSaleOrder>
+    SaleOrderDetail = (List<TblSaleOrder>
+    )ViewData["SaleorderDetail"];
+
+    List<SysCategory>
+    SysCategoryDetail = (List<SysCategory>
+    )ViewData["SysCategoryDetail"];
+
+
+
+    TblCustomer
+    customerDetail = (TblCustomer
+    )ViewData["optCustomer"];
+
+    List<TeamOperation>
+    TeamOperationList = (List<TeamOperation>
+    )ViewData["TeamOperation"];
+    List<TblProduct>
+ optProduct = (List<TblProduct>
+     )ViewData["optProduct"];
+
+    List<TblSaleOrderAttachment> optAttachment = (List<TblSaleOrderAttachment>
+      )ViewData["optAttachment"];
+
+
+}
+
+@section Scripts {
+    <script type="text/javascript">
+
+        var _contact = [];
+
+        $(document).ready(function () {
+
+                window.setTimeout(function () {
+                $(".alert").fadeTo(1000, 0).slideUp(1000, function () {
+                    $(this).remove();
+                    });
+            }, 5000);
+
+
+            $("form:first").validate({
+                highlight: function (element) {
+                    $(element).parents('.form-group').addClass('has-error');
+                    $(element).parents('.input-group').addClass('has-error');
+                },
+                unhighlight: function (element) {
+                    $(element).parents('.form-group').removeClass('has-error');
+                    $(element).parents('.input-group').removeClass('has-error');
+                }, messages: {
+                    SaleOrderNo: {
+                        required: "",
+                    },
+                }
+            });
+
+
+            $(SaleMenu).slideToggle();
+
+
+                if (getUrlVars()["tab"] == "Product") {
+                $('ul.tabs li').removeClass('current');
+                $('.tab-content').removeClass('current');
+                $("#tab-3").addClass('current');
+                $("li[data-tab='tab-3']").addClass('current');
+                }
+
+
+            $('ul.tabs li').click(function () {
+                    var tab_id = $(this).attr('data-tab');
+
+                $('ul.tabs li').removeClass('current');
+                $('.tab-content').removeClass('current');
+
+                $(this).addClass('current');
+                $("#" + tab_id).addClass('current');
+                })
+
+
+        });
+
+        function getUrlVars() {
+                var vars = [], hash;
+                var hashes = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');
+                for (var i = 0; i < hashes.length; i++) {
+                    hash = hashes[i].split('=');
+                    vars.push(hash[0]);
+                    vars[hash[0]] = hash[1];
+                }
+                return vars;
+            }
+
+
+
+
+        $('#btnSave').click(function () {
+                KeepData();
+
+
+        });
+
+        $(document).on("click", ".btnSelectTeam", function () {
+            $('#TeamId').val($(this).closest('tr').attr('data'));
+            $('#TeamName').val($(this).closest('td').next().html());
+            $('#TeamModal').modal('hide');
+        });
+
+
+
+        $(document).on("click", ".btnSellectSaleOrder", function () {
+            $('#SaleOrderId').val($(this).closest('tr').attr('data'));
+            $('#SaleOrderNo').val($(this).closest('td').next().html());
+
+
+                  var url = '@Url.Action("GetSaleOrderById", "SaleOrder")';
+            $.ajax({
+                type: "get",
+                contentType: 'application/json; charset=utf-8',
+                url: url,
+                data: { id: $(this).closest('tr').attr('data') },
+                success: function (obj) {
+
+                    $('#CustomerName').val(obj.Customer.CustomerName);
+                    $('#CustomerPhone').val(obj.Customer.CustomerPhone);
+                    $('#CustomerEmail').val(obj.Customer.CustomerEmail);
+                    $('#SaleName').val(obj.Sale.EmpNameTh);
+                    $('#SalePhone').val(obj.Sale.EmpMobile);
+                   // $('#SaleEmail').val(obj.Sale.CustomerEmail);
+
+                    $('#SaleOrderModal').modal('hide');
+                }
+            });
+
+
+        });
+
+
+
+
+        $('#btnAddProduct').click(function () {
+
+
+            $('#frmmain').attr('action', '@Url.Action("AddProduct", "JobOrderForSale")');
+        });
+
+        $('#btnSave').click(function () {
+
+            $('#Status').val("0"); // Sale Created
+            $('#frmmain').attr('action', '@Url.Action("Detail", "JobOrderForSale")');
+        });
+
+        $('#btnApprove').click(function () {
+
+            $('#Status').val("1"); // Sale Approved
+            $('#frmmain').attr('action', '@Url.Action("Detail", "JobOrderForSale")');
+        });
+
+
+
+
+        $('.btnDeleteProduct').click(function () {
+
+            $('#No').val($(this).closest("tr").attr("data"));
+            $('#frmmain').attr('action', '@Url.Action("DetailDelete", "JobOrderForSale")');
+        });
+
+
+
+        $('.btnSearchSaleOrder').click(function () {
+
+
+            $('.divSaleOrder').empty();
+            var html = '';
+            html += '<table class="table table-hover">';
+            html += '<thead> ';
+            html += '<tr>';
+            html += '<th>กรุณาเลือก</th>';
+            html += '<th>ใบสั่งขาย</th>';
+            html += '</tr>';
+            html += '</thead>';
+            html += '<tbody>';
+
+
+
+            var url = '@Url.Action("GetSaleOrder", "SaleOrder")';
+                   $.ajax({
+                type: "get",
+                url: url,
+                       data: { startDate: $("#SaleOrderStartDate").val(), toDate: $("#SaleOrderEndDate").val() },
+                       success: function (obj) {
+                           $.each(obj, function (index, item) {
+
+                               html += '<tr data=' + item.SaleOrderId + ' customerid=' + item.CustomerId + '>';
+                               html += '<td><button type="button" class="btn btn-primary btnSellectSaleOrder">เลิอก</button></td>';
+                               html += '<td>' + item.SaleOrderNo + '</td>';
+                               html += '</tr>';
+                           });
+
+                           html += '</tbody>';
+                           html += '</table>';
+                           html += ' </div>';
+
+
+                           $('.divSaleOrder').append(html);
+                           $('.divSaleOrder table').DataTable();
+                       },
+                       error: function (jqXHR, textStatus, errorThrown) {
+                           alert(errorThrown);
+                           //or you can put jqXHR.responseText somewhere as complete response. Its html.
+                       }
+                   });
+
+
+
+
+        });
+
+        $('.btnSearchTeam').click(function () {
+
+
+            $('.tblTeam').empty();
+            var html = '';
+            html += '<table class="table table-hover">';
+            html += '<thead> ';
+            html += '<tr>';
+            html += '<th>กรุณาเลือก</th>';
+            html += '<th>ทีมปฏิบัติงาน</th>';
+            html += '</tr>';
+            html += '</thead>';
+            html += '<tbody>';
+
+            $('#TeamStartDate').css('border-color', '');
+            $('#TeamEndDate').css('border-color', '');
+            if ($('#TeamStartDate').val() == "" || $('#TeamEndDate').val() == "")
+            {
+                $('#TeamStartDate').css('border-color', 'red');
+                $('#TeamEndDate').css('border-color', 'red');
+                return false;
+
+            }
+
+
+            var url = '@Url.Action("GetAllTeamNotIn", "TeamOperation")';
+                   $.ajax({
+                type: "get",
+                contentType: 'application/json; charset=utf-8',
+                url: url,
+                       data: { StartDate: $('#TeamStartDate').val(), EndDate: $('#TeamEndDate').val() },
+                       success: function (obj) {
+                           $.each(obj, function (index, item) {
+
+                               html += '<tr data=' + item.TeamId + '>';
+                               html += '<td><button type="button" class="btn btn-primary btnSelectTeam">เลิอก</button></td>';
+                               html += '<td>' + item.TeamName + '</td>';
+                               html += '</tr>';
+                           });
+
+                           html += '</tbody>';
+                           html += '</table>';
+                           html += ' </div>';
+
+
+                           $('.tblTeam').append(html);
+                       },
+                       error: function (jqXHR, textStatus, errorThrown) {
+                           alert(errorThrown);
+                           //or you can put jqXHR.responseText somewhere as complete response. Its html.
+                       }
+                   });
+
+
+
+
+            });
+
+        function KeepData() {
+
+                var selected = [];
+
+
+
+
+            $('.selProject:checked').each(function () {
+                    selected.push($(this).val());
+                });
+            $("#hddProject").val(selected.join(","));
+                selected = [];
+
+
+            $('.selEquipmentType:checked').each(function () {
+                    selected.push($(this).val());
+                });
+            $("#hddEquipmentType").val(selected.join(","));
+                selected = [];
+
+
+            $('.selLandType:checked').each(function () {
+                    selected.push($(this).val());
+                });
+            $("#hddLandType").val(selected.join(","));
+                selected = [];
+
+            $('.selUndergroundType:checked').each(function () {
+                    selected.push($(this).val());
+                });
+            $("#hddUndergroundType").val(selected.join(","));
+                selected = [];
+
+            $('.selObstructionType:checked').each(function () {
+                    selected.push($(this).val());
+                });
+            $("#hddObstructionType").val(selected.join(","));
+                selected = [];
+
+            $('.selAttachmentType:checked').each(function () {
+                    selected.push($(this).val());
+                });
+            $("#hddAttachmentType").val(selected.join(","));
+                selected = [];
+
+
+
+            }
+
+
+    </script>
+
+
+
+
+}
+@section Styles {
+
+    
+
+
+}
+
+<style type="text/css">
+
+    ul.tabs {
+        margin: 0px;
+        padding: 0px;
+        list-style: none;
+    }
+
+        ul.tabs li {
+            background: none;
+            color: #222;
+            display: inline-block;
+            padding: 10px 15px;
+            cursor: pointer;
+            background: #ededed;
+        }
+
+            ul.tabs li.current {
+                background: #ffffff;
+                color: #222;
+            }
+
+    .tab-content {
+        display: none;
+        background: #ffffff;
+        padding: 15px;
+    }
+
+        .tab-content.current {
+            display: inherit;
+        }
+</style>
+
+
+<body data-spy="scroll" data-target="#myTap" data-offset="300">
+    <form role="form" method="post" id="frmmain">
+        <div class="page">
+            <div class="page-header">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="@Url.Action("Index", new { controller = "JobOrderForSale", area = "" })" })">ย้อนกลับ</a></li>
+                </ol>
+            </div>
+            <div class="page-content container-fluid">
+                @if (ViewBag.Alert != null)
+                {
+                    <div class="row">
+                        <div class="col-12">
+                            @Html.Partial(kemrex.PathViewShared("_wgAlert"), Alert)
+                        </div>
+                    </div>
+                }
+
+
+
+                @*Head*@
+                <div class="row">
+                    <div class="col-12">
+
+                        <div class="panel">
+
+
+                            <div class="panel-heading">
+                                <h3 class="panel-title">
+                                    @(Model.JobOrderId > 0 ? "แก้ไข" : "เพิ่ม")ใบสั่งงาน
+                                    <span class="panel-desc">รายละเอียดใบสั่งงาน</span>
+                                </h3>
+                            </div>
+                            <div class="panel-body">
+
+                                <div class="row">
+
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label for="QuotationNo" class=" col-form-label">เลขที่ใบสั่งงาน</label>
+                                            <input type="hidden" id="JobOrderId" name="JobOrderId" value="@Model.JobOrderId" />
+                                            <input type="text" class="form-control" name="JobOrderNo"
+                                                   placeholder="บันทึกเพื่อสร้าง" value="@Model.JobOrderNo" readonly />
+
+
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label for="JobName" class="form-control-label">ชื่องาน</label>
+                                            <input type="text" id="JobName" class="form-control" name="JobName" value="@(Model.JobName != null ? Model.JobName : "")" />
+
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label for="SaleOrderId" class="form-control-label">เลขที่ใบสั่งขาย</label>
+                                            <div class="input-group ">
+                                                <input type="text" id="SaleOrderNo" class="form-control" name="SaleOrderNo" readonly required
+                                                       value="@(Model.SaleOrderId != null ? SaleOrderDetail.Find(o => o.SaleOrderId == Model.SaleOrderId).SaleOrderNo : "")" />
+
+                                                @if (Model.SaleOrderId == null)
+                                                {
+                                                    <div class="input-group-append">
+                                                        <button class="btn btn-outline-secondary btn-primary" type="button"
+                                                                data-toggle="modal"
+                                                                data-target="#SaleOrderModal"
+                                                                id="button-quotation">
+                                                            ...
+                                                        </button>
+                                                    </div>
+                                                }
+                                                <input type="hidden" id="SaleOrderId" name="SaleOrderId" value="@Model.SaleOrderId" />
+                                                <input type="hidden" id="Status" name="Status" value="@Model.Status" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-12">
+                                        <div class="form-group">
+                                            @if (Model.Status == null || Model.Status == "0")
+                                            {
+                                                <button type="submit" id="btnSave" class="btn btn-primary">บันทึก</button>
+
+                                            }
+                                            @if (Model.SaleOrderId > 0)
+                                            {
+                                                <button type="submit" id="btnApprove" class="btn btn-success">อนุมัติ</button>
+                                            }
+                                            <a href="@Url.Action("Index", new { controller = "JobOrderForSale", area = "" })" class="btn btn-default">ยกเลิก</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+                <div data-tabs="myTabPage">
+                    <ul class="tabs">
+
+
+
+                        <li class="tab-link current" data-tab="tab-1">1.รายละเอียดโครงการ</li>
+                        <li class="tab-link" data-tab="tab-2">2.ลักษณะโครงการ</li>
+                        <li class="tab-link" data-tab="tab-3">3.รายละเอียดพื้นที่ติดตั้งหน้างาน</li>
+
+                        @if (Model.SaleOrder != null)
+                        {
+                            <li class="tab-link" data-tab="tab-4">4.รายการสินค้า</li>
+                            <li class="tab-link" data-tab="tab-5">5.เอกสารแนบ</li>
+                        }
+                    </ul>
+
+                    <div id="tab-1" class="tab-content current">
+                        @*Detail*@
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="panel">
+                                    <div class="panel-heading">
+
+                                    </div>
+                                    <div class="panel-body">
+                                        <div class="row">
+                                            <div class="col-sm-4">
+                                                <div class="form-group">
+                                                    <label for="SaleOrderId" class="form-control-label">เลือกทีม</label>
+                                                    <div class="input-group ">
+                                                        <input type="text" id="TeamName" class="form-control" name="TeamName"
+                                                               value="@(Model.TeamId!=null?TeamOperationList.Find(o=>o.TeamId==Model.TeamId).TeamName:"")" />
+
+                                                        @if (Model.Status == null || Model.Status == "0")
+                                                        {
+                                                            <div class="input-group-append">
+                                                                <button class="btn btn-outline-secondary btn-primary" type="button"
+                                                                        data-toggle="modal"
+                                                                        data-target="#TeamModal"
+                                                                        id="button-quotation">
+                                                                    ...
+                                                                </button>
+                                                            </div>
+                                                        }
+                                                        <input type="hidden" id="TeamId" name="TeamId" value="@Model.TeamId" />
+                                                    </div>
+                                                </div>
+
+                                            </div>
+
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label for="StartDate" class="form-control-label">วันที่ติดตั้ง</label>
+                                                    <div class="input-group col-sm-6 date" data-provide="datepicker" data-date-format="dd/mm/yyyy">
+                                                        <input id="StartDate" type="text" class="form-control" placeholder="dd/MM/yyyy ค.ศ." name="StartDate"
+                                                               value="@(Model.StartDate == null ? null : Model.StartDate.Value.ToString("dd/MM/yyyy"))" />
+                                                        <span class="input-group-addon">
+                                                            <i class="icon wb-calendar icon-2-5x text-success" style="padding-left:2px" aria-hidden="true"></i>
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6 col-sm-8">
+                                                <div class="form-group">
+                                                    <label for="EndDate" class="form-control-label">กำหนดเสร็จ</label>
+                                                    @*<div class="input-group col-sm-6">
+                                                            <span class="input-group-addon">
+                                                                <i class="icon wb-calendar" aria-hidden="true"></i>
+                                                            </span>
+                                                            <input type="date" class="form-control" name="JobOrderCompleteDate" value="" />
+                                                        </div>*@
+                                                    <div class="input-group col-sm-6 date" data-provide="datepicker" data-date-format="dd/mm/yyyy">
+                                                        <input id="EndDate" type="text" class="form-control" placeholder="dd/MM/yyyy ค.ศ." name="EndDate"
+                                                               value="@(Model.EndDate == null ? null : Model.EndDate.Value.ToString("dd/MM/yyyy"))" />
+                                                        <span class="input-group-addon" style="padding-left:2px">
+                                                            <i class="icon wb-calendar icon-2-5x text-success" aria-hidden="true"></i>
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="row">
+                                            <div class="col-md-5">
+                                                <div class="form-group">
+                                                    <label for="" class="form-control-label">เวลาปฏิบัติหน้างาน</label>
+                                                    <div class="input-group">
+                                                        <div class="input-group col-sm-10">
+
+                                                            <select class="form-control" id="StartHH" data-live-search="true" style="padding-right:5px;"
+                                                                    name="StartHH" required>
+                                                                @for (var i = 0; i <= 24; i++)
+                                                                {
+                                                                    bool selected = i == (Model.StartWorkingTime != null ? Model.StartWorkingTime.Split(':')[0].AsInt() : -1);
+                                                                    <option value="@i" @(selected ? " selected=\" selected\"" : "")>@i.ToString("##00")</option>
+                                                                }
+                                                            </select>
+
+                                                            &nbsp;
+                                                            <select class="form-control" id="StartMM" data-live-search="true"
+                                                                    name="StartMM" required>
+                                                                @for (var i = 0; i <= 59; i++)
+                                                                {
+                                                                    bool selected = i == (Model.StartWorkingTime != null ? Model.StartWorkingTime.Split(':')[1].AsInt() : -1);
+                                                                    <option value="@i" @(selected ? " selected=\" selected\"" : "")>@i.ToString("##00")</option>
+                                                                }
+                                                            </select>
+                                                            <span class="input-group-addon" style="padding-left:2px">
+                                                                <i class="icon wb-time icon-2-5x text-success" aria-hidden="true"></i>
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-5 col-sm-8">
+                                                <div class="form-group">
+                                                    <label for="" class="form-control-label">ถึง</label>
+                                                    <div class="input-group">
+                                                        <div class="input-group col-sm-10">
+
+                                                            <select class="form-control" id="EndHH" data-live-search="true" style="padding:5px;"
+                                                                    name="EndHH" required>
+                                                                @for (var i = 0; i <= 24; i++)
+                                                                {
+                                                                    bool selected = i == (Model.EndWorkingTime != null ? Model.EndWorkingTime.Split(':')[0].AsInt() : -1);
+                                                                    <option value="@i" @(selected ? " selected=\" selected\"" : "")>@i.ToString("##00")</option>
+                                                                }
+                                                            </select>
+                                                            &nbsp;
+
+                                                            <select class="form-control" id="EndMM" data-live-search="true" style="padding:5px;"
+                                                                    name="EndMM" required>
+                                                                @for (var i = 0; i <= 59; i++)
+                                                                {
+                                                                    bool selected = i == (Model.EndWorkingTime != null ? Model.EndWorkingTime.Split(':')[1].AsInt() : -1);
+                                                                    <option value="@i" @(selected ? " selected=\" selected\"" : "")>@i.ToString("##00")</option>
+                                                                }
+                                                            </select>
+                                                            <span class="input-group-addon" style="padding-left:2px">
+                                                                <i class="icon wb-time icon-2-5x text-success" aria-hidden="true"></i>
+                                                            </span>
+
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-5">
+                                                <div class="form-group">
+                                                    <label for="" class="form-control-label">ชื่อโครงการ</label>
+                                                    <input type="text" id="ProjectName" class="form-control" name="ProjectName" value="@Model.ProjectName" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-5">
+                                                <div class="form-group">
+                                                    <label for="" class="form-control-label">ชื่อฝ่ายขาย</label>
+                                                    <input type="text" id="SaleName" class="form-control" name="SaleName" value="@(Model.SaleOrder!=null?Model.SaleOrder.SaleName:"")" readonly />
+                                                </div>
+                                            </div>
+                                            <div class="col-md-2 col-sm-8">
+                                                <div class="form-group">
+                                                    <label for="" class="form-control-label">โทรศัพท์</label>
+                                                    <input type="tel" id="SaleMobile" class="form-control" name="SaleMobile" value="" readonly />
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-5">
+                                                <div class="form-group">
+                                                    <label for="" class="form-control-label">ชื่อลูกค้า</label>
+                                                    <input type="text" id="CustomerName" class="form-control" name="CustomerName" readonly value="@(Model.CustomerName != null ? Model.CustomerName : (customerDetail != null ? customerDetail.CustomerName : ""))" />
+                                                </div>
+                                            </div>
+                                            <div class="col-md-2 col-sm-8">
+                                                <div class="form-group">
+                                                    <label for="" class="form-control-label">โทรศัพท์</label>
+                                                    <input type="tel" id="CustomerPhone" class="form-control" name="CustomerPhone" readonly value="@(Model.CustomerPhone!=null ? Model.CustomerPhone: (customerDetail!=null? customerDetail.CustomerPhone:"")) " />
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-5">
+                                                <div class="form-group">
+                                                    <label for="CustomerEmail" class="form-control-label">Email</label>
+                                                    <input type="text" id="CustomerEmail" class="form-control" name="CustomerEmail" readonly value="@(Model.CustomerEmail!=null ? Model.CustomerEmail: (customerDetail!=null? customerDetail.CustomerEmail:""))" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div id="tab-2" class="tab-content">
+                        @*ลักษณะโครงการ*@
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="panel">
+                                    <div class="panel-heading">
+
+                                    </div>
+                                    <div class="panel-body">
+                                        @foreach (var obj in SysCategoryDetail.Where(o => o.CategoryTypeId == 6))
+                                        {
+                                            bool selected = (Model.ProjectType != null && Model.ProjectType.Find(o => o.ProjectTypeId == obj.CategoryId) != null ? true : false);
+                                            <div class="checkbox">
+                                                <label>
+                                                    <input data-toggle="toggle" data-onstyle="success"
+                                                           type="checkbox" @(selected ? "Checked" : "") class="selProject" value="@obj.CategoryId">@obj.CategoryName
+                                                    </label>
+                                                </div>
+                                            }
+                                        <input type="hidden" id="hddProject" name="hddProject" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div id="tab-3" class="tab-content">
+                        @*รายละเอียดพื้นที่ติดตั้งหน้างาน*@
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="panel">
+                                    <div class="panel-heading">
+                                        <h3 class="panel-title"></h3>
+                                    </div>
+                                    <div class="panel-body">
+                                        <div class="row">
+                                            <div class="col-md-2">
+                                                <div class="form-group">
+                                                    <label for="" class="form-control-label">3.1 เลขที่</label>
+                                                    <input type="text" class="form-control" name="HouseNo" value="@Model.HouseNo" />
+                                                </div>
+                                            </div>
+                                            <div class="col-md-2 col-sm-8">
+                                                <div class="form-group">
+                                                    <label for="" class="form-control-label">หมู่</label>
+                                                    <input type="text" class="form-control" name="VillageNo" value="@Model.VillageNo" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-5">
+                                                <div class="form-group">
+                                                    <label for="" class="form-control-label">ถนน</label>
+                                                    <input type="text" class="form-control" name="" value="" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-5">
+                                                <div class="form-group">
+                                                    <label for="" class="form-control-label">ตำบล > อำเภอ > จังหวัด</label>
+                                                    <input type="text" class="form-control" name="SubDistrictId" value="@Model.SubDistrictId" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <hr />
+                                        <div class="row invisible" style="position:absolute">
+                                            <div class="col-md-5">
+                                                <div class="form-group">
+                                                    <label for="" class="form-control-label">3.2 อุปกรณ์ในการติดตั้งหน้างาน</label>
+                                                    @foreach (var obj in SysCategoryDetail.Where(o => o.CategoryTypeId == 1))
+                                                    {
+                                                        bool selected = (Model.EquipmentType != null && Model.EquipmentType.Find(o => o.EquipmentTypeId == obj.CategoryId) != null ? true : false);
+                                                        <div class="checkbox">
+                                                            <label><input data-toggle="toggle" data-onstyle="success" type="checkbox" @(selected ? "Checked" : "") class="selEquipmentType" value="@obj.CategoryId">@obj.CategoryName</label>
+                                                        </div>
+                                                    }
+                                                    <input type="hidden" id="hddEquipmentType" name="hddEquipmentType" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <hr />
+                                        <div class="row">
+                                            <div class="col-md-5">
+                                                <div class="form-group">
+                                                    <label for="" class="form-control-label">3.2 ลักษณะพื้นดินสำหรับการติดตั้ง</label>
+                                                    @foreach (var obj in SysCategoryDetail.Where(o => o.CategoryTypeId == 2))
+                                                    {
+                                                        bool selected = (Model.LandType != null && Model.LandType.Find(o => o.LandTypeId == obj.CategoryId) != null ? true : false);
+                                                        <div class="checkbox">
+                                                            <label><input data-toggle="toggle" data-onstyle="success" type="checkbox" @(selected ? "Checked" : "") class="selLandType" value="@obj.CategoryId">@obj.CategoryName</label>
+                                                        </div>
+                                                    }
+                                                    <input type="hidden" id="hddLandType" name="hddLandType" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <hr />
+                                        <div class="row">
+                                            <div class="col-md-5">
+                                                <div class="form-group">
+                                                    <label for="" class="form-control-label">3.3 วัตถุใต้ดิน</label>
+                                                    @foreach (var obj in SysCategoryDetail.Where(o => o.CategoryTypeId == 3))
+                                                    {
+                                                        bool selected = (Model.UndergroundType != null && Model.UndergroundType.Find(o => o.UndergroundTypeId == obj.CategoryId) != null ? true : false);
+                                                        <div class="checkbox">
+                                                            <label><input data-toggle="toggle" data-onstyle="success" type="checkbox" @(selected ? "Checked" : "") class="selUndergroundType" value="@obj.CategoryId">@obj.CategoryName</label>
+                                                        </div>
+                                                    }
+                                                    <input type="hidden" id="hddUndergroundType" name="hddUndergroundType" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <hr />
+                                        <div class="row">
+                                            <div class="col-md-5">
+                                                <div class="form-group">
+                                                    <label for="" class="form-control-label">3.4 ปัญหาและอุปสรรคหน้างาน</label>
+                                                    @foreach (var obj in SysCategoryDetail.Where(o => o.CategoryTypeId == 4))
+                                                    {
+                                                        bool selected = (Model.ObstructionType != null && Model.ObstructionType.Find(o => o.ObstructionTypeId == obj.CategoryId) != null ? true : false);
+                                                        <div class="checkbox">
+                                                            <label><input data-toggle="toggle" data-onstyle="success" type="checkbox" @(selected ? "Checked" : "") class="selObstructionType" value="@obj.CategoryId">@obj.CategoryName</label>
+                                                        </div>
+                                                    }
+                                                    <input type="hidden" id="hddObstructionType" name="hddObstructionType" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-5">
+                                                <div class="form-group">
+                                                    <label for="" class="form-control-label">สาเหตุ</label>
+                                                    <textarea rows="4" cols="47" class="form-control" name="Reason">@Model.Reason</textarea>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-5">
+                                                <div class="form-group">
+                                                    <label for="" class="form-control-label">การแก้ไขปัญหา</label>
+                                                    <textarea rows="4" cols="47" class="form-control" name="Solution">@Model.Solution</textarea>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <hr />
+                                        <div class="row">
+                                            <div class="col-md-5">
+                                                <div class="form-group">
+                                                    <label for="" class="form-control-label">3.5 สิ่งที่แนบมากด้วย</label>
+
+                                                    @foreach (var obj in SysCategoryDetail.Where(o => o.CategoryTypeId == 5))
+                                                    {
+                                                        bool selected = (Model.AttachmentType != null && Model.AttachmentType.Find(o => o.AttachmentTypeId == obj.CategoryId) != null ? true : false);
+                                                        <div class="checkbox">
+                                                            <label><input data-toggle="toggle" data-onstyle="success" type="checkbox" @(selected ? "Checked" : "") class="selAttachmentType" value="@obj.CategoryId">@obj.CategoryName</label>
+                                                        </div>
+                                                    }
+                                                    <input type="hidden" name="hddAttachmentType" id="hddAttachmentType" />
+                                                </div>
+                                            </div>
+                                        </div>
+
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    @if (Model.SaleOrder != null)
+                    {
+                        <div id="tab-4" class="tab-content">
+                            @*รายละเอียดเข็มเหล็กและอุปกรณ์เพิ่มเติม*@
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="panel">
+                                        <div class="panel-heading">
+                                            <h3 class="panel-title"></h3>
+                                        </div>
+                                        <div class="panel-body">
+                                            <div class="row">
+                                                <div class="col-12">
+                                                    <div class="panel">
+                                                        <div class="panel-heading">
+                                                            <h3 class="panel-title">
+                                                                4.1 รายการสินค้า&nbsp;
+                                                            </h3>
+                                                        </div>
+                                                        <div class="panel-body">
+                                                            <div class="row">
+                                                                <div class="col-12">
+                                                                    <div class="table-responsive">
+                                                                        <table class="table table-hover table-striped">
+                                                                            <thead>
+                                                                                <tr>
+                                                                                    <th>สินค้า</th>
+                                                                                    <th>จำนวน</th>
+                                                                                    <th>ราคา</th>
+                                                                                    <th>ส่วนลด</th>
+                                                                                    <th>รวม</th>
+                                                                                    <th>รวม VAT(7%)</th>
+
+                                                                                </tr>
+                                                                            </thead>
+                                                                            <tbody>
+                                                                                @if (Model.SaleOrder.TblSaleOrderDetail.Count() <= 0)
+                                                                                {
+                                                                                    <tr>
+                                                                                        <td colspan="7">ไม่พบข้อมูล</td>
+                                                                                    </tr>
+                                                                                }
+                                                                                @foreach (var ob in Model.SaleOrder.TblSaleOrderDetail)
+                                                                                {
+                                                                                    <tr>
+                                                                                        <td>@ob.Product.ProductCode @ob.Product.ProductName</td>
+                                                                                        <td>@ob.Quantity</td>
+                                                                                        <td>@ob.PriceNet.ToString("#,#0.00")</td>
+                                                                                        <td>@ob.DiscountNet.ToString("#,#0.00")</td>
+                                                                                        <td>@ob.TotalNet.Value.ToString("#,#0.00")</td>
+                                                                                        <td>@ob.TotalTot.Value.ToString("#,#0.00")</td>
+
+                                                                                    </tr>
+                                                                                }
+                                                                            </tbody>
+                                                                        </table>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+
+                                                        </div>
+
+                                                    </div>
+                                                    <div class="panel">
+
+                                                        <div class="col-md-auto">
+                                                            ผลรวม
+                                                            <hr size=2>
+                                                            <form method="post" action="@Url.Action("saveDiscount", "SaleOrder")" enctype="multipart/form-data">
+                                                                <input type="hidden" name="SaleOrderId" value="@Model.SaleOrderId" />
+                                                                <div class="form-group row">
+                                                                    <label for="SubTotal" class="col-sm-5 col-form-label">ยอดก่อนลด</label>
+                                                                    <div class="col-sm-6">
+                                                                        <input type="text" class="form-control" id="SubTotal" name="SubTotalNet"
+                                                                               style="text-align: right"
+                                                                               value="@(Model.SaleOrder.SubTotalNet.HasValue ? Model.SaleOrder.SubTotalNet.Value.ToString("#,#0.00") : "0")" readonly />
+                                                                    </div>
+                                                                </div>
+                                                                <div class="form-group row">
+                                                                    <label for="Discount" class="col-sm-5 col-form-label">ส่วนลดในรายการ</label>
+                                                                    <div class="col-sm-6">
+                                                                        <input type="text" class="form-control" id="Discount"
+                                                                               style="text-align: right"
+                                                                               value="@(Model.SaleOrder.DiscountNet.HasValue ? Model.SaleOrder.DiscountNet.Value.ToString("#,#0.00") : "0")" readonly />
+                                                                    </div>
+                                                                </div>
+                                                                <div class="form-group row">
+                                                                    <label for="TotalDiscount" class="col-sm-5 col-form-label">ยอดหลังหักส่วนลด</label>
+                                                                    <div class="col-sm-6">
+                                                                        <input type="text" class="form-control" id="TotalDiscount" style="text-align: right" value="@(Model.SaleOrder.SummaryNet.HasValue ? Model.SaleOrder.SummaryNet.Value.ToString("#,#0.00") : "0")" readonly />
+                                                                    </div>
+                                                                </div>
+                                                                <div class="form-group row">
+                                                                    <label for="Vat" class="col-sm-5 col-form-label">อัตราภาษี(7%)</label>
+                                                                    <div class="col-sm-6">
+                                                                        <input type="text" class="form-control" id="Vat"
+                                                                               style="text-align: right"
+                                                                               value="@(Model.SaleOrder.SummaryVat.HasValue ? Model.SaleOrder.SummaryVat.Value.ToString("#,#0.00") : "0")" readonly />
+                                                                    </div>
+                                                                </div>
+                                                                <div class="form-group row">
+                                                                    <label for="Discount" class="col-sm-5 col-form-label">ส่วนลดเงินสด</label>
+                                                                    <div class="col-sm-6">
+                                                                        <input type="text" class="form-control" id="DiscountCash" name="DiscountCash"
+                                                                               style="text-align: right" readonly
+                                                                               value="@(Model.SaleOrder.DiscountCash.HasValue ? Model.SaleOrder.DiscountCash.Value.ToString("#,#0.00") : "0")" onChange="calDiscount()" />
+                                                                    </div>
+                                                                </div>
+                                                                <div class="form-group row">
+                                                                    <label for="Total" class="col-sm-5 col-form-label">จำนวนทั้งสิ้น</label>
+                                                                    <div class="col-sm-6">
+                                                                        <input type="text" class="form-control" id="SummaryTot"
+                                                                               style="text-align: right"
+                                                                               value="@(Model.SaleOrder.SummaryTot.HasValue ? Model.SaleOrder.SummaryTot.Value.ToString("#,#0.00") : "0")" readonly />
+                                                                    </div>
+                                                                </div>
+
+                                                            </form>
+                                                        </div>
+                                                    </div>
+
+                                                </div>
+
+                                            </div>
+
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <div id="tab-5" class="tab-content">
+                            @*panel Attachment*@
+                            <div class="card-block" data-tab-page="navAttachment">
+                                <div class="col-12">
+                                    <div class="panel">
+                                        <div class="panel-heading">
+                                            <h3 class="panel-title">
+                                                5.1 รายการเอกสาร&nbsp;
+                                            </h3>
+                                        </div>
+                                        <div class="panel-body">
+                                            <div class="row">
+                                                <div class="col-12">
+                                                    <div class="table-responsive">
+                                                        <table class="table table-hover table-striped">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th>ชื่อไฟล์</th>
+                                                                    <th>ชนิด</th>
+
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                                @foreach (var at in optAttachment)
+                                                                {
+                                                                    <tr>
+
+                                                                        <td>
+                                                                            <a href="@Url.Content("~/" + at.AttachmentPath)" target="_blank"> @Path.GetFileName(at.AttachmentPath)</a>
+                                                                        </td>
+                                                                        <td>@at.AttachmentRemark</td>
+
+
+                                                                    </tr>
+                                                                }
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            @*End panel Attachment*@
+
+                        </div>
+
+                    }
+
+
+                </div>
+            </div>
+
+            <div class="modal fade" id="TeamModal" tabindex="-1" role="dialog" aria-labelledby="ค้นหาทีม" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="AddressModalTitle"><label id="lbCustomerId" hidden></label></h5>
+                            <h2><label id="lbCustomerName">เลือก ทีมปฏิบัติงาน</label></h2>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+
+                        </div>
+                        <div class="modal-body">
+
+                            <div class="row">
+                                <div class="col-sm-4">
+                                    <div class="form-group">
+                                        <label for="TeamStartDate" class="form-control-label">จากวันที่</label>
+                                        <div class="input-group date" data-provide="datepicker" data-date-format="dd/mm/yyyy">
+                                            <input id="TeamStartDate" type="text" class="form-control" placeholder="dd/MM/yyyy ค.ศ." name="TeamStartDate" />
+                                            <span class="input-group-addon">
+                                                <i class="icon wb-calendar icon-2-5x text-success" style="padding-left:2px" aria-hidden="true"></i>
+                                            </span>
+                                        </div>
+                                    </div>
+
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="form-group">
+                                        <label for="TeamEndDate" class="form-control-label">ถึงวันที่</label>
+                                        <div class="input-group ช date" data-provide="datepicker" data-date-format="dd/mm/yyyy">
+                                            <input id="TeamEndDate" type="text" class="form-control" placeholder="dd/MM/yyyy ค.ศ." name="TeamEndDate" />
+                                            <span class="input-group-addon">
+                                                <i class="icon wb-calendar icon-2-5x text-success" style="padding-left:2px" aria-hidden="true"></i>
+                                            </span>
+                                        </div>
+                                    </div>
+
+                                </div>
+                                <div class="col-sm-4">
+
+                                    <button class="btn btn-outline-secondary btn-primary btnSearchTeam" style="margin-top:34px" type="button"
+                                            id="btnSearchTeam">
+                                        ค้นหา
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-sm-12">
+
+                                    <div class="table-responsive tblTeam">
+                                        <table class="table table-hover">
+                                            <thead>
+                                                <tr>
+                                                    <th>กรุณาเลือก</th>
+                                                    <th>รายการ</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody></tbody>
+                                        </table>
+                                    </div>
+                                </div>
+
+                            </div>
+
+
+
+                        </div>
+                        <div class="modal-footer">
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="modal fade" id="SaleOrderModal" tabindex="-1" role="dialog" aria-labelledby="ค้นหาทีม" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="AddressModalTitle"><label id="lbCustomerId" hidden></label></h5>
+                            <h2><label id="lbCustomerName">เลือก ใบสั่งขาย</label></h2>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+
+                        </div>
+                        <div class="modal-body">
+
+                            <div class="row">
+                                <div class="col-sm-4">
+                                    <div class="form-group">
+                                        <label for="SaleOrderStartDate" class="form-control-label">จากวันที่</label>
+                                        <div class="input-group date" data-provide="datepicker" data-date-format="dd/mm/yyyy">
+                                            <input id="SaleOrderStartDate" type="text" class="form-control" placeholder="dd/MM/yyyy ค.ศ." name="SaleOrderStartDate" />
+                                            <span class="input-group-addon">
+                                                <i class="icon wb-calendar icon-2-5x text-success" style="padding-left:2px" aria-hidden="true"></i>
+                                            </span>
+                                        </div>
+                                    </div>
+
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="form-group">
+                                        <label for="SaleOrderEndDate" class="form-control-label">ถึงวันที่</label>
+                                        <div class="input-group ช date" data-provide="datepicker" data-date-format="dd/mm/yyyy">
+                                            <input id="SaleOrderEndDate" type="text" class="form-control" placeholder="dd/MM/yyyy ค.ศ." name="SaleOrderEndDate" />
+                                            <span class="input-group-addon">
+                                                <i class="icon wb-calendar icon-2-5x text-success" style="padding-left:2px" aria-hidden="true"></i>
+                                            </span>
+                                        </div>
+                                    </div>
+
+                                </div>
+                                <div class="col-sm-4">
+
+                                    <button class="btn btn-outline-secondary btn-primary btnSearchSaleOrder" style="margin-top:34px" type="button"
+                                            id="btnSearchSaleOrder">
+                                        ค้นหา
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-sm-12">
+
+                                    <div class="table-responsive divSaleOrder">
+                                        <table class="table table-hover">
+                                            <thead>
+                                                <tr>
+                                                    <th>กรุณาเลือก</th>
+                                                    <th>รายการ</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody></tbody>
+                                        </table>
+                                    </div>
+                                </div>
+
+                            </div>
+
+
+
+                        </div>
+                        <div class="modal-footer">
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+    </form>
+</body>
+

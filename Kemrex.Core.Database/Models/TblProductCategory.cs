@@ -14,6 +14,7 @@ namespace Kemrex.Core.Database.Models
         public int CategoryId { get; set; }
         public string CategoryName { get; set; }
         public string CategoryDetail { get; set; }
+        public string Accessory { get; set; }
         public int CategoryOrder { get; set; }
         public bool? FlagActive { get; set; }
         public long CreatedBy { get; set; }

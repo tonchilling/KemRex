@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Kemrex.Core.Database.Models
 {
-    public partial class TblJobOrderDetail
+    public partial class TblJobOrderProperties
     {
         public int JobOrderId { get; set; }
         public int No { get; set; }

@@ -2,6 +2,7 @@
 @using Kemrex.Web.Common.Controllers
 @using Kemrex.Web.Common.Models
 @using Kemrex.Core.Common.Helper
+
 @model List<TblJobOrder>
 @{
     ViewBag.Title = "Index";
@@ -21,7 +22,7 @@
             }, 5000);
         });
 
-        $(EngineerMenu).slideToggle();
+        $(SaleMenu).slideToggle();
     </script>
 }
 
@@ -43,7 +44,7 @@
                 }
                 <div class="panel">
                     <div class="panel-heading">
-                        <h3 class="panel-title">ใบสั่งงาน&nbsp;<a href="@Url.Action("Detail", new { area = "", controller = "JobOrder" })" class="btn btn-xs btn-primary" style="color:white;">เพิ่มข้อมูล</a></h3>
+                        <h3 class="panel-title">ใบสั่งงาน&nbsp;<a href="@Url.Action("Detail", new { area = "", controller = "JobOrderForSale" })" class="btn btn-xs btn-primary" style="color:white;">เพิ่มข้อมูล</a></h3>
                     </div>
                     <!-- /.box-header -->
                     <div class="panel-body dataTables_wrapper">
@@ -83,14 +84,17 @@
                                             {
                                                 //   var total = ob.SaleOrder.SummaryTot - ob.SaleOrder.DiscountCash;
                                                 <tr id="@ob.JobOrderId"
-                                                    @if (ob.Status == "1") { @Html.Raw("class=\"table-success text-white\"")  } else if (ob.Status == "2") { @Html.Raw("class=\"table-primary text-primary\"") }>
-
+                                                    @if (ob.Status == "1")
+                                                    {@Html.Raw("class=\"table-success text-white\"") }
+                                                else if (ob.Status == "2")
+                                                { @Html.Raw("class=\"table-primary text-primary\"") }
+                                           >
                                                     <td>@ob.JobName</td>
                                                     <td>@ob.JobOrderNo</td>
                                                     <td align="center">@ob.CreateDateToString</td>
                                                     <td align="center">@Converting.JobOrderStatus(ob.Status)</td>
                                                     <td align="center">
-                                                        <a href="@Url.Action("Detail", new { controller="JobOrder" , area="" , id=ob.JobOrderId })"
+                                                        <a href="@Url.Action("Detail", new { controller="JobOrderForSale" , area="" , id=ob.JobOrderId })"
                                                            class="btn btn-xs btn-primary">
                                                             <i class="fa fa-pencil" aria-hidden="true"></i>&nbsp;แก้ไข
                                                         </a>

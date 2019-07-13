@@ -59,7 +59,7 @@ namespace Kemrex.Web.Main.Controllers
             string qid = "T" + type;
             System.Globalization.CultureInfo _cultureTHInfo = new System.Globalization.CultureInfo("en-US");
             var dt = DateTime.Now.ToString("yyMMdd", _cultureTHInfo);
-            string Id = uow.Modules.Transfer.GetLastId(qid + dt);
+            string Id = uow.Modules.Transfer.GetLastId(qid + dt, type);
 
             if (Id == null)
             {
@@ -77,7 +77,7 @@ namespace Kemrex.Web.Main.Controllers
             {
                 runid = 1;
             }
-            qid += dt + "-" + runid.ToString("D3");
+            qid = qid+ dt + "-" + runid.ToString("D3");
             return qid;
         }
 
@@ -105,7 +105,7 @@ namespace Kemrex.Web.Main.Controllers
           */
             if (TransferId == "" || TransferId == "0")
             {
-                obj.TransferNo = getId("TI");
+                obj.TransferNo = getId("I");
                 obj.CreateDate = DateTime.Now;
             }
             else
@@ -189,6 +189,9 @@ namespace Kemrex.Web.Main.Controllers
                 ViewData["optProduct"] = uow.Modules.Product.Gets();
                 ViewData["optContact"] = uow.Modules.CustomerContact.Gets();
                 ViewData["optEmployee"] = uow.Modules.Employee.Gets();
+
+                if(ob.RefTransferId.HasValue)
+                ob.RefTransfer = uow.Modules.Transfer.GetTransferHeader(ob.RefTransferId.Value);
                 return View(ob);
             }
             catch (Exception ex)
@@ -204,27 +207,54 @@ namespace Kemrex.Web.Main.Controllers
 
         public ActionResult AddProduct()
         {
-            int qid = Request.Form["TransferId"].ParseInt();
-            var id = Request.Form["selProduct"].Split(':');  //  ProductId:PriceNet
-            int qty = Request.Form["RequestQty"].ParseInt();
+            string qid = Request.Form["TransferId"].ToString();
+            var productids = Request.Form["ProductIds"].ToString();  //  ProductId:PriceNet
+            string qtys = Request.Form["RequestQtys"].ToString();
+            string currentQty = Request.Form["currentQty"].ToString();
+            List<TransferDetail> list = new List<TransferDetail>();
 
 
-
-            if (id.Count() > 0)
+            if (qid.Count() > 0)
             {
-                int pid = int.Parse(id[0]);
-                int seq = uow.Modules.Transfer.GetDetails(qid) + 1;
-                TransferDetail ob = uow.Modules.Transfer.GetDetail(0);
+                int row = 0;
+                for (row = 0; row < productids.Split(',').Count(); row++)
+                {
+                    TransferDetail ob = new TransferDetail();
+                    ob.TransferId = qid.ParseInt();
+                    ob.ProductId = productids.Split(',')[row].ParseInt();
+                    ob.RequestQty = qtys.Split(',')[row].ParseInt();
+                    ob.CurrentQty = currentQty.Split(',')[row];
+                    ob.Seq = row + 1;
 
-                ob.TransferId = qid;
-                ob.ProductId = pid;
-                ob.RequestQty = qty;
-                ob.Seq = seq;
+                    list.Add(ob);
+
+
+                    /*   TransferDetail ob = uow.Modules.Transfer.GetDetail(qid.ParseInt(), row+1);
+                       if (ob == null)
+                       {
+                           ob = new TransferDetail();
+                           ob.TransferId = qid.ParseInt();
+                           ob.ProductId = productids.Split(',')[row].ParseInt();
+                           ob.RequestQty = qtys.Split(',')[row].ParseInt();
+                           ob.Seq = row + 1;
+                           uow.Modules.Transfer.SetDetail(ob);
+                       }
+                       else {
+                           ob.TransferId = qid.ParseInt();
+                           ob.ProductId = productids.Split(',')[row].ParseInt();
+                           ob.RequestQty = qtys.Split(',')[row].ParseInt();
+                           ob.Seq = row + 1;
+                           uow.Modules.Transfer.UpdateDetail(ob);
+                       }
+                      */
 
 
 
-                uow.Modules.Transfer.SetDetail(ob);
-                uow.SaveChanges();
+
+                    //  uow.SaveChanges();
+                }
+
+                uow.Modules.Transfer.Add(list);
 
 
             }
@@ -249,6 +279,37 @@ namespace Kemrex.Web.Main.Controllers
             }
             catch (Exception ex)
             { return RedirectToAction("Detail", MVCController, new { id = qid, tab = "Product", msg = ex.GetMessage(), msgType = AlertMsgType.Danger }); }
+        }
+
+        [HttpPost]
+        //[Authorized]
+        public ActionResult Approve()
+        {
+            int qid = Request.Form["TransferId"].ParseInt();
+            try
+            {
+                bool ob = uow.Modules.Transfer.TrasferOutApprove(qid);
+                return RedirectToAction("Detail", MVCController, new { id = qid, tab = "Master", msg = "ยืนยันเรียบร้อยแล้ว", msgType = AlertMsgType.Success });
+            }
+            catch (Exception ex)
+            { return RedirectToAction("Detail", MVCController, new { id = qid, tab = "Master", msg = ex.GetMessage(), msgType = AlertMsgType.Danger }); }
+        }
+
+
+
+        [HttpGet]
+        public JsonResult GetTransferOutByDate(string startDate, string toDate)
+        {
+
+            List<TransferHeader> result = uow.Modules.Transfer.Gets("O",startDate, toDate,"1");
+            //saleOrder.Customer = uow.Modules.Customer.GetByCondition(saleOrder.CustomerId.Value);
+            //  saleOrder.Sale = uow.Modules.Employee.GetByCondition(saleOrder.SaleId.Value);
+
+            // TblCustomer objCustomer = uow.Modules.Customer.Get(Convert.ToInt32(ob.CustomerId));
+
+
+
+            return Json(result, JsonRequestBehavior.AllowGet);
         }
     }
 }

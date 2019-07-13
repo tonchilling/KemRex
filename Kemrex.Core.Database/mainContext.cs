@@ -67,6 +67,7 @@ namespace Kemrex.Core.Database
         public virtual DbSet<TblJobOrderLandType> TblJobOrderLandType { get; set; }
         public virtual DbSet<TblJobOrderObstructionType> TblJobOrderObstructionType { get; set; }
         public virtual DbSet<TblJobOrderProjectType> TblJobOrderProjectType { get; set; }
+        public virtual DbSet<TblJobOrderProperties> TblJobOrderProperties { get; set; }
         public virtual DbSet<TblJobOrderUndergroundType> TblJobOrderUndergroundType { get; set; }
         public virtual DbSet<TblKpt> TblKpt { get; set; }
         public virtual DbSet<TblKptAttachment> TblKptAttachment { get; set; }
@@ -812,14 +813,17 @@ namespace Kemrex.Core.Database
 
                 entity.Property(e => e.StartWorkingTime).HasMaxLength(10);
 
+                entity.Property(e => e.Status).HasMaxLength(2);
+
                 entity.Property(e => e.UpdateDate).HasColumnType("datetime");
 
                 entity.Property(e => e.VillageNo).HasMaxLength(50);
 
-             /*   entity.HasOne(d => d.SaleOrder)
+           /*     entity.HasOne(d => d.SaleOrder)
                     .WithMany(p => p.TblJobOrder)
                     .HasForeignKey(d => d.SaleOrderId)
-                    .HasConstraintName("FK__TblJobOrd__SaleO__3EE740E8");*/
+                    .HasConstraintName("FK__TblJobOrd__SaleO__3EE740E8");
+                    */
             });
 
             modelBuilder.Entity<TblJobOrderAttachmentType>(entity =>
@@ -848,7 +852,7 @@ namespace Kemrex.Core.Database
 
                 entity.Property(e => e.Weight).HasColumnType("decimal(8, 2)");
 
-           /*     entity.HasOne(d => d.JobOrder)
+              /*    entity.HasOne(d => d.JobOrder)
                     .WithMany(p => p.TblJobOrderDetail)
                     .HasForeignKey(d => d.JobOrderId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
@@ -925,6 +929,22 @@ namespace Kemrex.Core.Database
                     .HasForeignKey(d => d.ProjectTypeId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK__TblJobOrd__Proje__2062B9C8");
+            });
+
+            modelBuilder.Entity<TblJobOrderProperties>(entity =>
+            {
+                entity.HasKey(e => new { e.JobOrderId, e.No });
+
+                entity.Property(e => e.JobOrderId).HasColumnName("JobOrderID");
+
+                entity.Property(e => e.Weight).HasColumnType("decimal(8, 2)");
+ /* 
+                entity.HasOne(d => d.JobOrder)
+                    .WithMany(p => p.TblJobOrderProperties)
+                    .HasForeignKey(d => d.JobOrderId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK__TblJobOrd__JobOr__13C7D8B9");
+                    */
             });
 
             modelBuilder.Entity<TblJobOrderUndergroundType>(entity =>
@@ -1307,388 +1327,389 @@ namespace Kemrex.Core.Database
 
                 entity.Property(e => e.UpdateDate).HasColumnType("datetime");
 
-             /*   entity.HasOne(d => d.Customer)
-                    .WithMany(p => p.TblQuotation)
-                    .HasForeignKey(d => d.CustomerId)
-                    .HasConstraintName("FK_TblQuotation_Customer");*/
+                /*    entity.HasOne(d => d.Customer)
+                      .WithMany(p => p.TblQuotation)
+                      .HasForeignKey(d => d.CustomerId)
+                      .HasConstraintName("FK_TblQuotation_Customer");*/
 
-                entity.HasOne(d => d.Sale)
-                    .WithMany(p => p.TblQuotation)
-                    .HasForeignKey(d => d.SaleId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_TblQuotation_Sale");
+                  entity.HasOne(d => d.Sale)
+                      .WithMany(p => p.TblQuotation)
+                      .HasForeignKey(d => d.SaleId)
+                      .OnDelete(DeleteBehavior.ClientSetNull)
+                      .HasConstraintName("FK_TblQuotation_Sale");
 
-                entity.HasOne(d => d.Status)
-                    .WithMany(p => p.TblQuotation)
-                    .HasForeignKey(d => d.StatusId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_TblQuotation_Status");
+                  entity.HasOne(d => d.Status)
+                      .WithMany(p => p.TblQuotation)
+                      .HasForeignKey(d => d.StatusId)
+                      .OnDelete(DeleteBehavior.ClientSetNull)
+                      .HasConstraintName("FK_TblQuotation_Status");
+              });
+
+              modelBuilder.Entity<TblQuotationDetail>(entity =>
+              {
+                  entity.Property(e => e.DiscountNet).HasColumnType("decimal(12, 2)");
+
+                  entity.Property(e => e.DiscountTot).HasColumnType("decimal(12, 2)");
+
+                  entity.Property(e => e.DiscountVat).HasColumnType("decimal(12, 2)");
+
+                  entity.Property(e => e.PriceNet).HasColumnType("decimal(12, 2)");
+
+                  entity.Property(e => e.PriceTot).HasColumnType("decimal(12, 2)");
+
+                  entity.Property(e => e.PriceVat).HasColumnType("decimal(12, 2)");
+
+                  entity.Property(e => e.TotalNet)
+                      .HasColumnType("decimal(13, 2)")
+                      .HasComputedColumnSql("([PriceNet]-[DiscountNet])");
+
+                  entity.Property(e => e.TotalTot)
+                      .HasColumnType("decimal(13, 2)")
+                      .HasComputedColumnSql("([PriceTot]-[DiscountTot])");
+
+                  entity.Property(e => e.TotalVat)
+                      .HasColumnType("decimal(13, 2)")
+                      .HasComputedColumnSql("([PriceVat]-[DiscountVat])");
+
+                  entity.HasOne(d => d.Product)
+                      .WithMany(p => p.TblQuotationDetail)
+                      .HasForeignKey(d => d.ProductId)
+                      .OnDelete(DeleteBehavior.ClientSetNull)
+                      .HasConstraintName("FK_TblQuotationDetail_Product");
+
+                  entity.HasOne(d => d.Quotation)
+                      .WithMany(p => p.TblQuotationDetail)
+                      .HasForeignKey(d => d.QuotationId)
+                      .OnDelete(DeleteBehavior.ClientSetNull)
+                      .HasConstraintName("FK_TblQuotationDetail_id");
+              });
+
+              modelBuilder.Entity<TblSaleOrder>(entity =>
+              {
+                  entity.HasKey(e => e.SaleOrderId);
+
+                  entity.Property(e => e.ContractName).HasMaxLength(500);
+
+                  entity.Property(e => e.CreatedDate).HasColumnType("datetime");
+
+                  entity.Property(e => e.CustomerName).HasMaxLength(500);
+
+                  entity.Property(e => e.DeliveryDate).HasColumnType("datetime");
+
+                  entity.Property(e => e.DiscountCash).HasColumnType("decimal(12, 2)");
+
+                  entity.Property(e => e.DiscountNet)
+                      .HasColumnType("decimal(12, 2)")
+                      .HasComputedColumnSql("([dbo].[cplSaleOrderPrice]([SaleOrderId],'DiscountNet'))");
+
+                  entity.Property(e => e.DiscountTot)
+                      .HasColumnType("decimal(12, 2)")
+                      .HasComputedColumnSql("([dbo].[cplSaleOrderPrice]([SaleOrderId],'DiscountTot'))");
+
+                  entity.Property(e => e.DiscountVat)
+                      .HasColumnType("decimal(12, 2)")
+                      .HasComputedColumnSql("([dbo].[cplSaleOrderPrice]([SaleOrderId],'DiscountVat'))");
+
+                  entity.Property(e => e.OperationEndDate).HasColumnType("datetime");
+
+                  entity.Property(e => e.OperationStartDate).HasColumnType("datetime");
+
+                  entity.Property(e => e.PoNo).HasMaxLength(50);
+
+                  entity.Property(e => e.QuotationNo).HasMaxLength(20);
+
+                  entity.Property(e => e.SaleName).HasMaxLength(500);
+
+                  entity.Property(e => e.SaleOrderDate).HasColumnType("datetime");
+
+                  entity.Property(e => e.SaleOrderNo)
+                      .IsRequired()
+                      .HasMaxLength(20);
+
+                  entity.Property(e => e.StatusId).HasDefaultValueSql("((1))");
+
+                  entity.Property(e => e.SubTotalNet)
+                      .HasColumnType("decimal(12, 2)")
+                      .HasComputedColumnSql("([dbo].[cplSaleOrderPrice]([SaleOrderId],'PriceNet'))");
+
+                  entity.Property(e => e.SubTotalTot)
+                      .HasColumnType("decimal(12, 2)")
+                      .HasComputedColumnSql("([dbo].[cplSaleOrderPrice]([SaleOrderId],'PriceTot'))");
+
+                  entity.Property(e => e.SubTotalVat)
+                      .HasColumnType("decimal(12, 2)")
+                      .HasComputedColumnSql("([dbo].[cplSaleOrderPrice]([SaleOrderId],'PriceVat'))");
+
+                  entity.Property(e => e.SummaryNet)
+                      .HasColumnType("decimal(12, 2)")
+                      .HasComputedColumnSql("([dbo].[cplSaleOrderPrice]([SaleOrderId],'SummaryNet'))");
+
+                  entity.Property(e => e.SummaryTot)
+                      .HasColumnType("decimal(12, 2)")
+                      .HasComputedColumnSql("([dbo].[cplSaleOrderPrice]([SaleOrderId],'SummaryTot'))");
+
+                  entity.Property(e => e.SummaryVat)
+                      .HasColumnType("decimal(12, 2)")
+                      .HasComputedColumnSql("([dbo].[cplSaleOrderPrice]([SaleOrderId],'SummaryVat'))");
+
+                  entity.Property(e => e.UpdateDate).HasColumnType("datetime");
+
+                  /*   entity.HasOne(d => d.Customer)
+                       .WithMany(p => p.TblSaleOrder)
+                       .HasForeignKey(d => d.CustomerId)
+                       .HasConstraintName("FK_TblSaleOrder_Customer");*/
             });
 
-            modelBuilder.Entity<TblQuotationDetail>(entity =>
-            {
-                entity.Property(e => e.DiscountNet).HasColumnType("decimal(12, 2)");
+             modelBuilder.Entity<TblSaleOrderAttachment>(entity =>
+             {
+                 entity.Property(e => e.AttachmentOrder).HasDefaultValueSql("((9999))");
 
-                entity.Property(e => e.DiscountTot).HasColumnType("decimal(12, 2)");
+                 entity.Property(e => e.AttachmentPath)
+                     .IsRequired()
+                     .HasMaxLength(500);
 
-                entity.Property(e => e.DiscountVat).HasColumnType("decimal(12, 2)");
+                 entity.HasOne(d => d.SaleOrder)
+                     .WithMany(p => p.TblSaleOrderAttachment)
+                     .HasForeignKey(d => d.SaleOrderId)
+                     .OnDelete(DeleteBehavior.ClientSetNull)
+                     .HasConstraintName("FK_TblSaleOrderAttachment_Id");
+             });
 
-                entity.Property(e => e.PriceNet).HasColumnType("decimal(12, 2)");
+             modelBuilder.Entity<TblSaleOrderDetail>(entity =>
+             {
+                 entity.Property(e => e.DiscountNet).HasColumnType("decimal(12, 2)");
 
-                entity.Property(e => e.PriceTot).HasColumnType("decimal(12, 2)");
+                 entity.Property(e => e.DiscountTot).HasColumnType("decimal(12, 2)");
 
-                entity.Property(e => e.PriceVat).HasColumnType("decimal(12, 2)");
+                 entity.Property(e => e.DiscountVat).HasColumnType("decimal(12, 2)");
 
-                entity.Property(e => e.TotalNet)
-                    .HasColumnType("decimal(13, 2)")
-                    .HasComputedColumnSql("([PriceNet]-[DiscountNet])");
+                 entity.Property(e => e.PriceNet).HasColumnType("decimal(12, 2)");
 
-                entity.Property(e => e.TotalTot)
-                    .HasColumnType("decimal(13, 2)")
-                    .HasComputedColumnSql("([PriceTot]-[DiscountTot])");
+                 entity.Property(e => e.PriceTot).HasColumnType("decimal(12, 2)");
 
-                entity.Property(e => e.TotalVat)
-                    .HasColumnType("decimal(13, 2)")
-                    .HasComputedColumnSql("([PriceVat]-[DiscountVat])");
+                 entity.Property(e => e.PriceVat).HasColumnType("decimal(12, 2)");
 
-                entity.HasOne(d => d.Product)
-                    .WithMany(p => p.TblQuotationDetail)
-                    .HasForeignKey(d => d.ProductId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_TblQuotationDetail_Product");
+                 entity.Property(e => e.Remark).HasMaxLength(10);
 
-                entity.HasOne(d => d.Quotation)
-                    .WithMany(p => p.TblQuotationDetail)
-                    .HasForeignKey(d => d.QuotationId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_TblQuotationDetail_id");
-            });
+                 entity.Property(e => e.TotalNet)
+                     .HasColumnType("decimal(13, 2)")
+                     .HasComputedColumnSql("([PriceNet]-[DiscountNet])");
 
-            modelBuilder.Entity<TblSaleOrder>(entity =>
-            {
-                entity.HasKey(e => e.SaleOrderId);
+                 entity.Property(e => e.TotalTot)
+                     .HasColumnType("decimal(13, 2)")
+                     .HasComputedColumnSql("([PriceTot]-[DiscountTot])");
 
-                entity.Property(e => e.ContractName).HasMaxLength(500);
+                 entity.Property(e => e.TotalVat)
+                     .HasColumnType("decimal(13, 2)")
+                     .HasComputedColumnSql("([PriceVat]-[DiscountVat])");
 
-                entity.Property(e => e.CreatedDate).HasColumnType("datetime");
+                 entity.HasOne(d => d.Product)
+                     .WithMany(p => p.TblSaleOrderDetail)
+                     .HasForeignKey(d => d.ProductId)
+                     .OnDelete(DeleteBehavior.ClientSetNull)
+                     .HasConstraintName("FK_TblSaleOrderDetail_Product");
 
-                entity.Property(e => e.CustomerName).HasMaxLength(500);
+                 entity.HasOne(d => d.SaleOrder)
+                     .WithMany(p => p.TblSaleOrderDetail)
+                     .HasForeignKey(d => d.SaleOrderId)
+                     .OnDelete(DeleteBehavior.ClientSetNull)
+                     .HasConstraintName("FK_TblSaleOrderDetail_id");
+             });
 
-                entity.Property(e => e.DeliveryDate).HasColumnType("datetime");
+             modelBuilder.Entity<TblUnit>(entity =>
+             {
+                 entity.HasKey(e => e.UnitId);
 
-                entity.Property(e => e.DiscountCash).HasColumnType("decimal(12, 2)");
+                 entity.Property(e => e.CreatedDate).HasColumnType("datetime");
+
+                 entity.Property(e => e.FlagActive)
+                     .IsRequired()
+                     .HasDefaultValueSql("((1))");
+
+                 entity.Property(e => e.UnitName)
+                     .IsRequired()
+                     .HasMaxLength(100);
 
-                entity.Property(e => e.DiscountNet)
-                    .HasColumnType("decimal(12, 2)")
-                    .HasComputedColumnSql("([dbo].[cplSaleOrderPrice]([SaleOrderId],'DiscountNet'))");
+                 entity.Property(e => e.UpdatedDate).HasColumnType("datetime");
+             });
 
-                entity.Property(e => e.DiscountTot)
-                    .HasColumnType("decimal(12, 2)")
-                    .HasComputedColumnSql("([dbo].[cplSaleOrderPrice]([SaleOrderId],'DiscountTot'))");
+             modelBuilder.Entity<TeamOperation>(entity =>
+             {
+                 entity.HasKey(e => e.TeamId);
 
-                entity.Property(e => e.DiscountVat)
-                    .HasColumnType("decimal(12, 2)")
-                    .HasComputedColumnSql("([dbo].[cplSaleOrderPrice]([SaleOrderId],'DiscountVat'))");
+                 entity.Property(e => e.CreatedDate).HasColumnType("datetime");
 
-                entity.Property(e => e.OperationEndDate).HasColumnType("datetime");
+                 entity.Property(e => e.TeamName)
+                     .IsRequired()
+                     .HasMaxLength(200);
 
-                entity.Property(e => e.OperationStartDate).HasColumnType("datetime");
+                 entity.Property(e => e.UpdatedDate).HasColumnType("datetime");
 
-                entity.Property(e => e.PoNo).HasMaxLength(50);
+                 entity.HasOne(d => d.Manager)
+                     .WithMany(p => p.TeamOperation)
+                     .HasForeignKey(d => d.ManagerId)
+                     .OnDelete(DeleteBehavior.ClientSetNull)
+                     .HasConstraintName("FK_TeamOperation_Manager");
+             });
 
-                entity.Property(e => e.QuotationNo).HasMaxLength(20);
+             modelBuilder.Entity<TeamOperationDetail>(entity =>
+             {
+                 entity.Property(e => e.CreatedDate).HasColumnType("datetime");
 
-                entity.Property(e => e.SaleName).HasMaxLength(500);
+                 entity.Property(e => e.UpdatedDate).HasColumnType("datetime");
 
-                entity.Property(e => e.SaleOrderDate).HasColumnType("datetime");
-
-                entity.Property(e => e.SaleOrderNo)
-                    .IsRequired()
-                    .HasMaxLength(20);
-
-                entity.Property(e => e.StatusId).HasDefaultValueSql("((1))");
-
-                entity.Property(e => e.SubTotalNet)
-                    .HasColumnType("decimal(12, 2)")
-                    .HasComputedColumnSql("([dbo].[cplSaleOrderPrice]([SaleOrderId],'PriceNet'))");
-
-                entity.Property(e => e.SubTotalTot)
-                    .HasColumnType("decimal(12, 2)")
-                    .HasComputedColumnSql("([dbo].[cplSaleOrderPrice]([SaleOrderId],'PriceTot'))");
-
-                entity.Property(e => e.SubTotalVat)
-                    .HasColumnType("decimal(12, 2)")
-                    .HasComputedColumnSql("([dbo].[cplSaleOrderPrice]([SaleOrderId],'PriceVat'))");
-
-                entity.Property(e => e.SummaryNet)
-                    .HasColumnType("decimal(12, 2)")
-                    .HasComputedColumnSql("([dbo].[cplSaleOrderPrice]([SaleOrderId],'SummaryNet'))");
-
-                entity.Property(e => e.SummaryTot)
-                    .HasColumnType("decimal(12, 2)")
-                    .HasComputedColumnSql("([dbo].[cplSaleOrderPrice]([SaleOrderId],'SummaryTot'))");
-
-                entity.Property(e => e.SummaryVat)
-                    .HasColumnType("decimal(12, 2)")
-                    .HasComputedColumnSql("([dbo].[cplSaleOrderPrice]([SaleOrderId],'SummaryVat'))");
-
-                entity.Property(e => e.UpdateDate).HasColumnType("datetime");
-
-            /*    entity.HasOne(d => d.Customer)
-                    .WithMany(p => p.TblSaleOrder)
-                    .HasForeignKey(d => d.CustomerId)
-                    .HasConstraintName("FK_TblSaleOrder_Customer");*/
-            });
-
-            modelBuilder.Entity<TblSaleOrderAttachment>(entity =>
-            {
-                entity.Property(e => e.AttachmentOrder).HasDefaultValueSql("((9999))");
-
-                entity.Property(e => e.AttachmentPath)
-                    .IsRequired()
-                    .HasMaxLength(500);
-
-                entity.HasOne(d => d.SaleOrder)
-                    .WithMany(p => p.TblSaleOrderAttachment)
-                    .HasForeignKey(d => d.SaleOrderId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_TblSaleOrderAttachment_Id");
-            });
-
-            modelBuilder.Entity<TblSaleOrderDetail>(entity =>
-            {
-                entity.Property(e => e.DiscountNet).HasColumnType("decimal(12, 2)");
-
-                entity.Property(e => e.DiscountTot).HasColumnType("decimal(12, 2)");
-
-                entity.Property(e => e.DiscountVat).HasColumnType("decimal(12, 2)");
-
-                entity.Property(e => e.PriceNet).HasColumnType("decimal(12, 2)");
-
-                entity.Property(e => e.PriceTot).HasColumnType("decimal(12, 2)");
-
-                entity.Property(e => e.PriceVat).HasColumnType("decimal(12, 2)");
-
-                entity.Property(e => e.Remark).HasMaxLength(10);
-
-                entity.Property(e => e.TotalNet)
-                    .HasColumnType("decimal(13, 2)")
-                    .HasComputedColumnSql("([PriceNet]-[DiscountNet])");
-
-                entity.Property(e => e.TotalTot)
-                    .HasColumnType("decimal(13, 2)")
-                    .HasComputedColumnSql("([PriceTot]-[DiscountTot])");
-
-                entity.Property(e => e.TotalVat)
-                    .HasColumnType("decimal(13, 2)")
-                    .HasComputedColumnSql("([PriceVat]-[DiscountVat])");
-
-                entity.HasOne(d => d.Product)
-                    .WithMany(p => p.TblSaleOrderDetail)
-                    .HasForeignKey(d => d.ProductId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_TblSaleOrderDetail_Product");
-
-                entity.HasOne(d => d.SaleOrder)
-                    .WithMany(p => p.TblSaleOrderDetail)
-                    .HasForeignKey(d => d.SaleOrderId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_TblSaleOrderDetail_id");
-            });
-
-            modelBuilder.Entity<TblUnit>(entity =>
-            {
-                entity.HasKey(e => e.UnitId);
-
-                entity.Property(e => e.CreatedDate).HasColumnType("datetime");
-
-                entity.Property(e => e.FlagActive)
-                    .IsRequired()
-                    .HasDefaultValueSql("((1))");
-
-                entity.Property(e => e.UnitName)
-                    .IsRequired()
-                    .HasMaxLength(100);
-
-                entity.Property(e => e.UpdatedDate).HasColumnType("datetime");
-            });
-
-            modelBuilder.Entity<TeamOperation>(entity =>
-            {
-                entity.HasKey(e => e.TeamId);
-
-                entity.Property(e => e.CreatedDate).HasColumnType("datetime");
-
-                entity.Property(e => e.TeamName)
-                    .IsRequired()
-                    .HasMaxLength(200);
-
-                entity.Property(e => e.UpdatedDate).HasColumnType("datetime");
-
-                entity.HasOne(d => d.Manager)
-                    .WithMany(p => p.TeamOperation)
-                    .HasForeignKey(d => d.ManagerId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_TeamOperation_Manager");
-            });
-
-            modelBuilder.Entity<TeamOperationDetail>(entity =>
-            {
-                entity.Property(e => e.CreatedDate).HasColumnType("datetime");
-
-                entity.Property(e => e.UpdatedDate).HasColumnType("datetime");
-
-                entity.HasOne(d => d.Account)
-                    .WithMany(p => p.TeamOperationDetail)
-                    .HasForeignKey(d => d.AccountId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_TeamOperationDetail_Account");
-
-                entity.HasOne(d => d.Team)
-                    .WithMany(p => p.TeamOperationDetail)
-                    .HasForeignKey(d => d.TeamId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_TeamOperationDetail_Id");
-            });
-
-            modelBuilder.Entity<TeamSale>(entity =>
-            {
-                entity.HasKey(e => e.TeamId);
-
-                entity.Property(e => e.CreatedDate).HasColumnType("datetime");
-
-                entity.Property(e => e.TeamName)
-                    .IsRequired()
-                    .HasMaxLength(200);
-
-                entity.Property(e => e.UpdatedDate).HasColumnType("datetime");
-
-                entity.HasOne(d => d.Manager)
-                    .WithMany(p => p.TeamSale)
-                    .HasForeignKey(d => d.ManagerId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_TeamSale_Manager");
-            });
-
-            modelBuilder.Entity<TeamSaleDetail>(entity =>
-            {
-                entity.Property(e => e.CreatedDate).HasColumnType("datetime");
-
-                entity.Property(e => e.UpdatedDate).HasColumnType("datetime");
-
-                entity.HasOne(d => d.Account)
-                    .WithMany(p => p.TeamSaleDetail)
-                    .HasForeignKey(d => d.AccountId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_TeamSaleDetail_Account");
-
-                entity.HasOne(d => d.Team)
-                    .WithMany(p => p.TeamSaleDetail)
-                    .HasForeignKey(d => d.TeamId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_TeamSaleDetail_Id");
-            });
-
-            modelBuilder.Entity<TransferDetail>(entity =>
-            {
-                entity.HasKey(e => new { e.TransferId, e.Seq })
-                    .HasName("PK__Transfer__09E95DAB26E6103B");
-
-                entity.Property(e => e.CurrentQty)
-                    .HasMaxLength(50)
-                    .IsUnicode(false);
-
-                entity.Property(e => e.LastModified)
-                    .HasColumnName("last_modified")
-                    .HasColumnType("datetime");
-
-                entity.Property(e => e.RequestUnit)
-                    .HasMaxLength(20)
-                    .IsUnicode(false);
-
-                entity.Property(e => e.RequestUnitFactor).HasColumnType("decimal(8, 3)");
-
-                entity.HasOne(d => d.Product)
-                    .WithMany(p => p.TransferDetail)
-                    .HasForeignKey(d => d.ProductId)
-                    .HasConstraintName("FK__TransferD__Produ__2803DB90");
-
-             /*   entity.HasOne(d => d.Transfer)
+                 entity.HasOne(d => d.Account)
+                     .WithMany(p => p.TeamOperationDetail)
+                     .HasForeignKey(d => d.AccountId)
+                     .OnDelete(DeleteBehavior.ClientSetNull)
+                     .HasConstraintName("FK_TeamOperationDetail_Account");
+
+                 entity.HasOne(d => d.Team)
+                     .WithMany(p => p.TeamOperationDetail)
+                     .HasForeignKey(d => d.TeamId)
+                     .OnDelete(DeleteBehavior.ClientSetNull)
+                     .HasConstraintName("FK_TeamOperationDetail_Id");
+             });
+
+             modelBuilder.Entity<TeamSale>(entity =>
+             {
+                 entity.HasKey(e => e.TeamId);
+
+                 entity.Property(e => e.CreatedDate).HasColumnType("datetime");
+
+                 entity.Property(e => e.TeamName)
+                     .IsRequired()
+                     .HasMaxLength(200);
+
+                 entity.Property(e => e.UpdatedDate).HasColumnType("datetime");
+
+                 entity.HasOne(d => d.Manager)
+                     .WithMany(p => p.TeamSale)
+                     .HasForeignKey(d => d.ManagerId)
+                     .OnDelete(DeleteBehavior.ClientSetNull)
+                     .HasConstraintName("FK_TeamSale_Manager");
+             });
+
+             modelBuilder.Entity<TeamSaleDetail>(entity =>
+             {
+                 entity.Property(e => e.CreatedDate).HasColumnType("datetime");
+
+                 entity.Property(e => e.UpdatedDate).HasColumnType("datetime");
+
+                 entity.HasOne(d => d.Account)
+                     .WithMany(p => p.TeamSaleDetail)
+                     .HasForeignKey(d => d.AccountId)
+                     .OnDelete(DeleteBehavior.ClientSetNull)
+                     .HasConstraintName("FK_TeamSaleDetail_Account");
+
+                 entity.HasOne(d => d.Team)
+                     .WithMany(p => p.TeamSaleDetail)
+                     .HasForeignKey(d => d.TeamId)
+                     .OnDelete(DeleteBehavior.ClientSetNull)
+                     .HasConstraintName("FK_TeamSaleDetail_Id");
+             });
+
+             modelBuilder.Entity<TransferDetail>(entity =>
+             {
+                 entity.HasKey(e => new { e.TransferId, e.Seq })
+                     .HasName("PK__Transfer__09E95DAB26E6103B");
+
+                 entity.Property(e => e.CurrentQty)
+                     .HasMaxLength(50)
+                     .IsUnicode(false);
+
+                 entity.Property(e => e.LastModified)
+                     .HasColumnName("last_modified")
+                     .HasColumnType("datetime");
+
+                 entity.Property(e => e.RequestUnit)
+                     .HasMaxLength(20)
+                     .IsUnicode(false);
+
+                 entity.Property(e => e.RequestUnitFactor).HasColumnType("decimal(8, 3)");
+
+                 /*  entity.HasOne(d => d.Product)
+                   .WithMany(p => p.TransferDetail)
+                   .HasForeignKey(d => d.ProductId)
+                   .HasConstraintName("FK__TransferD__Produ__2803DB90");
+
+              entity.HasOne(d => d.Transfer)
                     .WithMany(p => p.TransferDetail)
                     .HasForeignKey(d => d.TransferId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_TransferDetail_TransferHeader");*/
-            });
+             });
 
-            modelBuilder.Entity<TransferHeader>(entity =>
-            {
-                entity.HasKey(e => e.TransferId)
-                    .HasName("PK__Transfer__9548BE632F35F7F7");
+              modelBuilder.Entity<TransferHeader>(entity =>
+              {
+                  entity.HasKey(e => e.TransferId)
+                      .HasName("PK__Transfer__9548BE632F35F7F7");
 
-                entity.Property(e => e.BillNo).HasMaxLength(50);
+                  entity.Property(e => e.BillNo).HasMaxLength(50);
 
-                entity.Property(e => e.CarBrand).HasMaxLength(10);
+                  entity.Property(e => e.CarBrand).HasMaxLength(10);
 
-                entity.Property(e => e.CarNo).HasMaxLength(10);
+                  entity.Property(e => e.CarNo).HasMaxLength(10);
 
-                entity.Property(e => e.Company).HasMaxLength(100);
+                  entity.Property(e => e.Company).HasMaxLength(100);
 
-                entity.Property(e => e.CreateDate).HasColumnType("datetime");
+                  entity.Property(e => e.CreateDate).HasColumnType("datetime");
 
-                entity.Property(e => e.EmpId).HasMaxLength(10);
+                  entity.Property(e => e.EmpId).HasMaxLength(10);
 
-                entity.Property(e => e.Note1)
-                    .HasMaxLength(50)
-                    .IsUnicode(false);
+                  entity.Property(e => e.Note1)
+                      .HasMaxLength(50)
+                      .IsUnicode(false);
 
-                entity.Property(e => e.Reason).HasMaxLength(100);
+                  entity.Property(e => e.Reason).HasMaxLength(100);
 
-                entity.Property(e => e.ReceiveTo).HasMaxLength(50);
+                  entity.Property(e => e.ReceiveTo).HasMaxLength(50);
 
-                entity.Property(e => e.Remark).HasMaxLength(100);
+                  entity.Property(e => e.Remark).HasMaxLength(100);
 
-                entity.Property(e => e.TransferDate).HasColumnType("datetime");
+                  entity.Property(e => e.TransferDate).HasColumnType("datetime");
 
-                entity.Property(e => e.TransferNo)
-                    .IsRequired()
-                    .HasMaxLength(15);
+                  entity.Property(e => e.TransferNo)
+                      .IsRequired()
+                      .HasMaxLength(15);
 
-                entity.Property(e => e.TransferTime).HasMaxLength(5);
+                  entity.Property(e => e.TransferTime).HasMaxLength(5);
 
-                entity.Property(e => e.TransferType)
-                    .IsRequired()
-                    .HasMaxLength(3);
+                  entity.Property(e => e.TransferType)
+                      .IsRequired()
+                      .HasMaxLength(3);
 
-                entity.Property(e => e.UpdateDate).HasColumnType("datetime");
-            });
+                  entity.Property(e => e.UpdateDate).HasColumnType("datetime");
+              });
 
-            modelBuilder.Entity<TransferStockDetail>(entity =>
-            {
-                entity.HasKey(e => new { e.TransferStockId, e.Seq })
-                    .HasName("PK__TransferStockDetail");
+              modelBuilder.Entity<TransferStockDetail>(entity =>
+              {
+                  entity.HasKey(e => new { e.TransferStockId, e.Seq })
+                      .HasName("PK__TransferStockDetail");
 
-                entity.Property(e => e.CurrentQty)
-                    .HasMaxLength(50)
-                    .IsUnicode(false);
+                  entity.Property(e => e.CurrentQty)
+                      .HasMaxLength(50)
+                      .IsUnicode(false);
 
-                entity.Property(e => e.LastModified)
-                    .HasColumnName("last_modified")
-                    .HasColumnType("datetime");
+                  entity.Property(e => e.LastModified)
+                      .HasColumnName("last_modified")
+                      .HasColumnType("datetime");
 
-                entity.Property(e => e.RequestUnit)
-                    .HasMaxLength(20)
-                    .IsUnicode(false);
+                  entity.Property(e => e.RequestUnit)
+                      .HasMaxLength(20)
+                      .IsUnicode(false);
 
-                entity.Property(e => e.RequestUnitFactor).HasColumnType("decimal(8, 3)");
+                  entity.Property(e => e.RequestUnitFactor).HasColumnType("decimal(8, 3)");
 
-          /*      entity.HasOne(d => d.Product)
-                    .WithMany(p => p.TransferStockDetail)
-                    .HasForeignKey(d => d.ProductId)
-                    .HasConstraintName("FK__TransferStockDetail__Product");*/
-            });
+                /*    entity.HasOne(d => d.Product)
+                      .WithMany(p => p.TransferStockDetail)
+                      .HasForeignKey(d => d.ProductId)
+                      .HasConstraintName("FK__TransferStockDetail__Product");*/
+             });
 
             modelBuilder.Entity<TransferStockHeader>(entity =>
             {
+                 entity.HasKey(e => e.TransferId)
                 entity.HasKey(e => e.TransferStockId)
                     .HasName("PK__Transfer__Stock");
 

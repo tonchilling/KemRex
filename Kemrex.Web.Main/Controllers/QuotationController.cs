@@ -55,6 +55,16 @@ namespace Kemrex.Web.Main.Controllers
             }
             return View(lst);
         }
+
+        [HttpPost]
+        public ActionResult GetQuatationList()
+        {
+            List<TblQuotation> obList = uow.Modules.Quotation.GetList();
+
+            return Json(obList);
+        }
+
+
         public ActionResult Detail(int? id, string msg, AlertMsgType? msgType)
         {
             TblQuotation ob = uow.Modules.Quotation.Get(id ?? 0);

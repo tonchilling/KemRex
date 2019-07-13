@@ -20,11 +20,17 @@ namespace Kemrex.Web.Main
             );
 
 
+            routes.MapRoute(
+              name: "Home",
+              url: "Home/{year}/{month}",
+              defaults: new { controller = "Home", action = "Index", year = DateTime.Now.Year, month = DateTime.Now.Month }
+          );
+
 
             routes.MapRoute(
                 name: "Default",
                 url: "{controller}/{action}/{id}",
-                defaults: new { controller = "Home", action = "Index", id = UrlParameter.Optional }
+                defaults: new { controller = "Home", action = "Index", year = DateTime.Now.Year, month = DateTime.Now.Month, id = UrlParameter.Optional }
             );
 
         }

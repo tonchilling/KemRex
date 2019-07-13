@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-
+using System.ComponentModel.DataAnnotations.Schema;
 namespace Kemrex.Core.Database.Models
 {
     public partial class TblQuotation
@@ -13,6 +13,9 @@ namespace Kemrex.Core.Database.Models
         public int QuotationId { get; set; }
         public string QuotationNo { get; set; }
         public DateTime QuotationDate { get; set; }
+
+        [NotMapped]
+        public string strQuotationDate { get; set; }
         public int QuotationValidDay { get; set; }
         public int? ConditionId { get; set; }
         public DateTime? OperationStartDate { get; set; }
