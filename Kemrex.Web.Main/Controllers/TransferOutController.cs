@@ -59,7 +59,7 @@ namespace Kemrex.Web.Main.Controllers
             string qid = "T" + type;
             System.Globalization.CultureInfo _cultureTHInfo = new System.Globalization.CultureInfo("en-US");
             var dt = DateTime.Now.ToString("yyMMdd", _cultureTHInfo);
-            string Id = uow.Modules.Transfer.GetLastId(qid + dt);
+            string Id = uow.Modules.Transfer.GetLastId(qid + dt, type);
 
             if (Id == null)
             {

@@ -35,7 +35,8 @@ namespace Kemrex.Core.Common.Modules
                 .FirstOrDefault() ?? new TblInvoice()
                 {
                     CreatedDate = DateTime.Now,
-                    InvoiceDate = DateTime.Now
+                    InvoiceDate = DateTime.Now,
+                    DueDate = DateTime.Now.AddMonths(1)
                 };
         }
         public List<TblInvoice> Gets(int page = 1, int size = 0, string src = "")

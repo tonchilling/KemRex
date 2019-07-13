@@ -53,6 +53,7 @@ namespace Kemrex.Web.Main.Controllers
         public ActionResult Detail(int? id, string msg, AlertMsgType? msgType)
         {
             TblInvoice ob = uow.Modules.Invoice.Get(id ?? 0);
+            ob.SaleOrder = uow.Modules.SaleOrder.Get(ob.SaleOrderId);
             return ViewDetail(ob, msg, msgType);
         }
 

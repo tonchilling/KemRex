@@ -17,8 +17,14 @@
     List<EnmPaymentCondition> optPayment = (List<EnmPaymentCondition>
       )ViewData["optPayment"];
 }
+@section Styles {
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.8.0/css/bootstrap-datepicker.min.css" rel="stylesheet" type="text/css" />
 
+
+
+}
 @section Scripts {
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.8.0/js/bootstrap-datepicker.min.js"></script>
     <script type="text/javascript">
 
         var _contact = [];
@@ -126,13 +132,35 @@
                                                 </div>
                                             </div>
                                             <div class="form-group">
-                                                <label for="InvoiceAmount"  class="col-sm-4 col-form-label">ยอดเรียกเก็บ</label>
+                                                <label for="InvoiceAmount" class="col-sm-4 col-form-label">ยอดเรียกเก็บ</label>
                                                 <div class="input-group col-sm-6">
                                                     <span class="input-group-addon">
                                                         <i class="icon wb-payment" aria-hidden="true"></i>
                                                     </span>
                                                     <input type="text" class="form-control text-right" name="InvoiceAmount" value="@Model.InvoiceAmount" />
                                                 </div>
+                                            </div>
+                                            @{
+                                                bool DepositReadonly = false;
+                                                if (Model.InvoiceId > 0)
+                                                {
+                                                    if (Model.SaleOrder.ConditionId.HasValue)
+                                                    {
+                                                        DepositReadonly = Model.SaleOrder.ConditionId.Value == 2 ? true : false;
+                                                    }
+
+
+
+                                                }
+                                            }
+                                            <div class="form-group">
+                                                <label for="DepositAmount" class="col-sm-4 col-form-label">หักเงินมัดจำออก</label>
+                                                <div class="input-group col-sm-6">
+                                                    <span class="input-group-addon">
+                                                        <i class="icon wb-payment" aria-hidden="true"></i>
+                                                    </span>
+                                                    <input type="text" class="form-control text-right" name="DepositAmount" id="DepositAmount"
+                                                            value="@Model.DepositAmount"   @(DepositReadonly ? "readonly" : "") /> </div>
                                             </div>
                                             <div class="form-group">
                                                 <label for="Remark" class="col-sm-4 col-form-label">หมายเหตุ</label>
@@ -153,6 +181,15 @@
                                                     <input type="text" class="form-control" name="InvoiceDate" value="@Model.InvoiceDate.ToString("dd/MM/yyyy")" readonly />
                                                 </div>
                                             </div>
+                                            <div class="form-group">
+                                                <label for="DueDate" class="col-sm-5 col-form-label">วันที่ครบกำหนด</label>
+                                                <div class="input-group col-sm-6 date" data-provide="datepicker" data-date-format="dd/mm/yyyy">
+                                                    <span class="input-group-addon">
+                                                        <i class="icon wb-calendar" aria-hidden="true"></i>
+                                                    </span>
+                                                    <input type="text" class="form-control" name="DueDate" id="DueDate" value="@Model.DueDate.ToString("dd/MM/yyyy")" />
+                                                </div>
+                                            </div>
                                             @*Invoice Status*@
                                             <div class="form-group">
                                                 <label for="PriceValidity" class="col-sm-5 col-form-label">สถานะเอกสาร</label>
@@ -166,10 +203,21 @@
                                                 </div>
                                             </div>
                                             <div class="form-group">
-                                                <label  class="col-sm-5 col-form-label">เงื่อนไขการชำระเงิน</label>
+                                                <label class="col-sm-5 col-form-label">เงื่อนไขการชำระเงิน</label>
                                                 <div class="input-group col-sm-6">
                                                     @{
-                                                        var con = Model.SaleOrder != null ? @optPayment.Find(c => c.ConditionId == Model.SaleOrder.ConditionId).ConditionName : "";
+                                                        string con = "";
+                                                        int conid = 0;
+                                                        if (Model.InvoiceId > 0)
+                                                        {
+                                                            if (Model.SaleOrder.ConditionId.HasValue)
+                                                            {
+                                                                conid = Model.SaleOrder.ConditionId.Value;
+                                                            }
+                                                            con = @optPayment.Find(c => c.ConditionId == conid).ConditionName;
+
+
+                                                        }
                                                     }
                                                     <input type="text" class="form-control border-0" value="@con" readonly />
                                                 </div>

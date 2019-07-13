@@ -71,7 +71,7 @@
                                                 <th>ลูกค้า</th>
                                                 <th>ใบเสนอราคา/ใบสั่งงาน</th>
                                                 <th>การชำระ</th>
-                                                <th>ยอดเงิน</th>
+                                                <th>ยอดเงินเรียกเก็บ</th>
                                                 <th>วันที่เอกสาร</th>
                                                 <th>งวดที่</th>
                                                 <th>สถานะ</th>
@@ -126,6 +126,20 @@
                                                            class="btn btn-xs btn-primary">
                                                             <i class="fa fa-pencil" aria-hidden="true"></i>&nbsp;แก้ไข
                                                         </a>
+                                                        @if (ob.SaleOrder.ConditionId == 2)
+                                                        {
+                                                            <a href="@Url.Action("PDFDepositInvoice", new { controller = "export", area = "", id = ob.InvoiceId })"
+                                                               class="btn btn-xs btn-warning">
+                                                                <i class="fa fa-file-pdf-o" aria-hidden="true"></i>&nbsp;PDF
+                                                            </a>
+                                                        }
+                                                        else
+                                                        {
+                                                            <a href="@Url.Action("PDFInvoice", new { controller = "export", area = "", id = ob.InvoiceId })"
+                                                               class="btn btn-xs btn-warning">
+                                                                <i class="fa fa-file-pdf-o" aria-hidden="true"></i>&nbsp;PDF
+                                                            </a>
+                                                        }
                                                     </td>
                                                 </tr>
                                             }

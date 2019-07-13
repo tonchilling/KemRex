@@ -34,6 +34,13 @@ namespace Kemrex.Core.Common.Modules
                     .Where(n=>n.SaleOrderNo.Contains(pre))
                     select q.SaleOrderNo).Max();
         }
+        public TblJobOrder GetJobOrder(int id)
+        {
+            return db.TblJobOrder
+                   .Where(x => x.SaleOrderId == id)
+                   .FirstOrDefault() ?? new TblJobOrder();
+                   
+        }
         public TblSaleOrder Get(int id)
         {
             return db.TblSaleOrder
