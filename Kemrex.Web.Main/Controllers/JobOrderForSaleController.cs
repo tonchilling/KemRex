@@ -58,6 +58,18 @@ namespace Kemrex.Web.Main.Controllers
             return View(lst);
         }
 
+
+        [HttpPost]
+        public JsonResult GetList()
+        {
+            string formateDate = "yyyy-MM-dd";
+            //  DateTime searchOrderDate = Converting.StringToDate(saleOrderDate, formateDate);
+            List<TblJobOrder> ob = uow.Modules.JobOrder.GetHeader();
+
+
+            return Json(ob);
+        }
+
         public ActionResult Detail(int? id, string msg, AlertMsgType? msgType)
         {
             System.Threading.Thread.CurrentThread.CurrentCulture = new System.Globalization.CultureInfo("en-US"); ;

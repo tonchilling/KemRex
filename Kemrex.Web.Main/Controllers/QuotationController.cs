@@ -57,7 +57,7 @@ namespace Kemrex.Web.Main.Controllers
         }
 
         [HttpPost]
-        public ActionResult GetQuatationList()
+        public ActionResult GetList()
         {
             List<TblQuotation> obList = uow.Modules.Quotation.GetList();
 

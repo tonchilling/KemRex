@@ -113,7 +113,7 @@ namespace Kemrex.Web.Main.Controllers
                 ob.UpdateDate = CurrentDate;
             }
 
-            ob.QuotationNo = Request.Form["selQuotationNo"];
+            ob.QuotationNo = Request.Form["QuotationNo"];
             ob.SaleId = Request.Form["SaleId"] != null ? Request.Form["SaleId"].ParseInt() : 0;
             ob.SaleName = Request.Form["SaleName"];
             if (Request.Form["DeliveryDate"].ToString().Count() > 0)
@@ -175,6 +175,7 @@ namespace Kemrex.Web.Main.Controllers
         #region Private Action
         private ActionResult ViewDetail(TblSaleOrder ob, string msg, AlertMsgType? msgType)
         {
+            List<TblQuotation> quotationList = null;
             try
             {
                 if (ob == null)
@@ -187,10 +188,16 @@ namespace Kemrex.Web.Main.Controllers
                     ViewBag.Alert = alert;
                 }
 
-                ViewData["optSoDetail"] = uow.Modules.SaleOrderDetail.Gets(ob.SaleOrderId);
-                ViewData["optQuotation"] = uow.Modules.Quotation.Gets()
+                quotationList = uow.Modules.Quotation.GetQuatationNotSale()
                                             .Where(q => q.StatusId == 3)
                                             .ToList();
+                if (quotationList == null)
+                {
+                    quotationList = new List<TblQuotation>();
+                }
+                quotationList.Add(uow.Modules.Quotation.Get(ob.QuotationNo));
+                ViewData["optSoDetail"] = uow.Modules.SaleOrderDetail.Gets(ob.SaleOrderId);
+                ViewData["optQuotation"] = quotationList;
                 ViewData["optCustomer"] = uow.Modules.Customer.GetAllAddress();
                 ViewData["optCustomerAddress"] = uow.Modules.CustomerAddress.Gets();
                 ViewData["optProduct"] = uow.Modules.Product.Gets("0");
@@ -243,6 +250,37 @@ namespace Kemrex.Web.Main.Controllers
 
 
             return Json(ob, JsonRequestBehavior.AllowGet);
+        }
+
+
+        [HttpPost]
+        public JsonResult GetList()
+        {
+            string formateDate = "yyyy-MM-dd";
+          //  DateTime searchOrderDate = Converting.StringToDate(saleOrderDate, formateDate);
+            List<SaleOrderHeader> ob = uow.Modules.SaleOrder.GetHeader();
+            var js = new JavaScriptSerializer();
+
+
+            return Json(ob);
+        }
+
+
+        [HttpGet]
+        public JsonResult GetQuotationBySaleOrder()
+        {
+
+           var quotationList = uow.Modules.Quotation.GetQuatationNotSale()
+                                            .Where(q => q.StatusId == 3)
+                                            .ToList();
+            if (quotationList == null)
+            {
+                quotationList = new List<TblQuotation>();
+            }
+
+            var js = new JavaScriptSerializer();
+
+            return Json(quotationList, JsonRequestBehavior.AllowGet);
         }
 
 
@@ -314,7 +352,7 @@ namespace Kemrex.Web.Main.Controllers
         public ActionResult QT2SO()
         {
             int sid = 0;
-            if (string.IsNullOrEmpty(Request.Form["lbSaleOrderId"]))
+            if (!string.IsNullOrEmpty(Request.Form["lbSaleOrderId"]))
             {
                 sid = Request.Form["lbSaleOrderId"].ParseInt();
             }
@@ -337,10 +375,12 @@ namespace Kemrex.Web.Main.Controllers
 
                 sid = ob.SaleOrderId;
             }
+
+
             if (sid > 0)
             {
 
-                string qno = Request.Form["lbQuotationId"];
+                string qno = Request.Form["QuotationNo"];
 
                 TblSaleOrder so = uow.Modules.SaleOrder.Get(sid);
                 var qid = uow.Modules.Quotation.GetId(qno);
@@ -468,7 +508,7 @@ namespace Kemrex.Web.Main.Controllers
 
 
         [HttpGet]
-        public JsonResult GetSaleOrder(string startDate,string toDate)
+        public JsonResult GetSaleOrder(string startDate,string toDate  )
         {
 
             List<TblSaleOrder> saleOrderList = uow.Modules.SaleOrder.GetFindByCondition(startDate, toDate);
