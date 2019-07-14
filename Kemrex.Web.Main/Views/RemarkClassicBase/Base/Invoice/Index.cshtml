@@ -8,22 +8,119 @@
     KemrexController kemrex = ((KemrexController)this.ViewContext.Controller);
     Layout = kemrex.PathViewShared("_lyDefault");
     WidgetAlertModel Alert = (WidgetAlertModel)ViewBag.Alert;
-    WidgetPaginationModel Pagination = (WidgetPaginationModel)ViewBag.Pagination;
+    //WidgetPaginationModel Pagination = (WidgetPaginationModel)ViewBag.Pagination;
     List<EnmPaymentCondition> optPayment = (List<EnmPaymentCondition>
   )ViewData["optPayment"];
 }
 
 @section Scripts {
     <script type="text/javascript">
+        var url = '@Url.Action("GetInvoiceList", "Invoice")';
         $(document).ready(function () {
             window.setTimeout(function () {
                 $(".alert").fadeTo(1000, 0).slideUp(1000, function () {
                     $(this).remove();
                 });
             }, 5000);
-
+            waitingDialog.show('Waiting for loading data', { dialogSize: 'md', progressType: 'primary' });
+            LoadTable();
             $(SaleMenu).slideToggle();
         });
+        function LoadTable() {
+
+            var html = '';
+            var criteria = "";
+            var urlExport = '@Url.Action("PDFinvoice", new { controller = "export", area = ""})';
+            var urlExportDeposit = '@Url.Action("PDFDepositInvoice", new { controller = "export", area = ""})';
+            var urlDetail = '@Url.Action("Detail", new { controller = "Invoice", area = ""})';
+            $(".divDetail").empty();
+            html += '<table class="table  table-striped table-hover "  >';
+            html += '<thead>';
+            html += '<tr class="table-primary" >';
+            html += '<th align="center">หมายเลข</th>';
+            html += '<th align="center">ลูกค้า</th>';
+            html += '<th align="center">พนักงานขาย</th>';
+            html += '<th align="center">ใบเสนอราคา/ใบสั่งขาย</th>';
+            html += '<th align="center">การชำระ</th>';
+            html += '<th align="center">ยอดเงินเรียกเก็บ</th>';
+            html += '<th align="center">วันที่เอกสาร</th>';
+            html += '<th align="center">งวดที่</th>';
+            html += '<th align="center">สถานะ</th>';
+            html += '<th align="center">เครื่องมือ</th>';
+            html += ' </tr>';
+            html += '</thead>';
+            html += '<tbody>';
+
+
+
+            $.ajax({
+                url: url,
+                type: "POST",
+                // data: JSON.stringify(criteria),
+                dataType: "json",
+                contentType: "application/json; charset=utf-8",
+                success: function (data) {
+
+                    var statusName = "";
+                    if (data != null) {
+
+                        $.each(data, function (index, item) {
+                            html += '<tr>';
+                            html += '<td align="center">' + item.InvoiceNo + '</td>';
+                            html += '<td>' + item.SaleOrder.CustomerName + '</td>';
+                            html += '<td>' + item.SaleOrder.SaleName + '</td>';
+                            html += '<td align="center">' + item.SaleOrder.QuotationNo + '<br>' + item.SaleOrder.SaleOrderNo + '</td>';
+                            html += '<td>' + item.SaleOrder.ConditionName + '</td>';
+                            html += '<td align="right">' + item.InvoiceAmount + '</td>';
+                            html += '<td align="center">' + item.StrInvoiceDate + '</td>';
+                            html += '<td>' + item.InvoiceTerm + '</td>';
+
+                            if (item.StatusId == 1) {
+                                statusName = "ร่าง";
+                            } else if (item.StatusId == 2) {
+                                statusName = "ส่งแล้ว";
+                            } else if (item.StatusId == 3) {
+                                statusName = "จ่ายแล้ว";
+                            } else if (item.StatusId == 4) {
+                                statusName = "ยกเลิก";
+                            }
+
+                            html += '<td>' + statusName + '</td>';
+                            html += '<td> <a href="' + urlDetail + '/' + item.InvoiceId + '" class="btn btn-xs btn-primary">';
+                            html += '<i class="fa fa-pencil" aria-hidden="true"></i>&nbsp;แก้ไข </a>&nbsp;';
+
+                            if (item.SaleOrder.ConditionId == 2) {
+                                html += '<a href="' + urlExportDeposit + '/' + item.InvoiceId + '" class="btn btn-xs btn-warning">';
+                            }
+                            else {
+                                html += '<a href="' + urlExport + '/' + item.InvoiceId + '" class="btn btn-xs btn-warning">';
+                            }
+                            html += '<i class="fa fa-file-pdf-o" aria-hidden="true"></i>&nbsp;PDF </a></td>';
+
+                            html += '</tr>';
+                        });
+                    }
+                    html += '</tbody>';
+                    html += ' </table>';
+
+                    $(".divDetail").append(html);
+                    $(".divDetail table").DataTable(
+                        {
+                            columnDefs: [
+                                { type: 'date-uk', targets: 6 }
+                            ],
+                            order: [[6, 'desc']]
+                        }
+                    );
+                    waitingDialog.hide();
+                },
+                error: function (error) {
+                    alert(error);
+                    waitingDialog.hide();
+                    //  waitingDialog.hide();
+                }
+            });
+        }
     </script>
 }
 
@@ -49,36 +146,26 @@
                     </div>
                     <!-- /.box-header -->
                     <div class="panel-body dataTables_wrapper">
-                        <div class="row">
-                            <div class="col-12 col-sm-6 form-inline">
-                                @Html.Partial(kemrex.PathViewShared("_wgPaginationSize"), Pagination)
-                            </div>
-                            <div class="col-12 col-sm-6">
-                                <div class="dataTables_paginate float-right">
-                                    @Html.Partial(kemrex.PathViewShared("_wgPagination"), Pagination)
-                                </div>
-                                <div class="clear"></div>
-                            </div>
-                            <br /><br />
-                        </div>
+
                         <div class="row">
                             <div class="col-12">
-                                <div class="table-responsive">
+                                <div class="table-responsive divDetail">
                                     <table class="table table-bordered table-hover">
                                         <thead>
                                             <tr align="center">
-                                                <th>หมายเลข</th>
-                                                <th>ลูกค้า</th>
-                                                <th>ใบเสนอราคา/ใบสั่งงาน</th>
-                                                <th>การชำระ</th>
-                                                <th>ยอดเงินเรียกเก็บ</th>
-                                                <th>วันที่เอกสาร</th>
-                                                <th>งวดที่</th>
-                                                <th>สถานะ</th>
-                                                <th>เครื่องมือ</th>
+                                                <th align="center">หมายเลข</th>
+                                                <th align="center">ลูกค้า</th>
+                                                <th align="center">พนักงานขาย</th>
+                                                <th align="center">ใบเสนอราคา/ใบสั่งขาย</th>
+                                                <th align="center">การชำระ</th>
+                                                <th align="center">ยอดเงินเรียกเก็บ</th>
+                                                <th align="center">วันที่เอกสาร</th>
+                                                <th align="center">งวดที่</th>
+                                                <th align="center">สถานะ</th>
+                                                <th align="center">เครื่องมือ</th>
                                             </tr>
                                         </thead>
-                                        <tbody>
+                                        @*<tbody>
                                             @if (Model.Count() <= 0)
                                             {
                                                 <tr>
@@ -143,23 +230,13 @@
                                                     </td>
                                                 </tr>
                                             }
-                                        </tbody>
+                                        </tbody>*@
                                     </table>
 
                                 </div>
                             </div>
                         </div>
-                        <div class="row">
-                            <div class="col-12 col-sm-6">
-                                <span>@Pagination.CurrentDisplay</span>
-                            </div>
-                            <div class="col-12 col-sm-6">
-                                <div class="dataTables_paginate float-right">
-                                    @Html.Partial(kemrex.PathViewShared("_wgPagination"), Pagination)
-                                </div>
-                                <div class="clear"></div>
-                            </div>
-                        </div>
+                       
                     </div>
                     <!-- /.box-body -->
                 </div>

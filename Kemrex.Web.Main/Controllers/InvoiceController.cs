@@ -50,6 +50,36 @@ namespace Kemrex.Web.Main.Controllers
             }
             return View(lst);
         }
+        [HttpPost]
+        public ActionResult GetInvoiceList()
+        {
+            
+            List<TblInvoice> lst = new List<TblInvoice>();
+            EnmPaymentCondition payCon = new EnmPaymentCondition();
+            try
+            {
+                lst = uow.Modules.Invoice.GetList();
+                foreach (var pr in lst)
+                {
+                    pr.SaleOrder = uow.Modules.SaleOrder.Get(pr.SaleOrderId);
+                    pr.StrInvoiceDate = pr.InvoiceDate.Day.ToString("00") + "/" + pr.InvoiceDate.Month.ToString("00") + "/" + pr.InvoiceDate.Year;
+                    payCon = uow.Modules.PaymentCondition.Get(pr.SaleOrder.ConditionId.HasValue ? pr.SaleOrder.ConditionId.Value : 0);
+                    pr.SaleOrder.ConditionName = payCon.ConditionName;
+                }
+
+            }
+            catch (Exception ex)
+            {
+                WidgetAlertModel Alert = new WidgetAlertModel()
+                {
+                    Type = AlertMsgType.Danger,
+                    Message = ex.GetMessage(true)
+                };
+                ViewBag.Alert = Alert;
+            }
+
+            return Json(lst);
+        }
         public ActionResult Detail(int? id, string msg, AlertMsgType? msgType)
         {
             TblInvoice ob = uow.Modules.Invoice.Get(id ?? 0);
@@ -87,6 +117,7 @@ namespace Kemrex.Web.Main.Controllers
                 int id = Request.Form["InvoiceId"].ParseInt();
 
                 TblInvoice ob = uow.Modules.Invoice.Get(id);
+                ob.SaleOrder = uow.Modules.SaleOrder.Get(ob.SaleOrderId);
                 if (ob.InvoiceId <= 0)
                 {
                     ob.InvoiceNo = genInvoiceId("DEK");
@@ -112,7 +143,11 @@ namespace Kemrex.Web.Main.Controllers
                     ob.InvoiceAmount = 0;
                     if (Request.Form["InvoiceAmount"] != "")
                         ob.InvoiceAmount = decimal.Parse(Request.Form["InvoiceAmount"].ToString());
-
+                    decimal reamin = Request.Form["remain"].ToString().ParseDecimal();
+                    if (ob.InvoiceAmount > reamin)
+                    {
+                        return ViewDetail(ob, "ยอดเรียกเก็บต้อง น้อยกว่าหรือเท่ากับ ยอดที่ยังไม่ได้เรียกเก็บ", AlertMsgType.Danger);
+                    }
 
                     uow.Modules.Invoice.Set(ob);
                     uow.SaveChanges();
@@ -167,8 +202,9 @@ namespace Kemrex.Web.Main.Controllers
 
                 ViewData["optSaleOrder"] = uow.Modules.SaleOrder.Gets();
                 ViewData["optQuotation"] = uow.Modules.Quotation.Gets();
-
                 ViewData["optPayment"] = uow.Modules.PaymentCondition.Gets();
+                ViewData["optRemain"] = uow.Modules.Invoice.GetRemain(ob.SaleOrderId);
+
 
                 return View(ob);
             }

@@ -474,7 +474,10 @@ namespace Kemrex.Web.Main.Controllers
             List<TblSaleOrder> saleOrderList = uow.Modules.SaleOrder.GetFindByCondition(startDate, toDate);
             // ob.TblSaleOrderDetail = uow.Modules.SaleOrderDetail.Gets(id ?? 0);
             // TblCustomer objCustomer = uow.Modules.Customer.Get(Convert.ToInt32(ob.CustomerId));
-
+            foreach (TblSaleOrder so in saleOrderList)
+            {
+                so.StrSaleOrderDate = so.SaleOrderDate.HasValue ? so.SaleOrderDate.Value.Day.ToString("00") + "/" + so.SaleOrderDate.Value.Month.ToString("00") + "/" + so.SaleOrderDate.Value.Year : "";
+            }
 
 
             return Json(saleOrderList, JsonRequestBehavior.AllowGet);

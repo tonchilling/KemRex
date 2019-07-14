@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Kemrex.Core.Common.Helper;
 
 namespace Kemrex.Core.Common.Modules
 {
@@ -53,6 +54,52 @@ namespace Kemrex.Core.Common.Modules
             { data = data.Skip((page - 1) * size).Take(size); }
             return data.ToList();
         }
+        public List<TblInvoice> GetList()
+        {
+            var data = (from i in db.TblInvoice
+                        select new TblInvoice
+                        {
+                            InvoiceId = i.InvoiceId,
+                            InvoiceNo = i.InvoiceNo,
+                            InvoiceDate = i.InvoiceDate,
+                            StrInvoiceDate = i.InvoiceDate != null ? Converting.ToDDMMYYYY(i.InvoiceDate) : "",
+                            SaleOrderId = i.SaleOrderId,
+                            InvoiceRemark = i.InvoiceRemark,
+                            InvoiceTerm = i.InvoiceTerm,
+                            InvoiceAmount = i.InvoiceAmount,
+                            StatusId = i.StatusId,
+                            CreatedBy = i.CreatedBy,
+                            CreatedDate = i.CreatedDate,
+                            UpdatedBy = i.UpdatedBy,
+                            UpdateDate = i.UpdateDate,
+                            DueDate = i.DueDate,
+                            DepositAmount = i.DepositAmount,
+                            SaleOrder = null
+                        });
+            return data.ToList();
+        }
+        public decimal GetRemain(int SaleOrderId)
+        {
+            var data = (from i in db.TblInvoice
+                    .Where(i => i.SaleOrderId == SaleOrderId)
+                    select new TblInvoice
+                    {
+                        InvoiceId = i.InvoiceId,
+                        InvoiceNo = i.InvoiceNo,
+                        SaleOrderId = i.SaleOrderId, 
+                        InvoiceAmount = i.InvoiceAmount,
+                        SaleOrder = null
+                    });
+            decimal remain = 0;
+            foreach (var x in data.ToList())
+            {
+                remain += x.InvoiceAmount.HasValue ? x.InvoiceAmount.Value : 0;
+            }
+
+
+            return remain;
+        }
+
         public string GetLastId(string pre)
         {
             return (from q in db.TblInvoice

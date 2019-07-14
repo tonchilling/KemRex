@@ -97,7 +97,7 @@ namespace Kemrex.Web.Main.Controllers
             string TransferStockId = this.Request.Form["TransferStockId"];
             if (TransferStockId == "" || TransferStockId == "0")
             {
-                obj.TransferNo = getId("SI");
+                obj.TransferNo = getId("I");
                 obj.CreateDate = DateTime.Now;
                 obj.TransferStatus = 0;
             }
