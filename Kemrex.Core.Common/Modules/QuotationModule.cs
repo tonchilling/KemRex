@@ -39,6 +39,16 @@ namespace Kemrex.Core.Common.Modules
                     CreatedDate = DateTime.Now
                 };
         }
+        public TblQuotation Get(string quotationNo)
+        {
+            return db.TblQuotation
+                .Where(x => x.QuotationNo == quotationNo)
+                .FirstOrDefault() ?? new TblQuotation()
+                {
+                    CreatedDate = DateTime.Now
+                };
+        }
+
         public string GetLastId()
         {
             return db.TblQuotation.OrderByDescending(x => x.QuotationId).Select(x=>x.QuotationNo).First();
@@ -55,6 +65,51 @@ namespace Kemrex.Core.Common.Modules
             { data = data.Skip((page - 1) * size).Take(size); }
             return data.ToList();
         }
+
+        public List<TblQuotation> GetQuatationNotSale()
+        {
+            var quatations = (from q in db.TblSaleOrder select q.QuotationNo).ToList();
+            var data = (from q in db.TblQuotation.Where(o=> !quatations.Contains(o.QuotationNo)).Include(c => c.Status)
+                        .Include(c => c.Customer) select new TblQuotation {
+                                QuotationId = q.QuotationId,
+                                    QuotationNo = q.QuotationNo,
+                            QuotationDate = q.QuotationDate,
+                            strQuotationDate = string.Format("{0}/{1}/{2}", q.QuotationDate.Day.ToString("##00"), q.QuotationDate.Month.ToString("##00"), q.QuotationDate.Year.ToString()),
+                            QuotationValidDay = q.QuotationValidDay,
+                             ConditionId = q.ConditionId,
+                            OperationStartDate = q.OperationStartDate,
+                            OperationEndDate = q.OperationEndDate,
+                            DueDate = q.DueDate,
+                            DeliveryDate = q.DeliveryDate,
+                            QuotationCreditDay = q.QuotationCreditDay,
+                            SaleId = q.SaleId,
+                            SaleName = q.SaleName,
+                            CustomerId = q.CustomerId,
+                            CustomerName = q.CustomerName,
+
+                            SubTotalNet = q.SubTotalNet,
+                            SubTotalVat = q.SubTotalVat,
+                            SubTotalTot = q.SubTotalTot,
+                            DiscountNet = q.DiscountNet,
+                            DiscountVat = q.DiscountVat,
+                            DiscountTot = q.DiscountTot,
+                            DiscountCash = q.DiscountCash,
+                            SummaryNet = q.SummaryNet,
+                            SummaryVat = q.SummaryVat,
+                            SummaryTot = q.SummaryTot,
+                               Status = q.Status,
+                               StatusId=q.StatusId
+
+
+                        })
+
+                        .OrderByDescending(c => c.QuotationId)
+                .AsQueryable();
+
+          
+            return data.ToList();
+        }
+
 
         public List<TblQuotation> GetList()
         {
@@ -94,7 +149,7 @@ namespace Kemrex.Core.Common.Modules
                     EmpNameTh=emp.EmpNameTh
                 }).FirstOrDefault()
                         });
-            return data.ToList();
+            return data.OrderByDescending(o=>o.QuotationDate).ToList();
         }
 
 
