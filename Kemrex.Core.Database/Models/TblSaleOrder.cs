@@ -18,6 +18,8 @@ namespace Kemrex.Core.Database.Models
         public DateTime? SaleOrderDate { get; set; }
         [NotMapped]
         public string strSaleOrderDate { get; set; }
+         [NotMapped]
+        public string StrSaleOrderDate { get; set; }
         public DateTime? OperationStartDate { get; set; }
         public DateTime? OperationEndDate { get; set; }
         public string QuotationNo { get; set; }
@@ -25,6 +27,8 @@ namespace Kemrex.Core.Database.Models
         public string CustomerName { get; set; }
         public string ContractName { get; set; }
         public int? ConditionId { get; set; }
+        [NotMapped]
+        public string ConditionName { get; set; }
         public string PoNo { get; set; }
         public int? SaleId { get; set; }
         public string SaleName { get; set; }

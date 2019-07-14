@@ -12,6 +12,7 @@
     [CreatedDate] DATETIME NOT NULL, 
     [UpdatedBy] BIGINT NOT NULL, 
     [UpdateDate] DATETIME NOT NULL,
+    [DueDate] DATETIME NULL, 
     CONSTRAINT [PK_TblInvoice] PRIMARY KEY ([InvoiceId]), 
     CONSTRAINT [FK_TblInvoice_SaleOrder] FOREIGN KEY ([SaleOrderId]) REFERENCES [TblSaleOrder]([SaleOrderId])
 )

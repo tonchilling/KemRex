@@ -491,7 +491,235 @@ namespace Kemrex.Web.Main.Controllers
             }
 
         }
+        public FileResult PDFInvoice(int id)
+        {
+            TblInvoice invoice = new TblInvoice();
+            invoice = uow.Modules.Invoice.Get(id);
+            invoice.SaleOrder = uow.Modules.SaleOrder.Get(invoice.SaleOrderId);
+            invoice.SaleOrder.Customer = uow.Modules.Customer.Get(invoice.SaleOrder.CustomerId.HasValue? invoice.SaleOrder.CustomerId.Value:-1);
+            invoice.SaleOrder.TblSaleOrderDetail = uow.Modules.SaleOrderDetail.Gets(invoice.SaleOrderId);
+            foreach (var pr in invoice.SaleOrder.TblSaleOrderDetail.ToList())
+            {
+                pr.Product = uow.Modules.Product.Get(pr.ProductId);
+            }
+            EnmPaymentCondition epc = new EnmPaymentCondition();
+            epc = uow.Modules.PaymentCondition.Get(invoice.SaleOrder.ConditionId.Value);
+            invoice.SaleOrder.JobOrder = uow.Modules.SaleOrder.GetJobOrder(invoice.SaleOrderId);
+
+            String html = string.Empty;
+            html = System.IO.File.ReadAllText(HttpContext.Server.MapPath("~/html/" + "InvoiceHTML.html"));
+            using (MemoryStream stream = new System.IO.MemoryStream())
+            {
+                html = html.Replace("@@ImageBanner@@", HttpContext.Server.MapPath("~/images/logo-banner.png"));
+                html = html.Replace("@@Logo2@@", HttpContext.Server.MapPath("~/images/logo2.png"));
+                html = html.Replace("@@ImageCheckbox@@", HttpContext.Server.MapPath("~/html/img/checkbox_0.gif"));
+                html = html.Replace("@@CustomerID@@", invoice.SaleOrder.CustomerId.Value.ToString("0000000000"));
+                html = html.Replace("@@CustomerName@@", invoice.SaleOrder.CustomerName);
+                html = html.Replace("@@Address@@", invoice.SaleOrder.BillingAddress);
+                //html = html.Replace("@@Address2@@", "");
+                html = html.Replace("@@Tel@@", invoice.SaleOrder.Customer.CustomerPhone);
+                html = html.Replace("@@Fax@@", invoice.SaleOrder.Customer.CustomerFax);
+                html = html.Replace("@@PONO@@", invoice.SaleOrder.QuotationNo);
+                html = html.Replace("@@Fax@@", invoice.SaleOrder.Customer.CustomerFax);
+                html = html.Replace("@@CitizenID@@", invoice.SaleOrder.Customer.CustomerTaxId);
+
+                string InvoiceDate = invoice.InvoiceDate == null ? "" : invoice.InvoiceDate.Day.ToString("00") + "/" + invoice.InvoiceDate.Month.ToString("00") + "/" + invoice.InvoiceDate.Year;
+                string DueDate = invoice.DueDate == null ? "" : invoice.DueDate.Day.ToString("00") + "/" + invoice.DueDate.Month.ToString("00") + "/" + invoice.DueDate.Year;
+
+                html = html.Replace("@@InvoiceNo@@", invoice.InvoiceNo);
+                html = html.Replace("@@JobOrderNo@@", invoice.SaleOrder.JobOrder.JobOrderNo);
+                html = html.Replace("@@InvoiceDate@@", InvoiceDate);
+                html = html.Replace("@@Credit@@", invoice.SaleOrder.SaleOrderCreditDay.ToString());
+                html = html.Replace("@@DueDate@@", DueDate);
+                html = html.Replace("@@SaleName@@", invoice.SaleOrder.SaleName);
+
+
+
+                string tagItem = "";
+                int num = 0;
+                foreach (var d in invoice.SaleOrder.TblSaleOrderDetail.ToList())
+                {
+                    num++;
+                    tagItem += "<tr>";
+                    tagItem += "<td align='left' style='border-right:1px;'> " + d.Product.ProductCode + "</td>";
+                    tagItem += "<td align='left' style='border-right:1px;' >" + d.Product.ProductName +  "</td>";
+                    tagItem += "<td align='right' style='border-right:1px;' >" + (d.Quantity != 0? d.Quantity.ToString("###,###"):"") + "</td>";
+                    tagItem += "<td align='center' style='border-right:1px;' >" + "" + "</td>";
+                    tagItem += "<td align='right' style='border-right:1px;' >" + (d.Product.PriceNet != 0? d.Product.PriceNet.ToString("###,###,###.00"):"") + "</td>";
+                    tagItem += "<td align='right' style='border-right:1px;' >" + (d.DiscountNet != 0? d.DiscountNet.ToString("###,###,###.00") :"") + "</td>";
+                    tagItem += "<td align='right' >" + (d.TotalNet.HasValue ? d.TotalNet.Value.ToString("###,###,###.00") : "") + "</td>";
+                    tagItem += "</tr>";
+                }
+                
+                tagItem += "<tr>";
+                tagItem += "<td style='border-right:1px;'></td>";
+                switch (invoice.SaleOrder.ConditionId)
+                {
+                    case 3: tagItem += "<td style='border-right:1px;text-decoration:solid;'>จ่ายงวดที่ &nbsp;&nbsp;" + invoice.InvoiceTerm + "/" + 2 +"</td>"; break;
+                    case 4: tagItem += "<td style='border-right:1px;text-decoration:solid;'>จ่ายงวดที่ &nbsp;&nbsp;" + invoice.InvoiceTerm + "/" + 3 +"</td>"; break;
+                    case 5: tagItem += "<td style='border-right:1px;text-decoration:solid;'>จ่ายงวดที่ &nbsp;&nbsp;" + invoice.InvoiceTerm + "/" + 4  +"</td>"; break;
+                    default: tagItem += "<td></td>"; break;
+                }
+                tagItem += "<td style='border-right:1px;'></td>";
+                tagItem += "<td style='border-right:1px;'></td>";
+                tagItem += "<td style='border-right:1px;'></td>";
+                tagItem += "<td style='border-right:1px;'></td>";
+                switch (invoice.SaleOrder.ConditionId)
+                {
+                    case 3: 
+                    case 4: 
+                    case 5: tagItem += "<td align='right' style='text-decoration-line:underline;'>" + (invoice.InvoiceAmount.HasValue ? invoice.InvoiceAmount.Value.ToString("###,###,###.00") : "") + "</td>"; break;
+                    default: tagItem += "<td></td>"; break;
+                }
+                tagItem += "</tr>";
+                for (int i = 0; i <= 19 - num; i++)
+                {
+                    tagItem += "<tr><td style='border-right:1px;'>&nbsp;</td>" +
+                        "<td style='border-right:1px;'>&nbsp;</td>" +
+                        "<td style='border-right:1px;'>&nbsp;</td>" +
+                        "<td style='border-right:1px;'>&nbsp;</td>" +
+                        "<td style='border-right:1px;'>&nbsp;</td>" +
+                        "<td style='border-right:1px;'>&nbsp;</td>" +
+                        "<td>&nbsp;</td></tr>";
+                }
+                html = html.Replace("@@item@@", tagItem);
+                html = html.Replace("@@Remark@@", invoice.InvoiceRemark);
+                decimal SubTotalNet = 0;
+                decimal DiscountNet = 0;
+                decimal Deposit = invoice.DepositAmount;
+                switch (invoice.SaleOrder.ConditionId)
+                {
+                    case 1:
+                        SubTotalNet = invoice.SaleOrder.SubTotalNet.HasValue ? invoice.SaleOrder.SubTotalNet.Value : 0;
+                        DiscountNet = invoice.SaleOrder.DiscountNet.HasValue ? invoice.SaleOrder.DiscountNet.Value != 0 ? invoice.SaleOrder.DiscountNet.Value : 0 : 0;
+                        break;
+                    //case 2: 
+                    case 3:
+                        SubTotalNet = invoice.InvoiceAmount.HasValue ? invoice.InvoiceAmount.Value : 0;
+                        if(invoice.InvoiceTerm == 1) DiscountNet = invoice.SaleOrder.DiscountNet.HasValue ? invoice.SaleOrder.DiscountNet.Value != 0 ? invoice.SaleOrder.DiscountNet.Value : 0 : 0;
+                        break;
+                    case 4:
+                        SubTotalNet = invoice.InvoiceAmount.HasValue ? invoice.InvoiceAmount.Value : 0;
+                        if (invoice.InvoiceTerm == 1) DiscountNet = invoice.SaleOrder.DiscountNet.HasValue ? invoice.SaleOrder.DiscountNet.Value != 0 ? invoice.SaleOrder.DiscountNet.Value : 0 : 0;
+                        break;
+                    case 5:
+                        SubTotalNet = invoice.InvoiceAmount.HasValue ? invoice.InvoiceAmount.Value : 0;
+                        if (invoice.InvoiceTerm == 1) DiscountNet = invoice.SaleOrder.DiscountNet.HasValue ? invoice.SaleOrder.DiscountNet.Value != 0 ? invoice.SaleOrder.DiscountNet.Value : 0 : 0;
+                        break;
+
+                    default: tagItem += "<td></td>"; break;
+                }
+                decimal SummaryNet = 0;
+                SummaryNet = SubTotalNet - DiscountNet - Deposit;
+                decimal SummaryVat = (SummaryNet*7)/100;
+                decimal SummaryTot = SummaryNet + SummaryVat;
+                html = html.Replace("@@SubTotalNet@@", SubTotalNet.ToString("###,###,##0.00"));
+                html = html.Replace("@@DiscountNet@@", DiscountNet.ToString("###,###,##0.00"));
+                html = html.Replace("@@Deposit@@", Deposit.ToString("###,###,##0.00"));
+                html = html.Replace("@@SummaryNet@@", SummaryNet.ToString("###,###,##0.00"));
+                html = html.Replace("@@SummaryVat@@", SummaryVat.ToString("###,###,##0.00"));
+                html = html.Replace("@@SummaryTot@@", SummaryTot.ToString("###,###,##0.00"));
+                //string textFinalAmount = ThaiBahtText(invoice.SaleOrder.SummaryTot.HasValue ? invoice.SaleOrder.SummaryTot.Value.ToString():"");
+                string textFinalAmount = ThaiBahtText(SummaryTot.ToString());
+                html = html.Replace("@@TextfinalAmount@@", textFinalAmount);
+
+
+                StringReader sr = new StringReader(html);
+                Document pdfDoc = new Document(PageSize.A4, 10f, 10f, 10f, 0f);
+                PdfWriter writer = PdfWriter.GetInstance(pdfDoc, stream);
+                pdfDoc.Open();
+                XMLWorkerHelper.GetInstance().ParseXHtml(writer, pdfDoc, sr);
+                pdfDoc.Close();
+                return File(stream.ToArray(), "application/pdf", "Invoice_"+ invoice.InvoiceNo +".pdf");
+            }
+        }
+        public FileResult PDFDepositInvoice(int id)
+        {
+            TblInvoice invoice = new TblInvoice();
+            invoice = uow.Modules.Invoice.Get(id);
+            invoice.SaleOrder = uow.Modules.SaleOrder.Get(invoice.SaleOrderId);
+            invoice.SaleOrder.Customer = uow.Modules.Customer.Get(invoice.SaleOrder.CustomerId.HasValue ? invoice.SaleOrder.CustomerId.Value : -1);
+            invoice.SaleOrder.TblSaleOrderDetail = uow.Modules.SaleOrderDetail.Gets(invoice.SaleOrderId);
+            foreach (var pr in invoice.SaleOrder.TblSaleOrderDetail.ToList())
+            {
+                pr.Product = uow.Modules.Product.Get(pr.ProductId);
+            }
+            EnmPaymentCondition epc = new EnmPaymentCondition();
+            epc = uow.Modules.PaymentCondition.Get(invoice.SaleOrder.ConditionId.Value);
+            invoice.SaleOrder.JobOrder = uow.Modules.SaleOrder.GetJobOrder(invoice.SaleOrderId);
+
+            String html = string.Empty;
+            html = System.IO.File.ReadAllText(HttpContext.Server.MapPath("~/html/" + "DepositInvoiceHTML.html"));
+            using (MemoryStream stream = new System.IO.MemoryStream())
+            {
+                html = html.Replace("@@ImageBanner@@", HttpContext.Server.MapPath("~/images/logo-banner.png"));
+                html = html.Replace("@@Logo2@@", HttpContext.Server.MapPath("~/images/logo2.png"));
+                html = html.Replace("@@ImageCheckbox@@", HttpContext.Server.MapPath("~/html/img/checkbox_0.gif"));
+                html = html.Replace("@@CustomerID@@", invoice.SaleOrder.CustomerId.Value.ToString("0000000000"));
+                html = html.Replace("@@CustomerName@@", invoice.SaleOrder.CustomerName);
+                html = html.Replace("@@Address@@", invoice.SaleOrder.BillingAddress);
+                //html = html.Replace("@@Address2@@", "");
+                html = html.Replace("@@Tel@@", invoice.SaleOrder.Customer.CustomerPhone);
+                html = html.Replace("@@Fax@@", invoice.SaleOrder.Customer.CustomerFax);
+                html = html.Replace("@@PONO@@", invoice.SaleOrder.QuotationNo);
+                html = html.Replace("@@Fax@@", invoice.SaleOrder.Customer.CustomerFax);
+                html = html.Replace("@@CitizenID@@", invoice.SaleOrder.Customer.CustomerTaxId);
+
+                string InvoiceDate = invoice.InvoiceDate == null ? "" : invoice.InvoiceDate.Day.ToString("00") + "/" + invoice.InvoiceDate.Month.ToString("00") + "/" + invoice.InvoiceDate.Year;
+                string DueDate = invoice.DueDate == null ? "" : invoice.DueDate.Day.ToString("00") + "/" + invoice.DueDate.Month.ToString("00") + "/" + invoice.DueDate.Year;
+
+                html = html.Replace("@@InvoiceNo@@", invoice.InvoiceNo);
+                html = html.Replace("@@JobOrderNo@@", invoice.SaleOrder.JobOrder.JobOrderNo);
+                html = html.Replace("@@InvoiceDate@@", InvoiceDate);
+                html = html.Replace("@@Credit@@", invoice.SaleOrder.SaleOrderCreditDay.ToString());
+                html = html.Replace("@@DueDate@@", DueDate);
+                html = html.Replace("@@SaleName@@", invoice.SaleOrder.SaleName);
+
+
+
+                string tagItem = "";
+                int num = 0;
+                tagItem += "<tr>";
+                num++;
+                tagItem += "<td align='center' style='border-right:1px;'>" + num +"</td>";
+                tagItem += "<td style='border-right:1px;'>ค่ามัดจำ (ก่อนติดตั้งงาน)</td>";
+                tagItem += "<td align='right'>" + (invoice.InvoiceAmount.HasValue ? invoice.InvoiceAmount.Value.ToString("###,###,###.00") : "") + "</td>";
+                tagItem += "</tr>";
+                for (int i = 0; i <= 19 - num; i++)
+                {
+                    tagItem += "<tr><td style='border-right:1px;'>&nbsp;</td>" +
+                        "<td style='border-right:1px;'>&nbsp;</td>" +
+                        "<td>&nbsp;</td></tr>";
+                }
+                html = html.Replace("@@item@@", tagItem);
+                html = html.Replace("@@Remark@@", invoice.InvoiceRemark);
+                decimal SubTotalNet = 0;
+                decimal DiscountNet = 0;
+                decimal Deposit = 0;
+                SubTotalNet = invoice.InvoiceAmount.HasValue ? invoice.InvoiceAmount.Value : 0;
+                
+                decimal SummaryNet = 0;
+                SummaryNet = SubTotalNet - DiscountNet - Deposit;
+                decimal SummaryVat = (SummaryNet * 7) / 100;
+                decimal SummaryTot = SummaryNet + SummaryVat;
+                html = html.Replace("@@SubTotalNet@@", SubTotalNet.ToString("###,###,##0.00"));
+                html = html.Replace("@@SummaryVat@@", SummaryVat.ToString("###,###,##0.00"));
+                html = html.Replace("@@SummaryTot@@", SummaryTot.ToString("###,###,##0.00"));
+                //string textFinalAmount = ThaiBahtText(invoice.SaleOrder.SummaryTot.HasValue ? invoice.SaleOrder.SummaryTot.Value.ToString():"");
+                string textFinalAmount = ThaiBahtText(SummaryTot.ToString());
+                html = html.Replace("@@TextfinalAmount@@", textFinalAmount);
+
+
+                StringReader sr = new StringReader(html);
+                Document pdfDoc = new Document(PageSize.A4, 10f, 10f, 10f, 0f);
+                PdfWriter writer = PdfWriter.GetInstance(pdfDoc, stream);
+                pdfDoc.Open();
+                XMLWorkerHelper.GetInstance().ParseXHtml(writer, pdfDoc, sr);
+                pdfDoc.Close();
+                return File(stream.ToArray(), "application/pdf", "DepositInvoice_.pdf");
+            }
         
+        }
         public FileResult PDFJobOrder(int id)
         {
             TblJobOrder tbl = uow.Modules.JobOrder.Get(id);
@@ -705,6 +933,103 @@ namespace Kemrex.Web.Main.Controllers
                 pdfDoc.Close();
                 return File(stream.ToArray(), "application/pdf", "TransferOut.pdf");
             }
+        }
+        public string ThaiBahtText(string strNumber, bool IsTrillion = false)
+        {
+            string BahtText = "";
+            string strTrillion = "";
+            string[] strThaiNumber = { "ศูนย์", "หนึ่ง", "สอง", "สาม", "สี่", "ห้า", "หก", "เจ็ด", "แปด", "เก้า", "สิบ" };
+            string[] strThaiPos = { "", "สิบ", "ร้อย", "พัน", "หมื่น", "แสน", "ล้าน" };
+
+            decimal decNumber = 0;
+            decimal.TryParse(strNumber, out decNumber);
+
+            if (decNumber == 0)
+            {
+                return "ศูนย์บาทถ้วน";
+            }
+
+            strNumber = decNumber.ToString("0.00");
+            string strInteger = strNumber.Split('.')[0];
+            string strSatang = strNumber.Split('.')[1];
+
+            if (strInteger.Length > 13)
+                throw new Exception("รองรับตัวเลขได้เพียง ล้านล้าน เท่านั้น!");
+
+            bool _IsTrillion = strInteger.Length > 7;
+            if (_IsTrillion)
+            {
+                strTrillion = strInteger.Substring(0, strInteger.Length - 6);
+                BahtText = ThaiBahtText(strTrillion, _IsTrillion);
+                strInteger = strInteger.Substring(strTrillion.Length);
+            }
+
+            int strLength = strInteger.Length;
+            for (int i = 0; i < strInteger.Length; i++)
+            {
+                string number = strInteger.Substring(i, 1);
+                if (number != "0")
+                {
+                    if (i == strLength - 1 && number == "1" && strLength != 1)
+                    {
+                        BahtText += "เอ็ด";
+                    }
+                    else if (i == strLength - 2 && number == "2" && strLength != 1)
+                    {
+                        BahtText += "ยี่";
+                    }
+                    else if (i != strLength - 2 || number != "1")
+                    {
+                        BahtText += strThaiNumber[int.Parse(number)];
+                    }
+
+                    BahtText += strThaiPos[(strLength - i) - 1];
+                }
+            }
+
+            if (IsTrillion)
+            {
+                return BahtText + "ล้าน";
+            }
+
+            if (strInteger != "0")
+            {
+                BahtText += "บาท";
+            }
+
+            if (strSatang == "00")
+            {
+                BahtText += "ถ้วน";
+            }
+            else
+            {
+                strLength = strSatang.Length;
+                for (int i = 0; i < strSatang.Length; i++)
+                {
+                    string number = strSatang.Substring(i, 1);
+                    if (number != "0")
+                    {
+                        if (i == strLength - 1 && number == "1" && strSatang[0].ToString() != "0")
+                        {
+                            BahtText += "เอ็ด";
+                        }
+                        else if (i == strLength - 2 && number == "2" && strSatang[0].ToString() != "0")
+                        {
+                            BahtText += "ยี่";
+                        }
+                        else if (i != strLength - 2 || number != "1")
+                        {
+                            BahtText += strThaiNumber[int.Parse(number)];
+                        }
+
+                        BahtText += strThaiPos[(strLength - i) - 1];
+                    }
+                }
+
+                BahtText += "สตางค์";
+            }
+
+            return BahtText;
         }
 
 

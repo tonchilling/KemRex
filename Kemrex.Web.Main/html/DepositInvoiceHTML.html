@@ -1,0 +1,198 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Index</title>
+    <style type="text/css">
+        body {
+            font-family: tahoma;
+            font-size: 12px;
+            width: 1024px;
+            background-color: gainsboro;
+            line-height: 25px;
+        }
+
+    </style>
+</head>
+<body>
+    <div style="width: 100%; padding-left: 20px; padding-right: 20px; background-color: white; ">
+        <div>
+            <table style="background-color: white; margin-top:10px;font-size:small;line-height:20px;" width="100%" border="0" cellpadding="5">
+                <tr>
+                    <td align="left" width="105"><img src="@@Logo2@@" width="100" /></td>
+                    <td>
+                        <b style="font-size:large;">บริษัท เข็มเหล็ก จำกัด(สำนักงานใหญ่)</b>
+                        <br />
+                        27/5 อาคารสุธีกรุ๊ป ชั้น 3-4  หมู่ 7 ถ.กิ่งแก้ว-เทพารักษ์
+                        <br />
+                        ต.บางพลีใหญ่ อ.บางพลี สมุทรปราการ 10540
+                        <br />
+                        <b>โทร.</b> 02-026-3140 , 02-715-0400 &nbsp;&nbsp;<b>โทรสาร.</b> 02-715-0500
+                        <br />
+                        <b>เลขประจำตัวผู้เสียภาษี</b> 0115551005932   &nbsp;&nbsp;<b>www.kemrex.com</b>
+                    </td>
+                    <td align="center" width="230" valign="middle">
+                        <h3>
+                            ใบรับเงินมัดจำ/ใบแจ้งหนี้
+                            <br />
+                            ไม่ใช่ใบกำกับภาษี
+                        </h3>
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <div>รหัสลูกค้า &nbsp;&nbsp;&nbsp;@@CustomerID@@</div>
+        <!--<div style="float:right; text-align:right">ใบกำกับภาษีได้รับเมื่อชำระเงิน<br />หักภาษีเงินได้นิติบุคคลหัก ณ ที่จ่ายตามมาตรา 3</div>-->
+        <!--<div style="clear:both;"></div>-->
+        <div>
+            <table style="background-color: white; margin-top:10px; font-size:12px; line-height: 20px;" width="100%" border="1" cellspacing="0" cellpadding="5">
+                <tr>
+                    <td width="60%">
+                        <table style="font-size:12px; line-height: 20px;" width="100%" border="0" cellspacing="0" cellpadding="5">
+                            <tr>
+                                <td>ผู้ซื้อ</td>
+                                <td colspan="3">@@CustomerName@@</td>
+                            </tr>
+                            <tr>
+                                <td>ที่อยู่</td>
+                                <td colspan="3" rowspan="2" valign="top">@@Address@@</td>
+                            </tr>
+                            <tr>
+                                <td>Address</td>
+                            </tr>
+                            <tr>
+                                <td>เบอร์โทร</td>
+                                <td>@@Tel@@</td>
+                                <td>โทรสาร</td>
+                                <td>@@Fax@@</td>
+                            </tr>
+                            <tr>
+                                <td>PO No.</td>
+                                <td colspan="3">@@PONO@@</td>
+                            </tr>
+                            <tr>
+                                <td>เลขประจำตัวผู้เสียภาษี</td>
+                                <td>@@CitizenID@@</td>
+                                <td colspan="2"></td>
+                            </tr>
+                        </table>
+                    </td>
+                    <td width="40%">
+                        <table style="font-size:12px; line-height: 20px;" width="100%" border="0" cellspacing="0" cellpadding="5">
+                            <tr>
+                                <td>เลขที่/No.</td>
+                                <td>@@InvoiceNo@@</td>
+                            </tr>
+                            <tr>
+                                <td>Job No.</td>
+                                <td>@@JobOrderNo@@</td>
+                            </tr>
+                            <tr>
+                                <td>วันที่</td>
+                                <td>@@InvoiceDate@@</td>
+                            </tr>
+                            <tr>
+                                <td>เครดิต/Credit</td>
+                                <td>@@Credit@@ &nbsp;&nbsp;&nbsp;วัน</td>
+                            </tr>
+                            <tr>
+                                <td>วันที่ครบกำหนด/Due</td>
+                                <td>@@DueDate@@</td>
+                            </tr>
+                            <tr>
+                                <td colspan="2">Sale &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;@@SaleName@@</td>
+                                <!--<td>@@SaleName@@</td>-->
+                            </tr>
+                        </table>
+
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <div>
+            <table style="background-color: white; margin-top:3px; font-size:12px; line-height: 20px;" width="100%" border="1" cellspacing="0">
+                <tr>
+                    <td>
+                        <table style="background-color: white;font-size:12px; line-height: 25px;" width="100%" border="0" cellspacing="0" cellpadding="7">
+                            <tr style="border:1px solid black;">
+                                <th align="center" width="10%" style="border-right:1px;border-bottom:1px;">ลำดับ</th>
+                                <!--<th align="center" style="border-right:1px;border-bottom:1px;">รหัสสินค้า</th>-->
+                                <th align="center" width="80%" style="border-right:1px;border-bottom:1px;">รายการ</th>
+                                <th align="center" style="border-bottom:1px;width:124px;">จำนวนเงิน</th>
+                            </tr>
+                            @@item@@
+                        </table>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <table style="background-color: white;font-size:12px; line-height: 20px;" width="100%" border="0" cellspacing="0" cellpadding="5">
+                            <tr>
+                                <td width="70%" style="border-right:1px;">
+                                    <div style="height:40px;padding-top:5px;word-wrap:break-word;">หมายเหตุ : @@Remark@@</div>
+                                    <div style="height:20px;padding-top:5px;">ยอดเงินเป็นตัวหนังสือ(บาทถ้วน)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;@@TextfinalAmount@@</div>
+                                </td>
+                                <td width="18%" style="border-right:1px;">
+                                    รวมจำนวนเงิน <br />
+                                    ภาษีมูลค่าเพิ่ม 7% <br />
+                                    รวมเงินทั้งสิ้น
+                                </td>
+                                <td align="right" style="width:120px;">
+                                    @@SubTotalNet@@ <br />
+                                    @@SummaryVat@@ <br />
+                                    @@SummaryTot@@
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <div>
+            <table style="background-color: white; margin-top:3px; font-size:12px; line-height: 20px;" width="100%" border="1" cellspacing="0" cellpadding="5">
+                <tr>
+                    <td align="left" style="word-wrap:break-word;">
+                        - ชำระเงินโดย กรุณาโอนเข้าบัญชี บจก.เข็มเหล็ก ธนาคารกรุงเทพ/กิ่งแก้ว 2413008471
+                        <br />
+                        - ชำระเป็นเช็คสั่งจ่าย บจก.เข็มเหล็ก
+                    </td>
+                    
+                </tr>
+            </table>
+        </div>
+        <div>
+            <table style="background-color: white; margin-top:3px; font-size:12px; line-height: 20px;" width="100%" border="1" cellspacing="0" cellpadding="5">
+                <tr>
+                    <td align="center" width="24%">
+                        <br /><br />
+                        ผู้รับวางบิล_______________<br />
+
+                        วันที่______/______/______
+                    </td>
+                    <td align="center" width="22%">
+                        <br /><br />
+                        ผู้จัดทำ______________<br />
+
+                        วันที่_____/_____/_____
+                    </td>
+                    <td align="center" width="22%">
+                        <br /> <br />
+                        ผู้อนุมัติ______________<br />
+
+                        วันที่_____/_____/_____
+                    </td>
+                    <td align="center" width="22%">
+                        <br /><br />
+                        บัญชี________________<br />
+
+                        วันที่_____/_____/_____
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <div style="font-size:11px;">ยกรวมสิทธิ์สินค้าตามใบสั่ง/ใบแจ้งหนี้ฉบับนี้เมื่อครบกำหนดชำระแล้วไม่มาชำระ ผู้ซื้อยินยอมให้บริษัทคิดดอกเบี้ย 15% ต่อปี จนกว่าจะชำระสินค้าครบถ้วน</div>
+
+    </div>
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+</body>
+</html>
