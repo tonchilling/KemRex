@@ -32,6 +32,8 @@ namespace Kemrex.Core.Database.Models
         public string VillageNo { get; set; }
         public int? SubDistrictId { get; set; }
         public string Reason { get; set; }
+        public string Road { get; set; }
+        public string Address { get; set; }
         public string Solution { get; set; }
         public string Status { get; set; }
         public int? TeamId { get; set; }

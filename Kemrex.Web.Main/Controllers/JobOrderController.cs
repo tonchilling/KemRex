@@ -31,7 +31,7 @@ namespace Kemrex.Web.Main.Controllers
                     if (msgType.HasValue) { alert.Type = msgType.Value; }
                     ViewBag.Alert = alert;
                 }
-                int total = uow.Modules.JobOrder.Count(src,0 );
+              /*  int total = uow.Modules.JobOrder.Count(src,0 );
                 WidgetPaginationModel Pagination = new WidgetPaginationModel("Index", "JobOrder", "")
                 {
                     Page = (page ?? 1),
@@ -44,7 +44,7 @@ namespace Kemrex.Web.Main.Controllers
                     Total = total
                 };
                 ViewBag.Pagination = Pagination;
-                lst = uow.Modules.JobOrder.Gets(Pagination.Page, Pagination.Size, src, 0).ToList();
+                lst = uow.Modules.JobOrder.Gets(Pagination.Page, Pagination.Size, src, 0).ToList();*/
             }
             catch (Exception ex)
             {
@@ -56,6 +56,32 @@ namespace Kemrex.Web.Main.Controllers
                 ViewBag.Alert = Alert;
             }
             return View(lst);
+        }
+
+
+        [HttpGet]
+        public JsonResult GetSaleOrderNotInJobOrder(string startDate, string toDate)
+        {
+
+            List<TblSaleOrder> saleOrderList = uow.Modules.SaleOrder.GetFindByCondition(startDate, toDate,"2");
+            // ob.TblSaleOrderDetail = uow.Modules.SaleOrderDetail.Gets(id ?? 0);
+            // TblCustomer objCustomer = uow.Modules.Customer.Get(Convert.ToInt32(ob.CustomerId));
+
+
+
+            return Json(saleOrderList, JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpPost]
+        public JsonResult GetList()
+        {
+            string formateDate = "yyyy-MM-dd";
+            //  DateTime searchOrderDate = Converting.StringToDate(saleOrderDate, formateDate);
+            List<TblJobOrder> ob = uow.Modules.JobOrder.GetHeaderForEngineer();
+
+
+
+            return Json(ob);
         }
 
         public ActionResult Detail(int? id, string msg, AlertMsgType? msgType)

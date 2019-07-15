@@ -14,9 +14,13 @@ namespace Kemrex.Core.Common.Modules
    public class SaleOrderModule : IModule<TblSaleOrder, int>
     {
         private readonly mainContext db;
+
         public SaleOrderModule(mainContext context)
         {
+            System.Threading.Thread.CurrentThread.CurrentCulture = new System.Globalization.CultureInfo("en-US"); ;
+            System.Threading.Thread.CurrentThread.CurrentUICulture = new System.Globalization.CultureInfo("en-US"); ;
             db = context;
+          
         }
         public void Delete(TblSaleOrder ob)
         {
@@ -61,8 +65,10 @@ namespace Kemrex.Core.Common.Modules
                       SaleOrderId=o.SaleOrderId,
                       SaleOrderNo= o.SaleOrderNo,
                       SaleOrderDate = Converting.ToDDMMYYYY(o.SaleOrderDate),
+                      DSaleOrderDate= o.SaleOrderDate,
                       SaleName = o.SaleName,
                       QuotationNo = o.QuotationNo,
+                      
                       //QuotationDate  = Converting.ToDDMMYYYY(o.q),
                       CustomerId = o.CustomerId,
                       CustomerName = o.CustomerName,
@@ -73,6 +79,46 @@ namespace Kemrex.Core.Common.Modules
                       StatusId = o.StatusId,
                       Status = Converting.SaleOrderStatus(o.StatusId)
                   }).ToList();
+
+
+
+            return result;
+        }
+
+        public List<SaleOrderHeader> GetHeader()
+        {
+            List<SaleOrderHeader> result = new List<SaleOrderHeader>();
+
+            result = db.TblSaleOrder.Select(o => new SaleOrderHeader
+                  {
+
+                      SaleOrderId = o.SaleOrderId,
+                      SaleOrderNo = o.SaleOrderNo,
+                      SaleOrderDate = Converting.ToDDMMYYYY(o.SaleOrderDate),
+                DSaleOrderDate=o.SaleOrderDate,
+                      SaleName = o.SaleName,
+                      QuotationNo = o.QuotationNo,
+                      //QuotationDate  = Converting.ToDDMMYYYY(o.q),
+                      CustomerId = o.CustomerId,
+                      CustomerName = o.CustomerName!=null? o.CustomerName : "",
+                      JobOrderId = o.JobOrder != null ? o.JobOrder.JobOrderId.ToString() : "",
+                      JobOrderNo = o.JobOrder != null ? o.JobOrder.JobOrderNo.ToString() : "",
+                      JobOrderName = o.JobOrder != null ? o.JobOrder.JobName : "",
+                      JobOrderDate = o.JobOrder != null ? Converting.ToDDMMYYYY(o.JobOrder.StartDate) : "",
+                      StatusId = o.StatusId,
+                SubTotalNet = o.StatusId,
+      SubTotalVat = o.SubTotalVat,
+        SubTotalTot = o.SubTotalTot,
+       DiscountNet = o.DiscountNet,
+       DiscountVat = o.DiscountVat,
+        DiscountTot = o.DiscountTot,
+        DiscountCash = o.DiscountCash,
+       SummaryNet = o.SummaryNet,
+        SummaryVat = o.SummaryVat,
+        SummaryTot = o.SummaryTot,
+       
+        Status = Converting.SaleOrderStatus(o.StatusId)
+                  }).OrderByDescending(o=>o.DSaleOrderDate).ToList();
 
 
 
@@ -260,17 +306,51 @@ var data = (from order in db.TblSaleOrder select new TblSaleOrder {
                 .AsQueryable();
             DateTime stDate, enDate;
 
-            var saleOrderId = db.TblJobOrder.Select(x => x.SaleOrderId).ToArray();
+            var saleOrderId = db.TblJobOrder.Select(x => x.SaleOrderId ).ToArray();
             if (fromDate != "")
             {
-                stDate = DateTime.ParseExact("dd/MM/yyyy", fromDate, null);
-                enDate = DateTime.ParseExact("dd/MM/yyyy", toDate, null);
+                stDate = DateTime.ParseExact(fromDate, "dd/MM/yyyy", new System.Globalization.CultureInfo("en-US"));
+                enDate = DateTime.ParseExact( toDate, "dd/MM/yyyy", new System.Globalization.CultureInfo("en-US"));
 
-                data = data.Where(x => !saleOrderId.Contains(x.SaleOrderId) && (x.SaleOrderDate.Value >= stDate && x.SaleOrderDate.Value <= enDate));
+                data = data.Where(x => !saleOrderId.Contains(x.SaleOrderId) && (x.SaleOrderDate.Value.Date >= stDate.Date && x.SaleOrderDate.Value.Date <= enDate.Date));
 
             }
             else {
                 data = data.Where(x => !saleOrderId.Contains(x.SaleOrderId));
+            }
+
+            return data.ToList();
+        }
+
+        public List<TblSaleOrder> GetFindByCondition(string fromDate = "", string toDate = "",string status="1")
+        {
+            var data = db.TblSaleOrder
+                        .OrderByDescending(c => c.SaleOrderId)
+                .AsQueryable();
+            DateTime stDate, enDate;
+
+            var saleOrderId = db.TblJobOrder.Select(x => x.SaleOrderId).ToArray();
+            if (fromDate != "")
+            {
+                stDate = DateTime.ParseExact(fromDate, "dd/MM/yyyy", new System.Globalization.CultureInfo("en-US"));
+                enDate = DateTime.ParseExact(toDate, "dd/MM/yyyy", new System.Globalization.CultureInfo("en-US"));
+
+                data = data.Where(x => !saleOrderId.Contains(x.SaleOrderId) 
+                                        && (x.SaleOrderDate.Value.Date >= stDate.Date && x.SaleOrderDate.Value.Date <= enDate.Date)
+                                        && x.StatusId.ToString()== status);
+
+            }
+            else
+            {
+                data = data.Where(x => !saleOrderId.Contains(x.SaleOrderId) && x.StatusId.ToString() == status);
+            }
+
+            if (data != null && data.ToList().Count > 0)
+            {
+                foreach (TblSaleOrder obj in data)
+                {
+                    obj.strSaleOrderDate = Converting.ToDDMMYYYY(obj.SaleOrderDate);
+                }
             }
 
             return data.ToList();

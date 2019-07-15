@@ -13,6 +13,8 @@ namespace Kemrex.Core.Common.Modules
         private readonly mainContext db;
         public JobOrderModule(mainContext context)
         {
+            System.Threading.Thread.CurrentThread.CurrentCulture = new System.Globalization.CultureInfo("en-US"); ;
+            System.Threading.Thread.CurrentThread.CurrentUICulture = new System.Globalization.CultureInfo("en-US"); ;
             db = context;
         }
 
@@ -69,7 +71,37 @@ namespace Kemrex.Core.Common.Modules
             return jobOrder;
         }
 
-            public TblJobOrder Get(int id)
+
+        public List<TblSaleOrderDetail> GetOrderDetail(int saleOrderId)
+        {
+
+            var saleOrderDetail = (from q in db.TblSaleOrderDetail.Include(x => x.Product)
+                                                     where q.SaleOrderId == saleOrderId
+                                   select new TblSaleOrderDetail
+                                                     {
+                                                         Id = q.Id,
+                                                         SaleOrderId = q.SaleOrderId,
+                                                         ProductId = q.ProductId,
+                                                         Quantity = q.Quantity,
+                                                         PriceNet = q.PriceNet,
+                                                         PriceVat = q.PriceVat,
+                                                         PriceTot = q.PriceTot,
+                                                         DiscountNet = q.DiscountNet,
+                                                         DiscountVat = q.DiscountVat,
+                                                         DiscountTot = q.DiscountTot,
+                                                         TotalNet = q.TotalNet,
+                                                         TotalVat = q.TotalVat,
+                                                         TotalTot = q.TotalTot,
+                                                         Remark = q.Remark,
+                                                         Product = q.Product
+                                                     }).ToList();
+
+
+            return saleOrderDetail;
+
+        }
+
+        public TblJobOrder Get(int id)
         {
             /*   public int JobOrderId { get; set; }
         public int No { get; set; }
@@ -93,7 +125,7 @@ namespace Kemrex.Core.Common.Modules
                         };
 
 
-            if (jobOrder != null)
+            if (jobOrder != null && jobOrder.SaleOrderId>0)
             {
 
                 jobOrder.JobOrderDetail = (from q in db.TblJobOrderDetail.Include(x => x.Product)
@@ -108,9 +140,33 @@ namespace Kemrex.Core.Common.Modules
                                                Product = q.Product
                                            }).ToList();
 
-                jobOrder.SaleOrder = (from q in db.TblSaleOrder.Include(x => x.TblSaleOrderDetail)
+                jobOrder.SaleOrder = (from q in db.TblSaleOrder
                                       where q.SaleOrderId == jobOrder.SaleOrderId
                                       select q).FirstOrDefault();
+
+
+                jobOrder.SaleOrder.TblSaleOrderDetail = (from q in db.TblSaleOrderDetail.Include(x => x.Product)
+                                                   where q.SaleOrderId == jobOrder.SaleOrderId
+                                                         select new TblSaleOrderDetail
+                                                   {
+                                                       Id = q.Id,
+                                                       SaleOrderId = q.SaleOrderId,
+                                                       ProductId = q.ProductId,
+                                                       Quantity = q.Quantity,
+                                                       PriceNet = q.PriceNet,
+                                                       PriceVat = q.PriceVat,
+                                                       PriceTot = q.PriceTot,
+                                                       DiscountNet = q.DiscountNet,
+                                                       DiscountVat = q.DiscountVat,
+                                                       DiscountTot = q.DiscountTot,
+                                                       TotalNet = q.TotalNet,
+                                                       TotalVat = q.TotalVat,
+                                                       TotalTot = q.TotalTot,
+                                                       Remark = q.Remark,
+                                                       Product = q.Product
+                                                   }).ToList();
+
+
 
                 jobOrder.TblJobOrderProperties = (from q in db.TblJobOrderProperties.Include(x => x.Product)
                                            where q.JobOrderId == id
@@ -143,13 +199,156 @@ namespace Kemrex.Core.Common.Modules
         }
 
 
+        public List<TblJobOrder> GetHeader()
+        {
+            List<TblJobOrder> result = new List<TblJobOrder>();
+
+            result = (from o in db.TblJobOrder.Include(x=>x.Team).Include(x=>x.SaleOrder) select new TblJobOrder
+            {
+
+
+
+                JobOrderId = o.JobOrderId,
+                JobOrderNo = o.JobOrderNo,
+                SaleOrderId = o.SaleOrderId,
+                JobName = o.JobName,
+                StartDate = o.StartDate,
+                StartDateToString = o.StartDate != null ? Converting.ToDDMMYYYY(o.StartDate) : "",
+                EndDate = o.EndDate,
+                EndDateToString = o.EndDate != null ? Converting.ToDDMMYYYY(o.EndDate) : "",
+                StartWorkingTime = o.StartWorkingTime,
+                EndWorkingTime = o.EndWorkingTime,
+                CustomerId = o.CustomerId,
+                CustomerName = o.CustomerName,
+                CustomerPhone = o.CustomerPhone,
+                CustomerEmail = o.CustomerEmail,
+                ProjectName = o.ProjectName,
+                Status= Converting.JobOrderStatus(o.Status),
+               SaleOrder =(from oo in db.TblSaleOrder.Where(od=> od.SaleOrderId == o.SaleOrderId) select new TblSaleOrder {
+                   SaleOrderId=oo.SaleOrderId,
+                   SaleOrderNo=oo.SaleOrderNo
+
+
+               }).FirstOrDefault(),
+                SubDistrict = o.SubDistrict,
+                Team = o.Team,
+               
+                CreateDate = o.CreateDate,
+                CreateDateToString = o.CreateDate != null ? Converting.ToDDMMYYYY(o.CreateDate) : "",
+
+
+            }).OrderByDescending(o => o.CreateDate).ToList();
+
+
+
+            return result;
+        }
+
+        public List<TblJobOrder> GetHeader(string status)
+        {
+            List<TblJobOrder> result = new List<TblJobOrder>();
+
+            result = (from o in db.TblJobOrder.Include(x => x.Team).Include(x => x.SaleOrder).Where(t=>t.Status== status)
+                      select new TblJobOrder
+                      {
+
+
+
+                          JobOrderId = o.JobOrderId,
+                          JobOrderNo = o.JobOrderNo,
+                          SaleOrderId = o.SaleOrderId,
+                          JobName = o.JobName,
+                          StartDate = o.StartDate,
+                          StartDateToString = o.StartDate != null ? Converting.ToDDMMYYYY(o.StartDate) : "",
+                          EndDate = o.EndDate,
+                          EndDateToString = o.EndDate != null ? Converting.ToDDMMYYYY(o.EndDate) : "",
+                          StartWorkingTime = o.StartWorkingTime,
+                          EndWorkingTime = o.EndWorkingTime,
+                          CustomerId = o.CustomerId,
+                          CustomerName = o.CustomerName,
+                          CustomerPhone = o.CustomerPhone,
+                          CustomerEmail = o.CustomerEmail,
+                          ProjectName = o.ProjectName,
+                          Status = Converting.JobOrderStatus(o.Status),
+                          SaleOrder = (from oo in db.TblSaleOrder.Where(od => od.SaleOrderId == o.SaleOrderId)
+                                       select new TblSaleOrder
+                                       {
+                                           SaleOrderId = oo.SaleOrderId,
+                                           SaleOrderNo = oo.SaleOrderNo
+
+
+                                       }).FirstOrDefault(),
+                          SubDistrict = o.SubDistrict,
+                          Team = o.Team,
+
+                          CreateDate = o.CreateDate,
+                          CreateDateToString = o.CreateDate != null ? Converting.ToDDMMYYYY(o.CreateDate) : "",
+
+
+                      }).OrderByDescending(o => o.CreateDate).ToList();
+
+
+
+            return result;
+        }
+
+
+        public List<TblJobOrder> GetHeaderForEngineer()
+        {
+            List<TblJobOrder> result = new List<TblJobOrder>();
+
+            result = (from o in db.TblJobOrder.Include(x => x.Team).Include(x => x.SaleOrder).Where(t => t.Status == "1" || t.Status == "2")
+                      select new TblJobOrder
+                      {
+
+
+
+                          JobOrderId = o.JobOrderId,
+                          JobOrderNo = o.JobOrderNo,
+                          SaleOrderId = o.SaleOrderId,
+                          JobName = o.JobName,
+                          StartDate = o.StartDate,
+                          StartDateToString = o.StartDate != null ? Converting.ToDDMMYYYY(o.StartDate) : "",
+                          EndDate = o.EndDate,
+                          EndDateToString = o.EndDate != null ? Converting.ToDDMMYYYY(o.EndDate) : "",
+                          StartWorkingTime = o.StartWorkingTime,
+                          EndWorkingTime = o.EndWorkingTime,
+                          CustomerId = o.CustomerId,
+                          CustomerName = o.CustomerName,
+                          CustomerPhone = o.CustomerPhone,
+                          CustomerEmail = o.CustomerEmail,
+                          ProjectName = o.ProjectName,
+                          Status = Converting.JobOrderStatus(o.Status),
+                          SaleOrder = (from oo in db.TblSaleOrder.Where(od => od.SaleOrderId == o.SaleOrderId)
+                                       select new TblSaleOrder
+                                       {
+                                           SaleOrderId = oo.SaleOrderId,
+                                           SaleOrderNo = oo.SaleOrderNo
+
+
+                                       }).FirstOrDefault(),
+                          SubDistrict = o.SubDistrict,
+                          Team = o.Team,
+
+                          CreateDate = o.CreateDate,
+                          CreateDateToString = o.CreateDate != null ? Converting.ToDDMMYYYY(o.CreateDate) : "",
+
+
+                      }).OrderByDescending(o => o.CreateDate).ToList();
+
+
+
+            return result;
+        }
+
+
         public List<TblJobOrder> Gets(int page = 1, int size = 0
             , string src = "", int id = 0)
         {
-            var data = db.TblJobOrder
+            var data = (from q in db.TblJobOrder select q )
 
 
-           
+
               /*  .Include(x => x.AttachmentType.Where(o => o.JobOrderId == id))
                .Include(x => x.EquipmentType.Where(o => o.JobOrderId == id))
                  .Include(x => x.LandType.Where(o => o.JobOrderId == id))
@@ -165,6 +364,8 @@ namespace Kemrex.Core.Common.Modules
             foreach (TblJobOrder job in data)
             {
                 job.CreateDateToString = Converting.ToDDMMYYYY(job.CreateDate);
+                job.SaleOrder = (from q in db.TblSaleOrder.Where(o=>o.SaleOrderId== job.SaleOrderId).Include(o => o.Sale) select q).FirstOrDefault();
+             
 
             }
             return data.ToList();

@@ -25,9 +25,10 @@
     <!-- Stylesheets -->
 
     <link rel="stylesheet" href="~/themes/@kemrex.GetCurrentTheme()/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="~/themes/@kemrex.GetCurrentTheme()/css/bootstrap-extend.min.css?ver=xx4" />
+    <link rel="stylesheet" href="~/themes/@kemrex.GetCurrentTheme()/css/bootstrap-extend.min.css?ver=xx43" />
     <link rel="stylesheet" href="~/themes/@kemrex.GetCurrentTheme()/css/site.css?ver=x3" />
     <link href="~/themes/@kemrex.GetCurrentTheme()/css/datatable.boostrap.css" rel="stylesheet" />
+
     <!-- Plugins -->
     <link rel="stylesheet" href="~/themes/@kemrex.GetCurrentTheme()/libs/animsition/animsition.min.css" />
     <link rel="stylesheet" href="~/themes/@kemrex.GetCurrentTheme()/libs/jquery-asscrollbar/jquery-asScrollbar.min.css" />
@@ -38,6 +39,7 @@
 
     <link href="~/themes/RemarkClassicBase/css/bootstrap-datepicker.min.css" rel="stylesheet" />
     <link href="~/themes/RemarkClassicBase/css/bootstrap-toggle.css" rel="stylesheet" />
+    <link href="~/themes/RemarkClassicBase/css/sweetalert.css" rel="stylesheet" />
     <!-- Fonts -->
     <link rel="stylesheet" href="~/fonts/font-awesome/font-awesome.min.css" />
     <link rel="stylesheet" href="~/fonts/brand-icons/brand-icons.min.css" />
@@ -268,11 +270,14 @@
     <script src="~/themes/RemarkClassicBase/js/Plugin/bootstrap-datepicker.min.js"></script>
     <script src="~/themes/RemarkClassicBase/js/Plugin/bootstrap-toggle.js"></script>
 
-    <script src="~/themes//@kemrex.GetCurrentTheme()/js/waiting.js?33"></script>
+    <script src="~/themes/@kemrex.GetCurrentTheme()/js/waiting.js?33"></script>
+    <script src="~/themes/@kemrex.GetCurrentTheme()/js/sweetalert.js"></script>
+    <script src="~/themes/@kemrex.GetCurrentTheme()/js/numeral2.6.min.js"></script>
     @RenderSection("Plugins", false)
 
     <!-- Page -->
     <script src="~/themes/@kemrex.GetCurrentTheme()/js/Site.js"></script>
+  
     <script type="text/javascript">
 
         (function (global, factory) {
@@ -305,6 +310,7 @@
             }
         });
 
+
         jQuery.extend(jQuery.fn.dataTableExt.oSort, {
             "date-uk-pre": function (a) {
                 if (a == null || a == "") {
@@ -322,6 +328,7 @@
                 return ((a < b) ? 1 : ((a > b) ? -1 : 0));
             }
         });
+
 
         var BasicMenu = '#2200'
         var SaleMenu = '#2300'
