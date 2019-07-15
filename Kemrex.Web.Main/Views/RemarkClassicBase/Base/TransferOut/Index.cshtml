@@ -85,6 +85,7 @@
                                                 //   var total = ob.SaleOrder.SummaryTot - ob.SaleOrder.DiscountCash;
                                                 <tr id="@ob.TransferId"
                                                     @if (ob.TransferStatus == 1) { @Html.Raw("class=\"table-success text-white\"")  } else if (ob.TransferStatus == 2) { @Html.Raw("class=\"table-second text-second\"") }>
+                                                </tr>
                                                 <tr id="@ob.TransferNo"  align="center">
 
                                                     <td>@ob.TransferNo </td>
