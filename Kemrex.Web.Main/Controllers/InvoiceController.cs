@@ -126,6 +126,7 @@ namespace Kemrex.Web.Main.Controllers
                     ob.CreatedDate = CurrentDate;
                     ob.UpdateDate = CurrentDate;
                     ob.InvoiceDate = CurrentDate;
+                    //ob.DueDate = CurrentDate.AddMonths(1);
                 }
                 else
                 {
@@ -155,9 +156,22 @@ namespace Kemrex.Web.Main.Controllers
                     {
                         return ViewDetail(ob, "ยอดเรียกเก็บต้อง น้อยกว่าหรือเท่ากับ ยอดที่ยังไม่ได้เรียกเก็บ", AlertMsgType.Danger);
                     }
+                    bool result = false;
 
-                    uow.Modules.Invoice.Set(ob);
-                    uow.SaveChanges();
+                    if (ob.InvoiceId <= 0)
+                    {
+                        result = uow.Modules.Invoice.Add(ob);
+                        int ins = uow.Modules.Invoice.GetInsertId(ob.InvoiceNo);
+                        return RedirectToAction("Detail", MVCController, new { id = ins, msg = "สร้างหมายเลขใบแจ้งหนี้เรียบร้อยแล้ว", msgType = AlertMsgType.Success });
+                    }
+                    else
+                    {
+                        uow.Modules.Invoice.Set(ob);
+                        uow.SaveChanges();
+                    }
+                        
+
+                    
 
                     return RedirectToAction("Detail", MVCController, new { id = ob.InvoiceId, msg = "บันทึกข้อมูลเรียบร้อยแล้ว", msgType = AlertMsgType.Success });
                 }

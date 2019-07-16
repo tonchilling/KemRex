@@ -23,7 +23,7 @@
     {
         changestatus = true;
     }
-    if (Model.StatusId == 1)
+    if (Model.StatusId == 1 || Model.StatusId == null)
     {
         canedit = true;
     }
@@ -196,6 +196,15 @@
              ProductDiscount*/
 
             var chkValidate = true;
+            
+
+            if ($("#selSaleOrder").val() == "") {
+                $("#selSaleOrder").addClass("has-error");
+                chkValidate = false;
+            } else {
+                $("#selSaleOrder").removeClass("has-error");
+            }
+
             var value = $('select#StatusId option:selected').val();
             var invAmt = parseFloat($("#InvoiceAmount").val()).toFixed(2);
             if (value != 1) {
@@ -309,9 +318,12 @@
 
                                                             @{
                                                                 var sq = "";
-                                                                if (Model.SaleOrder.SaleOrderNo.ToString() != null && Model.SaleOrder.SaleOrderNo.ToString() != "")
+                                                                if (Model.SaleOrder != null)
                                                                 {
-                                                                    sq = Model.SaleOrder.QuotationNo + " / " + Model.SaleOrder.SaleOrderNo;
+                                                                    if (Model.SaleOrder.SaleOrderNo != null)
+                                                                    {
+                                                                        sq = Model.SaleOrder.QuotationNo + " / " + Model.SaleOrder.SaleOrderNo;
+                                                                    }
                                                                 }
                                                             }
 
@@ -347,8 +359,20 @@
                                                         <span class="input-group-addon">
                                                             <i class="icon wb-payment" aria-hidden="true"></i>
                                                         </span>
-                                                        <input type="text" class="form-control text-right" name="InvoiceAmount" id="InvoiceAmount" value="@Model.InvoiceAmount" @(canedit ? "" : "readonly") />
-                                                    </div>
+                                                        @{ 
+                                                            var checkInvoice = false;
+                                                            if (canedit)
+                                                            {
+                                                                if (Model.InvoiceNo != null)
+                                                                {
+                                                                    checkInvoice = true;
+                                                                }
+                                                            }
+
+                                                        }
+
+                                                            <input type="text" class="form-control text-right" name="InvoiceAmount" id="InvoiceAmount" value="@Model.InvoiceAmount" @(checkInvoice ? "" : "readonly") />
+                                                        </div>
                                                 </div>
                                                 @{
                                                     bool DepositReadonly = false;
@@ -394,11 +418,12 @@
                                                 </div>
                                                 <div class="form-group">
                                                     <label for="DueDate" class="col-sm-5 col-form-label">วันที่ครบกำหนด</label>
-                                                    <div class="input-group col-sm-6 date" data-provide="@(canedit ? "datepicker" : "")" data-date-format="dd/mm/yyyy">
+
+                                                    <div class="input-group col-sm-6 date" data-provide="@(checkInvoice ? "datepicker" : "")" data-date-format="dd/mm/yyyy">
                                                         <span class="input-group-addon">
                                                             <i class="icon wb-calendar" aria-hidden="true"></i>
                                                         </span>
-                                                        <input type="text" class="form-control" name="DueDate" id="DueDate" value="@Model.DueDate.ToString("dd/MM/yyyy")" @(canedit ? "" : "readonly") />
+                                                        <input type="text" class="form-control" name="DueDate" id="DueDate" value="@Model.DueDate.ToString("dd/MM/yyyy")" @(checkInvoice ? "" : "readonly") />
                                                     </div>
                                                 </div>
                                                 @*Invoice Status*@
@@ -406,14 +431,17 @@
                                                     <label for="PriceValidity" class="col-sm-5 col-form-label">สถานะเอกสาร</label>
                                                     <div class="col-sm-6">
                                                         <select name="StatusId" id="StatusId" class="form-control">
-                                                            @if (Model.StatusId == 1)
+                                                            @if (Model.StatusId == 1 || Model.StatusId == null)
                                                             {
                                                                 <option class="text-muted" value="1" @(Model.StatusId == 1 ? " selected=\" selected\"" : "" )>ร่าง</option>
                                                             }
+                                                            @if (Model.InvoiceNo != null)
+                                                            {
+                                                                <option class="text-primary" value="2" @(Model.StatusId == 2 ? " selected=\" selected\"" : "" )>ส่งแล้ว</option>
+                                                                <option class="text-success" value="3" @(Model.StatusId == 3 ? " selected=\" selected\"" : "" )>จ่ายแล้ว</option>
+                                                                <option class="text-dark" value="4" @(Model.StatusId == 4 ? " selected=\" selected\"" : "" )>ยกเลิก</option>
+                                                            }
 
-                                                            <option class="text-primary" value="2" @(Model.StatusId == 2 ? " selected=\" selected\"" : "" )>ส่งแล้ว</option>
-                                                            <option class="text-success" value="3" @(Model.StatusId == 3 ? " selected=\" selected\"" : "" )>จ่ายแล้ว</option>
-                                                            <option class="text-dark" value="4" @(Model.StatusId == 4 ? " selected=\" selected\"" : "" )>ยกเลิก</option>
                                                         </select>
                                                     </div>
                                                 </div>

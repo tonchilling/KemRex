@@ -8,15 +8,19 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Kemrex.Core.Common.Helper;
+using System.Data.SqlClient;
+using System.Data;
 
 namespace Kemrex.Core.Common.Modules
 {
     public class InvoiceModule : IModule<TblInvoice, int>
     {
         private readonly mainContext db;
+        private WebDB webdb;
         public InvoiceModule(mainContext context)
         {
             db = context;
+            webdb = new WebDB();
         }
 
         public int Count(int groupId = 0, string src = "")
@@ -106,6 +110,12 @@ namespace Kemrex.Core.Common.Modules
                     .Where(n => n.InvoiceNo.Contains(pre))
                     select q.InvoiceNo).Max();
         }
+        public int GetInsertId(string pre)
+        {
+            return (from q in db.TblInvoice
+                    .Where(n => n.InvoiceNo.Contains(pre))
+                    select q.InvoiceId).Max();
+        }
 
         public bool IsExist(int id)
         {
@@ -115,8 +125,38 @@ namespace Kemrex.Core.Common.Modules
         public void Set(TblInvoice ob)
         {
             if (ob.InvoiceId <= 0)
-            { db.TblInvoice.Add(ob); }
+            {
+                db.TblInvoice.Add(ob);
+            }
             else { db.Entry(ob).State = EntityState.Modified; }
+        }
+        public bool Add(TblInvoice dto)
+        {
+            bool result = false;
+            string sql = "sp_Invoice_Insert";
+
+
+            List<SqlParameter> paramList = new List<SqlParameter>();
+
+            paramList.Add(new SqlParameter("@InvoiceNo", dto.InvoiceNo)); 
+            paramList.Add(new SqlParameter("@SaleOrderId", dto.SaleOrderId));
+            paramList.Add(new SqlParameter("@InvoiceRemark", dto.InvoiceRemark));
+            paramList.Add(new SqlParameter("@InvoiceTerm", dto.InvoiceTerm));
+            paramList.Add(new SqlParameter("@User", dto.CreatedBy));
+            
+            try
+            {
+
+                result = webdb.ExcecuteNonQuery(sql, paramList);
+                
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("sp_Invoice_Insert::" + ex.ToString());
+            }
+            finally
+            { }
+            return result;
         }
     }
 }
