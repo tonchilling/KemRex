@@ -231,5 +231,30 @@ namespace Kemrex.Web.Main.Controllers
             catch (Exception ex)
             { return RedirectToAction("Detail", MVCController, new { id = qid, tab = "Product", msg = ex.GetMessage(), msgType = AlertMsgType.Danger }); }
         }
+        [HttpPost]
+        public ActionResult GetTransferStockInList()
+        {
+            List<TransferStockHeader> lst = new List<TransferStockHeader>();
+            try
+            {
+                lst = uow.Modules.TransferStock.GetList("I");
+                foreach (var ls in lst.ToList())
+                {
+                    ls.Employee = uow.Modules.Employee.GetByCondition(ls.EmpId);
+                    ls.StrTransferDate = ls.TransferDate.HasValue ? ls.TransferDate.Value.Day.ToString("00") + "/" + ls.TransferDate.Value.Month.ToString("00") + "/" + ls.TransferDate.Value.Year : "";
+                    ls.StrCreateDate = ls.CreateDate.HasValue? ls.CreateDate.Value.Day.ToString("00") + "/" + ls.CreateDate.Value.Month.ToString("00") + "/" + ls.CreateDate.Value.Year : "";
+                }
+            }
+            catch (Exception ex)
+            {
+                WidgetAlertModel Alert = new WidgetAlertModel()
+                {
+                    Type = AlertMsgType.Danger,
+                    Message = ex.GetMessage(true)
+                };
+                ViewBag.Alert = Alert;
+            }
+            return Json(lst);
+        }
     }
 }

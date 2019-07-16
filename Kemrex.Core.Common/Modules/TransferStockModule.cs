@@ -159,6 +159,20 @@ namespace Kemrex.Core.Common.Modules
             { data = data.Skip((page - 1) * size).Take(size); }
             return data.ToList();
         }
+        public List<TransferStockHeader> GetList()
+        {
+             var data = db.TransferStockHeader
+                        .OrderByDescending(c => c.TransferNo)
+                .AsQueryable();
+            return data.ToList();
+        }
+        public List<TransferStockHeader> GetList(string TransferType = "")
+        {
+            var data = db.TransferStockHeader.Where(o => o.TransferType == TransferType)
+                       .OrderByDescending(c => c.TransferNo)
+               .AsQueryable();
+            return data.ToList();
+        }
         public bool IsExist(string id)
         {
              return db.TransferStockHeader.Where(x => x.TransferNo == id).Count() > 0 ? true : false; 

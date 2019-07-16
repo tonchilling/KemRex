@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Kemrex.Core.Database.Models
 {
@@ -9,6 +10,10 @@ namespace Kemrex.Core.Database.Models
         public string TransferNo { get; set; }
         public string TransferType { get; set; }
         public DateTime? TransferDate { get; set; }
+        [NotMapped]
+        public string StrTransferDate { get; set; }
+        [NotMapped]
+        public string StrCreateDate { get; set; }
         public string TransferTime { get; set; }
         public string ReceiveTo { get; set; }
         public string Reason { get; set; }
