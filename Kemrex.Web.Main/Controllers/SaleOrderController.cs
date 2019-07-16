@@ -94,7 +94,7 @@ namespace Kemrex.Web.Main.Controllers
         [HttpPost, ActionName("Detail")]
         public ActionResult SetDetail()
         {
-
+            bool addQuotationDetail = false;
             int id = Request.Form["SaleOrderId"].ParseInt();
             TblSaleOrder ob = uow.Modules.SaleOrder.Get(id);
             if (ob.SaleOrderId <= 0)
@@ -106,6 +106,7 @@ namespace Kemrex.Web.Main.Controllers
                 ob.CreatedDate = CurrentDate;
                 ob.UpdateDate = CurrentDate;
                 ob.SaleOrderDate = CurrentDate;
+                addQuotationDetail = true;
             }
             else
             {
@@ -144,6 +145,75 @@ namespace Kemrex.Web.Main.Controllers
 
                 uow.Modules.SaleOrder.Set(ob);
                 uow.SaveChanges();
+
+                id = ob.SaleOrderId;
+                if (id > 0 && addQuotationDetail)
+                {
+
+                    string qno = Request.Form["QuotationNo"];
+
+                    TblSaleOrder so = uow.Modules.SaleOrder.Get(id);
+                    var qid = uow.Modules.Quotation.GetId(qno);
+                    TblQuotation qt = uow.Modules.Quotation.Get(qid);
+                    List<TblQuotationDetail> qtd = uow.Modules.QuotationDetail.Gets(qid)
+                                                        .OrderBy(c => c.Id).ToList();
+
+
+                    // clear saleorderdetail
+                    uow.Modules.SaleOrderDetail.DeleteId(id);
+                    //  uow.SaveChanges();
+
+                    // set QT to SO
+                    so.QuotationNo = qno;
+                    so.CustomerId = qt.CustomerId;
+                    so.CustomerName = qt.CustomerName;
+                    so.ContractName = qt.ContractName;
+                    so.SaleId = qt.SaleId;
+                    so.SaleName = qt.SaleName;
+                    so.BillingAddress = qt.BillingAddress;
+                    so.ShippingAddress = qt.ShippingAddress;
+                    so.SaleOrderRemark = qt.QuotationRemark;
+                    so.SubTotalNet = qt.SubTotalNet;
+                    so.SubTotalTot = qt.SubTotalTot;
+                    so.SubTotalVat = qt.SubTotalVat;
+                    so.DiscountCash = qt.DiscountCash;
+                    so.DiscountNet = qt.DiscountNet;
+                    so.DiscountTot = qt.DiscountTot;
+                    so.DiscountVat = qt.DiscountVat;
+                    so.SummaryNet = qt.SummaryNet;
+                    so.SummaryTot = qt.SummaryTot;
+                    so.SummaryVat = qt.SummaryVat;
+
+                    uow.Modules.SaleOrder.Set(so);
+                    // uow.SaveChanges();
+
+
+                    //Add QT detail to SO detail
+                    if (qtd.Count() > 0)
+                    {
+                        qtd.ForEach(dt =>
+                        {
+                            TblSaleOrderDetail sod = uow.Modules.SaleOrderDetail.Get(0);
+                            sod.SaleOrderId = id;
+                            sod.ProductId = dt.ProductId;
+                            sod.Quantity = dt.Quantity;
+                            sod.PriceNet = dt.PriceNet;
+                            sod.PriceVat = dt.PriceVat;
+                            sod.PriceTot = dt.PriceTot;
+                            sod.DiscountNet = dt.DiscountNet;
+                            sod.DiscountTot = dt.DiscountTot;
+                            sod.DiscountVat = dt.DiscountVat;
+                            sod.TotalNet = dt.TotalNet;
+                            sod.TotalTot = dt.TotalTot;
+                            sod.TotalVat = dt.TotalVat;
+                            uow.Modules.SaleOrderDetail.Set(sod);
+                        });
+
+                    }
+
+                    uow.SaveChanges();
+                }
+
 
                 return RedirectToAction("Detail", MVCController, new { id = ob.SaleOrderId, msg = "บันทึกข้อมูลเรียบร้อยแล้ว", msgType = AlertMsgType.Success });
             }
@@ -206,6 +276,7 @@ namespace Kemrex.Web.Main.Controllers
                 ViewData["optPayment"] = uow.Modules.PaymentCondition.Gets();
                 ViewData["optAttachment"] = uow.Modules.SaleOrderAttachment.Gets(ob.SaleOrderId);
                 ViewData["optTeam"] = uow.Modules.TeamOperation.Gets();
+                ViewData["userAccount"] = CurrentUser;
                 return View(ob);
             }
             catch (Exception ex)
@@ -352,9 +423,68 @@ namespace Kemrex.Web.Main.Controllers
         public ActionResult QT2SO()
         {
             int sid = 0;
+
+
             if (!string.IsNullOrEmpty(Request.Form["lbSaleOrderId"]))
             {
                 sid = Request.Form["lbSaleOrderId"].ParseInt();
+                TblSaleOrder ob = uow.Modules.SaleOrder.Get(sid);
+
+                if (ob.SaleOrderId <= 0)
+                {
+                    string pre = Request.Form["SaleOrderPreNo"];
+                    ob.SaleOrderNo = genSaleOrderId(pre);
+                    ob.CreatedBy = CurrentUID;
+                    ob.UpdatedBy = CurrentUID;
+                    ob.CreatedDate = CurrentDate;
+                    ob.UpdateDate = CurrentDate;
+                    ob.SaleOrderDate = CurrentDate;
+                }
+                else
+                {
+                    ob.UpdatedBy = CurrentUID;
+                    ob.UpdateDate = CurrentDate;
+                }
+
+                ob.QuotationNo = Request.Form["QuotationNo"];
+                ob.SaleId = Request.Form["SaleId"] != null ? Request.Form["SaleId"].ParseInt() : 0;
+                ob.SaleName = Request.Form["SaleName"];
+                if (Request.Form["DeliveryDate"].ToString().Count() > 0)
+                {
+                    var dd = Request.Form["DeliveryDate"].Split(' ')[0] + " 00:00:00";
+
+                    ob.DeliveryDate = dd.ParseDate(DateFormat.ddMMyyyyHHmmss);
+                }
+                TblQuotation quotation = uow.Modules.Quotation.Get(ob.QuotationNo);
+
+                ob.CustomerId = quotation.CustomerId;
+                ob.CustomerName = quotation.CustomerName;
+
+                ob.ContractName = quotation.ContractName;
+                ob.BillingAddress = quotation.BillingAddress;
+
+                ob.ShippingAddress = quotation.ShippingAddress;
+                ob.SaleOrderRemark = Request.Form["SaleOrderRemark"];
+                ob.TeamId = Request.Form["TeamId"].ParseInt();
+                if (Request.Form["DiscountCash"] != null)
+                    ob.DiscountCash = decimal.Parse(Request.Form["DiscountCash"]);
+
+                ob.SaleOrderCreditDay = Request.Form["SaleOrderCreditDay"].ParseInt();
+
+                ob.StatusId = Request.Form["StatusId"].ParseInt();
+                ob.ConditionId = Request.Form["ConditionId"].ParseInt();
+
+
+                uow.Modules.SaleOrder.Set(ob);
+                uow.SaveChanges();
+                sid = ob.SaleOrderId;
+
+            }
+            else if (Request.Form["lbSaleOrderId"] == "")
+            {
+               
+
+
             }
             else
             {

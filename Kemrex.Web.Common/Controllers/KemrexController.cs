@@ -12,6 +12,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Web.Mvc;
+using Kemrex.Core.Common.Modules;
 
 namespace Kemrex.Web.Common.Controllers
 {
@@ -126,6 +127,14 @@ namespace Kemrex.Web.Common.Controllers
                 SubMenus = menuAll.Where(o => o.ParentId == ob.MenuId).Select(x => ConvertToMenuModel2(x)).OrderBy(o => o.MenuOrder).ToList()
             };
             return rs;
+        }
+
+
+        public TransactionStatus GetTransactionStatus()
+        {
+            TransactionStatus md = new TransactionStatus();
+            md= uow.Modules.System.GetAllStatus(CurrentUser.AccountId.ToString());
+            return md;
         }
         #endregion
     }

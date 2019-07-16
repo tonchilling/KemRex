@@ -8,19 +8,21 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Kemrex.Core.Common.Helper;
-
+using System.Data.SqlClient;
+using System.Data;
+using Kemrex.Core.Common.Helper;
 namespace Kemrex.Core.Common.Modules
 {
    public class SaleOrderModule : IModule<TblSaleOrder, int>
     {
         private readonly mainContext db;
-
+        private WebDB webdb;
         public SaleOrderModule(mainContext context)
         {
             System.Threading.Thread.CurrentThread.CurrentCulture = new System.Globalization.CultureInfo("en-US"); ;
             System.Threading.Thread.CurrentThread.CurrentUICulture = new System.Globalization.CultureInfo("en-US"); ;
             db = context;
-          
+            webdb = new WebDB();
         }
         public void Delete(TblSaleOrder ob)
         {
@@ -240,6 +242,70 @@ namespace Kemrex.Core.Common.Modules
 
             return tblSaleOrder;
         }
+
+
+        public List<TblSaleOrder> GetSaleOrderInInvoice(DateTime? fromDate,DateTime? toDate)
+        {
+            string sql = "sp_GetSaleOrderInInvoice";
+            List<SqlParameter> paramList = new List<SqlParameter>();
+            List<TblSaleOrder> list = new List<TblSaleOrder>();
+            TblSaleOrder dto = null;
+            SqlDataReader reader = null;
+            SqlCommand sqlCommand = null;
+
+
+            try
+            {
+                webdb.OpenConnection();
+                paramList.Add(new SqlParameter("@FromDate", fromDate.HasValue ?  string.Format("{0}{1}{2}", fromDate.Value.Year,fromDate.Value.Month.ToString("##00"),fromDate.Value.Day.ToString("##00")):""));
+                paramList.Add(new SqlParameter("@ToDate", toDate.HasValue ?  string.Format("{0}{1}{2}",  toDate.Value.Year, toDate.Value.Month.ToString("##00"), toDate.Value.Day.ToString("##00")):""));
+                //connect.Open();
+                sqlCommand = new SqlCommand();
+                sqlCommand.CommandText = sql;
+                sqlCommand.CommandType = CommandType.StoredProcedure;
+                sqlCommand.Connection = webdb.Connection;
+                sqlCommand.Parameters.AddRange(paramList.ToArray());
+
+                reader = sqlCommand.ExecuteReader();
+                while (reader.Read())
+                {
+                    dto = new TblSaleOrder();
+                    dto.SaleOrderId = Converting.ToInt(reader["SaleOrderId"].ToString());
+                    dto.SaleOrderNo = reader["SaleOrderNo"].ToString();
+                    dto.SaleOrderDate = Converting.StringToDate(reader["SaleOrderDate"].ToString(),null);
+                    dto.strSaleOrderDate = Converting.ToDDMMYYYY(dto.SaleOrderDate);
+
+                 
+                    dto.QuotationNo = reader["QuotationNo"].ToString();
+                    dto.CustomerId = Converting.ToInt(reader["CustomerId"].ToString());
+                    dto.CustomerName = reader["CustomerName"].ToString();
+                    dto.ContractName = reader["ContractName"].ToString();
+                    dto.ConditionId = Converting.ToInt(reader["ConditionId"].ToString());
+                    dto.SaleId = Converting.ToInt(reader["SaleId"].ToString());
+                    dto.SaleName = reader["SaleName"].ToString();
+                    dto.TeamId = Converting.ToInt(reader["TeamId"].ToString());
+        list.Add(dto);
+
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.ToString());
+            }
+            finally
+            {
+                if (webdb.Connection.State == ConnectionState.Open)
+                {
+                    webdb.CloseConnection();
+                }
+            }
+
+
+
+            return list;
+        }
+
+
 
         public List<TblSaleOrder> Gets(int page = 1, int size = 0, int month = 0, string src = "")
         {

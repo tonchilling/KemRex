@@ -198,6 +198,7 @@ namespace Kemrex.Web.Main.Controllers
                 ViewData["optProduct"] = uow.Modules.Product.Gets();
                 ViewData["optContact"] = uow.Modules.CustomerContact.Gets();
                 ViewData["optEmployee"] = uow.Modules.Employee.Gets();
+                ViewData["userAccount"] = CurrentUser;
                 return View(ob);
             }
             catch (Exception ex)
