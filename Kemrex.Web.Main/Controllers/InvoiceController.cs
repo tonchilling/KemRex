@@ -111,7 +111,7 @@ namespace Kemrex.Web.Main.Controllers
         [HttpPost, ActionName("Detail")]
         public ActionResult SetDetail()
         {
-            int sid = Request.Form["selSaleOrder"].ParseInt();
+            int sid = Request.Form["SaleOrderId"].ParseInt();
             if (sid > -1)
             {
                 int id = Request.Form["InvoiceId"].ParseInt();
@@ -144,6 +144,13 @@ namespace Kemrex.Web.Main.Controllers
                     if (Request.Form["InvoiceAmount"] != "")
                         ob.InvoiceAmount = decimal.Parse(Request.Form["InvoiceAmount"].ToString());
                     decimal reamin = Request.Form["remain"].ToString().ParseDecimal();
+                    //if (ob.StatusId > 1)
+                    //{
+                    //    if (ob.InvoiceAmount <= 0)
+                    //    {
+                    //        return ViewDetail(ob, "กรุณาระบุยอดที่ต้องการเรียกเก็บ", AlertMsgType.Danger);
+                    //    }
+                    //}
                     if (ob.InvoiceAmount > reamin)
                     {
                         return ViewDetail(ob, "ยอดเรียกเก็บต้อง น้อยกว่าหรือเท่ากับ ยอดที่ยังไม่ได้เรียกเก็บ", AlertMsgType.Danger);
@@ -200,7 +207,23 @@ namespace Kemrex.Web.Main.Controllers
                     ViewBag.Alert = alert;
                 }
 
+                List<TblSaleOrder> saleOrderList = uow.Modules.SaleOrder.GetListForInvoiceByCondition("", "", "2");
+                List<TblSaleOrder> saleOrderList2 = new List<TblSaleOrder>();
+                decimal remain = 0;
+                decimal total = 0;
+                foreach (TblSaleOrder so in saleOrderList)
+                {
+                    remain = uow.Modules.Invoice.GetRemain(so.SaleOrderId);
+                    total = so.SubTotalNet.HasValue ? so.SubTotalNet.Value : 0;
+                    if (total - remain > 0)
+                    {
+                        saleOrderList2.Add(so);
+                    }
+                }
+
+
                 ViewData["optSaleOrder"] = uow.Modules.SaleOrder.Gets();
+                //ViewData["optSaleOrder"] = saleOrderList2;
                 ViewData["optQuotation"] = uow.Modules.Quotation.Gets();
                 ViewData["optPayment"] = uow.Modules.PaymentCondition.Gets();
                 ViewData["optRemain"] = uow.Modules.Invoice.GetRemain(ob.SaleOrderId);

@@ -716,7 +716,7 @@ namespace Kemrex.Web.Main.Controllers
                 pdfDoc.Open();
                 XMLWorkerHelper.GetInstance().ParseXHtml(writer, pdfDoc, sr);
                 pdfDoc.Close();
-                return File(stream.ToArray(), "application/pdf", "DepositInvoice_.pdf");
+                return File(stream.ToArray(), "application/pdf", "DepositInvoice_"+ invoice.InvoiceNo + ".pdf");
             }
         
         }

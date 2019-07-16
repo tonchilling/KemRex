@@ -421,6 +421,42 @@ var data = (from order in db.TblSaleOrder select new TblSaleOrder {
 
             return data.ToList();
         }
+        public List<TblSaleOrder> GetListForInvoiceByCondition(string fromDate = "", string toDate = "", string status="1")
+        {
+            var data = db.TblSaleOrder
+                        .OrderByDescending(c => c.SaleOrderId)
+                .AsQueryable();
+            DateTime stDate, enDate;
+
+            //var saleOrderId = db.TblSaleOrder.Select(x => x.SaleOrderId).ToArray();
+            if (fromDate != "")
+            {
+                stDate = DateTime.ParseExact(fromDate, "dd/MM/yyyy", new System.Globalization.CultureInfo("en-US"));
+                enDate = DateTime.ParseExact(toDate, "dd/MM/yyyy", new System.Globalization.CultureInfo("en-US"));
+
+                //data = data.Where(x => !saleOrderId.Contains(x.SaleOrderId)
+                //                        && (x.SaleOrderDate.Value.Date >= stDate.Date && x.SaleOrderDate.Value.Date <= enDate.Date)
+                //                        && x.StatusId.ToString() == status);
+                data = data.Where(x => (x.SaleOrderDate.Value.Date >= stDate.Date && x.SaleOrderDate.Value.Date <= enDate.Date)
+                                        && x.StatusId.ToString() == status);
+
+            }
+            else
+            {
+                //data = data.Where(x => !saleOrderId.Contains(x.SaleOrderId) && x.StatusId.ToString() == status);
+                data = data.Where(x => x.StatusId.ToString() == status);
+            }
+
+            if (data != null && data.ToList().Count > 0)
+            {
+                foreach (TblSaleOrder obj in data)
+                {
+                    obj.strSaleOrderDate = Converting.ToDDMMYYYY(obj.SaleOrderDate);
+                }
+            }
+
+            return data.ToList();
+        }
 
         public bool IsExist(int id)
         {

@@ -2,27 +2,106 @@
 @using Kemrex.Web.Common.Controllers
 @using Kemrex.Web.Common.Models
 @using Kemrex.Core.Common.Helper
-@model List<TransferStockHeader>
+
 @{
     ViewBag.Title = "Index";
     KemrexController kemrex = ((KemrexController)this.ViewContext.Controller);
     Layout = kemrex.PathViewShared("_lyDefault");
     WidgetAlertModel Alert = (WidgetAlertModel)ViewBag.Alert;
-    WidgetPaginationModel Pagination = (WidgetPaginationModel)ViewBag.Pagination;
+    //WidgetPaginationModel Pagination = (WidgetPaginationModel)ViewBag.Pagination;
 
 }
 
 @section Scripts {
     <script type="text/javascript">
+        var url = '@Url.Action("GetTransferStockOutList", "TransferStockOut")';
         $(document).ready(function () {
             window.setTimeout(function () {
                 $(".alert").fadeTo(1000, 0).slideUp(1000, function () {
                     $(this).remove();
                 });
             }, 5000);
+            //waitingDialog.show('Waiting for loading data', { dialogSize: 'md', progressType: 'primary' });
+
+            LoadTable();
         });
 
         $(EngineerMenu).slideToggle();
+        function LoadTable() {
+
+            var html = '';
+            var criteria = "";
+            var urlDetail = '@Url.Action("Detail", new { controller = "TransferStockOut", area = ""})';
+            $(".divDetail").empty();
+            html += '<table class="table  table-striped table-hover "  >';
+            html += '<thead>';
+            html += '<tr class="table-primary" >';
+            html += '<th align="center">เลขที่โอนสินค้าออก</th>';
+            html += '<th align="center">เลขที่อ้างอิง</th>';
+            html += '<th align="center">ผู้โอนสินค้าออก</th>';
+            html += '<th align="center">สถานะ</th>';
+            html += '<th align="center">วันที่โอนสินค้าออก</th>';
+            html += '<th align="center">วันที่สร้างรายการ</th>';
+            html += '<th align="center">เครื่องมือ</th>';
+            html += ' </tr>';
+            html += '</thead>';
+            html += '<tbody>';
+
+            
+
+            $.ajax({
+                url: url,
+                type: "POST",
+                // data: JSON.stringify(criteria),
+                dataType: "json",
+                contentType: "application/json; charset=utf-8",
+                success: function (data) {
+
+                    var statusName = "";
+                    if (data != null) {
+
+                        $.each(data, function (index, item) {
+                            html += '<tr>';
+                            html += '<td align="center">' + item.TransferNo + '</td>';
+                            html += '<td>' + item.BillNo + '</td>';
+                            html += '<td>' + item.Employee.EmpNameTh + '</td>';
+                           
+
+                            if (item.TransferStatus == 0) {
+                                statusName = "ร่าง";
+                            } else if (item.TransferStatus == 1) {
+                                statusName = "ส่งแล้ว";
+                            } 
+
+                            html += '<td>' + statusName + '</td>';
+                            html += '<td align="center">' + item.StrTransferDate + '</td>';
+                            html += '<td align="center">' + item.StrCreateDate + '</td>';
+                            html += '<td> <a href="' + urlDetail + '/' + item.TransferStockId + '" class="btn btn-xs btn-primary">';
+                            html += '<i class="fa fa-pencil" aria-hidden="true"></i>&nbsp;แก้ไข </a>&nbsp;';
+                            html += '</tr>';
+                        });
+                    }
+                    html += '</tbody>';
+                    html += ' </table>';
+
+                    $(".divDetail").append(html);
+                    $(".divDetail table").DataTable(
+                        {
+                            columnDefs: [
+                                { type: 'date-uk', targets: 4 }
+                            ],
+                            order: [[4, 'desc']]
+                        }
+                    );
+                    waitingDialog.hide();
+                },
+                error: function (error) {
+                    alert(error);
+                    waitingDialog.hide();
+                    //  waitingDialog.hide();
+                }
+            });
+        }
     </script>
 }
 
@@ -48,77 +127,31 @@
                     </div>
                     <!-- /.box-header -->
                     <div class="panel-body dataTables_wrapper">
-                        <div class="row">
-                            <div class="col-12 col-sm-6 form-inline">
-                                @Html.Partial(kemrex.PathViewShared("_wgPaginationSize"), Pagination)
-                            </div>
-                            <div class="col-12 col-sm-6">
-                                <div class="dataTables_paginate float-right">
-                                    @Html.Partial(kemrex.PathViewShared("_wgPagination"), Pagination)
-                                </div>
-                                <div class="clear"></div>
-                            </div>
-                            <br /><br />
-                        </div>
+                        
                         <div class="row">
                             <div class="col-12">
-                                <div class="table-responsive">
+                                <div class="table-responsive divDetail">
                                     <table class="table table-bordered table-hover">
                                         <thead>
                                             <tr align="center">
-                                                <th>เลขที่โอนสินค้าออก</th>
-                                                <th>เลขที่อ้างอิง</th>
-                                                <th>ผู้โอนสินค้าออก</th>
-                                                <th>วันที่โอนสินค้าออก</th>
-                                                <th>วันที่สร้างรายการ</th>
-                                                <th>เครื่องมือ</th>
+                                                <th align="center">เลขที่โอนสินค้าออก</th>
+                                                <th align="center">เลขที่อ้างอิง</th>
+                                                <th align="center">ผู้โอนสินค้าออก</th>
+                                                <th align="center">สถานะ</th>
+                                                <th align="center">วันที่โอนสินค้าออก</th>
+                                                <th align="center">วันที่สร้างรายการ</th>
+                                                <th align="center">เครื่องมือ</th>
                                                 @*<th>สถานะ</th>
-                                                <th>เครื่องมือ</th>*@
+        <th>เครื่องมือ</th>*@
                                             </tr>
                                         </thead>
-                                        <tbody>
-                                            @if (Model.Count() <= 0)
-                                            {
-                                                <tr align="center">
-                                                    <td colspan="6">ไม่พบข้อมูล</td>
-                                                </tr>
-                                            }
-                                            @foreach (var ob in Model)
-                                            {
-                                                //   var total = ob.SaleOrder.SummaryTot - ob.SaleOrder.DiscountCash;
-                                                <tr id="@ob.TransferNo" align="center">
-
-                                                    <td>@ob.TransferNo </td>
-                                                    <td>@ob.BillNo </td>
-                                                    <td>@ob.Employee.EmpNameTh</td>
-                                                    <td>@Converting.ToDDMMYYYY(ob.TransferDate)</td>
-                                                    <td>@Converting.ToDDMMYYYY(ob.CreateDate)</td>
-
-                                                    <td align="center">
-                                                        <a href="@Url.Action("Detail", new { controller="TransferStockOut" , area="" , id=ob.TransferStockId })"
-                                                           class="btn btn-xs btn-primary">
-                                                            <i class="fa fa-pencil" aria-hidden="true"></i>&nbsp;แก้ไข
-                                                        </a>
-                                                    </td>
-                                                </tr>
-                                            }
-                                        </tbody>
+                                        
                                     </table>
 
                                 </div>
                             </div>
                         </div>
-                        <div class="row">
-                            <div class="col-12 col-sm-6">
-                                <span>@Pagination.CurrentDisplay</span>
-                            </div>
-                            <div class="col-12 col-sm-6">
-                                <div class="dataTables_paginate float-right">
-                                    @Html.Partial(kemrex.PathViewShared("_wgPagination"), Pagination)
-                                </div>
-                                <div class="clear"></div>
-                            </div>
-                        </div>
+                        
                     </div>
                     <!-- /.box-body -->
                 </div>

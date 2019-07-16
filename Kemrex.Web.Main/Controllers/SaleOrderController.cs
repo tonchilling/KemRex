@@ -638,19 +638,20 @@ namespace Kemrex.Web.Main.Controllers
 
 
         [HttpGet]
-        public JsonResult GetSaleOrder(string startDate,string toDate  )
+        public JsonResult GetSaleOrder(string startDate,string toDate)
         {
 
             List<TblSaleOrder> saleOrderList = uow.Modules.SaleOrder.GetFindByCondition(startDate, toDate);
             // ob.TblSaleOrderDetail = uow.Modules.SaleOrderDetail.Gets(id ?? 0);
             // TblCustomer objCustomer = uow.Modules.Customer.Get(Convert.ToInt32(ob.CustomerId));
-            foreach (TblSaleOrder so in saleOrderList)
+            List<TblSaleOrder> saleOrderCloseList = saleOrderList.Where(x => x.StatusId == 2).ToList();
+            foreach (TblSaleOrder so in saleOrderCloseList)
             {
                 so.StrSaleOrderDate = so.SaleOrderDate.HasValue ? so.SaleOrderDate.Value.Day.ToString("00") + "/" + so.SaleOrderDate.Value.Month.ToString("00") + "/" + so.SaleOrderDate.Value.Year : "";
             }
 
 
-            return Json(saleOrderList, JsonRequestBehavior.AllowGet);
+            return Json(saleOrderCloseList, JsonRequestBehavior.AllowGet);
         }
 
         [HttpGet]
@@ -666,6 +667,33 @@ namespace Kemrex.Web.Main.Controllers
 
 
             return Json(saleOrder, JsonRequestBehavior.AllowGet);
+        }
+        [HttpGet]
+        public JsonResult GetSaleOrderForInvoice(string startDate, string toDate, string statusId)
+        {
+
+            List<TblSaleOrder> saleOrderList = uow.Modules.SaleOrder.GetListForInvoiceByCondition(startDate, toDate, statusId);
+            List<TblSaleOrder> saleOrderList2 = new List<TblSaleOrder>();
+            decimal remain = 0;
+            decimal total = 0;
+            foreach (TblSaleOrder so in saleOrderList)
+            {
+                remain = uow.Modules.Invoice.GetRemain(so.SaleOrderId);
+                total = so.SubTotalNet.HasValue ? so.SubTotalNet.Value : 0;
+                if (total - remain > 0)
+                {
+                    saleOrderList2.Add(so);
+                }
+            }
+
+
+            foreach (TblSaleOrder so in saleOrderList2)
+            {
+                so.StrSaleOrderDate = so.SaleOrderDate.HasValue ? so.SaleOrderDate.Value.Day.ToString("00") + "/" + so.SaleOrderDate.Value.Month.ToString("00") + "/" + so.SaleOrderDate.Value.Year : "";
+            }
+
+
+            return Json(saleOrderList2, JsonRequestBehavior.AllowGet);
         }
 
         #endregion
