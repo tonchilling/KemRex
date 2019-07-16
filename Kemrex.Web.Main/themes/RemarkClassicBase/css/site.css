@@ -8003,7 +8003,7 @@ h3.example-title {
 
 
 .modal-header {
-    padding: 9px 15px;
+    padding: 9px 25px;
     border-bottom: 1px solid #eee;
     background-color: #0480be;
     color:#ffffff;
@@ -8017,3 +8017,18 @@ h3.example-title {
     .modal-header h3 {
         color: #ffffff;
     }
+
+    .modal-header h2 {
+        color: #ffffff;
+    }
+
+
+.close {
+    float: right;
+    font-size: 28px;
+    font-weight: 700;
+    line-height: 1;
+    color: #ffffff;
+    text-shadow: none;
+    opacity: .5;
+}
