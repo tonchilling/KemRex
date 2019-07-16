@@ -74,7 +74,13 @@ namespace Kemrex.Core.Common.Helper
             try
             {
                 if (strDate != "")
-                    result = DateTime.ParseExact(strDate, format, enUS);
+                    if (format!=null && format != "")
+                    {
+                        result = DateTime.ParseExact(strDate, format, enUS);
+                    }
+                    else {
+                        result = DateTime.Parse(strDate, enUS);
+                    }
             }
             catch
             { }

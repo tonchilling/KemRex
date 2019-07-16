@@ -63,9 +63,19 @@ namespace Kemrex.Web.Main.Controllers
         public JsonResult GetSaleOrderNotInJobOrder(string startDate, string toDate)
         {
 
-            List<TblSaleOrder> saleOrderList = uow.Modules.SaleOrder.GetFindByCondition(startDate, toDate,"2");
-            // ob.TblSaleOrderDetail = uow.Modules.SaleOrderDetail.Gets(id ?? 0);
-            // TblCustomer objCustomer = uow.Modules.Customer.Get(Convert.ToInt32(ob.CustomerId));
+            //  List<TblSaleOrder> saleOrderList = uow.Modules.SaleOrder.GetFindByCondition(startDate, toDate,"2");
+            DateTime? StDate=null;
+            DateTime? ToDate = null;
+
+            if (startDate != "")
+            {
+                StDate = DateTime.ParseExact(startDate, "dd/MM/yyyy", new System.Globalization.CultureInfo("en-US"));
+                ToDate = DateTime.ParseExact(toDate, "dd/MM/yyyy", new System.Globalization.CultureInfo("en-US"));
+
+
+            }
+                List<TblSaleOrder> saleOrderList = uow.Modules.SaleOrder.GetSaleOrderInInvoice(StDate, ToDate);
+            
 
 
 
