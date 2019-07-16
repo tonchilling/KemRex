@@ -14,7 +14,7 @@
 
 @section Scripts {
     <script type="text/javascript">
-          var url = '@Url.Action("GetQuatationList", "Quotation")';
+          var url = '@Url.Action("GetList", "Quotation")';
         $(document).ready(function () {
             window.setTimeout(function () {
                 $(".alert").fadeTo(1000, 0).slideUp(1000, function () {
@@ -71,7 +71,7 @@
                                 html += '<tr>';
                                 html += '<td>' + item.QuotationNo + '</td>';
                                 html += '<td>' + item.Customer.CustomerName + '</td>';
-                                html += '<td>' + item.SummaryTot + '</td>';
+                                html += '<td>' + numeral(item.SummaryTot - item.DiscountCash).format('0,0.00')  + '</td>';
                                 html += '<td>' + item.strQuotationDate + '</td>';
                                 html += '<td>' + item.Status.StatusName + '</td>';
                               html += '<td> <a href="' + urlDetail + '/' + item.QuotationId+'" class="btn btn-xs btn-primary">';
@@ -91,7 +91,13 @@
                     html += ' </table>';
 
                     $(".divDetail").append(html);
-                    $(".divDetail table").DataTable();
+                    $(".divDetail table").DataTable({
+                        columnDefs: [
+                            { type: 'date-uk', targets: 3 }
+                        ],
+                        order: [[3, 'desc']]
+                    }
+                    );
                     waitingDialog.hide();
                 },
                 error: function (error) {
@@ -101,22 +107,6 @@
                 }
             });
 
-
-          /*  <table class="table table-bordered table-hover">
-                <thead>
-                    <tr align="center">
-                        <th>หมายเลข</th>
-                        <th>ลูกค้า</th>
-                        <th>ยอดเงิน</th>
-                        <th>วันที่</th>
-                        <th>สถานะ</th>
-
-                    </tr>
-                </thead>
-
-            </table>*/
-
-           
 
           
           

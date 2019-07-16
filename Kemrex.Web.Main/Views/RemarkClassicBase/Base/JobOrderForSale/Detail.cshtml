@@ -52,7 +52,7 @@
 
 
             $("form:first").validate({
-                highlight: function (element) {
+                hihlight: function (element) {
                     $(element).parents('.form-group').addClass('has-error');
                     $(element).parents('.input-group').addClass('has-error');
                 },
@@ -155,16 +155,118 @@
             $('#frmmain').attr('action', '@Url.Action("AddProduct", "JobOrderForSale")');
         });
 
+
+        function ValidationAll() {
+            var chkValidate = true;
+            if ($("#JobOrderNo").val() == "") {
+                $("#JobOrderNo").addClass("has-error");
+                chkValidate = false;
+            } else {
+                $("#JobOrderNo").removeClass("has-error");
+            }
+
+            if ($("#JobName").val() == "") {
+                $("#JobName").addClass("has-error");
+                chkValidate = false;
+            } else {
+                $("#JobName").removeClass("has-error");
+            }
+
+
+            if ($("#SaleOrderNo").val() == "") {
+                $("#SaleOrderNo").addClass("has-error");
+                chkValidate = false;
+            } else {
+                $("#SaleOrderNo").removeClass("has-error");
+            }
+
+
+            if ($("#TeamName").val() == "") {
+                $("#TeamName").addClass("has-error");
+                chkValidate = false;
+            } else {
+                $("#TeamName").removeClass("has-error");
+            }
+
+
+
+            if ($("#StartDate").val() == "") {
+                $("#StartDate").addClass("has-error");
+                chkValidate = false;
+            } else {
+                $("#StartDate").removeClass("has-error");
+            }
+
+
+            if ($("#EndDate").val() == "") {
+                $("#EndDate").addClass("has-error");
+                chkValidate = false;
+            } else {
+                $("#EndDate").removeClass("has-error");
+            }
+
+
+
+
+            return chkValidate;
+
+        }
+
         $('#btnSave').click(function () {
 
-            $('#Status').val("0"); // Sale Created
-            $('#frmmain').attr('action', '@Url.Action("Detail", "JobOrderForSale")');
+
+            var isConfirm = ValidationAll();
+
+
+            if (isConfirm) {
+                swal({
+                    title: "SAVE",
+                    text: "Do you want to save?",
+                    type: "info",
+                    showCancelButton: true,
+                    closeOnConfirm: false,
+                    showLoaderOnConfirm: true
+                },
+                    function (isConfirm) {
+                        if (isConfirm) {
+                          $('#Status').val("0"); // Sale Created
+                            $('#frmmain').attr('action', '@Url.Action("Detail", "JobOrderForSale")');
+                            $('#frmmain').submit();
+
+                        }
+                    });
+            }
+            return false;
+
+
+           
         });
 
         $('#btnApprove').click(function () {
 
-            $('#Status').val("1"); // Sale Approved
-            $('#frmmain').attr('action', '@Url.Action("Detail", "JobOrderForSale")');
+           
+            var isConfirm = ValidationAll();
+
+
+            if (isConfirm) {
+                swal({
+                    title: "Approve",
+                    text: "Do you want to approve?",
+                    type: "success",
+                    showCancelButton: true,
+                    closeOnConfirm: false,
+                    showLoaderOnConfirm: true
+                },
+                    function (isConfirm) {
+                        if (isConfirm) {
+                          $('#Status').val("1"); // Sale Created
+                            $('#frmmain').attr('action', '@Url.Action("Detail", "JobOrderForSale")');
+                            $('#frmmain').submit();
+
+                        }
+                    });
+            }
+            return false;
         });
 
 
@@ -188,13 +290,14 @@
             html += '<tr>';
             html += '<th>กรุณาเลือก</th>';
             html += '<th>ใบสั่งขาย</th>';
+            html += '<th>วันที่</th>';
             html += '</tr>';
             html += '</thead>';
             html += '<tbody>';
 
 
 
-            var url = '@Url.Action("GetSaleOrder", "SaleOrder")';
+            var url = '@Url.Action("GetSaleOrderNotInJobOrder", "JobOrder")';
                    $.ajax({
                 type: "get",
                 url: url,
@@ -205,6 +308,7 @@
                                html += '<tr data=' + item.SaleOrderId + ' customerid=' + item.CustomerId + '>';
                                html += '<td><button type="button" class="btn btn-primary btnSellectSaleOrder">เลิอก</button></td>';
                                html += '<td>' + item.SaleOrderNo + '</td>';
+                               html += '<td>' + item.strSaleOrderDate + '</td>';
                                html += '</tr>';
                            });
 
@@ -329,8 +433,6 @@
                 });
             $("#hddAttachmentType").val(selected.join(","));
                 selected = [];
-
-
 
             }
 
@@ -469,9 +571,9 @@
                                                 <button type="submit" id="btnSave" class="btn btn-primary">บันทึก</button>
 
                                             }
-                                            @if (Model.SaleOrderId > 0)
+                                            @if (Model.SaleOrderId > 0 && Model.Status != "2"  && Model.Status != "1")
                                             {
-                                                <button type="submit" id="btnApprove" class="btn btn-success">อนุมัติ</button>
+                                                <button type="submit" id="btnApprove" class="btn btn-success">ยืนยัน</button>
                                             }
                                             <a href="@Url.Action("Index", new { controller = "JobOrderForSale", area = "" })" class="btn btn-default">ยกเลิก</a>
                                         </div>
@@ -511,9 +613,9 @@
                                         <div class="row">
                                             <div class="col-sm-4">
                                                 <div class="form-group">
-                                                    <label for="SaleOrderId" class="form-control-label">เลือกทีม</label>
+                                                    <label for="TeamName" class="form-control-label">เลือกทีม</label>
                                                     <div class="input-group ">
-                                                        <input type="text" id="TeamName" class="form-control" name="TeamName"
+                                                        <input type="text" id="TeamName" class="form-control" name="TeamName" required
                                                                value="@(Model.TeamId!=null?TeamOperationList.Find(o=>o.TeamId==Model.TeamId).TeamName:"")" />
 
                                                         @if (Model.Status == null || Model.Status == "0")
@@ -540,7 +642,7 @@
                                                     <label for="StartDate" class="form-control-label">วันที่ติดตั้ง</label>
                                                     <div class="input-group col-sm-6 date" data-provide="datepicker" data-date-format="dd/mm/yyyy">
                                                         <input id="StartDate" type="text" class="form-control" placeholder="dd/MM/yyyy ค.ศ." name="StartDate"
-                                                               value="@(Model.StartDate == null ? null : Model.StartDate.Value.ToString("dd/MM/yyyy"))" />
+                                                               value="@(Model.StartDate == null ? null : Model.StartDate.Value.ToString("dd/MM/yyyy"))" required />
                                                         <span class="input-group-addon">
                                                             <i class="icon wb-calendar icon-2-5x text-success" style="padding-left:2px" aria-hidden="true"></i>
                                                         </span>
@@ -558,7 +660,7 @@
                                                         </div>*@
                                                     <div class="input-group col-sm-6 date" data-provide="datepicker" data-date-format="dd/mm/yyyy">
                                                         <input id="EndDate" type="text" class="form-control" placeholder="dd/MM/yyyy ค.ศ." name="EndDate"
-                                                               value="@(Model.EndDate == null ? null : Model.EndDate.Value.ToString("dd/MM/yyyy"))" />
+                                                               value="@(Model.EndDate == null ? null : Model.EndDate.Value.ToString("dd/MM/yyyy"))" required />
                                                         <span class="input-group-addon" style="padding-left:2px">
                                                             <i class="icon wb-calendar icon-2-5x text-success" aria-hidden="true"></i>
                                                         </span>
@@ -650,7 +752,7 @@
                                             <div class="col-md-2 col-sm-8">
                                                 <div class="form-group">
                                                     <label for="" class="form-control-label">โทรศัพท์</label>
-                                                    <input type="tel" id="SaleMobile" class="form-control" name="SaleMobile" value="" readonly />
+                                                    <input type="tel" id="SaleMobile" class="form-control" name="SaleMobile" value="@(Model.SaleOrder!=null?Model.SaleOrder.Sale.EmpMobile:"")" readonly />
                                                 </div>
                                             </div>
                                         </div>
@@ -736,19 +838,19 @@
                                             <div class="col-md-5">
                                                 <div class="form-group">
                                                     <label for="" class="form-control-label">ถนน</label>
-                                                    <input type="text" class="form-control" name="" value="" />
+                                                    <input type="text" class="form-control" name="Road" value="@Model.Road" />
                                                 </div>
                                             </div>
                                         </div>
                                         <div class="row">
                                             <div class="col-md-5">
                                                 <div class="form-group">
-                                                    <label for="" class="form-control-label">ตำบล > อำเภอ > จังหวัด</label>
-                                                    <input type="text" class="form-control" name="SubDistrictId" value="@Model.SubDistrictId" />
+                                                    <label for="" class="form-control-label">ที่อยู่</label>
+                                                    <input type="text" class="form-control" name="Address" value="@Model.Address" />
                                                 </div>
                                             </div>
                                         </div>
-                                        <hr />
+                                     
                                         <div class="row invisible" style="position:absolute">
                                             <div class="col-md-5">
                                                 <div class="form-group">
@@ -890,14 +992,16 @@
                                                                                 </tr>
                                                                             </thead>
                                                                             <tbody>
-                                                                                @if (Model.SaleOrder.TblSaleOrderDetail.Count() <= 0)
+                                                                                @if (SaleOrderDetail != null && SaleOrderDetail.Count <= 0)
                                                                                 {
                                                                                     <tr>
                                                                                         <td colspan="7">ไม่พบข้อมูล</td>
                                                                                     </tr>
                                                                                 }
-                                                                                @foreach (var ob in Model.SaleOrder.TblSaleOrderDetail)
+                                                                                else
                                                                                 {
+                                                                                    foreach (var ob in Model.SaleOrder.TblSaleOrderDetail)
+                                                                                    {
                                                                                     <tr>
                                                                                         <td>@ob.Product.ProductCode @ob.Product.ProductName</td>
                                                                                         <td>@ob.Quantity</td>
@@ -907,6 +1011,7 @@
                                                                                         <td>@ob.TotalTot.Value.ToString("#,#0.00")</td>
 
                                                                                     </tr>
+                                                                                    }
                                                                                 }
                                                                             </tbody>
                                                                         </table>
