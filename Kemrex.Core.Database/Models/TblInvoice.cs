@@ -23,6 +23,7 @@ namespace Kemrex.Core.Database.Models
         public DateTime UpdateDate { get; set; }
         public DateTime DueDate { get; set; }
         public decimal DepositAmount { get; set; }
+        public int IsDeposit { get; set; }
         public virtual TblSaleOrder SaleOrder { get; set; }
     }
 }

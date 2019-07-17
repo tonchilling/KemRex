@@ -141,6 +141,8 @@ namespace Kemrex.Web.Main.Controllers
                     ob.StatusId = Request.Form["StatusId"].ParseInt();
                     ob.InvoiceTerm = Request.Form["InvoiceTerm"].ParseInt();
                     ob.InvoiceRemark = Request.Form["InvoiceRemark"];
+                    string hddIsDeposit = Request.Form["hddIsDeposit"].ToString();
+                    ob.IsDeposit = hddIsDeposit == ""? 0:int.Parse(Request.Form["hddIsDeposit"]);
                     ob.InvoiceAmount = 0;
                     if (Request.Form["InvoiceAmount"] != "")
                         ob.InvoiceAmount = decimal.Parse(Request.Form["InvoiceAmount"].ToString());

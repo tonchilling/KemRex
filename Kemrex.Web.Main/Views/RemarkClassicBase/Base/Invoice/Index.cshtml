@@ -43,6 +43,7 @@
             html += '<th align="center">ใบเสนอราคา/ใบสั่งขาย</th>';
             html += '<th align="center">การชำระ</th>';
             html += '<th align="center">ยอดเงินเรียกเก็บ</th>';
+            html += '<th align="center">มัดจำ</th>';
             html += '<th align="center">วันที่เอกสาร</th>';
             html += '<th align="center">งวดที่</th>';
             html += '<th align="center">สถานะ</th>';
@@ -72,6 +73,16 @@
                             html += '<td align="center">' + item.SaleOrder.QuotationNo + '<br>' + item.SaleOrder.SaleOrderNo + '</td>';
                             html += '<td>' + item.SaleOrder.ConditionName + '</td>';
                             html += '<td align="right">' + item.InvoiceAmount + '</td>';
+
+                            if (item.IsDeposit == 1) {
+                                html += '<td align="center">' + '<span class="input-group-addon"><i class="glyphicon glyphicon-ok text-success" aria-hidden="true"></i></span>' + '</td>';
+                            }
+                            else {
+                                html += '<td align="center">' + '<span class="input-group-addon"><i class="glyphicon glyphicon-minus text-inverse" aria-hidden="true"></i></span>' + '</td>';
+                            }
+                  
+
+
                             html += '<td align="center">' + item.StrInvoiceDate + '</td>';
                             html += '<td>' + item.InvoiceTerm + '</td>';
 
@@ -89,7 +100,7 @@
                             html += '<td> <a href="' + urlDetail + '/' + item.InvoiceId + '" class="btn btn-xs btn-primary">';
                             html += '<i class="fa fa-pencil" aria-hidden="true"></i>&nbsp;แก้ไข </a>&nbsp;';
 
-                            if (item.SaleOrder.ConditionId == 2) {
+                            if (item.IsDeposit == 1) {
                                 html += '<a href="' + urlExportDeposit + '/' + item.InvoiceId + '" class="btn btn-xs btn-warning">';
                             }
                             else {

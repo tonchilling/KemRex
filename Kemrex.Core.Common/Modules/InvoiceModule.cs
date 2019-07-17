@@ -78,6 +78,7 @@ namespace Kemrex.Core.Common.Modules
                             UpdateDate = i.UpdateDate,
                             DueDate = i.DueDate,
                             DepositAmount = i.DepositAmount,
+                            IsDeposit = i.IsDeposit,
                             SaleOrder = null
                         });
             return data.ToList();
