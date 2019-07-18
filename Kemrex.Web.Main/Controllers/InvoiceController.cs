@@ -126,6 +126,7 @@ namespace Kemrex.Web.Main.Controllers
                     ob.CreatedDate = CurrentDate;
                     ob.UpdateDate = CurrentDate;
                     ob.InvoiceDate = CurrentDate;
+                    //ob.DueDate = CurrentDate.AddMonths(1);
                 }
                 else
                 {
@@ -140,6 +141,8 @@ namespace Kemrex.Web.Main.Controllers
                     ob.StatusId = Request.Form["StatusId"].ParseInt();
                     ob.InvoiceTerm = Request.Form["InvoiceTerm"].ParseInt();
                     ob.InvoiceRemark = Request.Form["InvoiceRemark"];
+                    string hddIsDeposit = Request.Form["hddIsDeposit"].ToString();
+                    ob.IsDeposit = hddIsDeposit == ""? 0:int.Parse(Request.Form["hddIsDeposit"]);
                     ob.InvoiceAmount = 0;
                     if (Request.Form["InvoiceAmount"] != "")
                         ob.InvoiceAmount = decimal.Parse(Request.Form["InvoiceAmount"].ToString());
@@ -155,9 +158,22 @@ namespace Kemrex.Web.Main.Controllers
                     {
                         return ViewDetail(ob, "ยอดเรียกเก็บต้อง น้อยกว่าหรือเท่ากับ ยอดที่ยังไม่ได้เรียกเก็บ", AlertMsgType.Danger);
                     }
+                    bool result = false;
 
-                    uow.Modules.Invoice.Set(ob);
-                    uow.SaveChanges();
+                    if (ob.InvoiceId <= 0)
+                    {
+                        result = uow.Modules.Invoice.Add(ob);
+                        int ins = uow.Modules.Invoice.GetInsertId(ob.InvoiceNo);
+                        return RedirectToAction("Detail", MVCController, new { id = ins, msg = "สร้างหมายเลขใบแจ้งหนี้เรียบร้อยแล้ว", msgType = AlertMsgType.Success });
+                    }
+                    else
+                    {
+                        uow.Modules.Invoice.Set(ob);
+                        uow.SaveChanges();
+                    }
+                        
+
+                    
 
                     return RedirectToAction("Detail", MVCController, new { id = ob.InvoiceId, msg = "บันทึกข้อมูลเรียบร้อยแล้ว", msgType = AlertMsgType.Success });
                 }

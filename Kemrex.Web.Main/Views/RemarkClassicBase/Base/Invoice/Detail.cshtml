@@ -19,11 +19,12 @@
     decimal optRemain = (decimal)ViewData["optRemain"];
     bool canedit = false;
     bool changestatus = false;
-    if (Model.StatusId != 3)
+    if (Model.StatusId != 3 && Model.SaleOrderId > 0)
     {
         changestatus = true;
     }
-    if (Model.StatusId == 1 || Model.InvoiceId==0)
+
+    if (Model.StatusId == 1 || Model.StatusId == null)
     {
         canedit = true;
     }
@@ -158,8 +159,47 @@
 
 
         });
+        $(document).on("click", "#btnSO2INV", function () {
+
+
+            var isConfirm = true;
+            if ($('#selSaleOrder').val()=="") {
+                isConfirm = false;
+            } 
+
+            if ($("#selSaleOrder").val() == "") {
+                $("#selSaleOrder").addClass("has-error");
+                chkValidate = false;
+            } else {
+                $("#selSaleOrder").removeClass("has-error");
+            }
+          
+
+            if (isConfirm) {
+
+                swal({
+                    title: "Import",
+                    text: "Do you want to import?",
+                    type: "info",
+                    showCancelButton: true,
+                    closeOnConfirm: false,
+                    showLoaderOnConfirm: true
+                },
+                    function (isConfirm) {
+                        if (isConfirm) {
+                            //$('#frmMain').attr('action', '@Url.Action("Detail", "Invoice")');
+                            $('#frmMain').submit();
+
+                        }
+                    });
+            }
+
+            return false;
+
+        });
         $("#btnSubmit").click(function () {
 
+            KeepData();
             var isConfirm = AddInvoiceValidation();
 
 
@@ -174,7 +214,7 @@
                 },
                     function (isConfirm) {
                         if (isConfirm) {
-                            $('#frm').submit();
+                            $('#frmMain').submit();
 
                         }
                     });
@@ -188,6 +228,18 @@
               ProductDiscount
               */
         });
+        function KeepData() {
+
+            var selected = 0;
+
+            $("#selIsDeposit:checked").each(function () {
+                
+                selected = 1;
+            });
+            $("#hddIsDeposit").val(selected);
+
+
+        }
         function AddInvoiceValidation() {
 
             /* selProduct
@@ -196,6 +248,15 @@
              ProductDiscount*/
 
             var chkValidate = true;
+            
+
+            if ($("#selSaleOrder").val() == "") {
+                $("#selSaleOrder").addClass("has-error");
+                chkValidate = false;
+            } else {
+                $("#selSaleOrder").removeClass("has-error");
+            }
+
             var value = $('select#StatusId option:selected').val();
             var invAmt = parseFloat($("#InvoiceAmount").val()).toFixed(2);
             if (value != 1) {
@@ -254,7 +315,7 @@
                                                             condi = Model.SaleOrder.ConditionId.Value;
                                                         }
                                                     }
-                                                    if (condi == 2)
+                                                    if (Model.IsDeposit == 1)
                                                     {
                                                         <a href="@Url.Action("PDFDepositInvoice", new { controller = "export", area = "", id = Model.InvoiceId  })"
                                                            class="btn btn-xs btn-warning">
@@ -264,7 +325,7 @@
                                                     }
                                                     else
                                                     {
-                                                        <a href="@Url.Action("PDFInvoice", new { controller = "export", area = "", id = Model.InvoiceId  })"
+                                                        <a href="@Url.Action("PDFInvoice", new { controller = "export", area = "", id = Model.InvoiceId })"
                                                            class="btn btn-xs btn-warning">
                                                             <i class="fa fa-file-pdf-o" aria-hidden="true"></i>&nbsp;PDF
                                                         </a>
@@ -281,7 +342,7 @@
                             </div>
                             
                             <div class="panel">
-                                <form method="post" id="frm" name="frm" action="@Url.Action("Detail", "Invoice")" enctype="multipart/form-data">
+                                <form method="post" id="frmMain" name="frmMain" action="@Url.Action("Detail", "Invoice")" enctype="multipart/form-data">
                                     @Html.AntiForgeryToken()
                                     <input type="hidden" name="InvoiceId" value="@Model.InvoiceId" />
                                     <div class="panel-body">
@@ -298,20 +359,25 @@
                                                     <div class="col-sm-6">
                                                         <div class="input-group">
                                                             @*<select class="form-control" id="selSaleOrder" data-live-search="true" readonly
-                                                name="selSaleOrder" >
-                                            <option value="-1" )>กรุณาเลือก</option>
-                                            @foreach (TblSaleOrder so in optSaleOrder)
-                                            {
-                                                bool selected = so.SaleOrderId == Model.SaleOrderId;
-                                                <option value="@so.SaleOrderId" @(selected ? " selected=\" selected\"" : "" )>@so.QuotationNo / @so.SaleOrderNo</option>
-                                            }
-                                        </select>*@
+                            name="selSaleOrder" >
+                        <option value="-1" )>กรุณาเลือก</option>
+                        @foreach (TblSaleOrder so in optSaleOrder)
+                        {
+                            bool selected = so.SaleOrderId == Model.SaleOrderId;
+                            <option value="@so.SaleOrderId" @(selected ? " selected=\" selected\"" : "" )>@so.QuotationNo / @so.SaleOrderNo</option>
+                        }
+                    </select>*@
 
                                                             @{
                                                                 var sq = "";
-                                                                if (Model.SaleOrder!=null && Model.SaleOrder.SaleOrderNo!= null && Model.SaleOrder.SaleOrderNo.ToString() != "")
+
+                                                                if (Model.SaleOrder != null)
+
                                                                 {
-                                                                    sq = Model.SaleOrder.QuotationNo + " / " + Model.SaleOrder.SaleOrderNo;
+                                                                    if (Model.SaleOrder.SaleOrderNo != null)
+                                                                    {
+                                                                        sq = Model.SaleOrder.QuotationNo + " / " + Model.SaleOrder.SaleOrderNo;
+                                                                    }
                                                                 }
                                                             }
 
@@ -325,6 +391,13 @@
                                                                         @(canedit ? "" : "disabled")>
                                                                     ...
                                                                 </button>
+                                                                <div class="input-group-append">
+                                                                    <button class="btn btn-outline-secondary btn-warning" type="button"
+                                                                            id="btnSO2INV">
+                                                                        ดึงข้อมูล
+                                                                    </button>
+
+                                                                </div>
                                                             </div>
                                                         </div>
 
@@ -347,7 +420,36 @@
                                                         <span class="input-group-addon">
                                                             <i class="icon wb-payment" aria-hidden="true"></i>
                                                         </span>
-                                                        <input type="text" class="form-control text-right" name="InvoiceAmount" id="InvoiceAmount" value="@Model.InvoiceAmount" @(canedit ? "" : "readonly") />
+                                                        @{
+                                                            var checkInvoice = false;
+                                                            if (canedit)
+                                                            {
+                                                                if (Model.InvoiceNo != null)
+                                                                {
+                                                                    checkInvoice = true;
+                                                                }
+                                                            }
+
+                                                        }
+
+                                                        <input type="text" class="form-control text-right" name="InvoiceAmount" id="InvoiceAmount" value="@Model.InvoiceAmount" @(checkInvoice ? "" : "readonly") />
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    
+                                                    <div class="input-group col-sm-6">
+                                                        
+                                                            @{ 
+                                                                bool selected = (Model.IsDeposit == 1 ? true : false);
+                                                            }
+                                                            <div class="checkbox col-sm-6">
+                                                                <label>
+                                                                    <input data-toggle="toggle" data-onstyle="success" id="selIsDeposit" name="selIsDeposit"
+                                                                           type="checkbox" @(selected ? "Checked" : "") class="selIsdeposit"  value="@Model.IsDeposit">เงินมัดจำ
+                                                                    </label>
+                                                                </div>
+                                                            
+                                                        <input type="hidden" id="hddIsDeposit" name="hddIsDeposit" />
                                                     </div>
                                                 </div>
                                                 @{
@@ -356,7 +458,8 @@
                                                     {
                                                         if (Model.SaleOrder.ConditionId.HasValue)
                                                         {
-                                                            DepositReadonly = Model.SaleOrder.ConditionId.Value == 2 ? true : false;
+                                                            //DepositReadonly = Model.SaleOrder.ConditionId.Value == 2 ? true : false;
+
                                                         }
 
 
@@ -394,11 +497,12 @@
                                                 </div>
                                                 <div class="form-group">
                                                     <label for="DueDate" class="col-sm-5 col-form-label">วันที่ครบกำหนด</label>
-                                                    <div class="input-group col-sm-6 date" data-provide="@(canedit ? "datepicker" : "")" data-date-format="dd/mm/yyyy">
+
+                                                    <div class="input-group col-sm-6 date" data-provide="@(checkInvoice ? "datepicker" : "")" data-date-format="dd/mm/yyyy">
                                                         <span class="input-group-addon">
                                                             <i class="icon wb-calendar" aria-hidden="true"></i>
                                                         </span>
-                                                        <input type="text" class="form-control" name="DueDate" id="DueDate" value="@Model.DueDate.ToString("dd/MM/yyyy")" @(canedit ? "" : "readonly") />
+                                                        <input type="text" class="form-control" name="DueDate" id="DueDate" value="@Model.DueDate.ToString("dd/MM/yyyy")" @(checkInvoice ? "" : "readonly") />
                                                     </div>
                                                 </div>
                                                 @*Invoice Status*@
@@ -406,14 +510,17 @@
                                                     <label for="PriceValidity" class="col-sm-5 col-form-label">สถานะเอกสาร</label>
                                                     <div class="col-sm-6">
                                                         <select name="StatusId" id="StatusId" class="form-control">
-                                                            @if (Model.StatusId == 1)
+                                                            @if (Model.StatusId == 1 || Model.StatusId == null)
                                                             {
                                                                 <option class="text-muted" value="1" @(Model.StatusId == 1 ? " selected=\" selected\"" : "" )>ร่าง</option>
                                                             }
+                                                            @if (Model.InvoiceNo != null)
+                                                            {
+                                                                <option class="text-primary" value="2" @(Model.StatusId == 2 ? " selected=\" selected\"" : "" )>ส่งแล้ว</option>
+                                                                <option class="text-success" value="3" @(Model.StatusId == 3 ? " selected=\" selected\"" : "" )>จ่ายแล้ว</option>
+                                                                <option class="text-dark" value="4" @(Model.StatusId == 4 ? " selected=\" selected\"" : "" )>ยกเลิก</option>
+                                                            }
 
-                                                            <option class="text-primary" value="2" @(Model.StatusId == 2 ? " selected=\" selected\"" : "" )>ส่งแล้ว</option>
-                                                            <option class="text-success" value="3" @(Model.StatusId == 3 ? " selected=\" selected\"" : "" )>จ่ายแล้ว</option>
-                                                            <option class="text-dark" value="4" @(Model.StatusId == 4 ? " selected=\" selected\"" : "" )>ยกเลิก</option>
                                                         </select>
                                                     </div>
                                                 </div>
