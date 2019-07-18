@@ -23,7 +23,7 @@
     {
         changestatus = true;
     }
-    if (Model.StatusId == 1)
+    if (Model.StatusId == 1 || Model.InvoiceId==0)
     {
         canedit = true;
     }
@@ -309,7 +309,7 @@
 
                                                             @{
                                                                 var sq = "";
-                                                                if (Model.SaleOrder.SaleOrderNo.ToString() != null && Model.SaleOrder.SaleOrderNo.ToString() != "")
+                                                                if (Model.SaleOrder!=null && Model.SaleOrder.SaleOrderNo!= null && Model.SaleOrder.SaleOrderNo.ToString() != "")
                                                                 {
                                                                     sq = Model.SaleOrder.QuotationNo + " / " + Model.SaleOrder.SaleOrderNo;
                                                                 }
