@@ -37,13 +37,15 @@ namespace Kemrex.Core.Database.Models
         public string ShippingAddress { get; set; }
         public string SaleOrderRemark { get; set; }
         public int StatusId { get; set; }
-        public long CreatedBy { get; set; }
-        public DateTime CreatedDate { get; set; }
-
+        public long? CreatedBy { get; set; }
+        public DateTime? CreatedDate { get; set; }
+        public DateTime? UpdatedDate { get; set; }
+        public long? UpdatedBy { get; set; }
+        public int ApprovedBy { get; set; }
         [NotMapped]
         public virtual string CreatedDateToString { get; set; }
-        public long UpdatedBy { get; set; }
-        public DateTime UpdateDate { get; set; }
+        
+       
         public string CancelReason { get; set; }
         public decimal? SubTotalNet { get; set; }
         public decimal? SubTotalVat { get; set; }

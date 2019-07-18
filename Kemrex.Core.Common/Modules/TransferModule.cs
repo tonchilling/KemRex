@@ -72,8 +72,8 @@ namespace Kemrex.Core.Common.Modules
                                                     BillNo = q.BillNo,
                                                     TransferStatus = q.TransferStatus,
                                                     Note1 = q.Note1,
-                                                    CreateDate = q.CreateDate,
-                                                    UpdateDate = q.UpdateDate
+                                                    CreatedDate = q.CreatedDate,
+                                                    UpdatedDate = q.UpdatedDate
                                                 }).FirstOrDefault() ?? new TransferHeader()
                    {
                        
@@ -228,8 +228,8 @@ namespace Kemrex.Core.Common.Modules
                             BillNo = d.BillNo,
                             TransferStatus = d.TransferStatus,
                             Note1 = d.Note1,
-                            CreateDate = d.CreateDate,
-                            UpdateDate = d.UpdateDate
+                            CreatedDate = d.CreatedDate,
+                            UpdatedDate = d.UpdatedDate
 
                         }).OrderByDescending(c => c.TransferNo)
                 .AsQueryable();
@@ -259,8 +259,8 @@ namespace Kemrex.Core.Common.Modules
      BillNo=d.BillNo,
      TransferStatus=d.TransferStatus,
     Note1=d.Note1,
-     CreateDate=d.CreateDate,
-       UpdateDate =d.UpdateDate
+     CreatedDate=d.CreatedDate,
+       UpdatedDate =d.UpdatedDate
 
                         }).OrderByDescending(c => c.TransferNo)
                 .AsQueryable();

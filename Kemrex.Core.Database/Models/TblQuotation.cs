@@ -44,10 +44,11 @@ namespace Kemrex.Core.Database.Models
         public decimal? SummaryVat { get; set; }
         public decimal? SummaryTot { get; set; }
         public int StatusId { get; set; }
-        public long CreatedBy { get; set; }
-        public DateTime CreatedDate { get; set; }
-        public long UpdatedBy { get; set; }
-        public DateTime UpdateDate { get; set; }
+        public long? CreatedBy { get; set; }
+        public DateTime? CreatedDate { get; set; }
+        public DateTime? UpdatedDate { get; set; }
+        public long? UpdatedBy { get; set; }
+        public int ApprovedBy { get; set; }
         public int? DeletedBy { get; set; }
         public DateTime? DeletedDate { get; set; }
         public string DeletedReason { get; set; }

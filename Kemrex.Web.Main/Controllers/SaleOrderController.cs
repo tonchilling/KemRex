@@ -96,6 +96,7 @@ namespace Kemrex.Web.Main.Controllers
         {
             bool addQuotationDetail = false;
             int id = Request.Form["SaleOrderId"].ParseInt();
+            int approveStatus = Request.Form["hdApprove"] != null ? Request.Form["hdApprove"].ParseInt() : 0;
             TblSaleOrder ob = uow.Modules.SaleOrder.Get(id);
             if (ob.SaleOrderId <= 0)
             {
@@ -104,14 +105,20 @@ namespace Kemrex.Web.Main.Controllers
                 ob.CreatedBy = CurrentUID;
                 ob.UpdatedBy = CurrentUID;
                 ob.CreatedDate = CurrentDate;
-                ob.UpdateDate = CurrentDate;
+                ob.UpdatedDate = CurrentDate;
                 ob.SaleOrderDate = CurrentDate;
                 addQuotationDetail = true;
             }
             else
             {
                 ob.UpdatedBy = CurrentUID;
-                ob.UpdateDate = CurrentDate;
+                ob.UpdatedDate = CurrentDate;
+            }
+
+
+            if (approveStatus == 3)
+            {
+                ob.ApprovedBy = Convert.ToInt32(CurrentUID);
             }
 
             ob.QuotationNo = Request.Form["QuotationNo"];
@@ -437,13 +444,13 @@ namespace Kemrex.Web.Main.Controllers
                     ob.CreatedBy = CurrentUID;
                     ob.UpdatedBy = CurrentUID;
                     ob.CreatedDate = CurrentDate;
-                    ob.UpdateDate = CurrentDate;
+                    ob.UpdatedDate = CurrentDate;
                     ob.SaleOrderDate = CurrentDate;
                 }
                 else
                 {
                     ob.UpdatedBy = CurrentUID;
-                    ob.UpdateDate = CurrentDate;
+                    ob.UpdatedDate = CurrentDate;
                 }
 
                 ob.QuotationNo = Request.Form["QuotationNo"];
@@ -494,7 +501,7 @@ namespace Kemrex.Web.Main.Controllers
                 ob.CreatedBy = CurrentUID;
                 ob.UpdatedBy = CurrentUID;
                 ob.CreatedDate = CurrentDate;
-                ob.UpdateDate = CurrentDate;
+                ob.UpdatedDate = CurrentDate;
                 ob.SaleOrderDate = CurrentDate;
                 ob.CustomerId = 1;
                 ob.SaleId = 1;

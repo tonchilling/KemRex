@@ -34,7 +34,9 @@ namespace Kemrex.Core.Database.Models
         public string InvState2 { get; set; }
         public string InvState3 { get; set; }
         public string InvState4 { get; set; }
+        public string JobOrderState1 { get; set; }
+        public string JobOrderState2 { get; set; }
 
-      
+
     }
 }

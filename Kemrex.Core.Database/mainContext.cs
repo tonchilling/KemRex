@@ -761,7 +761,7 @@ namespace Kemrex.Core.Database
                     .IsRequired()
                     .HasMaxLength(50);
 
-                entity.Property(e => e.UpdateDate).HasColumnType("datetime");
+                entity.Property(e => e.UpdatedDate).HasColumnType("datetime");
 
                 entity.HasOne(d => d.SaleOrder)
                     .WithMany(p => p.TblInvoice)
@@ -779,7 +779,7 @@ namespace Kemrex.Core.Database
 
                 entity.Property(e => e.Adapter).HasMaxLength(100);
 
-                entity.Property(e => e.CreateDate).HasColumnType("datetime");
+                entity.Property(e => e.CreatedDate).HasColumnType("datetime");
 
                 entity.Property(e => e.CustomerEmail).HasMaxLength(50);
 
@@ -813,9 +813,9 @@ namespace Kemrex.Core.Database
 
                 entity.Property(e => e.StartWorkingTime).HasMaxLength(10);
 
-                entity.Property(e => e.Status).HasMaxLength(2);
+            
 
-                entity.Property(e => e.UpdateDate).HasColumnType("datetime");
+                entity.Property(e => e.UpdatedDate).HasColumnType("datetime");
 
                 entity.Property(e => e.VillageNo).HasMaxLength(50);
 
@@ -1325,7 +1325,7 @@ namespace Kemrex.Core.Database
                     .HasColumnType("decimal(12, 2)")
                     .HasComputedColumnSql("([dbo].[cplQuotationSummaryVat]([QuotationId]))");
 
-                entity.Property(e => e.UpdateDate).HasColumnType("datetime");
+                entity.Property(e => e.UpdatedDate).HasColumnType("datetime");
 
                 /*    entity.HasOne(d => d.Customer)
                       .WithMany(p => p.TblQuotation)
@@ -1452,7 +1452,7 @@ namespace Kemrex.Core.Database
                       .HasColumnType("decimal(12, 2)")
                       .HasComputedColumnSql("([dbo].[cplSaleOrderPrice]([SaleOrderId],'SummaryVat'))");
 
-                  entity.Property(e => e.UpdateDate).HasColumnType("datetime");
+                  entity.Property(e => e.UpdatedDate).HasColumnType("datetime");
 
                   /*   entity.HasOne(d => d.Customer)
                        .WithMany(p => p.TblSaleOrder)
@@ -1653,7 +1653,7 @@ namespace Kemrex.Core.Database
 
                   entity.Property(e => e.Company).HasMaxLength(100);
 
-                  entity.Property(e => e.CreateDate).HasColumnType("datetime");
+                  entity.Property(e => e.CreatedDate).HasColumnType("datetime");
 
                   entity.Property(e => e.EmpId).HasMaxLength(10);
 
@@ -1679,7 +1679,7 @@ namespace Kemrex.Core.Database
                       .IsRequired()
                       .HasMaxLength(3);
 
-                  entity.Property(e => e.UpdateDate).HasColumnType("datetime");
+                  entity.Property(e => e.UpdatedDate).HasColumnType("datetime");
               });
 
               modelBuilder.Entity<TransferStockDetail>(entity =>

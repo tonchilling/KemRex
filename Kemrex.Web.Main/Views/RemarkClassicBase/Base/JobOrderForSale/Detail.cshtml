@@ -66,10 +66,13 @@
                 }
             });
 
-
-            $(SaleMenu).slideToggle();
-
-
+ 
+           
+  
+    
+                $(SaleMenu).slideToggle();
+    
+    
                 if (getUrlVars()["tab"] == "Product") {
                 $('ul.tabs li').removeClass('current');
                 $('.tab-content').removeClass('current');
@@ -105,11 +108,70 @@
 
 
 
-        $('#btnSave').click(function () {
-                KeepData();
+          $('#btnSave').click(function () {
+
+
+              var isConfirm = ValidationAll();
+              KeepData();
+
+            if (isConfirm) {
+                swal({
+                    title: "SAVE",
+                    text: "Do you want to save?",
+                    type: "info",
+                    showCancelButton: true,
+                    closeOnConfirm: false,
+                    showLoaderOnConfirm: true
+                },
+                    function (isConfirm) {
+                        if (isConfirm) {
+                            $('#hdApprove').val(3);
+                          $('#StatusId').val("3"); // Sale Created
+                             $('#frmmain').attr('action', '@Url.Action("Detail", "JobOrderForSale")');
+                            $('#frmmain').submit();
+
+                        }
+                    });
+            }
+            return false;
+          
+        });
+
+
+        $('#btnSOToJob').click(function () {
+
+       
+
+          
+           var isConfirm = ValidationAll();
+              KeepData();
+
+            if (isConfirm) {
+                swal({
+                    title: "IMPORT",
+                    text: "Do you want to import sale order?",
+                    type: "info",
+                    showCancelButton: true,
+                    closeOnConfirm: false,
+                    showLoaderOnConfirm: true
+                },
+                    function (isConfirm) {
+                        if (isConfirm) {
+                           
+                          $('#StatusId').val("1"); // Sale Created
+                             $('#frmmain').attr('action', '@Url.Action("Detail", "JobOrderForSale")');
+                            $('#frmmain').submit();
+
+                        }
+                    });
+            }
+            return false;
 
 
         });
+
+
+        
 
         $(document).on("click", ".btnSelectTeam", function () {
             $('#TeamId').val($(this).closest('tr').attr('data'));
@@ -229,7 +291,38 @@
                 },
                     function (isConfirm) {
                         if (isConfirm) {
-                          $('#Status').val("0"); // Sale Created
+                        
+                            $('#frmmain').attr('action', '@Url.Action("Detail", "JobOrderForSale")');
+                            $('#frmmain').submit();
+
+                        }
+                    });
+            }
+            return false;
+
+
+           
+        });
+
+
+           $('#btnSave').click(function () {
+
+
+            var isConfirm = ValidationAll();
+
+
+            if (isConfirm) {
+                swal({
+                    title: "SAVE",
+                    text: "Do you want to save?",
+                    type: "info",
+                    showCancelButton: true,
+                    closeOnConfirm: false,
+                    showLoaderOnConfirm: true
+                },
+                    function (isConfirm) {
+                        if (isConfirm) {
+                        
                             $('#frmmain').attr('action', '@Url.Action("Detail", "JobOrderForSale")');
                             $('#frmmain').submit();
 
@@ -259,7 +352,8 @@
                 },
                     function (isConfirm) {
                         if (isConfirm) {
-                          $('#Status').val("1"); // Sale Created
+                            $('#hdApprove').val(2);
+                          $('#StatusId').val("2"); // Sale Created
                             $('#frmmain').attr('action', '@Url.Action("Detail", "JobOrderForSale")');
                             $('#frmmain').submit();
 
@@ -486,6 +580,9 @@
 
 <body data-spy="scroll" data-target="#myTap" data-offset="300">
     <form role="form" method="post" id="frmmain">
+        <input type="hidden" id="hdApprove" name="hdApprove" />
+        <input type="hidden" id="SaleOrderId" name="SaleOrderId" value="@Model.SaleOrderId" />
+        <input type="hidden" id="StatusId" name="StatusId" value="@Model.StatusId" />
         <div class="page">
             <div class="page-header">
                 <ol class="breadcrumb">
@@ -556,9 +653,15 @@
                                                             ...
                                                         </button>
                                                     </div>
+                                                    <div class="input-group-append">
+                                                        <button class="btn btn-outline-secondary btn-warning" type="submit"
+                                                                id="btnSOToJob">
+                                                            ดึงข้อมูล
+                                                        </button>
+
+                                                    </div>
                                                 }
-                                                <input type="hidden" id="SaleOrderId" name="SaleOrderId" value="@Model.SaleOrderId" />
-                                                <input type="hidden" id="Status" name="Status" value="@Model.Status" />
+
                                             </div>
                                         </div>
                                     </div>
@@ -566,12 +669,12 @@
                                 <div class="row">
                                     <div class="col-12">
                                         <div class="form-group">
-                                            @if (Model.Status == null || Model.Status == "0")
+                                            @if (Model.StatusId == null || Model.StatusId == 1)
                                             {
                                                 <button type="submit" id="btnSave" class="btn btn-primary">บันทึก</button>
 
                                             }
-                                            @if (Model.SaleOrderId > 0 && Model.Status != "2"  && Model.Status != "1")
+                                            @if (Model.SaleOrderId > 0 && Model.StatusId <=1)
                                             {
                                                 <button type="submit" id="btnApprove" class="btn btn-success">ยืนยัน</button>
                                             }
@@ -653,11 +756,11 @@
                                                 <div class="form-group">
                                                     <label for="EndDate" class="form-control-label">กำหนดเสร็จ</label>
                                                     @*<div class="input-group col-sm-6">
-                                                            <span class="input-group-addon">
-                                                                <i class="icon wb-calendar" aria-hidden="true"></i>
-                                                            </span>
-                                                            <input type="date" class="form-control" name="JobOrderCompleteDate" value="" />
-                                                        </div>*@
+                                                        <span class="input-group-addon">
+                                                            <i class="icon wb-calendar" aria-hidden="true"></i>
+                                                        </span>
+                                                        <input type="date" class="form-control" name="JobOrderCompleteDate" value="" />
+                                                    </div>*@
                                                     <div class="input-group col-sm-6 date" data-provide="datepicker" data-date-format="dd/mm/yyyy">
                                                         <input id="EndDate" type="text" class="form-control" placeholder="dd/MM/yyyy ค.ศ." name="EndDate"
                                                                value="@(Model.EndDate == null ? null : Model.EndDate.Value.ToString("dd/MM/yyyy"))" required />
@@ -850,7 +953,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                     
+
                                         <div class="row invisible" style="position:absolute">
                                             <div class="col-md-5">
                                                 <div class="form-group">
@@ -1002,15 +1105,15 @@
                                                                                 {
                                                                                     foreach (var ob in Model.SaleOrder.TblSaleOrderDetail)
                                                                                     {
-                                                                                    <tr>
-                                                                                        <td>@ob.Product.ProductCode @ob.Product.ProductName</td>
-                                                                                        <td>@ob.Quantity</td>
-                                                                                        <td>@ob.PriceNet.ToString("#,#0.00")</td>
-                                                                                        <td>@ob.DiscountNet.ToString("#,#0.00")</td>
-                                                                                        <td>@ob.TotalNet.Value.ToString("#,#0.00")</td>
-                                                                                        <td>@ob.TotalTot.Value.ToString("#,#0.00")</td>
+                                                                                        <tr>
+                                                                                            <td>@ob.Product.ProductCode @ob.Product.ProductName</td>
+                                                                                            <td>@ob.Quantity</td>
+                                                                                            <td>@ob.PriceNet.ToString("#,#0.00")</td>
+                                                                                            <td>@ob.DiscountNet.ToString("#,#0.00")</td>
+                                                                                            <td>@ob.TotalNet.Value.ToString("#,#0.00")</td>
+                                                                                            <td>@ob.TotalTot.Value.ToString("#,#0.00")</td>
 
-                                                                                    </tr>
+                                                                                        </tr>
                                                                                     }
                                                                                 }
                                                                             </tbody>
@@ -1297,6 +1400,17 @@
                     </div>
                 </div>
             </div>
+
+            <script  type="text/javascript">
+
+                $(document).ready(function () {
+                    if ($("#StatusId").val() >= 2) {
+
+                        $("#frmmain :input").prop("disabled", true);
+                    }
+                }
+
+            </script>
 
     </form>
 </body>

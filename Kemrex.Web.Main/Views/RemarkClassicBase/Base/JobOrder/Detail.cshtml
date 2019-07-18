@@ -65,6 +65,11 @@
                 }
             });
 
+              if (@Model.StatusId> 2) {
+
+                  $("#frmmain :input").prop("disabled", true);
+            }
+
             $(EngineerMenu).slideToggle();
 
 
@@ -240,7 +245,8 @@
                 },
                     function (isConfirm) {
                         if (isConfirm) {
-                          $('#Status').val("2"); // Sale Created
+                            $('#StatusId').val("3"); // Sale Created
+                            $('#hdApprove').val(3);
                              $('#frmmain').attr('action', '@Url.Action("Detail", "JobOrder")');
                             $('#frmmain').submit();
 
@@ -271,7 +277,8 @@
                 },
                     function (isConfirm) {
                         if (isConfirm) {
-                          $('#Status').val("1"); // Sale Created
+                            $('#hdApprove').val(2);
+                          $('#StatusId').val("2"); // Sale Created
                              $('#frmmain').attr('action', '@Url.Action("Detail", "JobOrder")');
                             $('#frmmain').submit();
 
@@ -502,6 +509,8 @@
 
 <body data-spy="scroll" data-target="#myTap" data-offset="300">
     <form role="form" method="post" id="frmmain">
+        <input type="hidden" id="hdApprove" name="hdApprove" />
+        <input type="hidden" id="StatusId" name="StatusId" value="@Model.StatusId" />
         <div class="page">
             <div class="page-header">
                 <ol class="breadcrumb">
@@ -582,12 +591,12 @@
                                 <div class="row">
                                     <div class="col-12">
                                         <div class="form-group">
-                                            @if (Converting.ToInt(Model.Status) <= 1)
+                                            @if (Model.StatusId <= 2)
                                             {
                                                 <button type="submit" id="btnSave" class="btn btn-primary">บันทึก</button>
                                             }
 
-                                            @if (Model.SaleOrderId > 0 && Converting.ToInt(Model.Status) <= 1)
+                                            @if (Model.SaleOrderId > 0 && Model.StatusId <= 2)
                                             {
                                                 <button type="submit" id="btnCloseJob" class="btn btn-success">ปิดงาน</button>
                                             }
@@ -657,7 +666,7 @@
                                                     <label for="StartDate" class="form-control-label">วันที่ติดตั้ง</label>
                                                     <div class="input-group col-sm-6 date" data-provide="datepicker" data-date-format="dd/mm/yyyy">
                                                         <input id="StartDate" type="text" class="form-control" placeholder="dd/MM/yyyy ค.ศ." name="StartDate"
-                                                               value="@(Model.StartDate == null ? null : Model.StartDate.Value.ToString("dd/MM/yyyy"))"  required/>
+                                                               value="@(Model.StartDate == null ? null : Model.StartDate.Value.ToString("dd/MM/yyyy"))" required />
                                                         <span class="input-group-addon">
                                                             <i class="icon wb-calendar icon-2-5x text-success" style="padding-left:2px" aria-hidden="true"></i>
                                                         </span>
@@ -668,14 +677,14 @@
                                                 <div class="form-group">
                                                     <label for="EndDate" class="form-control-label">กำหนดเสร็จ</label>
                                                     @*<div class="input-group col-sm-6">
-                                                            <span class="input-group-addon">
-                                                                <i class="icon wb-calendar" aria-hidden="true"></i>
-                                                            </span>
-                                                            <input type="date" class="form-control" name="JobOrderCompleteDate" value="" />
-                                                        </div>*@
+                                                        <span class="input-group-addon">
+                                                            <i class="icon wb-calendar" aria-hidden="true"></i>
+                                                        </span>
+                                                        <input type="date" class="form-control" name="JobOrderCompleteDate" value="" />
+                                                    </div>*@
                                                     <div class="input-group col-sm-6 date" data-provide="datepicker" data-date-format="dd/mm/yyyy">
                                                         <input id="EndDate" type="text" class="form-control" placeholder="dd/MM/yyyy ค.ศ." name="EndDate"
-                                                               value="@(Model.EndDate == null ? null : Model.EndDate.Value.ToString("dd/MM/yyyy"))"  required/>
+                                                               value="@(Model.EndDate == null ? null : Model.EndDate.Value.ToString("dd/MM/yyyy"))" required />
                                                         <span class="input-group-addon" style="padding-left:2px">
                                                             <i class="icon wb-calendar icon-2-5x text-success" aria-hidden="true"></i>
                                                         </span>

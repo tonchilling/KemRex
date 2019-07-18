@@ -130,6 +130,7 @@ namespace Kemrex.Core.Common.Modules
        SummaryNet = order.SummaryNet,
         SummaryVat = order.SummaryVat,
         SummaryTot = order.SummaryTot,
+        StatusId=order.StatusId,
         Status= (from emp in db.EnmStatusQuotation.Where(o => o.StatusId == order.StatusId)
                  select new EnmStatusQuotation
                  {

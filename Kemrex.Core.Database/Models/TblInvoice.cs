@@ -17,10 +17,11 @@ namespace Kemrex.Core.Database.Models
         public int InvoiceTerm { get; set; }
         public decimal? InvoiceAmount { get; set; }
         public int? StatusId { get; set; }
-        public long CreatedBy { get; set; }
-        public DateTime CreatedDate { get; set; }
-        public long UpdatedBy { get; set; }
-        public DateTime UpdateDate { get; set; }
+        public long? CreatedBy { get; set; }
+        public DateTime? CreatedDate { get; set; }
+        public DateTime? UpdatedDate { get; set; }
+        public long? UpdatedBy { get; set; }
+        public int ApprovedBy { get; set; }
         public DateTime DueDate { get; set; }
         public decimal DepositAmount { get; set; }
         public int IsDeposit { get; set; }
