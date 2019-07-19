@@ -75,7 +75,7 @@ namespace Kemrex.Core.Common.Modules
                             CreatedBy = i.CreatedBy,
                             CreatedDate = i.CreatedDate,
                             UpdatedBy = i.UpdatedBy,
-                            UpdateDate = i.UpdateDate,
+                            UpdatedDate = i.UpdatedDate,
                             DueDate = i.DueDate,
                             DepositAmount = i.DepositAmount,
                             IsDeposit = i.IsDeposit,

@@ -150,6 +150,8 @@ namespace Kemrex.Core.Common.Modules
                     dto.InvState2 = reader["InvState2"].ToString();
                     dto.InvState3 = reader["InvState3"].ToString();
                     dto.InvState4 = reader["InvState4"].ToString();
+                    dto.JobOrderState1 = reader["JobOrderState1"].ToString();
+                    dto.JobOrderState2 = reader["JobOrderState2"].ToString();
                 }
             }
             catch (Exception ex)

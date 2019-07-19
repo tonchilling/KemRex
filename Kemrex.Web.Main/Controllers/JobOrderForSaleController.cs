@@ -115,7 +115,7 @@ namespace Kemrex.Web.Main.Controllers
             List<TblJobOrderUndergroundType> UndergroundType = null;
             List<TblJobOrderObstructionType> ObstructionType = null;
             List<TblJobOrderAttachmentType> AttachmentType = null;
-
+            int approveStatus = Request.Form["hdApprove"] != null ? Request.Form["hdApprove"].ParseInt() : 0;
             string JobOrderId = this.Request.Form["JobOrderId"];
 
             string StartHH = this.Request.Form["StartHH"];
@@ -136,13 +136,19 @@ namespace Kemrex.Web.Main.Controllers
             if (JobOrderId == "" || JobOrderId == "0")
             {
                 jobOrder.JobOrderNo = getJobId();
-                jobOrder.CreateDate = DateTime.Now;
+                jobOrder.CreatedDate = DateTime.Now;
             }
             else
             {
-                jobOrder.UpdateDate = DateTime.Now;
+                jobOrder.UpdatedDate = DateTime.Now;
             }
 
+
+            if (approveStatus == 2)
+            {
+               
+                jobOrder.ApprovedBy = Convert.ToInt32(CurrentUID);
+            }
             if (Request.Form["StartDate"].ToString() != "")
             {
                 var dd = Request.Form["StartDate"] + " 00:00:00";

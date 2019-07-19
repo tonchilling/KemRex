@@ -71,8 +71,9 @@
                                 html += '<td>' + item.CustomerName + '</td>';
                                 html += '<td>' + item.StartDateToString + '</td>';
                                 html += '<td>' + item.Status + '</td>';
-                                html += '<td> <a href="' + urlDetail + '/' + item.JobOrderId + '" class="btn btn-xs ' + (item.StatusId <= 1 ? " btn-primary" : " btn-success") +'">';
-                                html += '<i class="fa glyphicon glyphicon-search" aria-hidden="true"></i>&nbsp;' + (item.StatusId<=1? "แก้ไข":"เรียกดู") +' </a>&nbsp;';
+                                html += '<td> <a href="' + urlDetail + '/' + item.JobOrderId + '" class="btn btn-xs ' + (item.StatusId <= 1 ? " btn-primary" : " btn-success") + '">';
+                                html += '<i class=" ' + (item.StatusId <= 1 ? "fa fa-pencil" : "glyphicon glyphicon-search") + '" aria-hidden="true"></i>&nbsp;' + (item.StatusId <= 1 ? "แก้ไข" : "เรียกดู") + ' </a>&nbsp;';
+                              //  html += '<i class="fa glyphicon glyphicon-search" aria-hidden="true"></i>&nbsp;' + (item.StatusId<=1? "แก้ไข":"เรียกดู") +' </a>&nbsp;';
                                 html += '<a href="' + urlExport + '/' + item.JobOrderId + '" class="btn btn-xs btn-warning">';
                                 html += '<i class="fa fa-file-pdf-o" aria-hidden="true"></i>&nbsp;PDF </a></td>';
 

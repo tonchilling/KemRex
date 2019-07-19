@@ -124,14 +124,14 @@ namespace Kemrex.Web.Main.Controllers
                     ob.CreatedBy = CurrentUID;
                     ob.UpdatedBy = CurrentUID;
                     ob.CreatedDate = CurrentDate;
-                    ob.UpdateDate = CurrentDate;
+                    ob.UpdatedDate = CurrentDate;
                     ob.InvoiceDate = CurrentDate;
                     //ob.DueDate = CurrentDate.AddMonths(1);
                 }
                 else
                 {
                     ob.UpdatedBy = CurrentUID;
-                    ob.UpdateDate = CurrentDate;
+                    ob.UpdatedDate = CurrentDate;
                 }
 
                 try

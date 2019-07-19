@@ -35,10 +35,17 @@ namespace Kemrex.Core.Database.Models
         public string Road { get; set; }
         public string Address { get; set; }
         public string Solution { get; set; }
+        public int? StatusId { get; set; }
+
+        [NotMapped]
         public string Status { get; set; }
         public int? TeamId { get; set; }
-        public DateTime? UpdateDate { get; set; }
-        public DateTime? CreateDate { get; set; }
+        public int? CreatedBy { get; set; }
+        public DateTime? CreatedDate { get; set; }
+        public DateTime? UpdatedDate { get; set; }
+        public int? UpdatedBy { get; set; }
+        public int? ApprovedBy { get; set; }
+        public int? ClosedBy { get; set; }
         [NotMapped]
         public virtual string CreateDateToString { get; set; }
         public virtual TblSaleOrder SaleOrder { get; set; }

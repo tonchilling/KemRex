@@ -74,8 +74,10 @@
                                 html += '<td>' + numeral(item.SummaryTot - item.DiscountCash).format('0,0.00')  + '</td>';
                                 html += '<td>' + item.strQuotationDate + '</td>';
                                 html += '<td>' + item.Status.StatusName + '</td>';
-                              html += '<td> <a href="' + urlDetail + '/' + item.QuotationId+'" class="btn btn-xs btn-primary">';
-                                html += '<i class="fa fa-pencil" aria-hidden="true"></i>&nbsp;แก้ไข </a>&nbsp;';
+                              //  html += '<td> <a href="' + urlDetail + '/' + item.QuotationId + '" class="btn btn-xs btn-primary">';
+                                html += '<td> <a href="' + urlDetail + '/' + item.QuotationId + '" class="btn btn-xs ' + (item.StatusId <= 2 ? " btn-primary" : " btn-success") + '">';
+                                html += '<i class=" ' + (item.StatusId <= 2 ? "fa fa-pencil" : "glyphicon glyphicon-search") + '" aria-hidden="true"></i>&nbsp;' + (item.StatusId <= 2 ? "แก้ไข" : "เรียกดู") + ' </a>&nbsp;';
+                             //   html += '<i class=" ' + (item.StatusId <= 2 ? "fa fa-pencil" : "glyphicon glyphicon-search") + '" aria-hidden="true"></i>&nbsp;'+ (item.StatusId<=2? "แก้ไข":"เรียกดู") +'</a>&nbsp;';
                                 html += '<a href="' + urlExport + '/' + item.QuotationId + '" class="btn btn-xs btn-warning">';
                                 html += '<i class="fa fa-file-pdf-o" aria-hidden="true"></i>&nbsp;PDF </a></td>';
 

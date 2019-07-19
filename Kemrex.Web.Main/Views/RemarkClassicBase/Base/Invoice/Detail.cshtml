@@ -23,6 +23,7 @@
     {
         changestatus = true;
     }
+
     if (Model.StatusId == 1 || Model.StatusId == null)
     {
         canedit = true;
@@ -369,7 +370,9 @@
 
                                                             @{
                                                                 var sq = "";
+
                                                                 if (Model.SaleOrder != null)
+
                                                                 {
                                                                     if (Model.SaleOrder.SaleOrderNo != null)
                                                                     {

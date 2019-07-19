@@ -67,6 +67,11 @@ optEmployee = (List<TblEmployee>
 
             }
 
+            if (@Model.StatusId>= 2) {
+
+                $("#frmMain :input").prop("disabled", true);
+            }
+
 
             $(SaleMenu).slideToggle();
 
@@ -422,6 +427,28 @@ optEmployee = (List<TblEmployee>
 
      
 
+                 $(document).on("click", ".btnConfirm", function () {
+            var isConfirm = false;
+            swal({
+                title: "Approve",
+                text: "Do you want to confirm?",
+                type: "success",
+                showCancelButton: true,
+                closeOnConfirm: false,
+                showLoaderOnConfirm: true
+            },
+                function (isConfirm) {
+                    if (isConfirm) {
+                        
+                        $('#hdApprove').val(3);
+                        $('#frmMain').attr('action', '@Url.Action("Detail", "Quotation")');
+                        $('#frmMain').submit();
+
+                    }
+                });
+
+            return false;
+        });
 
 
 
@@ -487,6 +514,7 @@ optEmployee = (List<TblEmployee>
                 <li class="breadcrumb-item"><a href="@Url.Action("Index", new { controller = "Quotation", area = "" })" })">ย้อนกลับ</a></li>
             </ol>
         </div>
+       
         <div class="page-content container-fluid">
             @if (ViewBag.Alert != null)
             {
@@ -533,7 +561,7 @@ optEmployee = (List<TblEmployee>
                                 <form method="post" action="@Url.Action("Detail", "Quotation")" id="frmMain" enctype="multipart/form-data">
                                     @Html.AntiForgeryToken()
                                     <input type="hidden" name="QuotationId" value="@Model.QuotationId" />
-
+                                    <input type="hidden" id="hdApprove" name="hdApprove"  />
                                     <div class="panel-body">
                                         <div class="row">
                                             @*Left panel*@
@@ -656,7 +684,7 @@ optEmployee = (List<TblEmployee>
                                                     <label for="CreateDate" class="col-sm-5 col-form-label">วันที่ออกเอกสาร</label>
                                                     <div class="input-group col-sm-6">
 
-                                                        <input type="text" class="form-control" name="CreatedDate" value="@Model.CreatedDate.ToString("dd/MM/yyyy")" readonly />
+                                                        <input type="text" class="form-control" name="CreatedDate" value="@Model.CreatedDate.Value.ToString("dd/MM/yyyy")" readonly />
                                                         <span class="input-group-addon">
                                                             <i class="icon wb-calendar icon-2-5x text-success" aria-hidden="true"></i>
                                                         </span>
@@ -716,7 +744,7 @@ optEmployee = (List<TblEmployee>
                                                             <option value="-1" )></option>
                                                             @foreach (TblEmployee it in optEmployee)
                                                             {
-                                                                 bool selected = it.EmpNameTh == (Model.SaleName == null ? (sysAccount.TblEmployee != null ? sysAccount.TblEmployee.EmpNameTh : "") : Model.SaleName);
+                                                                bool selected = it.EmpNameTh == (Model.SaleName == null ? (sysAccount.TblEmployee != null ? sysAccount.TblEmployee.EmpNameTh : "") : Model.SaleName);
                                                                 <option value="@it.EmpId" @(selected ? " selected=\" selected\"" : "")>@it.EmpNameTh</option>
                                                             }
                                                         </select>
@@ -735,6 +763,13 @@ optEmployee = (List<TblEmployee>
                                                     {
                                                         <button type="submit" id="btnNextStep" class="btn btn-primary">@(Model.QuotationId > 0 ? "บันทึก" : "ต่อไป")</button>
                                                         <a href="#" class="btn btn-default btnCancel ">ยกเลิก</a>
+                                                    }
+
+                                                    @if (Model.StatusId > 0 && Model.StatusId < 2)
+                                                    {
+                                                        <button type="submit" id="btnConfirm" class="btn btn-success btnConfirm">
+                                                            อนุมัติ
+                                                        </button>
                                                     }
                                                 </div>
                                             </div>
@@ -817,7 +852,7 @@ optEmployee = (List<TblEmployee>
                                                                 name="selProduct">
                                                             <option value="">กรุณาเลือก</option>
 
-                                                            @foreach (var it in optProduct.Where(o=>o.PriceNet>0))
+                                                            @foreach (var it in optProduct.Where(o => o.PriceNet > 0))
                                                             {
                                                                 <option value="@it.ProductId:@it.PriceNet">@it.ProductCode @it.ProductName [@it.PriceNet]  Qty:@it.QtyStock</option>
                                                             }

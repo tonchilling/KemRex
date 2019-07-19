@@ -213,9 +213,9 @@ namespace Kemrex.Core.Common.Modules
                 SaleOrderId = o.SaleOrderId,
                 JobName = o.JobName,
                 StartDate = o.StartDate,
-                StartDateToString = o.StartDate != null ? Converting.ToDDMMYYYY(o.StartDate) : "",
+                StartDateToString = o.StartDate != null ? Converting.ToDDMMYYYY(o.StartDate.Value) : "",
                 EndDate = o.EndDate,
-                EndDateToString = o.EndDate != null ? Converting.ToDDMMYYYY(o.EndDate) : "",
+                EndDateToString = o.EndDate != null ? Converting.ToDDMMYYYY(o.EndDate.Value) : "",
                 StartWorkingTime = o.StartWorkingTime,
                 EndWorkingTime = o.EndWorkingTime,
                 CustomerId = o.CustomerId,
@@ -223,7 +223,8 @@ namespace Kemrex.Core.Common.Modules
                 CustomerPhone = o.CustomerPhone,
                 CustomerEmail = o.CustomerEmail,
                 ProjectName = o.ProjectName,
-                Status= Converting.JobOrderStatus(o.Status),
+                StatusId = o.StatusId.HasValue? o.StatusId.Value:0,
+                Status = o.StatusId.HasValue ? Converting.JobOrderStatus(o.StatusId.Value): Converting.JobOrderStatus(0),
                SaleOrder =(from oo in db.TblSaleOrder.Where(od=> od.SaleOrderId == o.SaleOrderId) select new TblSaleOrder {
                    SaleOrderId=oo.SaleOrderId,
                    SaleOrderNo=oo.SaleOrderNo
@@ -233,11 +234,11 @@ namespace Kemrex.Core.Common.Modules
                 SubDistrict = o.SubDistrict,
                 Team = o.Team,
                
-                CreateDate = o.CreateDate,
-                CreateDateToString = o.CreateDate != null ? Converting.ToDDMMYYYY(o.CreateDate) : "",
+                CreatedDate = o.CreatedDate,
+                CreateDateToString = o.CreatedDate.HasValue ? Converting.ToDDMMYYYY(o.CreatedDate.Value) : "",
 
 
-            }).OrderByDescending(o => o.CreateDate).ToList();
+            }).OrderByDescending(o => o.CreatedDate).ToList();
 
 
 
@@ -269,7 +270,7 @@ namespace Kemrex.Core.Common.Modules
                           CustomerPhone = o.CustomerPhone,
                           CustomerEmail = o.CustomerEmail,
                           ProjectName = o.ProjectName,
-                          Status = Converting.JobOrderStatus(o.Status),
+                          Status = Converting.JobOrderStatus(o.StatusId.Value),
                           SaleOrder = (from oo in db.TblSaleOrder.Where(od => od.SaleOrderId == o.SaleOrderId)
                                        select new TblSaleOrder
                                        {
@@ -281,11 +282,11 @@ namespace Kemrex.Core.Common.Modules
                           SubDistrict = o.SubDistrict,
                           Team = o.Team,
 
-                          CreateDate = o.CreateDate,
-                          CreateDateToString = o.CreateDate != null ? Converting.ToDDMMYYYY(o.CreateDate) : "",
+                          CreatedDate = o.CreatedDate,
+                          CreateDateToString = o.CreatedDate != null ? Converting.ToDDMMYYYY(o.CreatedDate) : "",
 
 
-                      }).OrderByDescending(o => o.CreateDate).ToList();
+                      }).OrderByDescending(o => o.CreatedDate).ToList();
 
 
 
@@ -297,7 +298,7 @@ namespace Kemrex.Core.Common.Modules
         {
             List<TblJobOrder> result = new List<TblJobOrder>();
 
-            result = (from o in db.TblJobOrder.Include(x => x.Team).Include(x => x.SaleOrder).Where(t => t.Status == "1" || t.Status == "2")
+            result = (from o in db.TblJobOrder.Include(x => x.Team).Include(x => x.SaleOrder).Where(t => t.StatusId==2 || t.StatusId == 3)
                       select new TblJobOrder
                       {
 
@@ -318,7 +319,8 @@ namespace Kemrex.Core.Common.Modules
                           CustomerPhone = o.CustomerPhone,
                           CustomerEmail = o.CustomerEmail,
                           ProjectName = o.ProjectName,
-                          Status = Converting.JobOrderStatus(o.Status),
+                          Status = Converting.JobOrderStatus(o.StatusId.Value),
+                          StatusId= o.StatusId,
                           SaleOrder = (from oo in db.TblSaleOrder.Where(od => od.SaleOrderId == o.SaleOrderId)
                                        select new TblSaleOrder
                                        {
@@ -330,11 +332,11 @@ namespace Kemrex.Core.Common.Modules
                           SubDistrict = o.SubDistrict,
                           Team = o.Team,
 
-                          CreateDate = o.CreateDate,
-                          CreateDateToString = o.CreateDate != null ? Converting.ToDDMMYYYY(o.CreateDate) : "",
+                          CreatedDate = o.CreatedDate,
+                          CreateDateToString = o.CreatedDate != null ? Converting.ToDDMMYYYY(o.CreatedDate) : "",
 
 
-                      }).OrderByDescending(o => o.CreateDate).ToList();
+                      }).OrderByDescending(o => o.CreatedDate).ToList();
 
 
 
@@ -363,7 +365,7 @@ namespace Kemrex.Core.Common.Modules
 
             foreach (TblJobOrder job in data)
             {
-                job.CreateDateToString = Converting.ToDDMMYYYY(job.CreateDate);
+                job.CreateDateToString = Converting.ToDDMMYYYY(job.CreatedDate);
                 job.SaleOrder = (from q in db.TblSaleOrder.Where(o=>o.SaleOrderId== job.SaleOrderId).Include(o => o.Sale) select q).FirstOrDefault();
              
 

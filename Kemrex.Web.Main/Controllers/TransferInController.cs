@@ -106,12 +106,12 @@ namespace Kemrex.Web.Main.Controllers
             if (TransferId == "" || TransferId == "0")
             {
                 obj.TransferNo = getId("I");
-                obj.CreateDate = DateTime.Now;
+                obj.CreatedDate = DateTime.Now;
             }
             else
             {
                 obj.TransferId = Convert.ToInt32(TransferId);
-                obj.UpdateDate = DateTime.Now;
+                obj.UpdatedDate = DateTime.Now;
             }
 
             obj.TransferType = "I";

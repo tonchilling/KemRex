@@ -98,6 +98,7 @@ namespace Kemrex.Web.Main.Controllers
         public ActionResult SetDetail()
         {
             int id = Request.Form["QuotationId"].ParseInt();
+            int approveStatus = Request.Form["hdApprove"] != null ? Request.Form["hdApprove"].ParseInt():0;
             TblQuotation ob = uow.Modules.Quotation.Get(id);
             if (ob.QuotationId <= 0)
             {
@@ -105,14 +106,22 @@ namespace Kemrex.Web.Main.Controllers
                 ob.CreatedBy = CurrentUID;
                 ob.UpdatedBy = CurrentUID;
                 ob.CreatedDate = CurrentDate;
-                ob.UpdateDate = CurrentDate;
+                ob.UpdatedDate = CurrentDate;
                 ob.QuotationDate = CurrentDate;
             }
             else
             {
                 ob.UpdatedBy = CurrentUID;
-                ob.UpdateDate = CurrentDate;
+                ob.UpdatedDate = CurrentDate;
             }
+            ob.StatusId = Request.Form["StatusId"].ParseInt();
+
+            if (approveStatus == 3)
+            {
+                ob.StatusId = 3;
+                ob.ApprovedBy = Convert.ToInt32(CurrentUID);
+            }
+
             ob.SaleId = Request.Form["SaleId"] != null ? Request.Form["SaleId"].ParseInt() : 0;
             ob.SaleName = Request.Form["SaleName"];
             if (Request.Form["DeliveryDate"].ToString().Count() > 0)
@@ -139,9 +148,9 @@ namespace Kemrex.Web.Main.Controllers
             ob.QuotationValidDay = Request.Form["QuotationValidDay"].ParseInt();
             ob.QuotationCreditDay = Request.Form["QuotationCreditDay"].ParseInt();
 
-            ob.DueDate = ob.CreatedDate.AddDays(ob.QuotationValidDay).ToUniversalTime();
+            ob.DueDate = ob.CreatedDate.Value.AddDays(ob.QuotationValidDay).ToUniversalTime();
 
-            ob.StatusId = Request.Form["StatusId"].ParseInt();
+          
 
 
             try

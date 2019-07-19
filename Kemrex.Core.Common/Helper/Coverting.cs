@@ -109,7 +109,7 @@ namespace Kemrex.Core.Common.Helper
 
         }
 
-        public static string JobOrderStatus(string StatusId)
+        public static string JobOrderStatus(int StatusId)
         {
             string result = "ร่าง";
 
@@ -117,9 +117,10 @@ namespace Kemrex.Core.Common.Helper
             {
                 switch (StatusId)
                 {
-                    case "1": result = "เปิด"; break;
-                    case "2": result = "ปิด"; break;
-                    case "3": result = "ยกเลิก"; break;
+                    case 1: result = "ร่าง"; break;
+                    case 2: result = "เปิด"; break;
+                    case 3: result = "ปิด"; break;
+                    case 4: result = "ยกเลิก"; break;
                 }
             }
             catch
@@ -128,6 +129,8 @@ namespace Kemrex.Core.Common.Helper
             return result;
 
         }
+
+    
 
         public static string TransferStatus(string StatusId)
         {
