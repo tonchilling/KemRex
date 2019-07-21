@@ -96,6 +96,11 @@ namespace Kemrex.Core.Database
         public virtual DbSet<TransferHeader> TransferHeader { get; set; }
         public virtual DbSet<TransferStockDetail> TransferStockDetail { get; set; }
         public virtual DbSet<TransferStockHeader> TransferStockHeader { get; set; }
+        public virtual DbSet<SysSurveyDetailTemplate> SysSurveyDetailTemplate { get; set; }
+        public virtual DbSet<SysSurveyHeaderSubTemplate> SysSurveyHeaderSubTemplate { get; set; }
+        public virtual DbSet<SysSurveyHeaderTemplate> SysSurveyHeaderTemplate { get; set; }
+        public virtual DbSet<TblSurveyDetail> TblSurveyDetail { get; set; }
+        public virtual DbSet<TblSurveyHeader> TblSurveyHeader { get; set; }
 
         // Unable to generate entity type for table 'dbo.Product_Temp'. Please see the warning messages.
 
@@ -1749,6 +1754,124 @@ namespace Kemrex.Core.Database
 
                 entity.Property(e => e.UpdateDate).HasColumnType("datetime");
             });
+
+            modelBuilder.Entity<SysSurveyDetailTemplate>(entity =>
+            {
+                entity.HasKey(e => new { e.SurveyId, e.No, e.SubSurveyId })
+                    .HasName("PK__SysSurve__EDE39A6EB053E946");
+
+                entity.ToTable("SysSurveyDetail_Template");
+
+                entity.Property(e => e.SurveyId).HasColumnName("SurveyID");
+
+                entity.Property(e => e.SubSurveyId).HasColumnName("SubSurveyID");
+
+                entity.Property(e => e.CreatedDate).HasColumnType("datetime");
+
+                entity.Property(e => e.Reason).HasMaxLength(400);
+
+                entity.Property(e => e.Title).HasMaxLength(400);
+
+                entity.Property(e => e.UpdatedDate).HasColumnType("datetime");
+            });
+
+            modelBuilder.Entity<SysSurveyHeaderSubTemplate>(entity =>
+            {
+                entity.HasKey(e => new { e.SurveyId, e.SubSurveyId })
+                    .HasName("PK__SysSurve__1DE4940013534019");
+
+                entity.ToTable("SysSurveyHeaderSub_Template");
+
+                entity.Property(e => e.SurveyId).HasColumnName("SurveyID");
+
+                entity.Property(e => e.SubSurveyId).HasColumnName("SubSurveyID");
+
+                entity.Property(e => e.CreatedDate).HasColumnType("datetime");
+
+                entity.Property(e => e.Desc).HasMaxLength(400);
+
+                entity.Property(e => e.Reason).HasMaxLength(400);
+
+                entity.Property(e => e.UpdatedDate).HasColumnType("datetime");
+            });
+
+            modelBuilder.Entity<SysSurveyHeaderTemplate>(entity =>
+            {
+                entity.HasKey(e => e.SurveyId)
+                    .HasName("PK__SysSurve__A5481F9D5844A79E");
+
+                entity.ToTable("SysSurveyHeader_Template");
+
+                entity.Property(e => e.SurveyId)
+                    .HasColumnName("SurveyID")
+                    .ValueGeneratedNever();
+
+                entity.Property(e => e.CreatedDate).HasColumnType("datetime");
+
+                entity.Property(e => e.Desc).HasMaxLength(400);
+
+                entity.Property(e => e.UpdatedDate).HasColumnType("datetime");
+            });
+
+
+
+            modelBuilder.Entity<TblSurveyDetail>(entity =>
+            {
+                entity.HasKey(e => new { e.SurveyId, e.No })
+                    .HasName("PK__TblSurve__366952D76CC502A5");
+
+                entity.Property(e => e.SurveyId).HasColumnName("SurveyID");
+
+                entity.Property(e => e.CreatedDate).HasColumnType("datetime");
+
+                entity.Property(e => e.Reason).HasMaxLength(400);
+
+                entity.Property(e => e.Title).HasMaxLength(400);
+
+                entity.Property(e => e.UpdatedDate).HasColumnType("datetime");
+            });
+
+            modelBuilder.Entity<TblSurveyHeader>(entity =>
+            {
+                entity.HasKey(e => e.SurveyId)
+                    .HasName("PK__TblSurve__A5481F9DAF20E4D4");
+
+                entity.Property(e => e.SurveyId)
+                    .HasColumnName("SurveyID")
+                    .ValueGeneratedNever();
+
+                entity.Property(e => e.CreatedDate).HasColumnType("datetime");
+
+                entity.Property(e => e.Desc).HasMaxLength(400);
+
+                entity.Property(e => e.RefSurveyId).HasColumnName("RefSurveyID");
+
+                entity.Property(e => e.SurveyDate).HasColumnType("datetime");
+
+                entity.Property(e => e.UpdatedDate).HasColumnType("datetime");
+            });
+
+
+            modelBuilder.Entity<TblJobOrder_SurveyDetail>(entity =>
+            {
+                entity.HasKey(e => new { e.JobOrderID, e.SurveyDetailID })
+                    .HasName("PK__TblJobOr__EC4EB037414376FC");
+
+
+           //     entity.ToTable("SysSurveyHeader_Template");
+
+                entity.Property(e => e.JobOrderID)
+                    .HasColumnName("JobOrderID")
+                    .ValueGeneratedNever();
+
+                entity.Property(e => e.IsCheck).HasColumnName("IsCheck");
+
+                entity.Property(e => e.SurveyDetailID).HasMaxLength(50);
+                entity.Property(e => e.Desc).HasMaxLength(400);
+
+                entity.Property(e => e.StatusId).HasColumnName("StatusId");
+            });
+
         }
     }
 }

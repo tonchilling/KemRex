@@ -32,11 +32,20 @@
      )ViewData["optProduct"];
     List<TblSaleOrderAttachment> optAttachment = (List<TblSaleOrderAttachment>
       )ViewData["optAttachment"];
+    SysAccount sysAccount = (SysAccount
+)ViewData["userAccount"];
+    List<TblEmployee>
+optEmployee = (List<TblEmployee>
+)ViewData["optEmployee"];
 
 
+    List<SysSurveyHeaderTemplate>
+  SurveyTemplate = (List<SysSurveyHeaderTemplate>
+)ViewData["SurveyTemplate"];
 }
 
 @section Scripts {
+<script src="~/themes/RemarkClassicBase/js/Plugin/select2.min.js?44d"></script>
     <script type="text/javascript">
 
         var _contact = [];
@@ -49,6 +58,12 @@
                     });
             }, 5000);
 
+            $("#SurveyBy").select2(
+                {
+                    placeholder: 'ผู้ประเมิน',
+                    allowClear: true
+                }
+            );
 
             $("form:first").validate({
                 highlight: function (element) {
@@ -90,6 +105,8 @@
                 $(this).addClass('current');
                 $("#" + tab_id).addClass('current');
                 })
+
+
 
 
         });
@@ -254,7 +271,7 @@
                     });
             }
             return false;
-          
+
         });
 
 
@@ -286,7 +303,7 @@
                     });
             }
             return false;
-          
+
         });
 
         $('.btnDeleteProduct').click(function () {
@@ -462,15 +479,15 @@
 
     </script>
 
- 
-    
+
+
 
 
 
 
 }
 @section Styles {
-
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.7/css/select2.min.css" rel="stylesheet" />
 }
 
 <style type="text/css">
@@ -504,6 +521,24 @@
         .tab-content.current {
             display: inherit;
         }
+
+
+    .form-comment {
+        /*display: block;*/
+        width: 400px;
+  
+        height: 2.573rem;
+        padding: .429rem 1rem;
+        font-size: 1rem;
+        line-height: 1.57142857;
+        color: #76838f;
+        background-color: #fff;
+        background-clip: padding-box;
+        border: 1px solid #e4eaec;
+        border-radius: .215rem;
+        box-shadow: inset 0 1px 1px rgba(0,0,0,.075);
+        transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
+    }
 </style>
 
 
@@ -623,6 +658,7 @@
                         {
                             <li class="tab-link" data-tab="tab-5">5.รายการสินค้า</li>
                             <li class="tab-link" data-tab="tab-6">6.เอกสารแนบ</li>
+                            <li class="tab-link" data-tab="tab-7">7.แบบประเมิน</li>
                         }
                     </ul>
 
@@ -677,11 +713,11 @@
                                                 <div class="form-group">
                                                     <label for="EndDate" class="form-control-label">กำหนดเสร็จ</label>
                                                     @*<div class="input-group col-sm-6">
-                                                        <span class="input-group-addon">
-                                                            <i class="icon wb-calendar" aria-hidden="true"></i>
-                                                        </span>
-                                                        <input type="date" class="form-control" name="JobOrderCompleteDate" value="" />
-                                                    </div>*@
+                                                            <span class="input-group-addon">
+                                                                <i class="icon wb-calendar" aria-hidden="true"></i>
+                                                            </span>
+                                                            <input type="date" class="form-control" name="JobOrderCompleteDate" value="" />
+                                                        </div>*@
                                                     <div class="input-group col-sm-6 date" data-provide="datepicker" data-date-format="dd/mm/yyyy">
                                                         <input id="EndDate" type="text" class="form-control" placeholder="dd/MM/yyyy ค.ศ." name="EndDate"
                                                                value="@(Model.EndDate == null ? null : Model.EndDate.Value.ToString("dd/MM/yyyy"))" required />
@@ -1423,64 +1459,169 @@
                             </div>
 
                         </div>
-                    }
-                    <div id="tab-6" class="tab-content">
-                        @*panel Attachment*@
-                        <div class="card-block" data-tab-page="navAttachment">
-                            <div class="col-12">
-                                <div class="panel">
-                                    <div class="panel-heading">
-                                        <h3 class="panel-title">
-                                            รายการเอกสาร&nbsp;
-                                        </h3>
-                                    </div>
-                                    <div class="panel-body">
-                                        <div class="row">
-                                            <div class="col-12">
-                                                <div class="table-responsive">
-                                                    <table class="table table-hover table-striped">
-                                                        <thead>
-                                                            <tr>
-                                                                <th>ชื่อไฟล์</th>
-                                                                <th>ชนิด</th>
-                                                                <th>เครื่องมือ</th>
-                                                            </tr>
-                                                        </thead>
-                                                        <tbody>
-                                                            @foreach (var at in optAttachment)
-                                                            {
+
+                        <div id="tab-6" class="tab-content">
+                            @*panel Attachment*@
+                            <div class="card-block" data-tab-page="navAttachment">
+                                <div class="col-12">
+                                    <div class="panel">
+                                        <div class="panel-heading">
+                                            <h3 class="panel-title">
+                                                รายการเอกสาร&nbsp;
+                                            </h3>
+                                        </div>
+                                        <div class="panel-body">
+                                            <div class="row">
+                                                <div class="col-12">
+                                                    <div class="table-responsive">
+                                                        <table class="table table-hover table-striped">
+                                                            <thead>
                                                                 <tr>
-
-                                                                    <td>
-                                                                        <a href="@Url.Content("~/" + at.AttachmentPath)" target="_blank"> @Path.GetFileName(at.AttachmentPath)</a>
-                                                                    </td>
-                                                                    <td>@at.AttachmentRemark</td>
-                                                                    <td>
-                                                                        <form method="post" action="@Url.Action("DeleteFile", new { controller = "SaleOrder" })"
-                                                                              class="fnc-delete inline-block">
-                                                                            <input type="hidden" name="soId" value="@at.SaleOrderId" />
-                                                                            <input type="hidden" name="atId" value="@at.Id" />
-
-                                                                        </form>
-                                                                    </td>
-
+                                                                    <th>ชื่อไฟล์</th>
+                                                                    <th>ชนิด</th>
+                                                                    <th>เครื่องมือ</th>
                                                                 </tr>
-                                                            }
-                                                        </tbody>
-                                                    </table>
+                                                            </thead>
+                                                            <tbody>
+                                                                @foreach (var at in optAttachment)
+                                                                {
+                                                                    <tr>
+
+                                                                        <td>
+                                                                            <a href="@Url.Content("~/" + at.AttachmentPath)" target="_blank"> @Path.GetFileName(at.AttachmentPath)</a>
+                                                                        </td>
+                                                                        <td>@at.AttachmentRemark</td>
+                                                                        <td>
+                                                                            <form method="post" action="@Url.Action("DeleteFile", new { controller = "SaleOrder" })"
+                                                                                  class="fnc-delete inline-block">
+                                                                                <input type="hidden" name="soId" value="@at.SaleOrderId" />
+                                                                                <input type="hidden" name="atId" value="@at.Id" />
+
+                                                                            </form>
+                                                                        </td>
+
+                                                                    </tr>
+                                                                }
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                        <hr />
+                                            <hr />
 
+                                        </div>
                                     </div>
                                 </div>
                             </div>
+                            @*End panel Attachment*@
+
                         </div>
-                        @*End panel Attachment*@
 
-                    </div>
+                        <div id="tab-7" class="tab-content">
+                            @*แบบประเมิน*@
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="panel">
+                                        <div class="panel-heading">
+                                            <h2>ประเมินคุณภาพและข้อมูลเพิ่มเติม(Quality check)</h2>
+                                        </div>
+                                        <div class="panel-body">
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <div class="form-group">
+                                                        <label for="StartDate" class="form-control-label">วันที่ประเมิน</label>
+                                                        <div class="input-group col-sm-6 date" data-provide="datepicker" data-date-format="dd/mm/yyyy">
+                                                            <input id="SurveyDate" type="text" class="form-control" placeholder="dd/MM/yyyy ค.ศ." name="SurveyDate"
+                                                                   value="" required />
+                                                            <span class="input-group-addon">
+                                                                <i class="icon wb-calendar icon-2-5x text-success" style="padding-left:2px" aria-hidden="true"></i>
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6 col-sm-8">
+                                                    <div class="form-group">
+                                                        <label for="SaleName" class="col-sm-5 col-form-label">ผู้ประเมิน</label>
+                                                        <div class="col-sm-6">
+                                                            <select class="form-control js-states" id="SurveyBy"
+                                                                    name="SurveyBy" placeholder="ผู้ประเมิน">
+                                                                <option value="-1" )></option>
+                                                                @foreach (TblEmployee it in optEmployee)
+                                                                {
+                                                                    <option value="@it.EmpId">@it.EmpNameTh</option>
+                                                                    //bool selected = it. == (Model.CreatedBy == null ? (sysAccount.TblEmployee != null ? sysAccount.TblEmployee.EmpNameTh : "") : Model.SaleName);
 
+                                                                    // <option value="@it.EmpId" @(selected ? " selected=\" selected\"" : "")>@it.EmpNameTh</option>
+                                                                }
+                                                            </select>
+                                                            <input type="hidden" id="SaleName" name="SaleName" value="" />
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <hr>
+                                            <div class="row" style="padding-bottom:2em">
+                                                <div class="col-md-6">
+                                                    <h3>คุณภาพหน้างาน</h3>
+                                                </div>
+                                            </div>
+                                            @{ int i = 1;
+                                                foreach (SysSurveyHeaderTemplate header in SurveyTemplate)
+                                                {
+                                                    foreach (SysSurveyHeaderSubTemplate subheader in header.SurveySubList)
+                                                    {
+
+                                                        <div class="row" style="padding-bottom:1em">
+                                                            <div class="col-md-12">
+                                                                <h4>@(i.ToString() + "." + subheader.Desc)</h4>
+                                                                @if (subheader.IsReason > 0)
+                                                                {
+                                                                    if (subheader.Reason != "")
+                                                                    {
+                                                                    <label for="" class="form-control-label">@subheader.Reason :</label>
+                                                                    }
+                                                                    <textarea rows="4" cols="47" class="form-control" name="Solution"></textarea>
+
+                                                                }
+                                                            </div>
+                                                        </div>
+
+                                                        foreach (SysSurveyDetailTemplate detail in subheader.SurveyDetailList)
+                                                        {
+                                                        <div class="col-md-12">
+                                                            <div class="checkbox">
+                                                                <label>
+                                                                    <input data-toggle="toggle" data-onstyle="success"
+                                                                           type="checkbox" class="selLandType" value="" />@detail.Title
+                                                                        @if (detail.IsReason > 0)
+                                                                        {
+
+                                                                            <label for="" class="form-control-label">@detail.Reason :</label>
+                                                                            <input type="text" class="form-comment" />
+
+                                                                        }
+                                                                    </label>
+
+                                                                </div>
+                                                              
+
+                                                            </div>
+                                                        }
+                                                        i++;
+                                                    }
+
+                                                }
+
+                                            }
+                                           
+
+                                        </div>
+                                            </div>
+                                        </div>
+                            </div>
+
+                        </div>
+                    }
 
 
 
@@ -1640,5 +1781,11 @@
             </div>
 
     </form>
+
+    <script type="text/javascript">
+
+      
+
+    </script>
 </body>
 
