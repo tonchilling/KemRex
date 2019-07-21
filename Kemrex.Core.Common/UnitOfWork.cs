@@ -95,6 +95,7 @@ namespace Kemrex.Core.Common
             private JobOrderModule _JobOrderModule;
             private TransferModule _Transfer;
             private TransferStockModule _TransferStock;
+            private SurveyModule _SurveyModule;
 
             public AccountModule Account => _Account ?? (_Account = new AccountModule(db));
             public CustomerAddressModule CustomerAddress => _CustomerAddress ?? (_CustomerAddress = new CustomerAddressModule(db));
@@ -133,6 +134,10 @@ namespace Kemrex.Core.Common
             public TransferModule Transfer => _Transfer ?? (_Transfer = new TransferModule(db));
 
             public TransferStockModule TransferStock => _TransferStock ?? (_TransferStock = new TransferStockModule(db));
+
+
+            public SurveyModule Survey => _SurveyModule ?? (_SurveyModule = new SurveyModule(db));
+
 
         }
         #endregion

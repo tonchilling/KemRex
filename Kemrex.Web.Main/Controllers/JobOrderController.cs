@@ -100,6 +100,9 @@ namespace Kemrex.Web.Main.Controllers
             System.Threading.Thread.CurrentThread.CurrentUICulture = new System.Globalization.CultureInfo("en-US"); ;
 
             TblJobOrder ob = uow.Modules.JobOrder.Get(id ?? 0);
+            ViewData["optEmployee"] = uow.Modules.Employee.Gets();
+            ViewData["userAccount"] = CurrentUser;
+            ViewData["SurveyTemplate"] = uow.Modules.Survey.GetList();
             return ViewDetail(ob, msg, msgType);
         }
 

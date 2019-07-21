@@ -102,6 +102,11 @@ optQuotation = (List<TblQuotation>
                 $("#" + tab_id).addClass('current');
             })
 
+
+             if (@Model.StatusId== 2) {
+
+                $("#frmMain :input").prop("disabled", true);
+            }
             calDiscount();
         });
 
@@ -381,7 +386,7 @@ optQuotation = (List<TblQuotation>
         $(document).on("click", ".btnConfirm", function () {
             var isConfirm = false;
             swal({
-                title: "Save",
+                title: "Approve",
                 text: "Do you want to confirm?",
                 type: "info",
                 showCancelButton: true,
@@ -390,7 +395,7 @@ optQuotation = (List<TblQuotation>
             },
                 function (isConfirm) {
                     if (isConfirm) {
-                        
+                        $('#hdApprove').val(3);
                         $('#StatusId').val(2);
                          $('#frmMain').attr('action', '@Url.Action("Detail", "SaleOrder")');
                         $('#frmMain').submit();
@@ -731,6 +736,7 @@ optQuotation = (List<TblQuotation>
                                 <form method="post" action="@Url.Action("Detail", "SaleOrder")" id="frmMain" enctype="multipart/form-data">
                                     @Html.AntiForgeryToken()
                                     <input type="hidden" name="SaleOrderId" value="@Model.SaleOrderId" />
+                                     <input type="hidden" id="hdApprove" name="hdApprove"  />
                                     <div class="panel-body">
                                         <div class="row">
 
@@ -877,7 +883,7 @@ optQuotation = (List<TblQuotation>
                                                     <label for="CreateDate" class="col-sm-5 col-form-label">วันที่ออกเอกสาร</label>
                                                     <div class="input-group col-sm-6">
 
-                                                        <input type="text" class="form-control" name="CreatedDate" value="@(Model.CreatedDate!=null? Model.CreatedDate.ToString("dd/MM/yyyy"):DateTime.Now.ToString("dd/MM/yyyy"))" readonly autocomplete="off" />
+                                                        <input type="text" class="form-control" name="CreatedDate" value="@(Model.CreatedDate!=null? Model.CreatedDate.Value.ToString("dd/MM/yyyy"):DateTime.Now.ToString("dd/MM/yyyy"))" readonly autocomplete="off" />
                                                         <span class="input-group-addon">
                                                             <i class="icon wb-calendar icon-2-5x text-success" aria-hidden="true"></i>
                                                         </span>
@@ -967,14 +973,14 @@ optQuotation = (List<TblQuotation>
                                                     <div class="col-12">
                                                         <div class="form-group">
                                                             <button type="submit" id="btnNextStep" class="btn btn-primary">@(Model.SaleOrderId > 0 ? "บันทึก" : "ต่อไป")</button>&nbsp;
-                                                            <button type="submit" id="btnConfirm" class="btn btn-info btnConfirm">
-                                                                ยืนยัน
+                                                            <button type="submit" id="btnConfirm" class="btn btn-success btnConfirm">
+                                                                อนุมัติ
                                                             </button>&nbsp;
 
                                                             <a href="@Url.Action("Index", "SaleOrder")" class="btn btn-default">ยกเลิก</a>
                                                             @if (Model.SaleOrderId > 0)
                                                             {
-                                                                <a href="@Url.Action("Detail", new { controller = "JobOrder", area = "", SaleOrderId = Model.SaleOrderId })" class="btn btn-success">สร้างใบสั่งงาน</a>
+                                                                <a href="@Url.Action("Detail", new { controller = "JobOrder", area = "", SaleOrderId = Model.SaleOrderId })" class="btn btn-warning">สร้างใบสั่งงาน</a>
                                                             }
                                                         </div>
                                                     </div>
