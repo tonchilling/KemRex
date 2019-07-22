@@ -260,7 +260,10 @@ namespace Kemrex.Web.Main.Controllers
             int cusid = quo.CustomerId.HasValue ? quo.CustomerId.Value : 0;
             int GroupID = uow.Modules.Customer.GetByCondition(cusid).GroupId.HasValue ? uow.Modules.Customer.GetByCondition(cusid).GroupId.Value:0;
             string SaleTel = uow.Modules.Employee.GetByCondition(quo.SaleId).EmpMobile;
-            string TitleSale = uow.Modules.Employee.Get(quo.SaleId).Prefix.PrefixNameTh;
+            TblEmployee emp = uow.Modules.Employee.GetByCondition(quo.SaleId);
+            emp.Prefix = uow.Modules.Enum.PrefixGet(emp.PrefixId.HasValue ? emp.PrefixId.Value : 0);
+            //string TitleSale = emp.Prefix.PrefixNameTh;
+            string TitleSale = emp.Prefix.PrefixNameTh;
 
             String html = string.Empty;
             html = System.IO.File.ReadAllText(HttpContext.Server.MapPath("~/html/" + "QuotationHTML.html"));
@@ -357,7 +360,7 @@ namespace Kemrex.Web.Main.Controllers
                 return File(stream.ToArray(), "application/pdf", "Quotation_" + quo.QuotationNo + ".pdf");
             }
         }
-        public FileResult PDFSaleOrder(int id)
+        public FileResult PDFSaleOrderxx(int id)
         {
             TblSaleOrder tblS = uow.Modules.SaleOrder.Get(id);
             tblS.TblSaleOrderDetail = uow.Modules.SaleOrderDetail.Gets(id);
@@ -599,6 +602,116 @@ namespace Kemrex.Web.Main.Controllers
                 return File(fs.ToArray(), "application/pdf", "SaleOrder.pdf");
             }
 
+        }
+        public FileResult PDFSaleOrder(int id)
+        {
+            TblSaleOrder so = uow.Modules.SaleOrder.Get(id);
+            so.TblSaleOrderDetail = uow.Modules.SaleOrderDetail.Gets(id);
+            so.Customer = uow.Modules.Customer.Get(so.CustomerId.HasValue ? so.CustomerId.Value : -1);
+            foreach (var pr in so.TblSaleOrderDetail.ToList())
+            {
+                pr.Product = uow.Modules.Product.Get(pr.ProductId);
+                pr.Product.Unit = uow.Modules.Unit.Get(pr.Product.UnitId);
+            }
+            EnmPaymentCondition epc = new EnmPaymentCondition();
+            TblQuotation qo = uow.Modules.Quotation.Get(so.QuotationNo);
+            epc = uow.Modules.PaymentCondition.Get(so.ConditionId.Value);
+            int saleID = so.SaleId.HasValue ? so.SaleId.Value : 0;
+            string SaleTel = uow.Modules.Employee.GetByCondition(saleID).EmpMobile;
+            int DepartmentID = uow.Modules.Employee.GetByCondition(saleID).DepartmentId.HasValue ? uow.Modules.Employee.GetByCondition(saleID).DepartmentId.Value : 0;
+            string Department = uow.Modules.Department.Get(DepartmentID).DepartmentName;
+            TblEmployee emp = uow.Modules.Employee.GetByCondition(saleID);
+            emp.Prefix = uow.Modules.Enum.PrefixGet(emp.PrefixId.HasValue ? emp.PrefixId.Value : 0);
+            string TitleSale = emp.Prefix.PrefixNameTh;
+
+            String html = string.Empty;
+            html = System.IO.File.ReadAllText(HttpContext.Server.MapPath("~/html/" + "SaleOrderHTML.html"));
+            using (MemoryStream stream = new System.IO.MemoryStream())
+            {
+                html = html.Replace("@@ImageBanner@@", HttpContext.Server.MapPath("~/images/logo-banner.png"));
+                html = html.Replace("@@Logo2@@", HttpContext.Server.MapPath("~/images/logo2.png"));
+                html = html.Replace("@@ImageCheckbox@@", HttpContext.Server.MapPath("~/html/img/checkbox_0.gif"));
+                html = html.Replace("@@SaleOrderNo@@", so.SaleOrderNo);
+                string StrSalOrderDate = so.SaleOrderDate.HasValue ? so.SaleOrderDate.Value.Day.ToString("00") + "/" + so.SaleOrderDate.Value.Month.ToString("00") + "/" + so.SaleOrderDate.Value.Year : "";
+
+                html = html.Replace("@@CustomerId@@", so.CustomerId.Value.ToString("0000000000"));
+                
+                html = html.Replace("@@CustomerName@@", so.CustomerName);
+                html = html.Replace("@@CustomerName@@", so.CustomerName);
+                html = html.Replace("@@Address@@", so.BillingAddress);
+                html = html.Replace("@@Tel@@", so.Customer.CustomerPhone);
+                html = html.Replace("@@Fax@@", so.Customer.CustomerFax);
+
+                html = html.Replace("@@QuotationNo@@", so.QuotationNo);
+                string StrQuotationDate = qo.QuotationDate.Day.ToString("00") + "/" + qo.QuotationDate.Month.ToString("00") + "/" + qo.QuotationDate.Year;
+                html = html.Replace("@@QuotationDate@@", StrQuotationDate);
+                string DeliveryDate = so.DeliveryDate.HasValue ? so.DeliveryDate.Value.Day.ToString("00") + "/" + so.DeliveryDate.Value.Month.ToString("00") + "/" + so.DeliveryDate.Value.Year : "";
+               
+                html = html.Replace("@@DeliveryDate@@", DeliveryDate);
+                html = html.Replace("@@CreditDay@@", so.SaleOrderCreditDay.ToString());
+                html = html.Replace("@@Condition@@", epc.ConditionName);
+                html = html.Replace("@@Department@@", Department);
+
+
+
+                string tagItem = "";
+                int num = 0;
+                foreach (var d in so.TblSaleOrderDetail.ToList())
+                {
+                    num++;
+                    tagItem += "<tr>";
+                    tagItem += "<td align='center' style='border-right:1px;'> " + num + "</td>";
+                    tagItem += "<td align='left' style='border-right:1px;'> " + d.Product.ProductCode + "</td>";
+                    tagItem += "<td align='left' style='border-right:1px;' >" + d.Product.ProductName + "</td>";
+                    tagItem += "<td align='right' style='border-right:1px;' >" + (d.Quantity != 0 ? d.Quantity.ToString("###,###") : "") + "</td>";
+                    tagItem += "<td align='center' style='border-right:1px;' >" + d.Product.Unit.UnitName + "</td>";
+                    tagItem += "<td align='right' style='border-right:1px;' >" + (d.Product.PriceNet != 0 ? d.Product.PriceNet.ToString("###,###,###.00") : "") + "</td>";
+                    tagItem += "<td align='right' style='border-right:1px;' >" + (d.DiscountNet != 0 ? d.DiscountNet.ToString("###,###,###.00") : "0.00") + "</td>";
+                    tagItem += "<td align='right' >" + (d.TotalNet.HasValue ? d.TotalNet.Value.ToString("###,###,###.00") : "") + "</td>";
+                    tagItem += "</tr>";
+                }
+
+                for (int i = 0; i <= 20 - num; i++)
+                {
+                    tagItem += "<tr><td style='border-right:1px;'>&nbsp;</td>" +
+                        "<td style='border-right:1px;'>&nbsp;</td>" +
+                        "<td style='border-right:1px;'>&nbsp;</td>" +
+                        "<td style='border-right:1px;'>&nbsp;</td>" +
+                        "<td style='border-right:1px;'>&nbsp;</td>" +
+                        "<td style='border-right:1px;'>&nbsp;</td>" +
+                        "<td style='border-right:1px;'>&nbsp;</td>" +
+                        "<td>&nbsp;</td></tr>";
+                }
+                html = html.Replace("@@item@@", tagItem);
+                html = html.Replace("@@Remark@@", so.SaleOrderRemark);
+                decimal SubTotalNet = 0;
+                decimal DiscountNet = 0;
+                SubTotalNet = so.SubTotalNet.HasValue ? so.SubTotalNet.Value : 0;
+                DiscountNet = so.DiscountNet.HasValue ? so.DiscountNet.Value != 0 ? so.DiscountNet.Value : 0 : 0;
+
+                decimal SummaryNet = 0;
+                SummaryNet = SubTotalNet - DiscountNet;
+                decimal SummaryVat = (SummaryNet * 7) / 100;
+                decimal SummaryTot = SummaryNet + SummaryVat;
+                html = html.Replace("@@SubTotalNet@@", SubTotalNet.ToString("###,###,##0.00"));
+                html = html.Replace("@@DiscountNet@@", DiscountNet.ToString("###,###,##0.00"));
+                html = html.Replace("@@SummaryNet@@", SummaryNet.ToString("###,###,##0.00"));
+                html = html.Replace("@@SummaryVat@@", SummaryVat.ToString("###,###,##0.00"));
+                html = html.Replace("@@SummaryTot@@", SummaryTot.ToString("###,###,##0.00"));
+                //string textFinalAmount = ThaiBahtText(invoice.SaleOrder.SummaryTot.HasValue ? invoice.SaleOrder.SummaryTot.Value.ToString():"");
+                string textFinalAmount = ThaiBahtText(SummaryTot.ToString());
+                html = html.Replace("@@TextfinalAmount@@", textFinalAmount);
+                html = html.Replace("@@SaleName@@", TitleSale + so.SaleName);
+
+
+                StringReader sr = new StringReader(html);
+                Document pdfDoc = new Document(PageSize.A4, 10f, 10f, 10f, 0f);
+                PdfWriter writer = PdfWriter.GetInstance(pdfDoc, stream);
+                pdfDoc.Open();
+                XMLWorkerHelper.GetInstance().ParseXHtml(writer, pdfDoc, sr);
+                pdfDoc.Close();
+                return File(stream.ToArray(), "application/pdf", "SaleOrder_" + so.SaleOrderNo + ".pdf");
+            }
         }
         public FileResult PDFInvoice(int id)
         {
@@ -906,22 +1019,8 @@ namespace Kemrex.Web.Main.Controllers
         public FileResult PDFQualityCheck(int id)
         {
 
-            TblJobOrder tbl = uow.Modules.JobOrder.Get(id);
-            tbl.SaleOrder = uow.Modules.SaleOrder.Get(tbl.SaleOrderId.HasValue ? tbl.SaleOrderId.Value : -1);
-            tbl.SaleOrder.Sale = uow.Modules.Employee.Get(tbl.SaleOrder.SaleId.HasValue ? tbl.SaleOrder.SaleId.Value : -1);
-            DataTable dtCate = new DataTable();
-            dtCate.Columns.Add("CategoryID", typeof(int));
-            dtCate.Columns.Add("CategoryTypID", typeof(int));
-            dtCate.Columns.Add("CategoryName", typeof(String));
-            foreach (var ptype in tbl.ProjectType.ToList())
-            {
-                DataRow row = dtCate.NewRow();
-                row["CategoryID"] = uow.Modules.SysCategory.Get(ptype.ProjectTypeId).CategoryId;
-                row["CategoryTypID"] = uow.Modules.SysCategory.Get(ptype.ProjectTypeId).CategoryTypeId;
-                row["CategoryName"] = uow.Modules.SysCategory.Get(ptype.ProjectTypeId).CategoryName;
-                dtCate.Rows.Add(row);
-            }
-            TblProduct prd = uow.Modules.Product.Get(tbl.ProductId.HasValue ? tbl.ProductId.Value : -1);
+            TblJobOrder jb = uow.Modules.JobOrder.Get(id);
+            //TblSurveyHeader svH = uow.Modules.Survey.Get(id);
 
             String html = string.Empty;
             html = System.IO.File.ReadAllText(HttpContext.Server.MapPath("~/html/" + "QualityCheckHTML.html"));
@@ -930,42 +1029,14 @@ namespace Kemrex.Web.Main.Controllers
                 html = html.Replace("@@ImageBanner@@", HttpContext.Server.MapPath("~/images/logo-banner.png"));
                 html = html.Replace("@@ImageCheckbox@@", HttpContext.Server.MapPath("~/html/img/checkbox_0.gif"));
 
-                html = html.Replace("@@JobName@@", tbl.JobName);
-                html = html.Replace("@@JobOrderNo@@", tbl.JobOrderNo);
-                string txtStartDate = tbl.StartDate == null ? "_______________" : tbl.StartDate.Value.Day.ToString("00") + "/" + tbl.StartDate.Value.Month.ToString("00") + "/" + tbl.StartDate.Value.Year;
-                string txtEndtDate = tbl.EndDate == null ? "_______________" : tbl.EndDate.Value.Day.ToString("00") + "/" + tbl.EndDate.Value.Month.ToString("00") + "/" + tbl.EndDate.Value.Year;
-                html = html.Replace("@@StartDate@@", txtStartDate);
-                html = html.Replace("@@EndDate@@", txtEndtDate);
-                html = html.Replace("@@StartWorkingTime@@", tbl.StartWorkingTime);
-                html = html.Replace("@@EndWorkingTime@@", tbl.EndWorkingTime);
-                html = html.Replace("@@ProjectName@@", tbl.ProjectName);
-                html = html.Replace("@@SaleName@@", tbl.SaleOrder.SaleName);
-                html = html.Replace("@@SaleMobile@@", tbl.SaleOrder.Sale.EmpMobile);
-                html = html.Replace("@@CustomerName@@", tbl.CustomerName);
-                html = html.Replace("@@CustomerPhone@@", tbl.CustomerPhone);
-                html = html.Replace("@@CustomerEmail@@", tbl.CustomerEmail);
+                html = html.Replace("@@Job@@", jb.JobName + " ("+ jb.JobOrderNo +")");
+                html = html.Replace("@@CauseChangeInstall@@", "_____________________________________________________________________________________");
+                html = html.Replace("@@CauseNotInstall@@", "_____________________________________________________________________________________");
+                html = html.Replace("@@MediumGround@@", "_______________________________________________________________________________");
+                html = html.Replace("@@LowGround@@", "_______________________________________________________________________________");
+                html = html.Replace("@@OtherGround@@", "________________________________________________________________________________________");
+                html = html.Replace("@@OtherProblem@@", "_____________________________________________________________________________________________");
 
-                int rowcheck = 0;
-                string CategoryName = "";
-                foreach (DataRow dr in dtCate.Rows)
-                {
-                    rowcheck++;
-                    if (rowcheck <= 3)
-                    {
-                        CategoryName += dr["CategoryName"].ToString() + "&nbsp; &nbsp; &nbsp;";
-                    }
-                }
-                html = html.Replace("@@CategoryName@@", CategoryName);
-                html = html.Replace("@@ProductSaftyFactory@@", tbl.ProductSaftyFactory == null ? "_____" : tbl.ProductSaftyFactory.ToString());
-                html = html.Replace("@@ProductModel@@", prd.ProductCode + " " + prd.ProductName);
-                html = html.Replace("@@ProductQuantity@@", tbl.ProductQty.HasValue ? tbl.ProductQty.Value.ToString() : "_________");
-
-                html = html.Replace("@@ProductWeight@@", tbl.ProductWeight.HasValue ? tbl.ProductWeight.Value.ToString() : "_________________");
-                html = html.Replace("@@Adapter@@", tbl.Adapter);
-                html = html.Replace("@@HouseNo@@", tbl.HouseNo);
-                html = html.Replace("@@VillageNo@@", tbl.VillageNo);
-
-                html = html.Replace("@@District@@", "____________________________________________________________");
 
 
 
@@ -975,7 +1046,7 @@ namespace Kemrex.Web.Main.Controllers
                 pdfDoc.Open();
                 XMLWorkerHelper.GetInstance().ParseXHtml(writer, pdfDoc, sr);
                 pdfDoc.Close();
-                return File(stream.ToArray(), "application/pdf", "JobOrder_" + tbl.JobOrderNo + ".pdf");
+                return File(stream.ToArray(), "application/pdf", "QualityCheck_" + jb.JobOrderNo + ".pdf");
             }
         }
         public FileResult PDFTransferOut(int id)
