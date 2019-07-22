@@ -33,7 +33,7 @@ namespace Kemrex.Web.Main.Controllers
             return View();
         }
         ///id=QuatationId or OrderId
-        public FileResult PDFQuatation(int id)
+        public FileResult PDFQuotationxx(int id)
         {
             TblQuotation tblQ = uow.Modules.Quotation.Get(id);
             tblQ.TblQuotationDetail = uow.Modules.QuotationDetail.Gets(id);
@@ -247,6 +247,115 @@ namespace Kemrex.Web.Main.Controllers
                 return File(fs.ToArray(), "application/pdf", "Quotation.pdf");
             }
 
+        }
+        public FileResult PDFQuotation(int id)
+        {
+            TblQuotation quo = uow.Modules.Quotation.Get(id);
+            quo.TblQuotationDetail = uow.Modules.QuotationDetail.Gets(id);
+            foreach (var pr in quo.TblQuotationDetail.ToList())
+            {
+                pr.Product = uow.Modules.Product.Get(pr.ProductId);
+                pr.Product.Unit = uow.Modules.Unit.Get(pr.Product.UnitId);
+            }
+            int cusid = quo.CustomerId.HasValue ? quo.CustomerId.Value : 0;
+            int GroupID = uow.Modules.Customer.GetByCondition(cusid).GroupId.HasValue ? uow.Modules.Customer.GetByCondition(cusid).GroupId.Value:0;
+            string SaleTel = uow.Modules.Employee.GetByCondition(quo.SaleId).EmpMobile;
+            string TitleSale = uow.Modules.Employee.Get(quo.SaleId).Prefix.PrefixNameTh;
+
+            String html = string.Empty;
+            html = System.IO.File.ReadAllText(HttpContext.Server.MapPath("~/html/" + "QuotationHTML.html"));
+            using (MemoryStream stream = new System.IO.MemoryStream())
+            {
+                html = html.Replace("@@ImageBanner@@", HttpContext.Server.MapPath("~/images/logo-banner.png"));
+                html = html.Replace("@@Logo2@@", HttpContext.Server.MapPath("~/images/logo2.png"));
+                html = html.Replace("@@ImageCheckbox@@", HttpContext.Server.MapPath("~/html/img/checkbox_0.gif"));
+                html = html.Replace("@@QuotationNo@@", quo.QuotationNo);
+                string StrQuotationDate = quo.QuotationDate.Day.ToString("00") + "/" + quo.QuotationDate.Month.ToString("00") + "/" + quo.QuotationDate.Year;
+                html = html.Replace("@@QuotationDateStr@@", StrQuotationDate);
+                if (GroupID == 1) //นิติบุคคล
+                {
+                    html = html.Replace("@@ContactName@@", quo.ContractName);
+                    html = html.Replace("@@CompanyName@@", quo.CustomerName);
+                }
+                else //ไม่ใช่นิติบุคคล
+                {
+                    html = html.Replace("@@ContactName@@", quo.CustomerName);
+                    html = html.Replace("@@CompanyName@@", "");
+                }
+                html = html.Replace("@@Address@@", quo.BillingAddress);
+                html = html.Replace("@@Tel@@", quo.ContractPhone);
+                html = html.Replace("@@Fax@@", "");
+                html = html.Replace("@@ProjectName@@", "");
+
+                string DeliveryDate = quo.DeliveryDate.HasValue ? quo.DeliveryDate.Value.Day.ToString("00") + "/" + quo.DeliveryDate.Value.Month.ToString("00") + "/" + quo.DeliveryDate.Value.Year:"";
+                string DueDate = quo.DueDate.HasValue ? quo.DueDate.Value.Day.ToString("00") + "/" + quo.DueDate.Value.Month.ToString("00") + "/" + quo.DueDate.Value.Year:"";
+
+                html = html.Replace("@@DeliveryDate@@", DeliveryDate);
+                html = html.Replace("@@ValidDay@@", quo.QuotationValidDay.ToString());
+                html = html.Replace("@@DueDate@@", DueDate);
+                html = html.Replace("@@CreditDay@@", quo.QuotationCreditDay.ToString());
+                html = html.Replace("@@SaleTel@@", SaleTel);
+
+
+
+                string tagItem = "";
+                int num = 0;
+                foreach (var d in quo.TblQuotationDetail.ToList())
+                {
+                    num++;
+                    tagItem += "<tr>";
+                    tagItem += "<td align='left' style='border-right:1px;'> " + num + "</td>";
+                    tagItem += "<td align='left' style='border-right:1px;'> " + d.Product.ProductCode + "</td>";
+                    tagItem += "<td align='left' style='border-right:1px;' >" + d.Product.ProductName + "</td>";
+                    tagItem += "<td align='right' style='border-right:1px;' >" + (d.Quantity != 0 ? d.Quantity.ToString("###,###") : "") + "</td>";
+                    tagItem += "<td align='center' style='border-right:1px;' >" + d.Product.Unit.UnitName + "</td>";
+                    tagItem += "<td align='right' style='border-right:1px;' >" + (d.Product.PriceNet != 0 ? d.Product.PriceNet.ToString("###,###,###.00") : "") + "</td>";
+                    tagItem += "<td align='right' style='border-right:1px;' >" + (d.DiscountNet != 0 ? d.DiscountNet.ToString("###,###,###.00") : "") + "</td>";
+                    tagItem += "<td align='right' >" + (d.TotalNet.HasValue ? d.TotalNet.Value.ToString("###,###,###.00") : "") + "</td>";
+                    tagItem += "</tr>";
+                }
+
+                for (int i = 0; i <= 20 - num; i++)
+                {
+                    tagItem += "<tr><td style='border-right:1px;'>&nbsp;</td>" +
+                        "<td style='border-right:1px;'>&nbsp;</td>" +
+                        "<td style='border-right:1px;'>&nbsp;</td>" +
+                        "<td style='border-right:1px;'>&nbsp;</td>" +
+                        "<td style='border-right:1px;'>&nbsp;</td>" +
+                        "<td style='border-right:1px;'>&nbsp;</td>" +
+                        "<td style='border-right:1px;'>&nbsp;</td>" +
+                        "<td>&nbsp;</td></tr>";
+                }
+                html = html.Replace("@@item@@", tagItem);
+                html = html.Replace("@@Remark@@", quo.QuotationRemark);
+                decimal SubTotalNet = 0;
+                decimal DiscountNet = 0;
+                SubTotalNet = quo.SubTotalNet.HasValue ? quo.SubTotalNet.Value : 0;
+                DiscountNet = quo.DiscountNet.HasValue ? quo.DiscountNet.Value != 0 ? quo.DiscountNet.Value : 0 : 0;
+               
+                decimal SummaryNet = 0;
+                SummaryNet = SubTotalNet - DiscountNet;
+                decimal SummaryVat = (SummaryNet * 7) / 100;
+                decimal SummaryTot = SummaryNet + SummaryVat;
+                html = html.Replace("@@SubTotalNet@@", SubTotalNet.ToString("###,###,##0.00"));
+                html = html.Replace("@@DiscountNet@@", DiscountNet.ToString("###,###,##0.00"));
+                html = html.Replace("@@SummaryNet@@", SummaryNet.ToString("###,###,##0.00"));
+                html = html.Replace("@@SummaryVat@@", SummaryVat.ToString("###,###,##0.00"));
+                html = html.Replace("@@SummaryTot@@", SummaryTot.ToString("###,###,##0.00"));
+                //string textFinalAmount = ThaiBahtText(invoice.SaleOrder.SummaryTot.HasValue ? invoice.SaleOrder.SummaryTot.Value.ToString():"");
+                string textFinalAmount = ThaiBahtText(SummaryTot.ToString());
+                html = html.Replace("@@TextfinalAmount@@", textFinalAmount);
+                html = html.Replace("@@SaleName@@", TitleSale + quo.SaleName);
+
+
+                StringReader sr = new StringReader(html);
+                Document pdfDoc = new Document(PageSize.A4, 10f, 10f, 10f, 0f);
+                PdfWriter writer = PdfWriter.GetInstance(pdfDoc, stream);
+                pdfDoc.Open();
+                XMLWorkerHelper.GetInstance().ParseXHtml(writer, pdfDoc, sr);
+                pdfDoc.Close();
+                return File(stream.ToArray(), "application/pdf", "Quotation_" + quo.QuotationNo + ".pdf");
+            }
         }
         public FileResult PDFSaleOrder(int id)
         {
@@ -792,6 +901,81 @@ namespace Kemrex.Web.Main.Controllers
                 XMLWorkerHelper.GetInstance().ParseXHtml(writer, pdfDoc, sr);
                 pdfDoc.Close();
                 return File(stream.ToArray(), "application/pdf", "JobOrder_"+ tbl.JobOrderNo + ".pdf");
+            }
+        }
+        public FileResult PDFQualityCheck(int id)
+        {
+
+            TblJobOrder tbl = uow.Modules.JobOrder.Get(id);
+            tbl.SaleOrder = uow.Modules.SaleOrder.Get(tbl.SaleOrderId.HasValue ? tbl.SaleOrderId.Value : -1);
+            tbl.SaleOrder.Sale = uow.Modules.Employee.Get(tbl.SaleOrder.SaleId.HasValue ? tbl.SaleOrder.SaleId.Value : -1);
+            DataTable dtCate = new DataTable();
+            dtCate.Columns.Add("CategoryID", typeof(int));
+            dtCate.Columns.Add("CategoryTypID", typeof(int));
+            dtCate.Columns.Add("CategoryName", typeof(String));
+            foreach (var ptype in tbl.ProjectType.ToList())
+            {
+                DataRow row = dtCate.NewRow();
+                row["CategoryID"] = uow.Modules.SysCategory.Get(ptype.ProjectTypeId).CategoryId;
+                row["CategoryTypID"] = uow.Modules.SysCategory.Get(ptype.ProjectTypeId).CategoryTypeId;
+                row["CategoryName"] = uow.Modules.SysCategory.Get(ptype.ProjectTypeId).CategoryName;
+                dtCate.Rows.Add(row);
+            }
+            TblProduct prd = uow.Modules.Product.Get(tbl.ProductId.HasValue ? tbl.ProductId.Value : -1);
+
+            String html = string.Empty;
+            html = System.IO.File.ReadAllText(HttpContext.Server.MapPath("~/html/" + "QualityCheckHTML.html"));
+            using (MemoryStream stream = new System.IO.MemoryStream())
+            {
+                html = html.Replace("@@ImageBanner@@", HttpContext.Server.MapPath("~/images/logo-banner.png"));
+                html = html.Replace("@@ImageCheckbox@@", HttpContext.Server.MapPath("~/html/img/checkbox_0.gif"));
+
+                html = html.Replace("@@JobName@@", tbl.JobName);
+                html = html.Replace("@@JobOrderNo@@", tbl.JobOrderNo);
+                string txtStartDate = tbl.StartDate == null ? "_______________" : tbl.StartDate.Value.Day.ToString("00") + "/" + tbl.StartDate.Value.Month.ToString("00") + "/" + tbl.StartDate.Value.Year;
+                string txtEndtDate = tbl.EndDate == null ? "_______________" : tbl.EndDate.Value.Day.ToString("00") + "/" + tbl.EndDate.Value.Month.ToString("00") + "/" + tbl.EndDate.Value.Year;
+                html = html.Replace("@@StartDate@@", txtStartDate);
+                html = html.Replace("@@EndDate@@", txtEndtDate);
+                html = html.Replace("@@StartWorkingTime@@", tbl.StartWorkingTime);
+                html = html.Replace("@@EndWorkingTime@@", tbl.EndWorkingTime);
+                html = html.Replace("@@ProjectName@@", tbl.ProjectName);
+                html = html.Replace("@@SaleName@@", tbl.SaleOrder.SaleName);
+                html = html.Replace("@@SaleMobile@@", tbl.SaleOrder.Sale.EmpMobile);
+                html = html.Replace("@@CustomerName@@", tbl.CustomerName);
+                html = html.Replace("@@CustomerPhone@@", tbl.CustomerPhone);
+                html = html.Replace("@@CustomerEmail@@", tbl.CustomerEmail);
+
+                int rowcheck = 0;
+                string CategoryName = "";
+                foreach (DataRow dr in dtCate.Rows)
+                {
+                    rowcheck++;
+                    if (rowcheck <= 3)
+                    {
+                        CategoryName += dr["CategoryName"].ToString() + "&nbsp; &nbsp; &nbsp;";
+                    }
+                }
+                html = html.Replace("@@CategoryName@@", CategoryName);
+                html = html.Replace("@@ProductSaftyFactory@@", tbl.ProductSaftyFactory == null ? "_____" : tbl.ProductSaftyFactory.ToString());
+                html = html.Replace("@@ProductModel@@", prd.ProductCode + " " + prd.ProductName);
+                html = html.Replace("@@ProductQuantity@@", tbl.ProductQty.HasValue ? tbl.ProductQty.Value.ToString() : "_________");
+
+                html = html.Replace("@@ProductWeight@@", tbl.ProductWeight.HasValue ? tbl.ProductWeight.Value.ToString() : "_________________");
+                html = html.Replace("@@Adapter@@", tbl.Adapter);
+                html = html.Replace("@@HouseNo@@", tbl.HouseNo);
+                html = html.Replace("@@VillageNo@@", tbl.VillageNo);
+
+                html = html.Replace("@@District@@", "____________________________________________________________");
+
+
+
+                StringReader sr = new StringReader(html);
+                Document pdfDoc = new Document(PageSize.A4, 10f, 10f, 10f, 0f);
+                PdfWriter writer = PdfWriter.GetInstance(pdfDoc, stream);
+                pdfDoc.Open();
+                XMLWorkerHelper.GetInstance().ParseXHtml(writer, pdfDoc, sr);
+                pdfDoc.Close();
+                return File(stream.ToArray(), "application/pdf", "JobOrder_" + tbl.JobOrderNo + ".pdf");
             }
         }
         public FileResult PDFTransferOut(int id)

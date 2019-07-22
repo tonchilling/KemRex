@@ -636,6 +636,16 @@ optEmployee = (List<TblEmployee>
                                                 <button type="submit" id="btnCloseJob" class="btn btn-success">ปิดงาน</button>
                                             }
                                             <a href="" class="btn btn-default">ยกเลิก</a>
+
+                                            <a href="@Url.Action("PDFQualityCheck", new { controller = "export", area = "", id = Model.JobOrderId  })"
+                                               class="btn btn-warning" style="float:right;margin-left:10px;">
+                                                <i class="fa fa-file-pdf-o" aria-hidden="true"></i>&nbsp;พิมพ์แบบประเมิน
+                                            </a>
+                                            <a href="@Url.Action("PDFJobOrder", new { controller = "export", area = "", id = Model.JobOrderId  })"
+                                               class="btn btn-warning" style="float:right;">
+                                                <i class="fa fa-file-pdf-o" aria-hidden="true"></i>&nbsp;พิมพ์ใบสั่งงาน
+                                            </a>
+
                                         </div>
                                     </div>
                                 </div>

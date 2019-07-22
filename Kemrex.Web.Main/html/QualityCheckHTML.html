@@ -1,0 +1,92 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Index</title>
+    <style type="text/css">
+        body {
+            font-family: tahoma;
+            font-size: 10pt;
+            width:1024px;
+            padding-left:20px;
+            padding-right:20px;
+            background-color:gainsboro;
+            line-height:28px;
+            
+        }
+    </style>
+</head>
+<body>
+    <div style="width: 100%; padding-left: 30px; padding-right: 30px; background-color: white;">
+        <div>
+            <center>
+                <table style="background-color: white; margin-top:10px;">
+                    <tr>
+                        <td width="30%">&nbsp;</td>
+                        <td><img src="@@ImageBanner@@" width="220" /></td>
+                        <td width="30%">&nbsp;</td>
+                    </tr>
+                </table>
+            </center>
+        </div>
+        <br />
+        <div style="float:left;"><h3>ประเมินคุณภาพงานและข้อมูลเพิ่มเติม (Quality Check) &nbsp;&nbsp;&nbsp;&nbsp;</h3></div>
+        <div style="float:left;">Job : @@Job@@</div>
+        <div style="clear:both;"></div>
+        <div><h3>คุณภาพหน้างาน</h3></div>
+        <div><h3>1. รายละเอียดพื้นทีติดตั้งหน้างาน</h3></div>
+        <div><img src="@@ImageCheckbox@@" width="18" /> &nbsp;&nbsp;การติดตั้งเป็นไปตามปกติ</div>
+        <div><img src="@@ImageCheckbox@@" width="18" /> &nbsp;&nbsp;การติดตั้งมีการเปลียนแปลงขนาดเข็มเหล็ก</div>
+        <div style="padding-left:18px;"> &nbsp;&nbsp;สาเหตุ &nbsp;@@CauseChangeInstall@@</div>
+        <div><img src="@@ImageCheckbox@@" width="18" /> &nbsp;&nbsp;ไม่สามารถติดตั้งเข็มเหล็กได้</div>
+        <div style="padding-left:18px;"> &nbsp;&nbsp;สาเหตุ &nbsp;@@CauseNotInstall@@</div>
+        <div><h3>2. สภาพของดินที่พบ</h3></div>
+        <div><img src="@@ImageCheckbox@@" width="18" /> &nbsp;&nbsp;ดินมีสภาพดี (ดินแน่น)</div>
+        <div><img src="@@ImageCheckbox@@" width="18" /> &nbsp;&nbsp;ดินมีสภาพปานกลาง (ดินไม่แน่น และพบเศษวัสดุอืนๆ)</div>
+        <div style="padding-left:18px;"> &nbsp;&nbsp;ปัญหาที่พบคือ &nbsp;@@MediumGround@@</div>
+        <div><img src="@@ImageCheckbox@@" width="18" /> &nbsp;&nbsp;ดินมีสภาพแย่ (ดินไม่แน่น และพบเศษวัสดุอืนๆ)</div>
+        <div style="padding-left:18px;"> &nbsp;&nbsp;ปัญหาที่พบคือ &nbsp;@@LowGround@@</div>
+        <div style="padding-left:18px;"> &nbsp;&nbsp;อื่นๆ &nbsp;@@OtherGround@@</div>
+        <div><h3>3. ปัญหาทีพบอื่นๆ</h3></div>
+        <div style="padding-left:18px;"> &nbsp;&nbsp;@@OtherProblem@@</div>
+
+        <div>
+            <table style="background-color: white; margin-top:3px; font-size:12px; line-height: 20px;" width="100%" border="1" cellspacing="0" cellpadding="5">
+                <tr>
+                    <td align="center" width="22%">
+                        <br /><br />
+                        ผู้ขายประสานงาน<br />
+                        ____________________<br />
+
+                        วันที่_____/_____/_____
+                    </td>
+                    <td align="center" width="22%">
+                        <br /><br />
+                        ผู้ควบคุมทีมติดตั้ง<br />
+                        ____________________<br />
+
+                        วันที่_____/_____/_____
+                    </td>
+                    <td align="center" width="22%">
+                        <br /> <br />
+                        ผู้รับเอกสาร<br />
+                        ____________________<br />
+
+                        วันที่_____/_____/_____
+                    </td>
+                    <td align="center" width="22%">
+                        <br /><br />
+                        ผู้จัดการฝาย EP รับทราบ<br />
+                        ____________________<br />
+
+                        วันที่_____/_____/_____
+                    </td>
+                </tr>
+            </table>
+            
+        </div>
+        <br />
+    </div>
+        <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+</body>
+</html>
