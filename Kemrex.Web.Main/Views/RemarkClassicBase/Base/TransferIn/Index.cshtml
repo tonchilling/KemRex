@@ -8,20 +8,90 @@
     KemrexController kemrex = ((KemrexController)this.ViewContext.Controller);
     Layout = kemrex.PathViewShared("_lyDefault");
     WidgetAlertModel Alert = (WidgetAlertModel)ViewBag.Alert;
-    WidgetPaginationModel Pagination = (WidgetPaginationModel)ViewBag.Pagination;
+    //WidgetPaginationModel Pagination = (WidgetPaginationModel)ViewBag.Pagination;
 }
 
 @section Scripts {
     <script type="text/javascript">
+        var url = '@Url.Action("GetTransferSInList", "TransferIn")';
         $(document).ready(function () {
             window.setTimeout(function () {
                 $(".alert").fadeTo(1000, 0).slideUp(1000, function () {
                     $(this).remove();
                 });
             }, 5000);
+            //waitingDialog.show('Waiting for loading data', { dialogSize: 'md', progressType: 'primary' });
+            LoadTable();
         });
 
         $(EngineerMenu).slideToggle();
+        function LoadTable() {
+
+            var html = '';
+            var criteria = "";
+            var urlExport = '@Url.Action("PDFTransferIn", new { controller = "export", area = ""})';
+            var urlDetail = '@Url.Action("Detail", new { controller = "TransferIn", area = ""})';
+            $(".divDetail").empty();
+            html += '<table class="table  table-striped table-hover "  >';
+            html += '<thead>';
+            html += '<tr class="table-primary" align="center">';
+            html += '<th align="center">หมายเลข</th>';
+            html += '<th align="center">วันที่</th>';
+            html += '<th align="center">สถานะ</th>';
+            html += '<th align="center">เครื่องมือ</th>';
+            html += ' </tr>';
+            html += '</thead>';
+            html += '<tbody>';
+
+
+
+            $.ajax({
+                url: url,
+                type: "POST",
+                // data: JSON.stringify(criteria),
+                dataType: "json",
+                contentType: "application/json; charset=utf-8",
+                success: function (data) {
+
+                    var statusName = "";
+                    if (data != null) {
+
+                        $.each(data, function (index, item) {
+                            html += '<tr>';
+                            html += '<td align="center">' + item.TransferNo + '</td>';
+                            html += '<td align="center">' + item.StrTransferDate + '</td>';
+                            var dddd = item.TransferStatus.toString();
+                            html += '<td align="center">' + item.StrTransferStatus + '</td>';
+
+                            html += '<td> <a href="' + urlDetail + '/' + item.TransferId + '" class="btn btn-xs btn-primary">';
+                            html += '<i class="fa fa-pencil" aria-hidden="true"></i>&nbsp;แก้ไข </a>&nbsp;';
+                            html += '<a href="' + urlExport + '/' + item.TransferId + '" class="btn btn-xs btn-warning">';
+                            html += '<i class="fa fa-file-pdf-o" aria-hidden="true"></i>&nbsp;PDF </a></td>';
+
+                            html += '</tr>';
+                        });
+                    }
+                    html += '</tbody>';
+                    html += ' </table>';
+
+                    $(".divDetail").append(html);
+                    $(".divDetail table").DataTable(
+                        {
+                            columnDefs: [
+                                { type: 'date-uk', targets: 1 }
+                            ],
+                            order: [[1, 'desc']]
+                        }
+                    );
+                    waitingDialog.hide();
+                },
+                error: function (error) {
+                    alert(error);
+                    waitingDialog.hide();
+                    //  waitingDialog.hide();
+                }
+            });
+        }
     </script>
 }
 
@@ -47,21 +117,10 @@
                     </div>
                     <!-- /.box-header -->
                     <div class="panel-body dataTables_wrapper">
-                        <div class="row">
-                            <div class="col-12 col-sm-6 form-inline">
-                                @Html.Partial(kemrex.PathViewShared("_wgPaginationSize"), Pagination)
-                            </div>
-                            <div class="col-12 col-sm-6">
-                                <div class="dataTables_paginate float-right">
-                                    @Html.Partial(kemrex.PathViewShared("_wgPagination"), Pagination)
-                                </div>
-                                <div class="clear"></div>
-                            </div>
-                            <br /><br />
-                        </div>
+                       
                         <div class="row">
                             <div class="col-12">
-                                <div class="table-responsive">
+                                <div class="table-responsive divDetail">
                                     <table class="table table-bordered table-hover">
                                         <thead>
                                             <tr align="center">
@@ -109,17 +168,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="row">
-                            <div class="col-12 col-sm-6">
-                                <span>@Pagination.CurrentDisplay</span>
-                            </div>
-                            <div class="col-12 col-sm-6">
-                                <div class="dataTables_paginate float-right">
-                                    @Html.Partial(kemrex.PathViewShared("_wgPagination"), Pagination)
-                                </div>
-                                <div class="clear"></div>
-                            </div>
-                        </div>
+                       
                     </div>
                     <!-- /.box-body -->
                 </div>

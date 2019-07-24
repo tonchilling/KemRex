@@ -235,7 +235,36 @@ namespace Kemrex.Core.Common.Modules
                 .AsQueryable();
             return data.ToList();
         }
-
+        public List<TransferHeader> GetList(string TransferType = "")
+        {
+            var data = (from d in db.TransferHeader.Where(o => o.TransferType == TransferType)
+                        select new TransferHeader
+                        {
+                            TransferId = d.TransferId,
+                            TransferNo = d.TransferNo,
+                            TransferType = d.TransferType,
+                            TransferDate = d.TransferDate,
+                            StrTransferDate = "",
+                            TransferTime = d.TransferTime,
+                            JobOrderId = d.JobOrderId,
+                            ReceiveTo = d.ReceiveTo,
+                            Reason = d.Reason,
+                            CarType = d.CarType,
+                            Company = d.Company,
+                            CarNo = d.CarNo,
+                            CarBrand = d.CarBrand,
+                            SendToDepartment = d.SendToDepartment,
+                            Remark = d.Remark,
+                            EmpId = d.EmpId,
+                            BillNo = d.BillNo,
+                            TransferStatus = d.TransferStatus,
+                            StrTransferStatus = Converting.TransferStatus(d.TransferStatus.ToString()),
+                            Note1 = d.Note1,
+                            CreatedDate = d.CreatedDate,
+                            UpdatedDate = d.UpdatedDate
+                        });
+            return data.ToList();
+        }
 
         public List<TransferHeader> Gets(int page = 1, int size = 0, string src = "",string TransferType="")
         {
