@@ -26,11 +26,11 @@ namespace Kemrex.Core.Database.Models
         public string BillNo { get; set; }
         public int TransferStatus { get; set; }
         public string Note1 { get; set; }
-        public long CreatedBy { get; set; }
-        public DateTime CreatedDate { get; set; }
-        public DateTime UpdatedDate { get; set; }
-        public long UpdatedBy { get; set; }
-        public long ApprovedBy { get; set; }
+        public long? CreatedBy { get; set; }
+        public DateTime? CreatedDate { get; set; }
+        public DateTime? UpdatedDate { get; set; }
+        public long? UpdatedBy { get; set; }
+        public long? ApprovedBy { get; set; }
 
         [NotMapped]
         public virtual TblJobOrder JobOrder { get; set; }

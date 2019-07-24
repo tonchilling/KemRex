@@ -119,7 +119,8 @@ namespace Kemrex.Core.Common.Modules
                     .Include(x => x.LandType)
                      .Include(x => x.ObstructionType)
                         .Include(x => x.ProjectType)
-                        .Include(x => x.UndergroundType).FirstOrDefault() ?? new TblJobOrder()
+                        .Include(x => x.UndergroundType)
+                        .Include(x => x.SurveyDetail).FirstOrDefault() ?? new TblJobOrder()
                         {
 
                         };
@@ -389,6 +390,7 @@ namespace Kemrex.Core.Common.Modules
                 db.TblJobOrderLandType.RemoveRange(db.TblJobOrderLandType.Where(o => o.JobOrderId == ob.JobOrderId));
                 db.TblJobOrderObstructionType.RemoveRange(db.TblJobOrderObstructionType.Where(o => o.JobOrderId == ob.JobOrderId));
                 db.TblJobOrderUndergroundType.RemoveRange(db.TblJobOrderUndergroundType.Where(o => o.JobOrderId == ob.JobOrderId));
+                db.TblJobOrderSurveyDetail.RemoveRange(db.TblJobOrderSurveyDetail.Where(o => o.JobOrderId == ob.JobOrderId));
                 db.TblJobOrder.Update(ob);
                 
 

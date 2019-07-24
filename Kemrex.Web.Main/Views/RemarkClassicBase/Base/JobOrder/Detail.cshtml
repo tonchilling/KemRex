@@ -58,7 +58,7 @@ optEmployee = (List<TblEmployee>
                     });
             }, 5000);
 
-            $("#SurveyBy").select2(
+            $("#SurveyEmployee").select2(
                 {
                     placeholder: 'ผู้ประเมิน',
                     allowClear: true
@@ -472,7 +472,23 @@ optEmployee = (List<TblEmployee>
             $("#hddAttachmentType").val(selected.join(","));
                 selected = [];
 
+            $('.selSurvey:checked').each(function () {
+                selected.push($(this).val());
+            });
 
+            $("#hddSurveyType").val(selected.join(","));
+            selected = [];
+
+
+            $('.selSurveyComment').each(function () {
+                selected.push($(this).attr('data')+":"+$(this).val());
+            });
+
+            $("#hddSurveyComment").val(selected.join(","));
+            selected = [];
+
+            //hddSurveyType
+           // hddSurveyComment
 
             }
 
@@ -914,7 +930,7 @@ optEmployee = (List<TblEmployee>
                                                                         </thead>
                                                                         <tbody>
 
-                                                                            @if (Model.JobOrderDetail.Count() <= 0)
+                                                                            @if (Model.JobOrderDetail!=null && Model.JobOrderDetail.Count() <= 0)
                                                                             {
                                                                                 <tr>
                                                                                     <td colspan="7">ไม่พบข้อมูล</td>
@@ -1541,8 +1557,8 @@ optEmployee = (List<TblEmployee>
                                                     <div class="form-group">
                                                         <label for="StartDate" class="form-control-label">วันที่ประเมิน</label>
                                                         <div class="input-group col-sm-6 date" data-provide="datepicker" data-date-format="dd/mm/yyyy">
-                                                            <input id="SurveyDate" type="text" class="form-control" placeholder="dd/MM/yyyy ค.ศ." name="SurveyDate"
-                                                                   value="" required />
+                                                            <input id="SurveyDate" name="SurveyDate" type="text" class="form-control" placeholder="dd/MM/yyyy ค.ศ." name="SurveyDate"
+                                                                   value="@(Model.SurveyDate.HasValue ?Model.SurveyDate.Value.ToString("dd/MM/yyyy") : "" )" required /> 
                                                             <span class="input-group-addon">
                                                                 <i class="icon wb-calendar icon-2-5x text-success" style="padding-left:2px" aria-hidden="true"></i>
                                                             </span>
@@ -1553,15 +1569,15 @@ optEmployee = (List<TblEmployee>
                                                     <div class="form-group">
                                                         <label for="SaleName" class="col-sm-5 col-form-label">ผู้ประเมิน</label>
                                                         <div class="col-sm-6">
-                                                            <select class="form-control js-states" id="SurveyBy"
-                                                                    name="SurveyBy" placeholder="ผู้ประเมิน">
+                                                            <select class="form-control js-states" id="SurveyEmployee"
+                                                                    name="SurveyEmployee" placeholder="ผู้ประเมิน">
                                                                 <option value="-1" )></option>
                                                                 @foreach (TblEmployee it in optEmployee)
                                                                 {
-                                                                    <option value="@it.EmpId">@it.EmpNameTh</option>
-                                                                    //bool selected = it. == (Model.CreatedBy == null ? (sysAccount.TblEmployee != null ? sysAccount.TblEmployee.EmpNameTh : "") : Model.SaleName);
+                                                                   // <option value="@it.EmpId">@it.EmpNameTh</option>
+                                                                    bool selected = it.EmpId == (Model.SurveyEmployee == null ? (sysAccount.TblEmployee != null ? sysAccount.TblEmployee.EmpId : -1) : Model.SurveyEmployee);
 
-                                                                    // <option value="@it.EmpId" @(selected ? " selected=\" selected\"" : "")>@it.EmpNameTh</option>
+                                                                    <option value="@it.EmpId" @(selected ? " selected=\" selected\"" : "")>@it.EmpNameTh</option>
                                                                 }
                                                             </select>
                                                             <input type="hidden" id="SaleName" name="SaleName" value="" />
@@ -1588,43 +1604,46 @@ optEmployee = (List<TblEmployee>
                                                                 {
                                                                     if (subheader.Reason != "")
                                                                     {
-                                                                    <label for="" class="form-control-label">@subheader.Reason :</label>
+                                                                        <label for="" class="form-control-label">@subheader.Reason :</label>
                                                                     }
                                                                     <textarea rows="4" cols="47" class="form-control" name="Solution"></textarea>
 
                                                                 }
                                                             </div>
                                                         </div>
-
+;
                                                         foreach (SysSurveyDetailTemplate detail in subheader.SurveyDetailList)
                                                         {
-                                                        <div class="col-md-12">
-                                                            <div class="checkbox">
-                                                                <label>
-                                                                    <input data-toggle="toggle" data-onstyle="success"
-                                                                           type="checkbox" class="selLandType" value="" />@detail.Title
-                                                                        @if (detail.IsReason > 0)
-                                                                        {
+                                                            <div class="col-md-12">
+                                                                <div class="checkbox">
+                                                                    <label>
+                                                                       @{bool selected = (Model.SurveyDetail != null && Model.SurveyDetail.Find(o => o.SurveyDetailId == detail.SurveyDetailID) != null ? true : false);}
+                                                                        <input data-toggle="toggle" data-onstyle="success"
+                                                                               type="checkbox" @(selected?"Checked":"") class="selSurvey" value="@detail.SurveyDetailID" />@detail.Title
+                                                                            @if (detail.IsReason > 0)
+                                                                            {
 
-                                                                            <label for="" class="form-control-label">@detail.Reason :</label>
-                                                                            <input type="text" class="form-comment" />
+                                                                                <label for="" class="form-control-label">@detail.Reason :</label>
+                                                                               string comment= (Model.SurveyDetail.Find(o => o.SurveyDetailId == detail.SurveyDetailID) != null ? Model.SurveyDetail.Find(o => o.SurveyDetailId == detail.SurveyDetailID).Desc : "");
+                                                                                <input type="text" data="@detail.SurveyDetailID" value="@comment" class="form-comment selSurveyComment" />
 
-                                                                        }
-                                                                    </label>
+                                                                            }
+                                                                        </label>
+
+                                                                    </div>
+
 
                                                                 </div>
-                                                              
-
-                                                            </div>
+                                                            }
+                                                            i++;
                                                         }
-                                                        i++;
+
                                                     }
 
-                                                }
-
                                             }
-                                           
 
+                                            <input type="hidden" name="hddSurveyType" id="hddSurveyType" />
+                                            <input type="hidden" name="hddSurveyComment" id="hddSurveyComment" />
                                         </div>
                                             </div>
                                         </div>
