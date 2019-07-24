@@ -37,6 +37,8 @@ namespace Kemrex.Core.Database.Models
         public string Solution { get; set; }
         public int? StatusId { get; set; }
 
+        public DateTime? SurveyDate { get; set; }
+        public int? SurveyEmployee { get; set; }
         [NotMapped]
         public string Status { get; set; }
         public int? TeamId { get; set; }
@@ -59,5 +61,6 @@ namespace Kemrex.Core.Database.Models
         public virtual List<TblJobOrderObstructionType> ObstructionType { get; set; }
         public virtual List<TblJobOrderProjectType> ProjectType { get; set; }
         public virtual List<TblJobOrderUndergroundType> UndergroundType { get; set; }
+        public virtual List<TblJobOrderSurveyDetail> SurveyDetail { get; set; }
     }
 }

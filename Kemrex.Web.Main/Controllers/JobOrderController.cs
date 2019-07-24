@@ -142,6 +142,7 @@ namespace Kemrex.Web.Main.Controllers
             List<TblJobOrderUndergroundType> UndergroundType = null;
             List<TblJobOrderObstructionType> ObstructionType = null;
             List<TblJobOrderAttachmentType> AttachmentType = null;
+            List<TblJobOrderSurveyDetail> SurveyDetailType = null;
 
             int approveStatus = Request.Form["hdApprove"] != null ? Request.Form["hdApprove"].ParseInt() : 0;
 
@@ -159,6 +160,8 @@ namespace Kemrex.Web.Main.Controllers
             string hddUndergroundType = this.Request.Form["hddUndergroundType"];
             string hddObstructionType = this.Request.Form["hddObstructionType"];
             string hddAttachmentType = this.Request.Form["hddAttachmentType"];
+            string hddSurveyType = this.Request.Form["hddSurveyType"];
+            string hddSurveyComment = this.Request.Form["hddSurveyComment"];
             jobOrder.ProductId= this.Request.Form["ProductId"].ParseInt();
             jobOrder.StartWorkingTime = StartHH + ":" + StartMM;
             jobOrder.EndWorkingTime = EndHH + ":" + EndMM;
@@ -193,7 +196,14 @@ namespace Kemrex.Web.Main.Controllers
                 jobOrder.EndDate = dd.ParseDate(DateFormat.ddMMyyyyHHmmss, culInfo: _cultureTHInfo);
             }
 
-            
+            if (Request.Form["SurveyDate"].ToString() != "")
+            {
+                var dd = Request.Form["SurveyDate"].Split(' ')[0] + " 00:00:00";
+
+                jobOrder.SurveyDate = dd.ParseDate(DateFormat.ddMMyyyyHHmmss, culInfo: _cultureTHInfo);
+            }
+
+
 
             /*# hddProject
             # hddEquipmentType
@@ -297,6 +307,26 @@ namespace Kemrex.Web.Main.Controllers
                 }
                 #endregion
 
+                #region SurveyDetail Type
+
+               // selSurveyComment
+                SurveyDetailType = new List<TblJobOrderSurveyDetail>();
+
+                if (hddSurveyType != null && hddSurveyType.Length > 0)
+                {
+                    foreach (string id in hddSurveyType.Split(','))
+                    {
+                        string comment = hddSurveyComment.Split(',').Where(o => o.IndexOf(id) > -1).First();
+                        if (comment.Length > 1 && comment.IndexOf(":") > -1)
+                        {
+                            comment = comment.Split(':')[1];
+                        }
+                        SurveyDetailType.Add(new TblJobOrderSurveyDetail() { JobOrderId = jobOrder.JobOrderId, SurveyDetailId = id ,Desc= comment });
+                    }
+                    jobOrder.SurveyDetail = SurveyDetailType;
+
+                }
+                #endregion
 
 
                 uow.Modules.JobOrder.Set(jobOrder);
