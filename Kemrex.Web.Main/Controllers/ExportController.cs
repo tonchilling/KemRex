@@ -995,8 +995,16 @@ namespace Kemrex.Web.Main.Controllers
                 }
                 html = html.Replace("@@CategoryName@@", CategoryName); 
                 html = html.Replace("@@ProductSaftyFactory@@", tbl.ProductSaftyFactory == null?"_____": tbl.ProductSaftyFactory.ToString());
-                html = html.Replace("@@ProductModel@@", prd.ProductCode + " " + prd.ProductName);
-                html = html.Replace("@@ProductQuantity@@", tbl.ProductQty.HasValue ? tbl.ProductQty.Value.ToString() : "_________");
+                if (prd.ProductCode == null)
+                {
+                    html = html.Replace("@@ProductModel@@", "___________________________");
+                }
+                else
+                {
+                    html = html.Replace("@@ProductModel@@", prd.ProductCode + " " + prd.ProductName);
+                }
+                    
+                html = html.Replace("@@ProductQuantity@@", tbl.ProductQty.HasValue ? tbl.ProductQty.Value.ToString() : "_____");
 
                 html = html.Replace("@@ProductWeight@@", tbl.ProductWeight.HasValue ? tbl.ProductWeight.Value.ToString() : "_________________");
                 html = html.Replace("@@Adapter@@", tbl.Adapter);
@@ -1030,21 +1038,20 @@ namespace Kemrex.Web.Main.Controllers
                 html = html.Replace("@@ImageCheckbox@@", HttpContext.Server.MapPath("~/html/img/checkbox_0.gif"));
 
                 html = html.Replace("@@Job@@", jb.JobName + " ("+ jb.JobOrderNo +")");
-                //สาเหตุ 88
-                html = html.Replace("@@CauseChangeInstall@@", "_______________________________________________________________________________________");
-                html = html.Replace("@@CauseNotInstall@@", "_______________________________________________________________________________________");
-                //ปัญหาที่พบคือ 82
-                html = html.Replace("@@MediumGround@@", "_________________________________________________________________________________");
-                html = html.Replace("@@LowGround@@", "_________________________________________________________________________________");
-                //อื่นๆ 90
-                html = html.Replace("@@OtherGround@@", "_________________________________________________________________________________________");
-                //Line 95
-                string line = "______________________________________________________________________________________________"+ "<br/>";
-                line += "______________________________________________________________________________________________" + "<br/>";
-                line += "______________________________________________________________________________________________" + "<br/>";
-                line += "______________________________________________________________________________________________" + "<br/>";
-                line += "______________________________________________________________________________________________" + "<br/>";
-                line += "______________________________________________________________________________________________" + "<br/>";
+                //สาเหตุ 85
+                html = html.Replace("@@CauseChangeInstall@@", "____________________________________________________________________________________");
+                html = html.Replace("@@CauseNotInstall@@", "____________________________________________________________________________________");
+                //ปัญหาที่พบคือ 79
+                html = html.Replace("@@MediumGround@@", "______________________________________________________________________________");
+                html = html.Replace("@@LowGround@@", "______________________________________________________________________________");
+                //อื่นๆ 87
+                html = html.Replace("@@OtherGround@@", "______________________________________________________________________________________");
+                //Line 92
+                string line = "___________________________________________________________________________________________"+ "<br/>";
+                line += "___________________________________________________________________________________________" + "<br/>";
+                line += "___________________________________________________________________________________________" + "<br/>";
+                line += "___________________________________________________________________________________________" + "<br/>";
+                line += "___________________________________________________________________________________________" + "<br/>";
                 html = html.Replace("@@OtherProblem@@", line);
 
 
