@@ -10,6 +10,9 @@ namespace Kemrex.Core.Database.Models
         public string TransferNo { get; set; }
         public string TransferType { get; set; }
         public DateTime? TransferDate { get; set; }
+        [NotMapped]
+        public string StrTransferDate { get; set; }
+        
         public string TransferTime { get; set; }
         public int JobOrderId { get; set; }
        
@@ -25,6 +28,8 @@ namespace Kemrex.Core.Database.Models
         public string EmpId { get; set; }
         public string BillNo { get; set; }
         public int TransferStatus { get; set; }
+        [NotMapped]
+        public string StrTransferStatus { get; set; }
         public string Note1 { get; set; }
         public long? CreatedBy { get; set; }
         public DateTime? CreatedDate { get; set; }

@@ -310,5 +310,30 @@ namespace Kemrex.Web.Main.Controllers
 
             return Json(result, JsonRequestBehavior.AllowGet);
         }
+        [HttpPost]
+        public ActionResult GetTransferSOutList()
+        {
+            List<TransferHeader> lst = new List<TransferHeader>();
+            try
+            {
+                lst = uow.Modules.Transfer.GetList("O");
+                foreach (var ls in lst.ToList())
+                {
+                    
+                    ls.StrTransferDate = ls.TransferDate.HasValue ? ls.TransferDate.Value.Day.ToString("00") + "/" + ls.TransferDate.Value.Month.ToString("00") + "/" + ls.TransferDate.Value.Year : "";
+                    
+                }
+            }
+            catch (Exception ex)
+            {
+                WidgetAlertModel Alert = new WidgetAlertModel()
+                {
+                    Type = AlertMsgType.Danger,
+                    Message = ex.GetMessage(true)
+                };
+                ViewBag.Alert = Alert;
+            }
+            return Json(lst);
+        }
     }
 }
