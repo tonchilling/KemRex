@@ -177,8 +177,8 @@ namespace Kemrex.Web.Main.Controllers
             try
             {
 
-                uow.Modules.JobOrder.Set(jobOrder);
-                uow.SaveChanges();
+               // uow.Modules.JobOrder.Set(jobOrder);
+               // uow.SaveChanges();
 
 
 
