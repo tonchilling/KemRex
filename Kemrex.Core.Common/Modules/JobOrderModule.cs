@@ -384,15 +384,62 @@ namespace Kemrex.Core.Common.Modules
             if (ob.JobOrderId == 0)
             { db.TblJobOrder.Add(ob); }
             else {
-                db.TblJobOrderAttachmentType.RemoveRange(db.TblJobOrderAttachmentType.Where(o=>o.JobOrderId==ob.JobOrderId));
-                db.TblJobOrderProjectType.RemoveRange(db.TblJobOrderProjectType.Where(o => o.JobOrderId == ob.JobOrderId));
-                db.TblJobOrderEquipmentType.RemoveRange(db.TblJobOrderEquipmentType.Where(o => o.JobOrderId == ob.JobOrderId));
-                db.TblJobOrderLandType.RemoveRange(db.TblJobOrderLandType.Where(o => o.JobOrderId == ob.JobOrderId));
-                db.TblJobOrderObstructionType.RemoveRange(db.TblJobOrderObstructionType.Where(o => o.JobOrderId == ob.JobOrderId));
-                db.TblJobOrderUndergroundType.RemoveRange(db.TblJobOrderUndergroundType.Where(o => o.JobOrderId == ob.JobOrderId));
-                db.TblJobOrderSurveyDetail.RemoveRange(db.TblJobOrderSurveyDetail.Where(o => o.JobOrderId == ob.JobOrderId));
-                db.TblJobOrder.Update(ob);
                 
+               
+              
+              
+                
+               
+               
+
+                if (ob.AttachmentType != null)
+                {
+                    db.TblJobOrderAttachmentType.RemoveRange(db.TblJobOrderAttachmentType.Where(o => o.JobOrderId == ob.JobOrderId));
+                    db.TblJobOrderAttachmentType.AddRange(ob.AttachmentType);
+                }
+                if (ob.ProjectType != null)
+                {
+                    db.TblJobOrderProjectType.RemoveRange(db.TblJobOrderProjectType.Where(o => o.JobOrderId == ob.JobOrderId));
+                    db.TblJobOrderProjectType.AddRange(ob.ProjectType);
+                }
+                if (ob.EquipmentType != null)
+                {
+                    db.TblJobOrderEquipmentType.RemoveRange(db.TblJobOrderEquipmentType.Where(o => o.JobOrderId == ob.JobOrderId));
+                    db.TblJobOrderEquipmentType.AddRange(ob.EquipmentType);
+                }
+
+                if (ob.LandType != null)
+                {
+                    db.TblJobOrderLandType.RemoveRange(db.TblJobOrderLandType.Where(o => o.JobOrderId == ob.JobOrderId));
+                    db.TblJobOrderLandType.AddRange(ob.LandType);
+                }
+
+                if (ob.ObstructionType != null)
+                {
+                    db.TblJobOrderObstructionType.RemoveRange(db.TblJobOrderObstructionType.Where(o => o.JobOrderId == ob.JobOrderId));
+                    db.TblJobOrderObstructionType.AddRange(ob.ObstructionType);
+                }
+
+                if (ob.UndergroundType != null)
+                {
+                    db.TblJobOrderUndergroundType.RemoveRange(db.TblJobOrderUndergroundType.Where(o => o.JobOrderId == ob.JobOrderId));
+                    db.TblJobOrderUndergroundType.AddRange(ob.UndergroundType);
+                }
+
+                if (ob.SurveyDetail != null)
+                {
+                    db.TblJobOrderSurveyDetail.RemoveRange(db.TblJobOrderSurveyDetail.Where(o => o.JobOrderId == ob.JobOrderId));
+                    db.TblJobOrderSurveyDetail.AddRange(ob.SurveyDetail);
+                }
+
+
+
+              
+                db.SaveChanges();
+
+               
+                 db.TblJobOrder.Update(ob);
+               // db.Entry(ob).State = EntityState.Modified;
 
 
             }

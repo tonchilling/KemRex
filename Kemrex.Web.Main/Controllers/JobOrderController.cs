@@ -217,8 +217,8 @@ namespace Kemrex.Web.Main.Controllers
             try
             {
 
-                uow.Modules.JobOrder.Set(jobOrder);
-                uow.SaveChanges();
+              //  uow.Modules.JobOrder.Set(jobOrder);
+              //  uow.SaveChanges();
 
 
 
@@ -316,7 +316,7 @@ namespace Kemrex.Web.Main.Controllers
                 {
                     foreach (string id in hddSurveyType.Split(','))
                     {
-                        string comment = hddSurveyComment.Split(',').Where(o => o.IndexOf(id) > -1).First();
+                        string comment = hddSurveyComment.Split(',').Where(o => o.IndexOf(id) > -1).Count() >0? hddSurveyComment.Split(',').Where(o => o.IndexOf(id) > -1).First():"";
                         if (comment.Length > 1 && comment.IndexOf(":") > -1)
                         {
                             comment = comment.Split(':')[1];
