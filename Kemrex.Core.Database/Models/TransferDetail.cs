@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 namespace Kemrex.Core.Database.Models
 {
+    [Serializable]
     public partial class TransferDetail
     {
 

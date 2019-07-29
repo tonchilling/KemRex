@@ -21,7 +21,7 @@ namespace Kemrex.Core.Common.Modules
 
         public int Count(int groupId = 0, string src = "")
         {
-            var data = db.TblQuotation.AsQueryable();        
+            var data = db.TblQuotation.AsQueryable();
             return data.Count();
         }
         public int GetId(string no)
@@ -39,6 +39,18 @@ namespace Kemrex.Core.Common.Modules
                     CreatedDate = DateTime.Now
                 };
         }
+
+        public TblQuotation GetDetail(int id)
+        {
+            return db.TblQuotation.Include(detail => detail.TblQuotationDetail)
+                .Where(x => x.QuotationId == id)
+                .FirstOrDefault() ?? new TblQuotation()
+                {
+                    CreatedDate = DateTime.Now
+                };
+        }
+
+
         public TblQuotation Get(string quotationNo)
         {
             return db.TblQuotation
@@ -51,32 +63,26 @@ namespace Kemrex.Core.Common.Modules
 
         public string GetLastId()
         {
-            return db.TblQuotation.OrderByDescending(x => x.QuotationId).Select(x=>x.QuotationNo).First();
+            return db.TblQuotation.OrderByDescending(x => x.QuotationId).Select(x => x.QuotationNo).First();
         }
 
-        public List<TblQuotation> Gets(int page = 1, int size = 0,string src="")
+        public List<TblQuotation> Gets(int page = 1, int size = 0, string src = "")
         {
-            var data = db.TblQuotation.Include(c => c.Status)
-                        .Include(c=>c.Customer)
-                        .OrderByDescending(c=>c.QuotationId)
-                .AsQueryable();
+            /* var data = db.TblQuotation.Include(c => c.Status)
+                         .Include(c=>c.Customer)
+                         .OrderByDescending(c=>c.QuotationId)
+                 .AsQueryable();*/
 
-            if (size > 0)
-            { data = data.Skip((page - 1) * size).Take(size); }
-            return data.ToList();
-        }
-
-        public List<TblQuotation> GetQuatationNotSale()
-        {
-            var quatations = (from q in db.TblSaleOrder select q.QuotationNo).ToList();
-            var data = (from q in db.TblQuotation.Where(o=> !quatations.Contains(o.QuotationNo)).Include(c => c.Status)
-                        .Include(c => c.Customer) select new TblQuotation {
-                                QuotationId = q.QuotationId,
-                                    QuotationNo = q.QuotationNo,
+            var data = (from q in db.TblQuotation.Include(c => c.Customer)
+                         .OrderByDescending(c => c.QuotationId)
+                        select new TblQuotation
+                        {
+                            QuotationId = q.QuotationId,
+                            QuotationNo = q.QuotationNo,
                             QuotationDate = q.QuotationDate,
                             strQuotationDate = string.Format("{0}/{1}/{2}", q.QuotationDate.Day.ToString("##00"), q.QuotationDate.Month.ToString("##00"), q.QuotationDate.Year.ToString()),
                             QuotationValidDay = q.QuotationValidDay,
-                             ConditionId = q.ConditionId,
+                            ConditionId = q.ConditionId,
                             OperationStartDate = q.OperationStartDate,
                             OperationEndDate = q.OperationEndDate,
                             DueDate = q.DueDate,
@@ -97,8 +103,57 @@ namespace Kemrex.Core.Common.Modules
                             SummaryNet = q.SummaryNet,
                             SummaryVat = q.SummaryVat,
                             SummaryTot = q.SummaryTot,
-                               Status = q.Status,
-                               StatusId=q.StatusId
+                            Status = q.Status,
+                            StatusId = q.StatusId,
+                            RefQuotationId = q.RefQuotationId,
+                            OrgQuotationId = q.OrgQuotationId,
+                            TblOrgQuotation = (from qq in db.TblQuotation.Where(qq => qq.QuotationId == q.OrgQuotationId) select qq).FirstOrDefault(),
+                            TblRefQuotation = (from qq in db.TblQuotation.Where(qq => qq.QuotationId == q.RefQuotationId) select qq).FirstOrDefault(),
+                            TblOtherQuotation = (from qq in db.TblQuotation.Where(qq => qq.OrgQuotationId == q.OrgQuotationId) select qq).ToList()
+
+                        })
+
+                        .OrderByDescending(c => c.QuotationId)
+                .AsQueryable();
+
+            if (size > 0)
+            { data = data.Skip((page - 1) * size).Take(size); }
+            return data.ToList();
+        }
+
+        public List<TblQuotation> GetQuatationNotSale()
+        {
+            var quatations = (from q in db.TblSaleOrder select q.QuotationNo).ToList();
+            var data = (from q in db.TblQuotation.Where(o => !quatations.Contains(o.QuotationNo)).Include(c => c.Status)
+                        .Include(c => c.Customer) select new TblQuotation {
+                            QuotationId = q.QuotationId,
+                            QuotationNo = q.QuotationNo,
+                            QuotationDate = q.QuotationDate,
+                            strQuotationDate = string.Format("{0}/{1}/{2}", q.QuotationDate.Day.ToString("##00"), q.QuotationDate.Month.ToString("##00"), q.QuotationDate.Year.ToString()),
+                            QuotationValidDay = q.QuotationValidDay,
+                            ConditionId = q.ConditionId,
+                            OperationStartDate = q.OperationStartDate,
+                            OperationEndDate = q.OperationEndDate,
+                            DueDate = q.DueDate,
+                            DeliveryDate = q.DeliveryDate,
+                            QuotationCreditDay = q.QuotationCreditDay,
+                            SaleId = q.SaleId,
+                            SaleName = q.SaleName,
+                            CustomerId = q.CustomerId,
+                            CustomerName = q.CustomerName,
+
+                            SubTotalNet = q.SubTotalNet,
+                            SubTotalVat = q.SubTotalVat,
+                            SubTotalTot = q.SubTotalTot,
+                            DiscountNet = q.DiscountNet,
+                            DiscountVat = q.DiscountVat,
+                            DiscountTot = q.DiscountTot,
+                            DiscountCash = q.DiscountCash,
+                            SummaryNet = q.SummaryNet,
+                            SummaryVat = q.SummaryVat,
+                            SummaryTot = q.SummaryTot,
+                            Status = q.Status,
+                            StatusId = q.StatusId
 
 
                         })
@@ -106,10 +161,26 @@ namespace Kemrex.Core.Common.Modules
                         .OrderByDescending(c => c.QuotationId)
                 .AsQueryable();
 
-          
+
             return data.ToList();
         }
 
+
+        public List<TblQuotationDisplay> GetList(int id)
+        {
+            List<TblQuotationDisplay> result = new List<TblQuotationDisplay>();
+            var data = (from q in db.TblQuotation.Where(o=>o.OrgQuotationId== id)
+                        select q);
+
+            foreach (TblQuotation qu in data)
+            {
+                result.Add(new TblQuotationDisplay { QuotationNo=qu.QuotationNo,QuotationId=qu.QuotationId,QuotationDate=qu.QuotationDate});
+            }
+            
+
+
+            return result.OrderByDescending(o => o.QuotationDate).ToList();
+        }
 
         public List<TblQuotation> GetList()
         {
@@ -148,7 +219,11 @@ namespace Kemrex.Core.Common.Modules
                     EmpId=emp.EmpId,
                     EmpCode=emp.EmpCode,
                     EmpNameTh=emp.EmpNameTh
-                }).FirstOrDefault()
+                }).FirstOrDefault(),
+
+                            RefQuotationId = order.RefQuotationId,
+                            OrgQuotationId = order.OrgQuotationId
+                        
                         });
             return data.OrderByDescending(o=>o.QuotationDate).ToList();
         }
