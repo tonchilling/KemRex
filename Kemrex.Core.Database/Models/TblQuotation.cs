@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 namespace Kemrex.Core.Database.Models
 {
+    [Serializable]
     public partial class TblQuotation
     {
         public TblQuotation()
@@ -52,10 +53,26 @@ namespace Kemrex.Core.Database.Models
         public int? DeletedBy { get; set; }
         public DateTime? DeletedDate { get; set; }
         public string DeletedReason { get; set; }
-
+        public int?  RefQuotationId { get; set; }
+        public int? OrgQuotationId { get; set; }
         public virtual TblCustomer Customer { get; set; }
         public virtual TblEmployee Sale { get; set; }
         public virtual EnmStatusQuotation Status { get; set; }
         public virtual ICollection<TblQuotationDetail> TblQuotationDetail { get; set; }
+
+        [NotMapped]
+        public TblQuotation TblRefQuotation { get; set; }
+        [NotMapped]
+        public TblQuotation TblOrgQuotation { get; set; }
+        [NotMapped]
+        public List<TblQuotation> TblOtherQuotation { get; set; }
+    }
+
+
+    public partial class TblQuotationDisplay
+    {
+        public int QuotationId { get; set; }
+        public string QuotationNo { get; set; }
+        public DateTime QuotationDate { get; set; }
     }
 }

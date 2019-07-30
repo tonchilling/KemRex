@@ -60,6 +60,17 @@ namespace Kemrex.Core.Common.Modules
             else { db.Entry(ob).State = EntityState.Modified; }
         }
 
+
+        public void Set(List<TblQuotationDetail> obList)
+        {
+            foreach (TblQuotationDetail ob in obList)
+            {
+                if (ob.Id <= 0)
+                { db.TblQuotationDetail.Add(ob); }
+                else { db.Entry(ob).State = EntityState.Modified; }
+            }
+        }
+
         TblQuotationDetail IModule<TblQuotationDetail, int>.Get(int id)
         {
             throw new NotImplementedException();

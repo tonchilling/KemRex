@@ -6,6 +6,7 @@ using Kemrex.Web.Common.Controllers;
 using Kemrex.Web.Common.Models;
 using System;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 using System.Web.Mvc;
 
 namespace Kemrex.Web.Main.Controllers
@@ -83,6 +84,7 @@ namespace Kemrex.Web.Main.Controllers
         public ActionResult Detail(int? id, string msg, AlertMsgType? msgType)
         {
             TblInvoice ob = uow.Modules.Invoice.Get(id ?? 0);
+           
             ob.SaleOrder = uow.Modules.SaleOrder.Get(ob.SaleOrderId);
             return ViewDetail(ob, msg, msgType);
         }

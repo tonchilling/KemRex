@@ -3,6 +3,7 @@ using System.Collections.Generic;
 
 namespace Kemrex.Core.Database.Models
 {
+    [Serializable]
     public partial class TblQuotationDetail
     {
         public int Id { get; set; }

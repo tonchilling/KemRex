@@ -1,0 +1,20 @@
+﻿ <div>
+            <table style="background-color: white; margin-top:3px; font-size:12px; line-height: 20px;" width="100%" border="1" cellspacing="0">
+                <tr>
+                    <td>
+                        <table style="background-color: white;font-size:12px; line-height: 20px;" width="100%" border="0" cellspacing="0" cellpadding="5">
+                            <tr style="border:1px solid black;">
+                                <th align="center" style="border-right:1px;border-bottom:1px;">รหัสสินค้า</th>
+                                <th align="center" style="border-right:1px;border-bottom:1px;">รายการ</th>
+                                <th align="center" style="border-right:1px;border-bottom:1px;">จำนวน</th>
+                                <th align="center" style="border-right:1px;border-bottom:1px;">หน่วย</th>
+                                <th align="center" style="border-right:1px;border-bottom:1px;">ราคา/หน่วย</th>
+                                <th align="center" style="border-right:1px;border-bottom:1px;">ส่วนลด</th>
+                                <th align="center" style="border-bottom:1px;">จำนวนเงิน</th>
+                            </tr>
+                            @@body@@
+                        </table>
+                    </td>
+                </tr>
+            </table>
+        </div>

@@ -1,0 +1,93 @@
+﻿<div>
+            <table style="background-color: white; margin-top:10px;font-size:small;line-height:20px;" width="100%" border="0" cellpadding="5">
+                <tr>
+                    <td align="left" width="105"><img src="@@Logo2@@" width="100" /></td>
+                    <td>
+                        <b style="font-size:large;">บริษัท เข็มเหล็ก จำกัด(สำนักงานใหญ่)</b>
+                        <br />
+                        27/5 อาคารสุธีกรุ๊ป ชั้น 3-4  หมู่ 7 ถ.กิ่งแก้ว-เทพารักษ์
+                        <br />
+                        ต.บางพลีใหญ่ อ.บางพลี สมุทรปราการ 10540
+                        <br />
+                        <b>โทร.</b> 02-026-3140 , 02-715-0400 &nbsp;&nbsp;<b>โทรสาร.</b> 02-715-0500
+                        <br />
+                        <b>เลขประจำตัวผู้เสียภาษี</b> 0115551005932   &nbsp;&nbsp;<b>www.kemrex.com</b>
+                    </td>
+                    <td align="center" width="230" valign="middle">
+                        <h3>
+                            ใบส่งสินค้า/ใบแจ้งหนี้
+                            <br />
+                            INVOICE
+                        </h3>
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <div style="float:left;"><br />รหัสลูกค้า &nbsp;&nbsp;&nbsp;@@CustomerID@@</div>
+        <div style="float:right; text-align:right">ใบกำกับภาษีได้รับเมื่อชำระเงิน<br />หักภาษีเงินได้นิติบุคคลหัก ณ ที่จ่ายตามมาตรา 3</div>
+        <div style="clear:both;"></div>
+        <div>
+            <table style="background-color: white; margin-top:10px; font-size:12px; line-height: 20px;" width="100%" border="1" cellspacing="0" cellpadding="5">
+                <tr>
+                    <td width="60%">
+                        <table style="font-size:12px; line-height: 20px;" width="100%" border="0" cellspacing="0" cellpadding="5">
+                            <tr>
+                                <td>ผู้ซื้อ</td>
+                                <td colspan="3">@@CustomerName@@</td>
+                            </tr>
+                            <tr>
+                                <td>ที่อยู่</td>
+                                <td colspan="3" rowspan="2" valign="top">@@Address@@</td>
+                            </tr>
+                            <tr>
+                                <td>Address</td>
+                            </tr>
+                            <tr>
+                                <td>เบอร์โทร</td>
+                                <td>@@Tel@@</td>
+                                <td>โทรสาร</td>
+                                <td>@@Fax@@</td>
+                            </tr>
+                            <tr>
+                                <td>PO No.</td>
+                                <td colspan="3">@@PONO@@</td>
+                            </tr>
+                            <tr>
+                                <td>เลขประจำตัวผู้เสียภาษี</td>
+                                <td>@@CitizenID@@</td>
+                                <td colspan="2"></td>
+                            </tr>
+                        </table>
+                    </td>
+                    <td width="40%">
+                        <table style="font-size:12px; line-height: 20px;" width="100%" border="0" cellspacing="0" cellpadding="5">
+                            <tr>
+                                <td>เลขที่/No.</td>
+                                <td>@@InvoiceNo@@</td>
+                            </tr>
+                            <tr>
+                                <td>Job No.</td>
+                                <td>@@JobOrderNo@@</td>
+                            </tr>
+                            <tr>
+                                <td>วันที่</td>
+                                <td>@@InvoiceDate@@</td>
+                            </tr>
+                            <tr>
+                                <td>เครดิต/Credit</td>
+                                <td>@@Credit@@ &nbsp;&nbsp;&nbsp;วัน</td>
+                            </tr>
+                            <tr>
+                                <td>วันที่ครบกำหนด/Due</td>
+                                <td>@@DueDate@@</td>
+                            </tr>
+                            <tr>
+                                <td colspan="2">Sale &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;@@SaleName@@</td>
+                                <!--<td>@@SaleName@@</td>-->
+                            </tr>
+                        </table>
+
+                    </td>
+                </tr>
+            </table>
+        </div>
