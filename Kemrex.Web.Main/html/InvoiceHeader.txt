@@ -36,17 +36,12 @@
                                 <td colspan="3">@@CustomerName@@</td>
                             </tr>
                             <tr>
-                                <td>ที่อยู่</td>
+                                <td rowspan="2">ที่อยู่</td>
                                 <td colspan="3" rowspan="2" valign="top">@@Address@@</td>
                             </tr>
                             <tr>
-                                <td>Address</td>
-                            </tr>
-                            <tr>
                                 <td>เบอร์โทร</td>
-                                <td>@@Tel@@</td>
-                                <td>โทรสาร</td>
-                                <td>@@Fax@@</td>
+                                <td  colspan="3">@@Tel@@ &nbsp;&nbsp;&nbsp;โทรสาร&nbsp; @@Fax@@</td>
                             </tr>
                             <tr>
                                 <td>PO No.</td>

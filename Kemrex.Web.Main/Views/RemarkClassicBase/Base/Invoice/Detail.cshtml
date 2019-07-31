@@ -16,7 +16,7 @@
     List<TblSaleOrder> optSaleOrder = (List<TblSaleOrder>)ViewData["optSaleOrder"];
     List<EnmPaymentCondition> optPayment = (List<EnmPaymentCondition>
       )ViewData["optPayment"];
-    decimal optRemain = (decimal)ViewData["optRemain"];
+    //decimal optRemain = (decimal)ViewData["optRemain"];
     bool canedit = false;
     bool changestatus = false;
     if (Model.StatusId != 3 && Model.SaleOrderId > 0)
@@ -232,11 +232,11 @@
 
             var selected = 0;
 
-            $("#selIsDeposit:checked").each(function () {
+            //$("#selIsDeposit:checked").each(function () {
                 
-                selected = 1;
-            });
-            $("#hddIsDeposit").val(selected);
+            //    selected = 1;
+            //});
+            //$("#hddIsDeposit").val(selected);
 
 
         }
@@ -315,7 +315,32 @@
                                                             condi = Model.SaleOrder.ConditionId.Value;
                                                         }
                                                     }
-                                                    if (Model.IsDeposit == 1)
+                                                    if (Model.SaleOrder.ConditionId == 3 || Model.SaleOrder.ConditionId == 4 || Model.SaleOrder.ConditionId == 5)
+                                                    {
+                                                        if (Model.InvoiceTerm == 1)
+                                                        {
+                                                            <a href="@Url.Action("PDFDepositInvoice", new { controller = "export", area = "", id = Model.InvoiceId  })"
+                                                               class="btn btn-xs btn-warning">
+                                                                <i class="fa fa-file-pdf-o" aria-hidden="true"></i>&nbsp;PDF
+                                                            </a>
+
+                                                        }
+                                                        else
+                                                        {
+                                                            <a href="@Url.Action("PDFInvoice", new { controller = "export", area = "", id = Model.InvoiceId })"
+                                                               class="btn btn-xs btn-warning">
+                                                                <i class="fa fa-file-pdf-o" aria-hidden="true"></i>&nbsp;PDF
+                                                            </a>
+                                                        }
+                                                    }
+                                                    else
+                                                    {
+                                                            <a href="@Url.Action("PDFInvoice", new { controller = "export", area = "", id = Model.InvoiceId })"
+                                                               class="btn btn-xs btn-warning">
+                                                                <i class="fa fa-file-pdf-o" aria-hidden="true"></i>&nbsp;PDF
+                                                            </a>
+                                                    }
+                                                    @*if (Model.IsDeposit == 1)
                                                     {
                                                         <a href="@Url.Action("PDFDepositInvoice", new { controller = "export", area = "", id = Model.InvoiceId  })"
                                                            class="btn btn-xs btn-warning">
@@ -329,7 +354,7 @@
                                                            class="btn btn-xs btn-warning">
                                                             <i class="fa fa-file-pdf-o" aria-hidden="true"></i>&nbsp;PDF
                                                         </a>
-                                                    }
+                                                    }*@
                                                 }
 
 
@@ -350,23 +375,23 @@
                                             <div class="col-md-6">
                                                 <div class="form-group">
                                                     <label for="InvNo" class="col-sm-4 col-form-label">เลขที่ใบแจ้งหนี้</label>
-                                                    <div class="col-sm-6">
+                                                    <div class="col-sm-7">
                                                         <input type="text" placeholder="บันทึกเพื่อสร้าง" class="form-control" value="@Model.InvoiceNo" readonly />
                                                     </div>
                                                 </div>
                                                 <div class="form-group">
                                                     <label for="QuotationNo" class="col-sm-6 col-form-label">เลขที่ใบเสนอราคา / ใบสั่งขาย</label>
-                                                    <div class="col-sm-6">
+                                                    <div class="col-sm-7">
                                                         <div class="input-group">
                                                             @*<select class="form-control" id="selSaleOrder" data-live-search="true" readonly
-                            name="selSaleOrder" >
-                        <option value="-1" )>กรุณาเลือก</option>
-                        @foreach (TblSaleOrder so in optSaleOrder)
-                        {
-                            bool selected = so.SaleOrderId == Model.SaleOrderId;
-                            <option value="@so.SaleOrderId" @(selected ? " selected=\" selected\"" : "" )>@so.QuotationNo / @so.SaleOrderNo</option>
-                        }
-                    </select>*@
+                                                                    name="selSaleOrder" >
+                                                                <option value="-1" )>กรุณาเลือก</option>
+                                                                @foreach (TblSaleOrder so in optSaleOrder)
+                                                                {
+                                                                    bool selected = so.SaleOrderId == Model.SaleOrderId;
+                                                                    <option value="@so.SaleOrderId" @(selected ? " selected=\" selected\"" : "" )>@so.QuotationNo / @so.SaleOrderNo</option>
+                                                                }
+                                                            </select>*@
 
                                                             @{
                                                                 var sq = "";
@@ -409,7 +434,7 @@
                                                     <div class="input-group col-sm-6">
                                                         @{
                                                             //var total = (Model.SaleOrder != null ? Model.SaleOrder.SummaryTot - Model.SaleOrder.DiscountCash : decimal.Zero);
-                                                            var total = (Model.SaleOrder != null ? Model.SaleOrder.SummaryTot : decimal.Zero);
+                                                            var total = (Model.SaleOrder != null ? Model.SaleOrder.SummaryNet : decimal.Zero);
                                                         }
                                                         <input type="text" class="form-control text-right border-0" value="@total" readonly />
                                                     </div>
@@ -435,11 +460,9 @@
                                                         <input type="text" class="form-control text-right" name="InvoiceAmount" id="InvoiceAmount" value="@Model.InvoiceAmount" @(checkInvoice ? "" : "readonly") />
                                                     </div>
                                                 </div>
-                                                <div class="form-group">
-                                                    
+                                                @*<div class="form-group">
                                                     <div class="input-group col-sm-6">
-                                                        
-                                                            @{ 
+                                                            @{
                                                                 bool selected = (Model.IsDeposit == 1 ? true : false);
                                                             }
                                                             <div class="checkbox col-sm-6">
@@ -448,7 +471,6 @@
                                                                            type="checkbox" @(selected ? "Checked" : "") class="selIsdeposit"  value="@Model.IsDeposit">เงินมัดจำ
                                                                     </label>
                                                                 </div>
-                                                            
                                                         <input type="hidden" id="hddIsDeposit" name="hddIsDeposit" />
                                                     </div>
                                                 </div>
@@ -459,14 +481,10 @@
                                                         if (Model.SaleOrder.ConditionId.HasValue)
                                                         {
                                                             //DepositReadonly = Model.SaleOrder.ConditionId.Value == 2 ? true : false;
-
                                                         }
-
-
-
                                                     }
-                                                }
-                                                <div class="form-group">
+                                                }*@
+                                                 @*<div class="form-group">
                                                     <label for="DepositAmount" class="col-sm-4 col-form-label">หักเงินมัดจำออก</label>
                                                     <div class="input-group col-sm-6">
                                                         <span class="input-group-addon">
@@ -474,6 +492,12 @@
                                                         </span>
                                                         <input type="text" class="form-control text-right" name="DepositAmount" id="DepositAmount"
                                                                value="@Model.DepositAmount" @(DepositReadonly ? "readonly" : (canedit ? "" : "readonly")) />
+                                                    </div>
+                                                </div>*@
+                                                <div class="form-group">
+                                                    <label for="InvoiceTerm" class="col-sm-5 col-form-label">งวดที่</label>
+                                                    <div class="input-group col-sm-6">
+                                                        <input type="number" class="form-control text-right" name="InvoiceTerm" id="InvoiceTerm" value="@Model.InvoiceTerm" @(canedit ? "" : "readonly") />
                                                     </div>
                                                 </div>
                                                 <div class="form-group">
@@ -497,7 +521,6 @@
                                                 </div>
                                                 <div class="form-group">
                                                     <label for="DueDate" class="col-sm-5 col-form-label">วันที่ครบกำหนด</label>
-
                                                     <div class="input-group col-sm-6 date" data-provide="@(checkInvoice ? "datepicker" : "")" data-date-format="dd/mm/yyyy">
                                                         <span class="input-group-addon">
                                                             <i class="icon wb-calendar" aria-hidden="true"></i>
@@ -524,16 +547,16 @@
                                                         </select>
                                                     </div>
                                                 </div>
-                                                <div class="form-group">
+                                                @*<div class="form-group">
                                                     <label class="col-sm-5 col-form-label">ยอดที่ยังไม่ได้เรียกเก็บ</label>
                                                     <div class="input-group col-sm-6">
                                                         @{
                                                             //var remain = (Model.SaleOrder != null ? Model.SaleOrder.SummaryTot - Model.SaleOrder.DiscountCash - optRemain : decimal.Zero);
-                                                            var remain = (Model.SaleOrder != null ? Model.SaleOrder.SummaryTot - optRemain : decimal.Zero);
+                                                            var remain = (Model.SaleOrder != null ? Model.SaleOrder.SummaryNet - optRemain : decimal.Zero);
                                                         }
                                                         <input type="text" class="form-control text-right border-0" id="remain" name="remain" value="@remain" readonly />
                                                     </div>
-                                                </div>
+                                                </div>*@
                                                 <div class="form-group">
                                                     <label class="col-sm-5 col-form-label">เงื่อนไขการชำระเงิน</label>
                                                     <div class="input-group col-sm-6">
@@ -547,19 +570,12 @@
                                                                     conid = Model.SaleOrder.ConditionId.Value;
                                                                 }
                                                                 con = @optPayment.Find(c => c.ConditionId == conid).ConditionName;
-
-
                                                             }
                                                         }
                                                         <input type="text" class="form-control border-0" value="@con" readonly />
                                                     </div>
                                                 </div>
-                                                <div class="form-group">
-                                                    <label for="InvoiceTerm" class="col-sm-5 col-form-label">งวดที่</label>
-                                                    <div class="input-group col-sm-6">
-                                                        <input type="number" class="form-control text-right" name="InvoiceTerm" id="InvoiceTerm" value="@Model.InvoiceTerm" @(canedit ? "" : "readonly") />
-                                                    </div>
-                                                </div>
+                                                
                                             </div>
                                         </div>
                                     </div>
