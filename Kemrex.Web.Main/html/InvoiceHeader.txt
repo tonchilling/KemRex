@@ -1,7 +1,7 @@
 ﻿<div>
             <table style="background-color: white; margin-top:10px;font-size:small;line-height:20px;" width="100%" border="0" cellpadding="5">
                 <tr>
-                    <td align="left" width="105"><img src="@@Logo2@@" width="100" /></td>
+                    <td align="left" width="115"><img src="@@Logo2@@" width="110" /></td>
                     <td>
                         <b style="font-size:large;">บริษัท เข็มเหล็ก จำกัด(สำนักงานใหญ่)</b>
                         <br />
