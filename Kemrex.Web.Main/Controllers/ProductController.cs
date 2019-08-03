@@ -167,5 +167,16 @@ namespace Kemrex.Web.Main.Controllers
             }
         }
         #endregion
+
+        [HttpPost]
+        public ActionResult GetProductList()
+        {
+
+            List<TblProduct> lst = new List<TblProduct>();
+
+                lst = uow.Modules.Product.GetList();
+          
+            return Json(lst);
+        }
     }
 }

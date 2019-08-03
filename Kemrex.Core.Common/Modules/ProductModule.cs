@@ -72,6 +72,25 @@ namespace Kemrex.Core.Common.Modules
             { data = data.Skip((page - 1) * size).Take(size); }
             return data.ToList();
         }
+        public List<TblProduct> GetList()
+        {
+            var data = (from i in db.TblProduct
+                        select new TblProduct
+                        {
+                            CategoryId = i.CategoryId,
+                            Category = i.Category,
+                            ProductId = i.ProductId,
+                            ProductCode = i.ProductCode,
+                            ProductName = i.ProductName,
+                            Model = i.Model,
+                            PriceNet = i.PriceNet,
+                            PriceTot = i.PriceTot,
+                            PriceVat = i.PriceVat,
+                            QtyStock = i.QtyStock
+
+                        });
+            return data.ToList();
+        }
         public bool IsExist(int id)
         {
              return db.TblProduct.Where(x => x.ProductId == id).Count() > 0 ? true : false; 

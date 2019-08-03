@@ -38,7 +38,7 @@
             $(".divDetail").empty();
             html += '<table class="table  table-striped table-hover "  >';
             html += '<thead>';
-            html += '<tr class="table-primary" >';
+            html += '<tr class="table-primary" align="center">';
             html += '<th align="center">หมายเลข</th>';
             html += '<th align="center">ลูกค้า</th>';
             html += '<th align="center">พนักงานขาย</th>';
@@ -50,7 +50,7 @@
             html += '<th align="center">งวดที่</th>';
             html += '<th align="center">สถานะ</th>';
             html += '<th align="center">เครื่องมือ</th>';
-            html += ' </tr>';
+            html += '</tr>';
             html += '</thead>';
             html += '<tbody>';
 
@@ -86,7 +86,7 @@
 
 
                             html += '<td align="center">' + item.StrInvoiceDate + '</td>';
-                            html += '<td>' + item.InvoiceTerm + '</td>';
+                            html += '<td align="center">' + item.InvoiceTerm + '</td>';
 
                             if (item.StatusId == 1) {
                                 statusName = "ร่าง";
@@ -98,7 +98,7 @@
                                 statusName = "ยกเลิก";
                             }
 
-                            html += '<td>' + statusName + '</td>';
+                            html += '<td align="center">' + statusName + '</td>';
                             html += '<td> <a href="' + urlDetail + '/' + item.InvoiceId + '" class="btn btn-xs btn-primary">';
                             html += '<i class="fa fa-pencil" aria-hidden="true"></i>&nbsp;แก้ไข </a>&nbsp;';
 
