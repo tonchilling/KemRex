@@ -10,7 +10,7 @@ namespace Kemrex.Core.Common.Modules
 {
 
 
-    public class SurveyModule : IModule<TblSurveyHeader, int>
+    public class SurveyModule
     {
 
         private readonly mainContext db;
@@ -27,9 +27,23 @@ namespace Kemrex.Core.Common.Modules
             throw new System.NotImplementedException();
         }
 
-        public TblSurveyHeader Get(int id)
+        public List<TblJobOrderSurveyDetail> Get(int id)
         {
-            throw new System.NotImplementedException();
+            var data = (from i in db.TblJobOrderSurveyDetail
+                        join t in db.SysSurveyDetailTemplate
+                        on i.SurveyDetailId equals t.SurveyDetailID
+                        where i.JobOrderId == id
+                        select new TblJobOrderSurveyDetail
+                        {
+                            JobOrderId = i.JobOrderId,
+                            SurveyDetailId = i.SurveyDetailId,
+                            IsCheck = i.IsCheck,
+                            Desc = i.Desc,
+                            StatusId = i.StatusId,
+                            SubSurveyID = t.SubSurveyId,
+                            No = t.No
+                        });
+            return data.ToList();
         }
 
         public bool IsExist(int id)

@@ -1436,6 +1436,8 @@ namespace Kemrex.Web.Main.Controllers
         {
 
             TblJobOrder jb = uow.Modules.JobOrder.Get(id);
+            //SysSurveyDetailTemplate sdTemplate = uow.Modules.
+            List<TblJobOrderSurveyDetail> SurveyDetail = uow.Modules.Survey.Get(id);
             //TblSurveyHeader svH = uow.Modules.Survey.Get(id);
 
             String html = string.Empty;
@@ -1443,9 +1445,57 @@ namespace Kemrex.Web.Main.Controllers
             using (MemoryStream stream = new System.IO.MemoryStream())
             {
                 html = html.Replace("@@ImageBanner@@", HttpContext.Server.MapPath("~/images/logo-banner.png"));
-                html = html.Replace("@@ImageCheckbox@@", HttpContext.Server.MapPath("~/html/img/checkbox_0.gif"));
+                //html = html.Replace("@@ImageCheckbox@@", HttpContext.Server.MapPath("~/html/img/checkbox_0.gif"));
+                string checkbox_0 = HttpContext.Server.MapPath("~/html/img/checkbox_0.gif");
+                string checkbox_1 = HttpContext.Server.MapPath("~/html/img/checkbox_1.gif");
 
                 html = html.Replace("@@Job@@", jb.JobName + " ("+ jb.JobOrderNo +")");
+                
+
+                foreach (var x in SurveyDetail)
+                {
+                    if (x.SubSurveyID == 1 && x.No == 1)
+                    {
+                        html = html.Replace("@@ImageCheckbox1@@", checkbox_1);
+                    }
+                    if (x.SubSurveyID == 1 && x.No == 2)
+                    {
+                        html = html.Replace("@@ImageCheckbox2@@", checkbox_1);
+                        html = html.Replace("@@CauseChangeInstall@@", x.Desc);
+                    }
+                    if (x.SubSurveyID == 1 && x.No == 3)
+                    {
+                        html = html.Replace("@@ImageCheckbox3@@", checkbox_1);
+                        html = html.Replace("@@CauseNotInstall@@", x.Desc);
+                    }
+                    if (x.SubSurveyID == 2 && x.No == 1)
+                    {
+                        html = html.Replace("@@ImageCheckbox4@@", checkbox_1);
+                        html = html.Replace("@@MediumGround@@", x.Desc);
+                    }
+                    if (x.SubSurveyID == 2 && x.No == 2)
+                    {
+                        html = html.Replace("@@ImageCheckbox5@@", checkbox_1);
+                        html = html.Replace("@@MediumGround@@", x.Desc);
+                    }
+                    if (x.SubSurveyID == 2 && x.No == 3)
+                    {
+                        html = html.Replace("@@ImageCheckbox6@@", checkbox_1);
+                        html = html.Replace("@@LowGround@@", x.Desc);
+                    }
+                    if (x.SubSurveyID == 2 && x.No == 4)
+                    {
+                        html = html.Replace("@@ImageCheckbox7@@", checkbox_1);
+                        html = html.Replace("@@OtherGround@@", x.Desc);
+                    }
+                }
+                html = html.Replace("@@ImageCheckbox1@@", checkbox_0);
+                html = html.Replace("@@ImageCheckbox2@@", checkbox_0);
+                html = html.Replace("@@ImageCheckbox3@@", checkbox_0);
+                html = html.Replace("@@ImageCheckbox4@@", checkbox_0);
+                html = html.Replace("@@ImageCheckbox5@@", checkbox_0);
+                html = html.Replace("@@ImageCheckbox6@@", checkbox_0);
+                html = html.Replace("@@ImageCheckbox7@@", checkbox_0);
                 //สาเหตุ 85
                 html = html.Replace("@@CauseChangeInstall@@", "____________________________________________________________________________________");
                 html = html.Replace("@@CauseNotInstall@@", "____________________________________________________________________________________");
@@ -1454,6 +1504,10 @@ namespace Kemrex.Web.Main.Controllers
                 html = html.Replace("@@LowGround@@", "______________________________________________________________________________");
                 //อื่นๆ 87
                 html = html.Replace("@@OtherGround@@", "______________________________________________________________________________________");
+
+
+
+
                 //Line 92
                 string line = "___________________________________________________________________________________________"+ "<br/>";
                 line += "___________________________________________________________________________________________" + "<br/>";

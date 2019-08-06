@@ -82,7 +82,6 @@ namespace Kemrex.Core.Common.Modules
                             ProductId = i.ProductId,
                             ProductCode = i.ProductCode,
                             ProductName = i.ProductName,
-                            Model = i.Model,
                             PriceNet = i.PriceNet,
                             PriceTot = i.PriceTot,
                             PriceVat = i.PriceVat,

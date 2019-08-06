@@ -232,7 +232,7 @@ namespace Kemrex.Web.Main.Controllers
             { return RedirectToAction("Detail", MVCController, new { id = qid, tab = "Product", msg = ex.GetMessage(), msgType = AlertMsgType.Danger }); }
         }
         [HttpPost]
-        public ActionResult GetTransferStockInList()
+        public JsonResult GetTransferStockInList()
         {
             List<TransferStockHeader> lst = new List<TransferStockHeader>();
             try

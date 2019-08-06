@@ -169,7 +169,7 @@ namespace Kemrex.Web.Main.Controllers
         #endregion
 
         [HttpPost]
-        public ActionResult GetProductList()
+        public JsonResult GetProductList()
         {
 
             List<TblProduct> lst = new List<TblProduct>();
