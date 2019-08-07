@@ -143,6 +143,7 @@ namespace Kemrex.Core.Common.Modules
             paramList.Add(new SqlParameter("@SaleOrderId", dto.SaleOrderId));
             paramList.Add(new SqlParameter("@InvoiceRemark", dto.InvoiceRemark));
             paramList.Add(new SqlParameter("@InvoiceTerm", dto.InvoiceTerm));
+            paramList.Add(new SqlParameter("@InvoiceAmount", dto.InvoiceAmount));
             paramList.Add(new SqlParameter("@User", dto.CreatedBy));
             
             try

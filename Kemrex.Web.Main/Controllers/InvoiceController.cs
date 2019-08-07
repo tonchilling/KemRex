@@ -6,6 +6,7 @@ using Kemrex.Web.Common.Controllers;
 using Kemrex.Web.Common.Models;
 using System;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 using System.Web.Mvc;
 
 namespace Kemrex.Web.Main.Controllers
@@ -83,6 +84,7 @@ namespace Kemrex.Web.Main.Controllers
         public ActionResult Detail(int? id, string msg, AlertMsgType? msgType)
         {
             TblInvoice ob = uow.Modules.Invoice.Get(id ?? 0);
+           
             ob.SaleOrder = uow.Modules.SaleOrder.Get(ob.SaleOrderId);
             return ViewDetail(ob, msg, msgType);
         }
@@ -117,6 +119,8 @@ namespace Kemrex.Web.Main.Controllers
                 int id = Request.Form["InvoiceId"].ParseInt();
 
                 TblInvoice ob = uow.Modules.Invoice.Get(id);
+                if (Request.Form["SaleOrderId"] != "")
+                    ob.SaleOrderId = int.Parse(Request.Form["SaleOrderId"].ToString());
                 ob.SaleOrder = uow.Modules.SaleOrder.Get(ob.SaleOrderId);
                 if (ob.InvoiceId <= 0)
                 {
@@ -127,11 +131,27 @@ namespace Kemrex.Web.Main.Controllers
                     ob.UpdatedDate = CurrentDate;
                     ob.InvoiceDate = CurrentDate;
                     //ob.DueDate = CurrentDate.AddMonths(1);
+                    switch (ob.SaleOrder.ConditionId)
+                    {
+                        case 1:     //จ่าย 100% หลังติดตั้งงาน
+                        case 2: ob.InvoiceAmount = ob.SaleOrder.SummaryNet; //มัดจำ 100 % ก่อนติดตั้งงาน
+                            break;
+                        case 3: ob.InvoiceAmount = ob.SaleOrder.SummaryNet/2; //2 งวด 50 / 50
+                            break;
+                        case 4: //3 งวด
+                        case 5: ob.InvoiceAmount = 0; //4 งวด
+                            break;
+                        default: ob.InvoiceAmount = 0;
+                            break;
+                    }
                 }
                 else
                 {
                     ob.UpdatedBy = CurrentUID;
                     ob.UpdatedDate = CurrentDate;
+                    ob.InvoiceAmount = 0;
+                    if (Request.Form["InvoiceAmount"] != "")
+                        ob.InvoiceAmount = decimal.Parse(Request.Form["InvoiceAmount"].ToString());
                 }
 
                 try
@@ -141,12 +161,10 @@ namespace Kemrex.Web.Main.Controllers
                     ob.StatusId = Request.Form["StatusId"].ParseInt();
                     ob.InvoiceTerm = Request.Form["InvoiceTerm"].ParseInt();
                     ob.InvoiceRemark = Request.Form["InvoiceRemark"];
-                    string hddIsDeposit = Request.Form["hddIsDeposit"].ToString();
-                    ob.IsDeposit = hddIsDeposit == ""? 0:int.Parse(Request.Form["hddIsDeposit"]);
-                    ob.InvoiceAmount = 0;
-                    if (Request.Form["InvoiceAmount"] != "")
-                        ob.InvoiceAmount = decimal.Parse(Request.Form["InvoiceAmount"].ToString());
-                    decimal reamin = Request.Form["remain"].ToString().ParseDecimal();
+                    //string hddIsDeposit = Request.Form["hddIsDeposit"].ToString();
+                    //ob.IsDeposit = hddIsDeposit == ""? 0:int.Parse(Request.Form["hddIsDeposit"]);
+                   
+                    //decimal reamin = Request.Form["remain"].ToString().ParseDecimal();
                     //if (ob.StatusId > 1)
                     //{
                     //    if (ob.InvoiceAmount <= 0)
@@ -154,10 +172,13 @@ namespace Kemrex.Web.Main.Controllers
                     //        return ViewDetail(ob, "กรุณาระบุยอดที่ต้องการเรียกเก็บ", AlertMsgType.Danger);
                     //    }
                     //}
-                    if (ob.InvoiceAmount > reamin)
-                    {
-                        return ViewDetail(ob, "ยอดเรียกเก็บต้อง น้อยกว่าหรือเท่ากับ ยอดที่ยังไม่ได้เรียกเก็บ", AlertMsgType.Danger);
-                    }
+                    //if (ob.InvoiceId > 0)
+                    //{
+                    //    if (ob.InvoiceAmount > reamin)
+                    //    {
+                    //        return ViewDetail(ob, "ยอดเรียกเก็บต้อง น้อยกว่าหรือเท่ากับ ยอดที่ยังไม่ได้เรียกเก็บ", AlertMsgType.Danger);
+                    //    }
+                    //}
                     bool result = false;
 
                     if (ob.InvoiceId <= 0)
@@ -171,10 +192,6 @@ namespace Kemrex.Web.Main.Controllers
                         uow.Modules.Invoice.Set(ob);
                         uow.SaveChanges();
                     }
-                        
-
-                    
-
                     return RedirectToAction("Detail", MVCController, new { id = ob.InvoiceId, msg = "บันทึกข้อมูลเรียบร้อยแล้ว", msgType = AlertMsgType.Success });
                 }
                 catch (Exception ex)

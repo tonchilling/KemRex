@@ -19,6 +19,7 @@ using System.Web.UI.WebControls;
 using System.IO;
 using iTextSharp.text.html.simpleparser;
 using iTextSharp.tool.xml;
+using System.Text.RegularExpressions;
 
 namespace Kemrex.Web.Main.Controllers
 {
@@ -603,7 +604,7 @@ namespace Kemrex.Web.Main.Controllers
             }
 
         }
-        public FileResult PDFSaleOrder(int id)
+        public FileResult PDFSaleOrderx(int id)
         {
             TblSaleOrder so = uow.Modules.SaleOrder.Get(id);
             so.TblSaleOrderDetail = uow.Modules.SaleOrderDetail.Gets(id);
@@ -713,7 +714,198 @@ namespace Kemrex.Web.Main.Controllers
                 return File(stream.ToArray(), "application/pdf", "SaleOrder_" + so.SaleOrderNo + ".pdf");
             }
         }
-        public FileResult PDFInvoice(int id)
+        public FileResult PDFSaleOrder(int id)
+        {
+            TblSaleOrder so = uow.Modules.SaleOrder.Get(id);
+            so.TblSaleOrderDetail = uow.Modules.SaleOrderDetail.Gets(id);
+            so.Customer = uow.Modules.Customer.Get(so.CustomerId.HasValue ? so.CustomerId.Value : -1);
+            foreach (var pr in so.TblSaleOrderDetail.ToList())
+            {
+                pr.Product = uow.Modules.Product.Get(pr.ProductId);
+                pr.Product.Unit = uow.Modules.Unit.Get(pr.Product.UnitId);
+            }
+            EnmPaymentCondition epc = new EnmPaymentCondition();
+            TblQuotation qo = uow.Modules.Quotation.Get(so.QuotationNo);
+            epc = uow.Modules.PaymentCondition.Get(so.ConditionId.Value);
+            int saleID = so.SaleId.HasValue ? so.SaleId.Value : 0;
+            string SaleTel = uow.Modules.Employee.GetByCondition(saleID).EmpMobile;
+            int DepartmentID = uow.Modules.Employee.GetByCondition(saleID).DepartmentId.HasValue ? uow.Modules.Employee.GetByCondition(saleID).DepartmentId.Value : 0;
+            string Department = uow.Modules.Department.Get(DepartmentID).DepartmentName;
+            TblEmployee emp = uow.Modules.Employee.GetByCondition(saleID);
+            emp.Prefix = uow.Modules.Enum.PrefixGet(emp.PrefixId.HasValue ? emp.PrefixId.Value : 0);
+            string TitleSale = emp.Prefix.PrefixNameTh;
+
+            String html = string.Empty;
+            html = System.IO.File.ReadAllText(HttpContext.Server.MapPath("~/html/" + "SaleOrderHTML.html"));
+            string Header = System.IO.File.ReadAllText(HttpContext.Server.MapPath("~/html/" + "SaleOrderHeader.html"));
+            string Body = System.IO.File.ReadAllText(HttpContext.Server.MapPath("~/html/" + "SaleOrderBody.html"));
+            using (MemoryStream stream = new System.IO.MemoryStream())
+            {
+
+                string tagItem = "";
+                string tagBody = "";
+                int num = 0;
+                int line = 0;
+                tagItem += Header;
+                tagItem += Body;
+                foreach (var d in so.TblSaleOrderDetail.ToList())
+                {
+
+                    num++;
+                    line++;
+                    tagBody += "<tr>";
+                    tagBody += "<td align='left' style='border-right:1px;'> " + d.Product.ProductCode + "</td>";
+                    tagBody += "<td align='left' style='border-right:1px;' >" + d.Product.ProductName + "</td>";
+                    tagBody += "<td align='right' style='border-right:1px;' >" + (d.Quantity != 0 ? d.Quantity.ToString("###,###") : "") + "</td>";
+                    tagBody += "<td align='center' style='border-right:1px;' >" + d.Product.Unit.UnitName + "</td>";
+                    tagBody += "<td align='right' style='border-right:1px;' >" + (d.Product.PriceNet != 0 ? d.Product.PriceNet.ToString("###,###,###.00") : "") + "</td>";
+                    tagBody += "<td align='right' style='border-right:1px;' >" + (d.DiscountNet != 0 ? d.DiscountNet.ToString("###,###,###.00") : "") + "</td>";
+                    tagBody += "<td align='right' >" + (d.TotalNet.HasValue ? d.TotalNet.Value.ToString("###,###,###.00") : "") + "</td>";
+                    tagBody += "</tr>";
+
+                    if (d.Remark != null && d.Remark.ToString() != "")
+                    {
+                        string[] lines = Regex.Split(d.Remark, "\r\n");
+                        foreach (string re in lines)
+                        {
+                            num++;
+                            line++;
+                            tagBody += "<tr>";
+                            tagBody += "<td align='left' style='border-right:1px;'> " + "" + "</td>";
+                            tagBody += "<td align='left' style='border-right:1px;' >" + re + "</td>";
+                            tagBody += "<td align='right' style='border-right:1px;' >" + "" + "</td>";
+                            tagBody += "<td align='center' style='border-right:1px;' >" + "" + "</td>";
+                            tagBody += "<td align='right' style='border-right:1px;' >" + "" + "</td>";
+                            tagBody += "<td align='right' style='border-right:1px;' >" + "" + "</td>";
+                            tagBody += "<td align='right' >" + "" + "</td>";
+                            tagBody += "</tr>";
+                            if (line % 31 == 0)
+                            {
+                                num = 0;
+                                tagItem = tagItem.Replace("@@body@@", tagBody);
+                                tagItem += "<br/>";
+                                tagItem += "<br/>";
+                                tagItem += "<br/>";
+
+                                tagItem += Header;
+                                tagItem += Body;
+                                tagBody = "";
+                            }
+                        }
+                    }
+
+                }
+
+
+                for (int i = 0; i <= 19 - num; i++)
+                {
+                    tagBody += "<tr><td style='border-right:1px;'>&nbsp;</td>" +
+                        "<td style='border-right:1px;'>&nbsp;</td>" +
+                        "<td style='border-right:1px;'>&nbsp;</td>" +
+                        "<td style='border-right:1px;'>&nbsp;</td>" +
+                        "<td style='border-right:1px;'>&nbsp;</td>" +
+                        "<td style='border-right:1px;'>&nbsp;</td>" +
+                        "<td>&nbsp;</td></tr>";
+                }
+                tagItem = tagItem.Replace("@@body@@", tagBody);
+                if (num > 25 && num <= 30)
+                {
+                    for (int k = num + 1; k <= 31; k++)
+                    {
+                        tagItem += "<br/>";
+                    }
+                    tagItem += "<br/>";
+                    tagItem += Header;
+                    tagItem += Body;
+                    tagBody = "";
+                    for (int i = 0; i <= 20; i++)
+                    {
+                        tagBody += "<tr><td style='border-right:1px;'>&nbsp;</td>" +
+                            "<td style='border-right:1px;'>&nbsp;</td>" +
+                            "<td style='border-right:1px;'>&nbsp;</td>" +
+                            "<td style='border-right:1px;'>&nbsp;</td>" +
+                            "<td style='border-right:1px;'>&nbsp;</td>" +
+                            "<td style='border-right:1px;'>&nbsp;</td>" +
+                            "<td>&nbsp;</td></tr>";
+                    }
+                    tagItem = tagItem.Replace("@@body@@", tagBody);
+                }
+
+                html = html.Replace("@@item@@", tagItem);
+                string[] RemarkLine = Regex.Split(so.SaleOrderRemark, "\r\n");
+                string remarkx = "";
+                int countline = 1;
+                foreach (string re in RemarkLine)
+                {
+                    if (countline == RemarkLine.Count())
+                    {
+                        remarkx += re;
+                    }
+                    else
+                    {
+                        remarkx += re + "<br/>";
+                    }
+                    countline++;
+                }
+
+
+                html = html.Replace("@@ImageBanner@@", HttpContext.Server.MapPath("~/images/logo-banner.png"));
+                html = html.Replace("@@Logo2@@", HttpContext.Server.MapPath("~/images/logo2.png"));
+                html = html.Replace("@@ImageCheckbox@@", HttpContext.Server.MapPath("~/html/img/checkbox_0.gif"));
+                html = html.Replace("@@SaleOrderNo@@", so.SaleOrderNo);
+                string StrSalOrderDate = so.SaleOrderDate.HasValue ? so.SaleOrderDate.Value.Day.ToString("00") + "/" + so.SaleOrderDate.Value.Month.ToString("00") + "/" + so.SaleOrderDate.Value.Year : "";
+                html = html.Replace("@@SaleOrderDateStr@@", StrSalOrderDate);
+                html = html.Replace("@@CustomerId@@", so.CustomerId.Value.ToString("0000000000"));
+
+                html = html.Replace("@@CustomerName@@", so.CustomerName);
+                html = html.Replace("@@CustomerName@@", so.CustomerName);
+                html = html.Replace("@@Address@@", so.BillingAddress);
+                html = html.Replace("@@Tel@@", so.Customer.CustomerPhone);
+                html = html.Replace("@@Fax@@", so.Customer.CustomerFax);
+
+                html = html.Replace("@@QuotationNo@@", so.QuotationNo);
+                string StrQuotationDate = qo.QuotationDate.Day.ToString("00") + "/" + qo.QuotationDate.Month.ToString("00") + "/" + qo.QuotationDate.Year;
+                html = html.Replace("@@QuotationDate@@", StrQuotationDate);
+                string DeliveryDate = so.DeliveryDate.HasValue ? so.DeliveryDate.Value.Day.ToString("00") + "/" + so.DeliveryDate.Value.Month.ToString("00") + "/" + so.DeliveryDate.Value.Year : "";
+
+                html = html.Replace("@@DeliveryDate@@", DeliveryDate);
+                html = html.Replace("@@CreditDay@@", so.SaleOrderCreditDay.ToString());
+                html = html.Replace("@@Condition@@", epc.ConditionName);
+                html = html.Replace("@@Department@@", Department);
+
+                
+                html = html.Replace("@@item@@", tagItem);
+                html = html.Replace("@@Remark@@", remarkx);
+                decimal SubTotalNet = 0;
+                decimal DiscountNet = 0;
+                SubTotalNet = so.SubTotalNet.HasValue ? so.SubTotalNet.Value : 0;
+                DiscountNet = so.DiscountNet.HasValue ? so.DiscountNet.Value != 0 ? so.DiscountNet.Value : 0 : 0;
+
+                decimal SummaryNet = 0;
+                SummaryNet = SubTotalNet - DiscountNet;
+                decimal SummaryVat = (SummaryNet * 7) / 100;
+                decimal SummaryTot = SummaryNet + SummaryVat;
+                html = html.Replace("@@SubTotalNet@@", SubTotalNet.ToString("###,###,##0.00"));
+                html = html.Replace("@@DiscountNet@@", DiscountNet.ToString("###,###,##0.00"));
+                html = html.Replace("@@SummaryNet@@", SummaryNet.ToString("###,###,##0.00"));
+                html = html.Replace("@@SummaryVat@@", SummaryVat.ToString("###,###,##0.00"));
+                html = html.Replace("@@SummaryTot@@", SummaryTot.ToString("###,###,##0.00"));
+                //string textFinalAmount = ThaiBahtText(invoice.SaleOrder.SummaryTot.HasValue ? invoice.SaleOrder.SummaryTot.Value.ToString():"");
+                string textFinalAmount = ThaiBahtText(SummaryTot.ToString());
+                html = html.Replace("@@TextfinalAmount@@", textFinalAmount);
+                html = html.Replace("@@SaleName@@", TitleSale + so.SaleName);
+
+
+                StringReader sr = new StringReader(html);
+                Document pdfDoc = new Document(PageSize.A4, 10f, 10f, 10f, 0f);
+                PdfWriter writer = PdfWriter.GetInstance(pdfDoc, stream);
+                pdfDoc.Open();
+                XMLWorkerHelper.GetInstance().ParseXHtml(writer, pdfDoc, sr);
+                pdfDoc.Close();
+                return File(stream.ToArray(), "application/pdf", "SaleOrder_" + so.SaleOrderNo + ".pdf");
+            }
+        }
+        public FileResult PDFInvoicexx(int id)
         {
             TblInvoice invoice = new TblInvoice();
             invoice = uow.Modules.Invoice.Get(id);
@@ -855,6 +1047,207 @@ namespace Kemrex.Web.Main.Controllers
                 return File(stream.ToArray(), "application/pdf", "Invoice_"+ invoice.InvoiceNo +".pdf");
             }
         }
+        public FileResult PDFInvoice(int id)
+        {
+            TblInvoice invoice = new TblInvoice();
+            invoice = uow.Modules.Invoice.Get(id);
+            invoice.SaleOrder = uow.Modules.SaleOrder.Get(invoice.SaleOrderId);
+            invoice.SaleOrder.Customer = uow.Modules.Customer.Get(invoice.SaleOrder.CustomerId.HasValue ? invoice.SaleOrder.CustomerId.Value : -1);
+            invoice.SaleOrder.TblSaleOrderDetail = uow.Modules.SaleOrderDetail.Gets(invoice.SaleOrderId);
+            foreach (var pr in invoice.SaleOrder.TblSaleOrderDetail.ToList())
+            {
+                pr.Product = uow.Modules.Product.Get(pr.ProductId);
+                pr.Product.Unit = uow.Modules.Unit.Get(pr.Product.UnitId);
+            }
+            EnmPaymentCondition epc = new EnmPaymentCondition();
+            epc = uow.Modules.PaymentCondition.Get(invoice.SaleOrder.ConditionId.Value);
+            invoice.SaleOrder.JobOrder = uow.Modules.SaleOrder.GetJobOrder(invoice.SaleOrderId);
+
+            String html = string.Empty;
+            html = System.IO.File.ReadAllText(HttpContext.Server.MapPath("~/html/" + "InvoiceHTML.html"));
+            string Header = System.IO.File.ReadAllText(HttpContext.Server.MapPath("~/html/" + "InvoiceHeader.html"));
+            string Body = System.IO.File.ReadAllText(HttpContext.Server.MapPath("~/html/" + "InvoiceBody.html"));
+            using (MemoryStream stream = new System.IO.MemoryStream())
+            {
+
+                string tagItem = "";
+                string tagBody = "";
+                int num = 0;
+                int line = 0;
+                tagItem += Header;
+                tagItem += Body;
+                foreach (var d in invoice.SaleOrder.TblSaleOrderDetail.ToList())
+                {
+                    
+                    num++;
+                    line++;
+                    tagBody += "<tr>";
+                    tagBody += "<td align='left' style='border-right:1px;'> " + d.Product.ProductCode + "</td>";
+                    tagBody += "<td align='left' style='border-right:1px;' >" + d.Product.ProductName + "</td>";
+                    tagBody += "<td align='right' style='border-right:1px;' >" + (d.Quantity != 0 ? d.Quantity.ToString("###,###") : "") + "</td>";
+                    tagBody += "<td align='center' style='border-right:1px;' >" + d.Product.Unit.UnitName + "</td>";
+                    tagBody += "<td align='right' style='border-right:1px;' >" + (d.Product.PriceNet != 0 ? d.Product.PriceNet.ToString("###,###,###.00") : "") + "</td>";
+                    tagBody += "<td align='right' style='border-right:1px;' >" + (d.DiscountNet != 0 ? d.DiscountNet.ToString("###,###,###.00") : "") + "</td>";
+                    tagBody += "<td align='right' >" + (d.TotalNet.HasValue ? d.TotalNet.Value.ToString("###,###,###.00") : "") + "</td>";
+                    tagBody += "</tr>";
+
+                    if (d.Remark != null && d.Remark.ToString() != "")
+                    {
+                        string[] lines = Regex.Split(d.Remark, "\r\n");
+                        foreach (string re in lines)
+                        {
+                            num++;
+                            line++;
+                            tagBody += "<tr>";
+                            tagBody += "<td align='left' style='border-right:1px;'> " + "" + "</td>";
+                            tagBody += "<td align='left' style='border-right:1px;' >" + re + "</td>";
+                            tagBody += "<td align='right' style='border-right:1px;' >" + "" + "</td>";
+                            tagBody += "<td align='center' style='border-right:1px;' >" + "" + "</td>";
+                            tagBody += "<td align='right' style='border-right:1px;' >" + "" + "</td>";
+                            tagBody += "<td align='right' style='border-right:1px;' >" + "" + "</td>";
+                            tagBody += "<td align='right' >" + "" + "</td>";
+                            tagBody += "</tr>";
+                            if (line % 31 == 0)
+                            {
+                                num = 0;
+                                tagItem = tagItem.Replace("@@body@@", tagBody);
+                                tagItem += "<br/>";
+                                tagItem += "<br/>";
+                                tagItem += "<br/>";
+             
+                                tagItem += Header;
+                                tagItem += Body;
+                                tagBody = "";
+                            }
+                        }
+                    }
+                    
+                }
+               
+
+                for (int i = 0; i <= 19 - num; i++)
+                {
+                    tagBody += "<tr><td style='border-right:1px;'>&nbsp;</td>" +
+                        "<td style='border-right:1px;'>&nbsp;</td>" +
+                        "<td style='border-right:1px;'>&nbsp;</td>" +
+                        "<td style='border-right:1px;'>&nbsp;</td>" +
+                        "<td style='border-right:1px;'>&nbsp;</td>" +
+                        "<td style='border-right:1px;'>&nbsp;</td>" +
+                        "<td>&nbsp;</td></tr>";
+                }
+                tagItem = tagItem.Replace("@@body@@", tagBody);
+                if (num > 20 && num <= 30)
+                {   
+                    for(int k = num + 1; k <= 31; k++)
+                    {
+                        tagItem += "<br/>";
+                    }
+                    tagItem += "<br/>";
+                    tagItem += Header;
+                    tagItem += Body;
+                    tagBody = "";
+                    for (int i = 0; i <= 19; i++)
+                    {
+                        tagBody += "<tr><td style='border-right:1px;'>&nbsp;</td>" +
+                            "<td style='border-right:1px;'>&nbsp;</td>" +
+                            "<td style='border-right:1px;'>&nbsp;</td>" +
+                            "<td style='border-right:1px;'>&nbsp;</td>" +
+                            "<td style='border-right:1px;'>&nbsp;</td>" +
+                            "<td style='border-right:1px;'>&nbsp;</td>" +
+                            "<td>&nbsp;</td></tr>";
+                    }
+                    tagItem = tagItem.Replace("@@body@@", tagBody);
+                }
+                
+                html = html.Replace("@@item@@", tagItem);
+                string[] RemarkLine = Regex.Split(invoice.InvoiceRemark, "\r\n");
+                string remarkx = "";
+                int countline = 1;
+                foreach (string re in RemarkLine)
+                {
+                    if (countline == RemarkLine.Count())
+                    {
+                        remarkx += re;
+                    }
+                    else
+                    {
+                        remarkx += re + "<br/>";
+                    }
+                    countline++;
+                }
+                
+                html = html.Replace("@@Remark@@", remarkx);
+                html = html.Replace("@@ImageBanner@@", HttpContext.Server.MapPath("~/images/logo-banner.png"));
+                html = html.Replace("@@Logo2@@", HttpContext.Server.MapPath("~/images/logo2.png"));
+                html = html.Replace("@@ImageCheckbox@@", HttpContext.Server.MapPath("~/html/img/checkbox_0.gif"));
+                html = html.Replace("@@CustomerID@@", invoice.SaleOrder.CustomerId.Value.ToString("0000000000"));
+                html = html.Replace("@@CustomerName@@", invoice.SaleOrder.CustomerName);
+                html = html.Replace("@@Address@@", invoice.SaleOrder.BillingAddress);
+                //html = html.Replace("@@Address2@@", "");
+                html = html.Replace("@@Tel@@", invoice.SaleOrder.Customer.CustomerPhone);
+                html = html.Replace("@@Fax@@", invoice.SaleOrder.Customer.CustomerFax);
+                html = html.Replace("@@PONO@@", invoice.SaleOrder.QuotationNo);
+                html = html.Replace("@@Fax@@", invoice.SaleOrder.Customer.CustomerFax);
+                html = html.Replace("@@CitizenID@@", invoice.SaleOrder.Customer.CustomerTaxId);
+
+                string InvoiceDate = invoice.InvoiceDate == null ? "" : invoice.InvoiceDate.Day.ToString("00") + "/" + invoice.InvoiceDate.Month.ToString("00") + "/" + invoice.InvoiceDate.Year;
+                string DueDate = invoice.DueDate == null ? "" : invoice.DueDate.Day.ToString("00") + "/" + invoice.DueDate.Month.ToString("00") + "/" + invoice.DueDate.Year;
+
+                html = html.Replace("@@InvoiceNo@@", invoice.InvoiceNo);
+                html = html.Replace("@@JobOrderNo@@", invoice.SaleOrder.JobOrder.JobOrderNo);
+                html = html.Replace("@@InvoiceDate@@", InvoiceDate);
+                html = html.Replace("@@Credit@@", invoice.SaleOrder.SaleOrderCreditDay.ToString());
+                html = html.Replace("@@DueDate@@", DueDate);
+                html = html.Replace("@@SaleName@@", invoice.SaleOrder.SaleName);
+                decimal SubTotalNet = 0;
+                decimal DiscountNet = 0;
+                decimal Deposit = invoice.DepositAmount;
+                switch (invoice.SaleOrder.ConditionId)
+                {
+                    case 1:
+                        SubTotalNet = invoice.SaleOrder.SubTotalNet.HasValue ? invoice.SaleOrder.SubTotalNet.Value : 0;
+                        DiscountNet = invoice.SaleOrder.DiscountNet.HasValue ? invoice.SaleOrder.DiscountNet.Value != 0 ? invoice.SaleOrder.DiscountNet.Value : 0 : 0;
+                        break;
+                    //case 2: 
+                    case 3:
+                        SubTotalNet = invoice.InvoiceAmount.HasValue ? invoice.InvoiceAmount.Value : 0;
+                        if (invoice.InvoiceTerm == 1) DiscountNet = invoice.SaleOrder.DiscountNet.HasValue ? invoice.SaleOrder.DiscountNet.Value != 0 ? invoice.SaleOrder.DiscountNet.Value : 0 : 0;
+                        break;
+                    case 4:
+                        SubTotalNet = invoice.InvoiceAmount.HasValue ? invoice.InvoiceAmount.Value : 0;
+                        if (invoice.InvoiceTerm == 1) DiscountNet = invoice.SaleOrder.DiscountNet.HasValue ? invoice.SaleOrder.DiscountNet.Value != 0 ? invoice.SaleOrder.DiscountNet.Value : 0 : 0;
+                        break;
+                    case 5:
+                        SubTotalNet = invoice.InvoiceAmount.HasValue ? invoice.InvoiceAmount.Value : 0;
+                        if (invoice.InvoiceTerm == 1) DiscountNet = invoice.SaleOrder.DiscountNet.HasValue ? invoice.SaleOrder.DiscountNet.Value != 0 ? invoice.SaleOrder.DiscountNet.Value : 0 : 0;
+                        break;
+
+                    default: tagItem += "<td></td>"; break;
+                }
+                decimal SummaryNet = 0;
+                SummaryNet = SubTotalNet - DiscountNet - Deposit;
+                decimal SummaryVat = (SummaryNet * 7) / 100;
+                decimal SummaryTot = SummaryNet + SummaryVat;
+                html = html.Replace("@@SubTotalNet@@", SubTotalNet.ToString("###,###,##0.00"));
+                html = html.Replace("@@DiscountNet@@", DiscountNet.ToString("###,###,##0.00"));
+                html = html.Replace("@@Deposit@@", Deposit.ToString("###,###,##0.00"));
+                html = html.Replace("@@SummaryNet@@", SummaryNet.ToString("###,###,##0.00"));
+                html = html.Replace("@@SummaryVat@@", SummaryVat.ToString("###,###,##0.00"));
+                html = html.Replace("@@SummaryTot@@", SummaryTot.ToString("###,###,##0.00"));
+                //string textFinalAmount = ThaiBahtText(invoice.SaleOrder.SummaryTot.HasValue ? invoice.SaleOrder.SummaryTot.Value.ToString():"");
+                string textFinalAmount = ThaiBahtText(SummaryTot.ToString());
+                html = html.Replace("@@TextfinalAmount@@", textFinalAmount);
+
+
+                StringReader sr = new StringReader(html);
+                Document pdfDoc = new Document(PageSize.A4, 10f, 10f, 10f, 0f);
+                PdfWriter writer = PdfWriter.GetInstance(pdfDoc, stream);
+                pdfDoc.Open();
+                XMLWorkerHelper.GetInstance().ParseXHtml(writer, pdfDoc, sr);
+                pdfDoc.Close();
+                return File(stream.ToArray(), "application/pdf", "Invoice_" + invoice.InvoiceNo + ".pdf");
+            }
+        }
         public FileResult PDFDepositInvoice(int id)
         {
             TblInvoice invoice = new TblInvoice();
@@ -914,7 +1307,22 @@ namespace Kemrex.Web.Main.Controllers
                         "<td>&nbsp;</td></tr>";
                 }
                 html = html.Replace("@@item@@", tagItem);
-                html = html.Replace("@@Remark@@", invoice.InvoiceRemark);
+                string[] RemarkLine = Regex.Split(invoice.InvoiceRemark, "\r\n");
+                string remarkx = "";
+                int countline = 1;
+                foreach (string re in RemarkLine)
+                {
+                    if (countline == RemarkLine.Count())
+                    {
+                        remarkx += re;
+                    }
+                    else
+                    {
+                        remarkx += re + "<br/>";
+                    }
+                    countline++;
+                }
+                html = html.Replace("@@Remark@@", remarkx);
                 decimal SubTotalNet = 0;
                 decimal DiscountNet = 0;
                 decimal Deposit = 0;
@@ -1028,6 +1436,8 @@ namespace Kemrex.Web.Main.Controllers
         {
 
             TblJobOrder jb = uow.Modules.JobOrder.Get(id);
+            //SysSurveyDetailTemplate sdTemplate = uow.Modules.
+            List<TblJobOrderSurveyDetail> SurveyDetail = uow.Modules.Survey.Get(id);
             //TblSurveyHeader svH = uow.Modules.Survey.Get(id);
 
             String html = string.Empty;
@@ -1035,9 +1445,57 @@ namespace Kemrex.Web.Main.Controllers
             using (MemoryStream stream = new System.IO.MemoryStream())
             {
                 html = html.Replace("@@ImageBanner@@", HttpContext.Server.MapPath("~/images/logo-banner.png"));
-                html = html.Replace("@@ImageCheckbox@@", HttpContext.Server.MapPath("~/html/img/checkbox_0.gif"));
+                //html = html.Replace("@@ImageCheckbox@@", HttpContext.Server.MapPath("~/html/img/checkbox_0.gif"));
+                string checkbox_0 = HttpContext.Server.MapPath("~/html/img/checkbox_0.gif");
+                string checkbox_1 = HttpContext.Server.MapPath("~/html/img/checkbox_1.gif");
 
                 html = html.Replace("@@Job@@", jb.JobName + " ("+ jb.JobOrderNo +")");
+                
+
+                foreach (var x in SurveyDetail)
+                {
+                    if (x.SubSurveyID == 1 && x.No == 1)
+                    {
+                        html = html.Replace("@@ImageCheckbox1@@", checkbox_1);
+                    }
+                    if (x.SubSurveyID == 1 && x.No == 2)
+                    {
+                        html = html.Replace("@@ImageCheckbox2@@", checkbox_1);
+                        html = html.Replace("@@CauseChangeInstall@@", x.Desc);
+                    }
+                    if (x.SubSurveyID == 1 && x.No == 3)
+                    {
+                        html = html.Replace("@@ImageCheckbox3@@", checkbox_1);
+                        html = html.Replace("@@CauseNotInstall@@", x.Desc);
+                    }
+                    if (x.SubSurveyID == 2 && x.No == 1)
+                    {
+                        html = html.Replace("@@ImageCheckbox4@@", checkbox_1);
+                        html = html.Replace("@@MediumGround@@", x.Desc);
+                    }
+                    if (x.SubSurveyID == 2 && x.No == 2)
+                    {
+                        html = html.Replace("@@ImageCheckbox5@@", checkbox_1);
+                        html = html.Replace("@@MediumGround@@", x.Desc);
+                    }
+                    if (x.SubSurveyID == 2 && x.No == 3)
+                    {
+                        html = html.Replace("@@ImageCheckbox6@@", checkbox_1);
+                        html = html.Replace("@@LowGround@@", x.Desc);
+                    }
+                    if (x.SubSurveyID == 2 && x.No == 4)
+                    {
+                        html = html.Replace("@@ImageCheckbox7@@", checkbox_1);
+                        html = html.Replace("@@OtherGround@@", x.Desc);
+                    }
+                }
+                html = html.Replace("@@ImageCheckbox1@@", checkbox_0);
+                html = html.Replace("@@ImageCheckbox2@@", checkbox_0);
+                html = html.Replace("@@ImageCheckbox3@@", checkbox_0);
+                html = html.Replace("@@ImageCheckbox4@@", checkbox_0);
+                html = html.Replace("@@ImageCheckbox5@@", checkbox_0);
+                html = html.Replace("@@ImageCheckbox6@@", checkbox_0);
+                html = html.Replace("@@ImageCheckbox7@@", checkbox_0);
                 //สาเหตุ 85
                 html = html.Replace("@@CauseChangeInstall@@", "____________________________________________________________________________________");
                 html = html.Replace("@@CauseNotInstall@@", "____________________________________________________________________________________");
@@ -1046,6 +1504,10 @@ namespace Kemrex.Web.Main.Controllers
                 html = html.Replace("@@LowGround@@", "______________________________________________________________________________");
                 //อื่นๆ 87
                 html = html.Replace("@@OtherGround@@", "______________________________________________________________________________________");
+
+
+
+
                 //Line 92
                 string line = "___________________________________________________________________________________________"+ "<br/>";
                 line += "___________________________________________________________________________________________" + "<br/>";

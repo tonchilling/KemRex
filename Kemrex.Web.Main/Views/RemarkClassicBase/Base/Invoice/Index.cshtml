@@ -13,6 +13,7 @@
   )ViewData["optPayment"];
 }
 
+
 @section Scripts {
     <script type="text/javascript">
         var url = '@Url.Action("GetInvoiceList", "Invoice")';
@@ -25,6 +26,7 @@
             waitingDialog.show('Waiting for loading data', { dialogSize: 'md', progressType: 'primary' });
             LoadTable();
             $(SaleMenu).slideToggle();
+            $('.money').simpleMoneyFormat();
         });
         function LoadTable() {
 
@@ -36,19 +38,19 @@
             $(".divDetail").empty();
             html += '<table class="table  table-striped table-hover "  >';
             html += '<thead>';
-            html += '<tr class="table-primary" >';
+            html += '<tr class="table-primary" align="center">';
             html += '<th align="center">หมายเลข</th>';
             html += '<th align="center">ลูกค้า</th>';
             html += '<th align="center">พนักงานขาย</th>';
             html += '<th align="center">ใบเสนอราคา/ใบสั่งขาย</th>';
             html += '<th align="center">การชำระ</th>';
             html += '<th align="center">ยอดเงินเรียกเก็บ</th>';
-            html += '<th align="center">มัดจำ</th>';
+            //html += '<th align="center">มัดจำ</th>';
             html += '<th align="center">วันที่เอกสาร</th>';
             html += '<th align="center">งวดที่</th>';
             html += '<th align="center">สถานะ</th>';
             html += '<th align="center">เครื่องมือ</th>';
-            html += ' </tr>';
+            html += '</tr>';
             html += '</thead>';
             html += '<tbody>';
 
@@ -72,19 +74,19 @@
                             html += '<td>' + item.SaleOrder.SaleName + '</td>';
                             html += '<td align="center">' + item.SaleOrder.QuotationNo + '<br>' + item.SaleOrder.SaleOrderNo + '</td>';
                             html += '<td>' + item.SaleOrder.ConditionName + '</td>';
-                            html += '<td align="right">' + item.InvoiceAmount + '</td>';
+                            html += '<td align="right" class="money">' + (item.InvoiceAmount).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,') + '</td>';
 
-                            if (item.IsDeposit == 1) {
-                                html += '<td align="center">' + '<span class="input-group-addon"><i class="glyphicon glyphicon-ok text-success" aria-hidden="true"></i></span>' + '</td>';
-                            }
-                            else {
-                                html += '<td align="center">' + '<span class="input-group-addon"><i class="glyphicon glyphicon-minus text-inverse" aria-hidden="true"></i></span>' + '</td>';
-                            }
-                  
+                            //if (item.IsDeposit == 1) {
+                            //    html += '<td align="center">' + '<span class="input-group-addon"><i class="glyphicon glyphicon-ok text-success" aria-hidden="true"></i></span>' + '</td>';
+                            //}
+                            //else {
+                            //    html += '<td align="center">' + '<span class="input-group-addon"><i class="glyphicon glyphicon-minus text-inverse" aria-hidden="true"></i></span>' + '</td>';
+                            //}
+
 
 
                             html += '<td align="center">' + item.StrInvoiceDate + '</td>';
-                            html += '<td>' + item.InvoiceTerm + '</td>';
+                            html += '<td align="center">' + item.InvoiceTerm + '</td>';
 
                             if (item.StatusId == 1) {
                                 statusName = "ร่าง";
@@ -96,16 +98,23 @@
                                 statusName = "ยกเลิก";
                             }
 
-                            html += '<td>' + statusName + '</td>';
+                            html += '<td align="center">' + statusName + '</td>';
                             html += '<td> <a href="' + urlDetail + '/' + item.InvoiceId + '" class="btn btn-xs btn-primary">';
                             html += '<i class="fa fa-pencil" aria-hidden="true"></i>&nbsp;แก้ไข </a>&nbsp;';
 
-                            if (item.IsDeposit == 1) {
-                                html += '<a href="' + urlExportDeposit + '/' + item.InvoiceId + '" class="btn btn-xs btn-warning">';
+                            if (item.SaleOrder.ConditionId == 3 || item.SaleOrder.ConditionId == 4 || item.SaleOrder.ConditionId == 5) {
+                                if (item.InvoiceTerm == 1) {
+                                    html += '<a href="' + urlExportDeposit + '/' + item.InvoiceId + '" class="btn btn-xs btn-warning">';
+                                }
+                                else {
+                                    html += '<a href="' + urlExport + '/' + item.InvoiceId + '" class="btn btn-xs btn-warning">';
+                                }
                             }
                             else {
                                 html += '<a href="' + urlExport + '/' + item.InvoiceId + '" class="btn btn-xs btn-warning">';
                             }
+
+                           
                             html += '<i class="fa fa-file-pdf-o" aria-hidden="true"></i>&nbsp;PDF </a></td>';
 
                             html += '</tr>';
@@ -177,77 +186,77 @@
                                             </tr>
                                         </thead>
                                         @*<tbody>
-                                            @if (Model.Count() <= 0)
-                                            {
-                                                <tr>
-                                                    <td colspan="8">ไม่พบข้อมูล</td>
-                                                </tr>
-                                            }
-                                            @foreach (var ob in Model)
-                                            {
+                                                @if (Model.Count() <= 0)
+                                                {
+                                                    <tr>
+                                                        <td colspan="8">ไม่พบข้อมูล</td>
+                                                    </tr>
+                                                }
+                                                @foreach (var ob in Model)
+                                                {
 
-                                                <tr id="@ob.StatusId"
-                                                    @if (ob.StatusId == 1) { @Html.Raw("class=\"table-light text-primary\"")  } else if (ob.StatusId == 2) { @Html.Raw("class=\"bg-warning text-dark\"")  } else if (ob.StatusId == 3) { @Html.Raw("class=\"bg-success text-white\"")  } else { @Html.Raw("class=\"table-secondary text-white\"") }>
-                                                    <td>@ob.InvoiceNo</td>
-                                                    <td>@ob.SaleOrder.CustomerName</td>
-                                                    <td align="center">
-                                                        <a href="@Url.Action("Detail", new { controller="SaleOrder" , area="" , id=ob.SaleOrderId })">@ob.SaleOrder.QuotationNo</a>
-                                                    </td>
-                                                    @{
-                                                        var con = ob.SaleOrder != null ? @optPayment.Find(c => c.ConditionId == ob.SaleOrder.ConditionId).ConditionName : "";
-                                                    }
-                                                    <td align="center">@con</td>
-                                                    <td align="right">@ob.InvoiceAmount</td>
-                                                    <td align="center">@ob.InvoiceDate.ToString("dd/MM/yyyy HH:mm")</td>
-                                                    <td align="center">@ob.InvoiceTerm</td>
-                                                    <td align="center">
-                                                        @{ if (ob.StatusId == 1)
-                                                            {
-                                                                @("ร่าง");
+                                                    <tr id="@ob.StatusId"
+                                                        @if (ob.StatusId == 1) { @Html.Raw("class=\"table-light text-primary\"")  } else if (ob.StatusId == 2) { @Html.Raw("class=\"bg-warning text-dark\"")  } else if (ob.StatusId == 3) { @Html.Raw("class=\"bg-success text-white\"")  } else { @Html.Raw("class=\"table-secondary text-white\"") }>
+                                                        <td>@ob.InvoiceNo</td>
+                                                        <td>@ob.SaleOrder.CustomerName</td>
+                                                        <td align="center">
+                                                            <a href="@Url.Action("Detail", new { controller="SaleOrder" , area="" , id=ob.SaleOrderId })">@ob.SaleOrder.QuotationNo</a>
+                                                        </td>
+                                                        @{
+                                                            var con = ob.SaleOrder != null ? @optPayment.Find(c => c.ConditionId == ob.SaleOrder.ConditionId).ConditionName : "";
+                                                        }
+                                                        <td align="center">@con</td>
+                                                        <td align="right">@ob.InvoiceAmount</td>
+                                                        <td align="center">@ob.InvoiceDate.ToString("dd/MM/yyyy HH:mm")</td>
+                                                        <td align="center">@ob.InvoiceTerm</td>
+                                                        <td align="center">
+                                                            @{ if (ob.StatusId == 1)
+                                                                {
+                                                                    @("ร่าง");
+                                                                }
+                                                                else if (ob.StatusId == 2)
+                                                                {
+                                                                    @("ส่งแล้ว");
+                                                                }
+                                                                else if (ob.StatusId == 3)
+                                                                {
+                                                                    @("จ่ายแล้ว");
+                                                                }
+                                                                else
+                                                                {
+                                                                    @("ยกเลิก");
+                                                                }
                                                             }
-                                                            else if (ob.StatusId == 2)
+                                                        </td>
+                                                        <td align="center">
+                                                            <a href="@Url.Action("Detail", new { controller="Invoice" , area="" , id=ob.InvoiceId })"
+                                                               class="btn btn-xs btn-primary">
+                                                                <i class="fa fa-pencil" aria-hidden="true"></i>&nbsp;แก้ไข
+                                                            </a>
+                                                            @if (ob.SaleOrder.ConditionId == 2)
                                                             {
-                                                                @("ส่งแล้ว");
-                                                            }
-                                                            else if (ob.StatusId == 3)
-                                                            {
-                                                                @("จ่ายแล้ว");
+                                                                <a href="@Url.Action("PDFDepositInvoice", new { controller = "export", area = "", id = ob.InvoiceId })"
+                                                                   class="btn btn-xs btn-warning">
+                                                                    <i class="fa fa-file-pdf-o" aria-hidden="true"></i>&nbsp;PDF
+                                                                </a>
                                                             }
                                                             else
                                                             {
-                                                                @("ยกเลิก");
+                                                                <a href="@Url.Action("PDFInvoice", new { controller = "export", area = "", id = ob.InvoiceId })"
+                                                                   class="btn btn-xs btn-warning">
+                                                                    <i class="fa fa-file-pdf-o" aria-hidden="true"></i>&nbsp;PDF
+                                                                </a>
                                                             }
-                                                        }
-                                                    </td>
-                                                    <td align="center">
-                                                        <a href="@Url.Action("Detail", new { controller="Invoice" , area="" , id=ob.InvoiceId })"
-                                                           class="btn btn-xs btn-primary">
-                                                            <i class="fa fa-pencil" aria-hidden="true"></i>&nbsp;แก้ไข
-                                                        </a>
-                                                        @if (ob.SaleOrder.ConditionId == 2)
-                                                        {
-                                                            <a href="@Url.Action("PDFDepositInvoice", new { controller = "export", area = "", id = ob.InvoiceId })"
-                                                               class="btn btn-xs btn-warning">
-                                                                <i class="fa fa-file-pdf-o" aria-hidden="true"></i>&nbsp;PDF
-                                                            </a>
-                                                        }
-                                                        else
-                                                        {
-                                                            <a href="@Url.Action("PDFInvoice", new { controller = "export", area = "", id = ob.InvoiceId })"
-                                                               class="btn btn-xs btn-warning">
-                                                                <i class="fa fa-file-pdf-o" aria-hidden="true"></i>&nbsp;PDF
-                                                            </a>
-                                                        }
-                                                    </td>
-                                                </tr>
-                                            }
-                                        </tbody>*@
+                                                        </td>
+                                                    </tr>
+                                                }
+                                            </tbody>*@
                                     </table>
 
                                 </div>
                             </div>
                         </div>
-                       
+
                     </div>
                     <!-- /.box-body -->
                 </div>

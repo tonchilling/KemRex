@@ -16,127 +16,22 @@
 </head>
 <body>
     <div style="width: 100%; padding-left: 20px; padding-right: 20px; background-color: white; ">
-        <div>
-            <table style="background-color: white; margin-top:10px;font-size:small;line-height:20px;" width="100%" border="0" cellpadding="5">
-                <tr>
-                    <td align="left" width="105"><img src="@@Logo2@@" width="100" /></td>
-                    <td>
-                        <b style="font-size:large;">บริษัท เข็มเหล็ก จำกัด(สำนักงานใหญ่)</b>
-                        <br />
-                        27/5 อาคารสุธีกรุ๊ป ชั้น 3-4  หมู่ 7 ถ.กิ่งแก้ว-เทพารักษ์
-                        <br />
-                        ต.บางพลีใหญ่ อ.บางพลี สมุทรปราการ 10540
-                        <br />
-                        <b>โทร.</b> 02-026-3140 , 02-715-0400 &nbsp;&nbsp;<b>โทรสาร.</b> 02-715-0500
-                        <br />
-                        <b>www.kemrex.com</b>
-                    </td>
-                    <td align="center" width="230" valign="middle">
-                        <h3>
-                            ใบสั่งขาย
-                            <br />
-                            Sale Order
-                        </h3>
-                    </td>
-                </tr>
-            </table>
-        </div>
-        <!--<div style="float:left;"><br />รหัสลูกค้า &nbsp;&nbsp;&nbsp;@@CustomerId@@</div>-->
-        <div style="float:right;">
-            <table align="right" style="margin-top:10px;font-size:small;line-height:20px;" border="1" cellspacing="0" cellpadding="5">
-                <tr>
-                    <td align="center">เลขทีเอกสาร</td>
-                    <td align="left">@@SaleOrderNo@@</td>
-                </tr>
-                <tr>
-                    <td align="center">วันที่เอกสาร</td>
-                    <td align="left">@@SaleOrderDateStr@@</td>
-                </tr>
-            </table>
-        </div>
-        <div style="clear:both;"></div>
-        <div>
-            <table style="background-color: white; margin-top:3px; font-size:12px; line-height: 20px;" width="100%" border="1" cellspacing="0" cellpadding="5">
-                <tr>
-                    <td width="55%" valign="top">
-                        <table style="font-size:12px; line-height: 20px;" width="100%" border="0" cellspacing="0" cellpadding="5">
-                            <tr>
-                                <td>รหัสลูกค้า</td>
-                                <td colspan="3">@@CustomerId@@</td>
-                            </tr>
-                            <tr>
-                                <td>ชื่อลูกค้า</td>
-                                <td colspan="3">@@CustomerName@@</td>
-                            </tr>
-                            <tr>
-                                <td valign="top" >ที่อยู่</td>
-                                <td valign="top" colspan="3" >@@Address@@</td>
-                            </tr>
-                            <tr>
-                                <td>โทรศัพท์</td>
-                                <td>@@Tel@@</td>
-                                <td>โทรสาร</td>
-                                <td>@@Fax@@</td>
-                            </tr>
-                        </table>
-                    </td>
-                    <td width="45%" valign="top">
-                        <table style="font-size:12px; line-height: 20px;" width="100%" border="0" cellspacing="0" cellpadding="5">
-
-                            <tr>
-                                <td>ใบสั่งจอง</td>
-                                <td>@@QuotationNo@@</td>
-                                <td>วันที่</td>
-                                <td>@@QuotationDate@@</td>
-                            </tr>
-                            <tr>
-                                <td>วันที่กำหนดส่ง</td>
-                                <td colspan="3">@@DeliveryDate@@</td>
-                                
-                            </tr>
-                            <tr>
-                                <td>จำนวนวันเครดิต</td>
-                                <td colspan="3">@@CreditDay@@ &nbsp;&nbsp;วัน</td>
-                            </tr>
-                            <tr>
-                                <td>เงื่อนไขวางบิล</td>
-                                <td colspan="3">@@Condition@@</td>
-                            </tr>
-                            <tr>
-                                <td>แผนก</td>
-                                <td colspan="3">@@Department@@</td>
-                            </tr>
-                        </table>
-
-                    </td>
-                </tr>
-            </table>
-        </div>
+        @@item@@
         <div>
             <table style="background-color: white; margin-top:3px; font-size:12px; line-height: 20px;" width="100%" border="1" cellspacing="0">
                 <tr>
                     <td>
                         <table style="background-color: white;font-size:12px; line-height: 20px;" width="100%" border="0" cellspacing="0" cellpadding="5">
-                            <tr style="border:1px solid black;margin-bottom:20px;">
-                                <th align="center" style="border-right:1px;border-bottom:1px;">ลำดับ</th>
-                                <th align="center" style="border-right:1px;border-bottom:1px;">รหัสสินค้า</th>
-                                <th align="center" style="border-right:1px;border-bottom:1px;">รายการ</th>
-                                <th align="center" style="border-right:1px;border-bottom:1px;">จำนวน</th>
-                                <th align="center" style="border-right:1px;border-bottom:1px;">หน่วย</th>
-                                <th align="center" style="border-right:1px;border-bottom:1px;">ราคา/หน่วย</th>
-                                <th align="center" style="border-right:1px;border-bottom:1px;">ส่วนลด</th>
-                                <th align="center" style="border-bottom:1px;">จำนวนเงิน</th>
-                            </tr>
-                            @@item@@
-                        </table>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <table style="background-color: white;font-size:12px; line-height: 20px;" width="100%" border="0" cellspacing="0" cellpadding="5">
                             <tr>
                                 <td width="70%" style="border-right:1px;" valign="top">
-                                    <div style="height:80px;padding-top:5px;word-wrap:break-word;">หมายเหตุ : @@Remark@@</div>
+                                    <div style="height:80px;word-wrap:break-word;">
+                                        <table style="font-size:12px; line-height: 20px;" border="0" cellspacing="0" cellpadding="5">
+                                            <tr>
+                                                <td valign="top" width="60">หมายเหตุ :</td>
+                                                <td valign="top">@@Remark@@</td>
+                                            </tr>
+                                        </table>
+                                    </div>
                                     <div style="height:20px;padding-top:5px;">ยอดเงินเป็นตัวหนังสือ(บาทถ้วน)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;@@TextfinalAmount@@</div>
                                 </td>
                                 <td width="18%" style="border-right:1px;" valign="top">

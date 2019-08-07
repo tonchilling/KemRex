@@ -18,7 +18,65 @@
                     $(this).remove();
                 });
             }, 5000);
+            //LoadTable();
         });
+
+        function LoadTable() {
+
+            var html = '';
+            var criteria = "";
+            $(".divDetail").empty();
+            html += '<table class="table  table-striped table-hover "  >';
+            html += '<thead>';
+            html += '<tr class="table-primary" >';
+            html += '<th align="center">หมวดหมู่</th>';
+            html += '<th align="center">รหัสสินค้า</th>';
+            html += '<th align="center">ชื่อสินค้า</th>';
+            html += '<th align="center">ราคา (Inc.Vat)</th>';
+            html += '<th align="center">คงเหลือ</th>';
+            html += '<th align="center">คลังสินค้า</th>';
+            html += '</tr>';
+            html += '</thead>';
+            html += '<tbody>';
+
+            
+
+            $.ajax({
+                url: url,
+                type: "POST",
+                // data: JSON.stringify(criteria),
+                dataType: "json",
+                contentType: "application/json; charset=utf-8",
+                success: function (data) {
+
+                    var statusName = "";
+                    if (data != null) {
+
+                        $.each(data, function (index, item) {
+                            html += '<tr>';
+                            html += '<td>' + item.Category.CategoryName + '</td>';
+                            html += '<td align="center">' + item.ProductCode + '</td>';
+                            html += '<td>' + item.ProductName + '</td>';
+                            html += '<td align="right">' + (item.PriceTot)..toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,') + '</td>';
+                            html += '<td align="right">' + item.QtyStock + '</td>';
+                            html += '<td align="center">' + '' + '</td>';
+                            html += '</tr>';
+                        });
+                    }
+                    html += '</tbody>';
+                    html += ' </table>';
+
+                    $(".divDetail").append(html);
+                   
+                    //waitingDialog.hide();
+                },
+                error: function (error) {
+                    alert(error.statusText);
+                    //waitingDialog.hide();
+                    //  waitingDialog.hide();
+                }
+            });
+        }
     </script>
 }
 
@@ -86,18 +144,6 @@
                                                     <td>@ob.ProductName</td>
                                                     <td>@ob.PriceTot.ToString("#,##0.00")</td>
                                                     <td>@ob.QtyStock.ToString()</td>
-                                                    @*<td>
-            <a href="@Url.Action("Detail", new { controller = "Product", area = "", id = ob.ProductId })"
-               class="btn btn-xs btn-primary">
-                <i class="fa fa-pencil" aria-hidden="true"></i>&nbsp;แก้ไข
-            </a>
-            <form method="post" action="@Url.Action("Delete", new { controller = "Product", area = "" })"
-                  class="fnc-delete inline-block">
-                <input type="hidden" name="Id" value="@ob.ProductId" />
-                @Html.AntiForgeryToken()
-                <button type="submit" class="btn btn-danger btn-xs"><i class="fa fa-trash" aria-hidden="true"></i>&nbsp;ลบ</button>
-            </form>
-        </td>*@
                                                 </tr>
                                             }
                                         </tbody>
