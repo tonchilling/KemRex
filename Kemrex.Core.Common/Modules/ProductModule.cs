@@ -50,6 +50,37 @@ namespace Kemrex.Core.Common.Modules
                     };
         }
 
+
+
+        public List<TblProduct> GetByCondition(string productCode, string productName)
+        {
+
+
+
+
+            var data = db.TblProduct.Select(o => new TblProduct
+            {
+                ProductId = o.ProductId,
+                ProductCode=o.ProductCode,
+                ProductName = o.ProductName,
+                PriceNet=o.PriceNet,
+                QtyStock=o.QtyStock,
+                /*      WareHouse=(from q in db.TblWareHouse.Where(xx=>xx.Whid==o.Whid) select new TblWareHouse {
+                           Whid=q.Whid,
+                           Whcode=q.Whcode,
+                           Whname=q.Whname
+                       }).FirstOrDefault()*/
+
+
+            }).Where(
+                   o => (o.ProductCode.ToString().IndexOf(productCode) > -1 || productCode == "")
+                        && (o.ProductName.IndexOf(productName) > -1 || productName == "")
+                  );
+
+
+            return data.ToList();
+        }
+
         public List<TblProduct> Gets(string categoryType)
         {
             return db.TblProduct

@@ -61,7 +61,7 @@ namespace Kemrex.Web.Main.Controllers
         [HttpPost, ActionName("Detail")]
         public ActionResult SetDetail()
         {
-            int id = Request.Form["ModelId"].ParseInt();
+            int id = Request.Form["ProductId"].ParseInt();
             TblProduct ob = uow.Modules.Product.Get(id);
             if (ob.ProductId <= 0)
             {
@@ -86,6 +86,7 @@ namespace Kemrex.Web.Main.Controllers
             ob.ProductNameBilling = Request.Form["ProductNameBilling"];
             ob.ProductNameTrade = Request.Form["ProductNameTrade"];
             ob.UnitId = Request.Form["UnitId"].ParseInt();
+            ob.Whid= Request.Form["WHId"].ParseInt();
             ob.PriceNet = Request.Form["PriceNet"].ParseDecimal();
             ob.PriceVat = Request.Form["PriceVat"].ParseDecimal();
             ob.PriceTot = ob.PriceNet + ob.PriceVat;
@@ -154,6 +155,8 @@ namespace Kemrex.Web.Main.Controllers
                 ViewData["optCategory"] = uow.Modules.ProductCategory.Gets();
                 ViewData["optModel"] = uow.Modules.ProductModel.Gets();
                 ViewData["optUnit"] = uow.Modules.Unit.Gets();
+                ViewData["optWareHouse"] = uow.Modules.WareHouse.Gets();
+
                 return View(ob);
             }
             catch (Exception ex)

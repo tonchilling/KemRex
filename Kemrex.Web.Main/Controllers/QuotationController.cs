@@ -9,7 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
-
+using Kemrex.Core.Common.Helper;
 namespace Kemrex.Web.Main.Controllers
 {
     public class QuotationController : KemrexController
@@ -29,7 +29,7 @@ namespace Kemrex.Web.Main.Controllers
                     if (msgType.HasValue) { alert.Type = msgType.Value; }
                     ViewBag.Alert = alert;
                 }
-                int total = uow.Modules.Quotation.Count(0, src);
+             /*   int total = uow.Modules.Quotation.Count(0, src);
                 WidgetPaginationModel Pagination = new WidgetPaginationModel("Index", "Qoutation", "")
                 {
                     Page = (page ?? 1),
@@ -40,9 +40,9 @@ namespace Kemrex.Web.Main.Controllers
                     },
                     SortExp = "",
                     Total = total
-                };
-                ViewBag.Pagination = Pagination;
-                lst = uow.Modules.Quotation.Gets(Pagination.Page, Pagination.Size, src);
+                };*/
+               // ViewBag.Pagination = Pagination;
+             //   lst = uow.Modules.Quotation.Gets(Pagination.Page, Pagination.Size, src);
             }
             catch (Exception ex)
             {
@@ -55,6 +55,17 @@ namespace Kemrex.Web.Main.Controllers
             }
             return View(lst);
         }
+
+
+        [HttpGet]
+        public ActionResult GetList(int id)
+        {
+            List<TblQuotationDisplay> obList = uow.Modules.Quotation.GetList(id);
+
+            return Json(obList,JsonRequestBehavior.AllowGet);
+        }
+
+
 
         [HttpPost]
         public ActionResult GetList()
@@ -71,6 +82,38 @@ namespace Kemrex.Web.Main.Controllers
            
             return ViewDetail(ob, msg, msgType);
         }
+
+
+        [HttpGet]
+        public JsonResult GetCustomer(string CustomerNo, string CustomerName, string ContactName)
+        {
+
+            List<TblCustomer> customerResult = uow.Modules.Customer.GetByCondition(CustomerNo, CustomerName, ContactName);
+
+
+
+
+
+            return Json(customerResult, JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpGet]
+        public JsonResult GetProduct(string ProductCode, string ProductName)
+        {
+            List<TblProduct> customerResult = null;
+            try
+            {
+                 customerResult = uow.Modules.Product.GetByCondition(ProductCode, ProductName).Where(o => o.PriceNet > 0).ToList();
+            }
+            catch (Exception ex)
+
+            { }
+
+
+
+            return Json(customerResult, JsonRequestBehavior.AllowGet);
+        }
+
 
         private string genQuotationId()
         {
@@ -93,21 +136,105 @@ namespace Kemrex.Web.Main.Controllers
             return qid;
         }
 
-        [ValidateAntiForgeryToken]
+        [HttpPost, ActionName("Clone")]
+        public ActionResult CloneDetail()
+        {
+            int id = Request.Form["QuotationId"].ParseInt();
+          
+            TblQuotation objOrg = uow.Modules.Quotation.GetDetail(id);
+            TblQuotation ob = Kemrex.Core.Common.Helper.Converting.ObjectClone<TblQuotation>(objOrg);
+            ob.QuotationId = 0;
+            ob.RefQuotationId = id;
+            ob.OrgQuotationId = ob.OrgQuotationId.HasValue ? ob.OrgQuotationId : id;
+            /*   if (ob.QuotationId <= 0)
+                {
+                    ob.QuotationNo = genQuotationId();
+                    ob.CreatedBy = CurrentUID;
+                    ob.UpdatedBy = CurrentUID;
+                    ob.CreatedDate = CurrentDate;
+                    ob.UpdatedDate = CurrentDate;
+                    ob.QuotationDate = CurrentDate;
+                }
+                else
+                {
+                    ob.UpdatedBy = CurrentUID;
+                    ob.UpdatedDate = CurrentDate;
+                }
+  */
+
+
+
+            ob.QuotationNo = genQuotationId();
+            ob.StatusId = 1;
+            ob.CreatedBy = CurrentUID;
+            ob.UpdatedBy = CurrentUID;
+            ob.CreatedDate = CurrentDate;
+            ob.UpdatedDate = CurrentDate;
+            ob.QuotationDate = CurrentDate;
+            ob.ApprovedBy = Convert.ToInt32(CurrentUID);
+            ob.QuotationId = 0;
+           
+            try
+            {
+
+                if (ob.TblQuotationDetail != null && ob.TblQuotationDetail.Count > 0)
+                {
+                    foreach (TblQuotationDetail detail in ob.TblQuotationDetail)
+                    {
+
+                        detail.QuotationId = ob.QuotationId;
+                        detail.Id = 0;
+                    }
+                }
+
+
+                uow.Modules.Quotation.Set(ob);
+                uow.SaveChanges();
+/*
+                if (ob.TblQuotationDetail != null && ob.TblQuotationDetail.Count > 0)
+                {
+                    foreach (TblQuotationDetail detail in ob.TblQuotationDetail)
+                    {
+
+                        detail.QuotationId = ob.QuotationId;
+                        detail.Id = 0;
+                    }
+                }
+
+                uow.Modules.QuotationDetail.Set(ob.TblQuotationDetail.ToList());
+                uow.SaveChanges();
+*/
+
+
+                return RedirectToAction("Detail", MVCController, new { id = ob.QuotationId, msg = "บันทึกข้อมูลเรียบร้อยแล้ว", msgType = AlertMsgType.Success });
+            }
+            catch (Exception ex)
+            {
+                string msg = ex.GetMessage(true);
+                return ViewDetail(ob, msg, AlertMsgType.Danger);
+            }
+        }
+
+      
         [HttpPost, ActionName("Detail")]
         public ActionResult SetDetail()
         {
+            bool updateOrgId = false;
+            TblQuotation cloneObj = new TblQuotation();
             int id = Request.Form["QuotationId"].ParseInt();
             int approveStatus = Request.Form["hdApprove"] != null ? Request.Form["hdApprove"].ParseInt():0;
             TblQuotation ob = uow.Modules.Quotation.Get(id);
             if (ob.QuotationId <= 0)
             {
+                updateOrgId = true;
                 ob.QuotationNo = genQuotationId();
                 ob.CreatedBy = CurrentUID;
                 ob.UpdatedBy = CurrentUID;
                 ob.CreatedDate = CurrentDate;
                 ob.UpdatedDate = CurrentDate;
                 ob.QuotationDate = CurrentDate;
+              //  ob.RefQuotationId = id;
+              //  ob.OrgQuotationId = ob.OrgQuotationId.HasValue ? ob.OrgQuotationId : id;
             }
             else
             {
@@ -121,7 +248,7 @@ namespace Kemrex.Web.Main.Controllers
                 ob.StatusId = 3;
                 ob.ApprovedBy = Convert.ToInt32(CurrentUID);
             }
-
+            ob.QuotationRemark = Request.Form["QuotationRemark"]; ;
             ob.SaleId = Request.Form["SaleId"] != null ? Request.Form["SaleId"].ParseInt() : 0;
             ob.SaleName = Request.Form["SaleName"];
             if (Request.Form["DeliveryDate"].ToString().Count() > 0)
@@ -140,7 +267,7 @@ namespace Kemrex.Web.Main.Controllers
             ob.BillingAddress = Request.Form["BillingAddress"];
 
             ob.ShippingAddress = Request.Form["ShippingAddress"];
-            ob.QuotationRemark = Request.Form["QuotationRemark"];
+          
 
             if (Request.Form["DiscountCash"] != null)
                 ob.DiscountCash = decimal.Parse(Request.Form["DiscountCash"]);
@@ -157,8 +284,15 @@ namespace Kemrex.Web.Main.Controllers
             {
 
                 uow.Modules.Quotation.Set(ob);
-                uow.SaveChanges();
 
+              
+                uow.SaveChanges();
+                if (updateOrgId)
+                {
+                    ob.OrgQuotationId = ob.QuotationId;
+                    uow.Modules.Quotation.Set(ob);
+                }
+                uow.SaveChanges();
                 return RedirectToAction("Detail", MVCController, new { id = ob.QuotationId, msg = "บันทึกข้อมูลเรียบร้อยแล้ว", msgType = AlertMsgType.Success });
             }
             catch (Exception ex)
@@ -235,7 +369,7 @@ namespace Kemrex.Web.Main.Controllers
             int qid = Request.Form["QuotationId"].ParseInt();
             try
             {
-                int id = Request.Form["Id"].ParseInt();
+                int id = Request.Form["SelQuotationProductId"].ParseInt();
                 TblQuotationDetail ob = uow.Modules.QuotationDetail.Get(id);
                 if (ob == null)
                 { return RedirectToAction("Detail", MVCController, new { id = qid, tab = "Product", msg = "ไม่พบข้อมูลที่ต้องการ", msgType = AlertMsgType.Warning }); }
@@ -251,32 +385,58 @@ namespace Kemrex.Web.Main.Controllers
         public ActionResult AddProduct()
         {
             int qid = Request.Form["QuotationId"].ParseInt();
-            var id = Request.Form["selProduct"].Split(':');  //  ProductId:PriceNet
+            var productId = Request.Form["selProduct"].Split(':');  //  ProductId:PriceNet
+            var SelQuotationProductId = Request.Form["SelQuotationProductId"].ParseInt();  //  ProductId:PriceNet
             int qty = Request.Form["ProductQty"].ParseInt();
             Decimal price = Request.Form["ProductPrice"].ParseDecimal();
             Decimal discount = Request.Form["ProductDiscount"].ParseDecimal();
-
-            if (id.Count() > 0)
+            decimal realDiscount = 0;
+            var remark = Request.Form["Remark"];
+            if (productId.Count() > 0)
             {
-                int pid = int.Parse(id[0]);
+                int pid = int.Parse(productId[0]);
 
-                TblQuotationDetail ob = uow.Modules.QuotationDetail.Get(0);
-
+                TblQuotationDetail ob = uow.Modules.QuotationDetail.Get(SelQuotationProductId);
+                realDiscount = discount;
                 ob.QuotationId = qid;
                 ob.ProductId = pid;
                 ob.Quantity = qty;
+                ob.CalType= Request.Form["selCalType"].ParseInt(); 
                 ob.PriceNet = price * qty;
                 ob.PriceVat = uow.Modules.System.GetVatFromNet(price * qty);
                 // ob.PriceVat = (price * qty * vat) - (price * qty);
                 ob.PriceTot = price * qty + ob.PriceVat;
-                ob.DiscountNet = discount;
-                ob.DiscountVat = uow.Modules.System.GetVatFromNet(discount);
-                ob.DiscountTot = discount + ob.DiscountVat;
+                if (ob.CalType == 1)
+                    realDiscount = ((ob.PriceNet * discount) / 100);
 
+                ob.Discount = discount;
+                ob.DiscountNet = realDiscount;
+                ob.DiscountVat = uow.Modules.System.GetVatFromNet(realDiscount);
+                ob.DiscountTot = realDiscount + ob.DiscountVat;
+
+                ob.TotalNet = ob.PriceNet - realDiscount;
+
+                ob.TotalVat= ob.PriceVat - ob.DiscountVat;
+                ob.TotalTot = ob.PriceTot - ob.DiscountTot;
+
+                ob.Remark = remark;
                 uow.Modules.QuotationDetail.Set(ob);
                 uow.SaveChanges();
 
+                TblQuotation objQuoation = uow.Modules.Quotation.GetDetail(qid);
 
+                objQuoation.SubTotalNet = objQuoation.TblQuotationDetail.Sum(o=>o.PriceNet);
+                objQuoation.SubTotalVat = objQuoation.TblQuotationDetail.Sum(o => o.PriceVat);
+                objQuoation.SubTotalTot= objQuoation.TblQuotationDetail.Sum(o => o.PriceTot);
+                objQuoation.DiscountNet = objQuoation.TblQuotationDetail.Sum(o => o.DiscountNet);
+                objQuoation.DiscountVat = objQuoation.TblQuotationDetail.Sum(o => o.DiscountVat);
+                objQuoation.DiscountTot = objQuoation.TblQuotationDetail.Sum(o => o.DiscountTot);
+                objQuoation.SummaryNet= objQuoation.TblQuotationDetail.Sum(o => o.TotalNet);
+                objQuoation.SummaryVat = objQuoation.TblQuotationDetail.Sum(o => o.TotalVat);
+                objQuoation.SummaryTot = objQuoation.TblQuotationDetail.Sum(o => o.TotalTot);
+
+                uow.Modules.Quotation.Set(objQuoation);
+                uow.SaveChanges();
             }
             return RedirectToAction("Detail", MVCController, new { id = qid, tab = "Product", msg = "", msgType = AlertMsgType.Success });
         }

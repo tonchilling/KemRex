@@ -381,7 +381,32 @@ optQuotation = (List<TblQuotation>
 
         });
 
-        
+
+
+          $(".btnDelete").click(function () {
+
+            
+                swal({
+                    title: "Delete",
+                    text: "Do you want to delete?",
+                    type: "danger",
+                    showCancelButton: true,
+                    closeOnConfirm: false,
+                    showLoaderOnConfirm: true
+                },
+                    function (isConfirm) {
+                        if (isConfirm) {
+                            $("#SelQSaleOrderProductId").val($(this).closest("tr").attr("data"));
+                     $('#frmProduct').attr('action', '@Url.Action("DetailDelete", new { controller = "SaleOrder" })');
+                      $('#frmProduct').submit();
+
+                        }
+                    });
+         
+          
+            return false;
+
+        })
 
         $(document).on("click", ".btnConfirm", function () {
             var isConfirm = false;
@@ -419,7 +444,7 @@ optQuotation = (List<TblQuotation>
                     function (isConfirm) {
                         if (isConfirm) {
                            
-                            $('#frmProduct').submit();
+                            $('#frmDiscount').submit();
 
                         }
                 });
@@ -427,7 +452,139 @@ optQuotation = (List<TblQuotation>
             return false;
         });
 
-      
+
+
+          $("#btnProduct").click(function () {
+
+
+
+            $("#ProductModal").modal('show');
+
+        })
+
+
+                  $("#btnSearchProduct").click(function () {
+
+
+            var html = '';
+                   $('.divProduct').empty();
+
+            html += '<table class="table table-hover">';
+            html += '<thead> ';
+            html += '<tr>';
+                      html += '<th>กรุณาเลือก</th>';
+                      html += '<th>รหัสสินค้า</th>';
+                      html += '<th>ชื่อสินค้า</th>';
+                      html += '<th>ราคาต่อหน่วย</th>';
+                      html += '<th>Qty คงเหลือ</th>';
+                      html += '<th>คลังสินค้า</th>';
+            html += '</tr>';
+            html += '</thead>';
+            html += '<tbody>';
+
+
+
+            var url = '@Url.Action("GetProduct", "Quotation")';
+                   objAddressList = [];
+                   objContacList = [];
+                   $.ajax({
+                type: "get",
+                url: url,
+                       data: {
+                           ProductCode: $("#searchProductCode").val(),
+                           ProductName: $("#searchProductName").val()
+                       }
+                       ,success: function (obj) {
+                           $.each(obj, function (index, item) {
+
+
+
+                               html += '<tr data=' + item.ProductId + ' >';
+                               html += '<td><button type="button" class="btn btn-primary btnSelectProduct">เลิอก</button>';
+
+                               html += '</td>';
+                               html += '<td>' + item.ProductCode + '</td>';
+                               html += '<td>' + item.ProductName + '</td>';
+                               html += '<td>' + item.PriceNet + '</td>';
+                               html += '<td>' + item.QtyStock + '</td>';
+                               html += '<td></td>';
+                               html += '</tr>';
+                           });
+
+                           html += '</tbody>';
+                           html += '</table>';
+                           html += ' </div>';
+
+
+                           $('.divProduct').append(html);
+                           $('.divProduct table').DataTable();
+                       },
+                       error: function (jqXHR, textStatus, errorThrown) {
+                           alert(errorThrown);
+                           //or you can put jqXHR.responseText somewhere as complete response. Its html.
+                       }
+                   });
+
+        });
+
+
+        function CalProductPrice() {
+
+            if ($("#ProductDiscount").val() == "") {
+                $("#ProductDiscount").val(0)
+            }
+          var discount=  $("#ProductDiscount").val();
+            var netTotal = parseFloat($("#ProductQty").val().replace(",", "")) * parseFloat($("#ProductPrice").val().replace(",", ""))
+
+            switch ($(".selCalType").val()) {
+              
+                case '1':
+                    netTotal = (netTotal - (netTotal * (discount / 100))).toFixed(2);
+                    break;
+                case '2':
+                    netTotal = (netTotal - discount).toFixed(2);
+                    break;
+            }
+
+            $("#NetPrice").val(numeral(netTotal).format('0,0.00'));
+        }
+
+
+
+        $(document).on("click", ".btnSelectProduct", function () {
+            $('#selProduct').val($(this).closest('tr').attr('data'));
+            $('#ProductPrice').val($(this).closest('tr').find("td:eq(3)").html());
+            $("#ProductModal").modal('hide');
+
+        });
+        $(".btnEditProduct").click(function () {
+
+
+
+            $("#SelQSaleOrderProductId").val($(this).closest("tr").attr("data"));
+            $("#selProduct").val($(this).closest("tr").attr("ProductId"));
+            $("#ProductQty").val($(this).closest("tr").find('td:eq(1)').text());
+            $("#ProductPrice").val($(this).closest("tr").find('td:eq(2)').text());
+            $("#ProductDiscount").val($(this).closest("tr").find('.Discount').val());
+            $("#Remark").val($(this).closest("tr").find('td:eq(7)').text());
+            $(".selCalType").val($(this).closest("tr").find('.CalType').val());
+
+            CalProductPrice();
+            return false;
+
+        })
+
+       
+        $("#ProductQty").keyup(function () {
+            CalProductPrice();
+        });
+        $("#ProductDiscount").keyup(function () {
+            CalProductPrice();
+        });
+        $(".selCalType").change(function () {
+            CalProductPrice();
+        });
+
 
         $(document).on("click", ".btnSelectQuotation", function () {
             $('#QuotationId').val($(this).closest('tr').attr('data'));
@@ -446,8 +603,10 @@ optQuotation = (List<TblQuotation>
                 price = parseFloat(p[1]);
             }
             document.getElementById("ProductQty").value = 1;
-            document.getElementById("ProductPrice").value = price;
+            document.getElementById("ProductPrice").value = $("#selProduct option:selected").attr("title");
             document.getElementById("ProductDiscount").value = 0;
+
+            CalProductPrice();
         })
 
         $("#button-EditCustomerAddress").click(function () {
@@ -736,7 +895,8 @@ optQuotation = (List<TblQuotation>
                                 <form method="post" action="@Url.Action("Detail", "SaleOrder")" id="frmMain" enctype="multipart/form-data">
                                     @Html.AntiForgeryToken()
                                     <input type="hidden" name="SaleOrderId" value="@Model.SaleOrderId" />
-                                     <input type="hidden" id="hdApprove" name="hdApprove"  />
+                                   
+                                    <input type="hidden" id="hdApprove" name="hdApprove" />
                                     <div class="panel-body">
                                         <div class="row">
 
@@ -965,29 +1125,29 @@ optQuotation = (List<TblQuotation>
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>  
-                                        @if (isCanEdit && Model.SaleOrderId > 0)
-                                        {
-                                            <div class="panel-footer">
-                                                <div class="row">
-                                                    <div class="col-12">
-                                                        <div class="form-group">
-                                                            <button type="submit" id="btnNextStep" class="btn btn-primary">@(Model.SaleOrderId > 0 ? "บันทึก" : "ต่อไป")</button>&nbsp;
-                                                            <button type="submit" id="btnConfirm" class="btn btn-success btnConfirm">
-                                                                อนุมัติ
-                                                            </button>&nbsp;
+                                    </div>
+                                    @if (isCanEdit && Model.SaleOrderId > 0)
+                                    {
+                                        <div class="panel-footer">
+                                            <div class="row">
+                                                <div class="col-12">
+                                                    <div class="form-group">
+                                                        <button type="submit" id="btnNextStep" class="btn btn-primary">@(Model.SaleOrderId > 0 ? "บันทึก" : "ต่อไป")</button>&nbsp;
+                                                        <button type="submit" id="btnConfirm" class="btn btn-success btnConfirm">
+                                                            อนุมัติ
+                                                        </button>&nbsp;
 
-                                                            <a href="@Url.Action("Index", "SaleOrder")" class="btn btn-default">ยกเลิก</a>
-                                                            @if (Model.SaleOrderId > 0)
-                                                            {
-                                                                <a href="@Url.Action("Detail", new { controller = "JobOrder", area = "", SaleOrderId = Model.SaleOrderId })" class="btn btn-warning">สร้างใบสั่งงาน</a>
-                                                            }
-                                                        </div>
+                                                        <a href="@Url.Action("Index", "SaleOrder")" class="btn btn-default">ยกเลิก</a>
+                                                        @if (Model.SaleOrderId > 0)
+                                                        {
+                                                            <a href="@Url.Action("Detail", new { controller = "JobOrder", area = "", SaleOrderId = Model.SaleOrderId })" class="btn btn-warning">สร้างใบสั่งงาน</a>
+                                                        }
                                                     </div>
                                                 </div>
                                             </div>
-                                        }
-                                    </form>
+                                        </div>
+                                    }
+                                </form>
                             </div>
                         </div>
                     </div>
@@ -1005,6 +1165,75 @@ optQuotation = (List<TblQuotation>
                                     </h3>
                                 </div>
                                 <div class="panel-body">
+                                    @if (isCanEdit)
+                                    {
+                                        <div class="row">
+                                            <div class="col-12">
+                                                <form method="post" action="@Url.Action("AddProduct", "SaleOrder")" id="frmProduct" enctype="multipart/form-data">
+                                                    <input type="hidden" name="SaleOrderId" value="@Model.SaleOrderId" />
+
+                                                    <input type="hidden" name="SelQSaleOrderProductId" id="SelQSaleOrderProductId" />
+                                                    <div class="row">
+                                                        <div class="col-4 col-md-4 form-group">
+                                                            <label for="PileId" class="form-control-label">รหัสสินค้า</label>
+                                                            <div class="input-group">
+                                                                <select class="form-control" id="selProduct" data-live-search="true"
+                                                                        name="selProduct">
+                                                                    <option value="">กรุณาเลือก</option>
+
+                                                                    @foreach (var it in optProduct.Where(o => o.PriceNet > 0))
+                                                                    {
+                                                                        <option value="@it.ProductId" title="@it.PriceNet">@it.ProductCode @it.ProductName [@it.PriceNet]  Qty:@it.QtyStock</option>
+                                                                    }
+
+
+
+                                                                </select>
+                                                                <div class="input-group-append">
+                                                                    <button class="btn btn-outline-secondary btn-info" type="button"
+                                                                            id="btnProduct">
+                                                                        ...
+                                                                    </button>
+                                                                </div>
+                                                            </div>
+                                                        </div><div class="col-2 col-md-2 form-group">
+                                                            <label for="Qty" class="form-control-label">จำนวน</label>
+                                                            <input type="number" class="form-control" id="ProductQty" name="ProductQty" />
+                                                        </div>
+                                                        <div class="col-2 col-md-2 form-group">
+                                                            <label for="Price" class="form-control-label">ราคา</label>
+                                                            <input type="text" class="form-control" id="ProductPrice" name="ProductPrice" />
+                                                        </div>
+                                                        <div class="col-2 col-md-2 form-group">
+                                                            <label for="Discount" class="form-control-label">ส่วนลด</label>
+                                                            <div class="input-group">
+                                                                <input type="text" class="form-control Number" id="ProductDiscount" name="ProductDiscount" />
+                                                                <div class="input-group-append">
+                                                                    <select class="form-control selCalType" id="selCalType" name="selCalType">
+                                                                        <option value="1">%</option>
+                                                                        <option value="2">บาท</option>
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-2 col-md-2 form-group">
+                                                            <label for="NetPrice" class="form-control-label">ราคาสุทธิ</label>
+                                                            <input type="text" class="form-control Number" readonly id="NetPrice" name="NetPrice" />
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-4 col-md-4 form-group">
+                                                            <label for="Remark" class="form-control-label">หมายเหตุ</label>
+                                                            <textarea class="form-control" id="Remark" name="Remark"></textarea>
+                                                        </div>
+                                                    </div>
+
+                                                    <button type="submit" class="btn btn-primary" id="btnAddProduct">เพิ่ม</button>&nbsp;
+                                                </form>
+                                            </div>
+                                        </div>
+                                      
+                                    }
                                     <div class="row">
                                         <div class="col-12">
                                             <div class="table-responsive">
@@ -1018,6 +1247,7 @@ optQuotation = (List<TblQuotation>
                                                             <th>รวม</th>
                                                             <th>รวม VAT(7%)</th>
                                                             <th>เครื่องมือ</th>
+                                                            <th>หมายเหตุ</th>
                                                         </tr>
                                                     </thead>
                                                     <tbody>
@@ -1029,26 +1259,30 @@ optQuotation = (List<TblQuotation>
                                                         }
                                                         @foreach (var ob in Model.TblSaleOrderDetail)
                                                         {
-                                                            <tr>
+                                                            string calType = (ob.CalType == 1 ? string.Format("({0}%)", ob.Discount.ToString("#,#0.0")) : "(บาท)");
+                                                            <tr data="@ob.Id" ProductId="@ob.ProductId">
                                                                 <td>@ob.Product.ProductCode @ob.Product.ProductName</td>
                                                                 <td>@ob.Quantity</td>
                                                                 <td>@ob.PriceNet.ToString("#,#0.00")</td>
-                                                                <td>@ob.DiscountNet.ToString("#,#0.00")</td>
+                                                                <td>@ob.DiscountNet.ToString("#,#0.00") @calType</td>
                                                                 <td>@ob.TotalNet.Value.ToString("#,#0.00")</td>
                                                                 <td>@ob.TotalTot.Value.ToString("#,#0.00")</td>
                                                                 <td>
 
                                                                     @if (isCanEdit)
                                                                     {
-                                                                        <form method="post" action="@Url.Action("DetailDelete", new { controller = "SaleOrder" })"
-                                                                              class="fnc-delete inline-block">
-                                                                            <input type="hidden" name="SaleOrderId" value="@Model.SaleOrderId" />
-                                                                            <input type="hidden" name="Id" value="@ob.Id" />
-                                                                            @* @Html.AntiForgeryToken()*@
-                                                                            <button type="submit" class="btn btn-danger btn-xs"><i class="fa fa-trash" aria-hidden="true"></i>&nbsp;ลบ</button>
-                                                                        </form>
+                                                                        <input type="hidden" class="Discount" name="Discount" value="@ob.Discount" />
+
+                                                                        <input type="hidden" class="CalType" name="CalType" value="@ob.CalType" />
+                                                                        <input type="hidden" name="SaleOrderId" value="@Model.SaleOrderId" />
+                                                                        <input type="hidden" name="Id" id="Id" value="@ob.Id" />
+                                                                        @* @Html.AntiForgeryToken()*@
+                                                                        <button type="submit" class="btn btn-primary btn-xs btnEditProduct" id="btnEditProduct"><i class="fa fa-pencil" aria-hidden="true"></i>&nbsp;แก้ไข</button>
+                                                                        <button type="submit" class="btn btn-danger btn-xs btnDelete"><i class="fa fa-trash" aria-hidden="true"></i>&nbsp;ลบ</button>
+
                                                                     }
                                                                 </td>
+                                                                <td>@ob.Remark</td>
                                                             </tr>
                                                         }
                                                     </tbody>
@@ -1057,50 +1291,18 @@ optQuotation = (List<TblQuotation>
                                         </div>
                                     </div>
                                 </div>
-                                @if (isCanEdit)
-                                {
-                                    <div class="panel-footer">
-                                        <div class="row">
-                                            <div class="col-12">
-                                                <form method="post" action="@Url.Action("AddProduct", "SaleOrder")" id="frmProduct" enctype="multipart/form-data">
-                                                    <input type="hidden" name="SaleOrderId" value="@Model.SaleOrderId" />         <div class="row">
-                                                        <div class="col-4 col-md-4 form-group">
-                                                            <label for="PileId" class="form-control-label">รหัสสินค้า</label>
-                                                            <select class="form-control" id="selProduct" data-live-search="true"
-                                                                    name="selProduct">
-                                                                <option value="">กรุณาเลือก</option>
-                                                                @foreach (TblProduct it in optProduct.Where(o => o.PriceNet > 0))
-                                                                {
-                                                                    <option value="@it.ProductId:@it.PriceNet">@it.ProductCode @it.ProductName [@it.PriceNet]  Qty:@it.QtyStock</option>
-                                                                }
-                                                            </select>
-                                                        </div><div class="col-2 col-md-2 form-group">
-                                                            <label for="Qty" class="form-control-label">จำนวน</label>
-                                                            <input type="number" class="form-control" id="ProductQty" name="ProductQty" />
-                                                        </div>
-                                                        <div class="col-2 col-md-2 form-group">
-                                                            <label for="Price" class="form-control-label">ราคา</label>
-                                                            <input type="text" class="form-control" id="ProductPrice" name="ProductPrice" />
-                                                        </div>
-                                                        <div class="col-2 col-md-2 form-group">
-                                                            <label for="Discount" class="form-control-label">ส่วนลด</label>
-                                                            <input type="text" class="form-control" id="ProductDiscount" name="ProductDiscount" />
-                                                        </div>
-                                                    </div>
 
-                                                    <button type="submit" class="btn btn-primary" id="btnAddProduct">เพิ่ม</button>&nbsp;
-                                                </form>
-                                            </div>
-                                        </div>
-                                    </div>
-                                }
+                                <div class="panel-footer">
+
                                 </div>
+
+                            </div>
                             <div class="panel">
 
                                 <div class="col-md-auto">
                                     ผลรวม
                                     <hr size=2>
-                                    <form method="post" action="@Url.Action("saveDiscount", "SaleOrder")" enctype="multipart/form-data">
+                                    <form method="post" action="@Url.Action("saveDiscount", "SaleOrder")" id="frmDiscount" name="frmDiscount" enctype="multipart/form-data">
                                         <input type="hidden" name="SaleOrderId" value="@Model.SaleOrderId" />
                                         <div class="form-group row">
                                             <label for="SubTotal" class="col-sm-5 col-form-label">ยอดก่อนลด</label>
@@ -1157,7 +1359,7 @@ optQuotation = (List<TblQuotation>
                                                         <a href="@Url.Action("Detail", "SaleOrder")" class="btn btn-default">ยกเลิก</a>
                                                     </div>
                                                 }
-                                                </div>
+                                            </div>
                                         </div>
                                     </form>
                                 </div>
@@ -1209,7 +1411,7 @@ optQuotation = (List<TblQuotation>
                                                                         {
                                                                             <button type="submit" class="btn btn-danger btn-xs"><i class="fa fa-trash" aria-hidden="true"></i>&nbsp;ลบ</button>
                                                                         }
-                                                                        </form>
+                                                                    </form>
                                                                 </td>
 
                                                             </tr>
@@ -1235,7 +1437,7 @@ optQuotation = (List<TblQuotation>
                                             </div>
                                         </div>
                                     }
-                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -1357,7 +1559,70 @@ optQuotation = (List<TblQuotation>
         </div>
     </div>
     <!-- Address Modal -->
+    <!-- Product Modal -->
+    <div class="modal fade" id="ProductModal" tabindex="-1" role="dialog" aria-labelledby="" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button class="btn btn-outline-secondary btn-primary btnSearchProduct " type="button"
+                            id="btnSearchProduct">
+                        ค้นหา
+                    </button>
+                    <h5 class="modal-title" id="AddressModalTitle"><label id="lbCustomerName" hidden></label></h5>
+                    <h2></h2>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
 
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <label for="Discount" class="col-sm-12 col-form-label">รหัสสินค้า</label>
+                                <div class="col-sm-12">
+                                    <input type="text" class="form-control" id="searchProductCode" />
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <label for="Discount" class="col-sm-12 col-form-label">ชื่อสินค้า</label>
+                                <div class="col-sm-12">
+                                    <input type="text" class="form-control" id="searchProductName" />
+                                </div>
+                            </div>
+
+                        </div>
+
+
+                    </div>
+
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="table-responsive divProduct">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>กรุณาเลือก</th>
+                                            <th>รหัสสินค้า</th>
+                                            <th>ชื่อสินค้า</th>
+                                            <th>ราคาต่อหน่วย</th>
+                                            <th>Qty คงเหลือ</th>
+                                        </tr>
+                                    </thead>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                </div>
+
+            </div>
+        </div>
+    </div>
 
 
 </body>

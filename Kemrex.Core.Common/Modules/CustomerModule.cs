@@ -59,6 +59,49 @@ namespace Kemrex.Core.Common.Modules
                 };
         }
 
+        public List<TblCustomer> GetByCondition(string customerId,string customerName,string contracName)
+        {
+
+
+            /*  List<TblCustomer> customerResult = uow.Modules.Customer.GetAll().FindAll(
+                   o => (CustomerNo.IndexOf(o.CustomerId.ToString()) > -1 || CustomerNo == "")
+                        || (CustomerName.IndexOf(o.CustomerName) > -1 || CustomerName == "")
+                         || (o.TblCustomerContact.Where(ct => ContactName.IndexOf(ct.ContactName) > -1).Count() > 0 || ContactName == "")
+                  );*/
+
+            var data = db.TblCustomer.Select(o => new TblCustomer {
+                CustomerId=o.CustomerId,
+                CustomerName=o.CustomerName,
+                TblCustomerContact= o.TblCustomerContact.Select(
+                         xx=> new TblCustomerContact {
+                             CustomerId=xx.CustomerId,
+                             ContactName=xx.ContactName,
+                             ContactPhone=xx.ContactPhone,
+                             ContactId=xx.ContactId,
+                             ContactEmail=xx.ContactEmail
+                         }
+                    ).Where(ct=>ct.CustomerId==o.CustomerId).ToList(),
+                TblCustomerAddress = o.TblCustomerAddress.Select(
+                         xx => new TblCustomerAddress
+                         {
+                             CustomerId = xx.CustomerId,
+                             AddressId = xx.AddressId,
+                             AddressName = xx.AddressName+xx.AddressValue
+                         }
+                    ).Where(ct => ct.CustomerId == o.CustomerId).ToList(),
+
+            }).Where(
+                   o => (o.CustomerId.ToString().IndexOf(customerId) > -1 || customerId == "")
+                        && (o.CustomerName.IndexOf(customerName) > -1 || customerName == "")
+                          && (o.TblCustomerContact.Where(ct => ct.ContactName.IndexOf(contracName) > -1).Count() > 0 || contracName == "")
+                  );
+
+
+            return data.ToList();
+        }
+
+
+
         public List<TblCustomer> GetAll()
         {
             var data= db.TblCustomer
@@ -69,6 +112,9 @@ namespace Kemrex.Core.Common.Modules
 
             return data.ToList();
         }
+
+        
+
         public List<TblCustomer> GetAllAddress()
         {
             var data = db.TblCustomer                

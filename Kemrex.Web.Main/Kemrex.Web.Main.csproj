@@ -268,9 +268,15 @@
     <Content Include="fonts\web-icons\web-icons.min.css" />
     <Content Include="fonts\web-icons\web-icons.svg" />
     <Content Include="Global.asax" />
+    <Content Include="html\DepositInvoiceHTML.html" />
     <Content Include="html\img\checkbox_0.gif" />
     <Content Include="html\img\checkbox_1.gif" />
+    <Content Include="html\InvoiceHTML.html" />
     <Content Include="html\JobOrderHTML.html" />
+    <Content Include="html\QualityCheckHTML.html" />
+    <Content Include="html\QuotationHTML.html" />
+    <Content Include="html\TransferInHTML.html" />
+    <Content Include="html\TransferOutHTML.html" />
     <Content Include="images\apple-touch-icon.png" />
     <Content Include="images\avatar\guest.png" />
     <Content Include="images\Dashboard\1.jpg" />
@@ -283,6 +289,7 @@
     <Content Include="images\logo%402x.png" />
     <Content Include="images\logo-banner.png" />
     <Content Include="images\logo.png" />
+    <Content Include="images\logo2.png" />
     <Content Include="libs\bootstrap\css\bootstrap.min.css" />
     <Content Include="libs\bootstrap\js\bootstrap.min.js" />
     <Content Include="libs\flag-icon-css\flag-icon.min.css" />
@@ -884,6 +891,7 @@
     <Content Include="themes\RemarkClassicBase\css\bootstrap-extend.min.css">
       <DependentUpon>bootstrap-extend.css</DependentUpon>
     </Content>
+    <Content Include="themes\RemarkClassicBase\css\bootstrap-toggle.css" />
     <Content Include="themes\RemarkClassicBase\css\bootstrap.css" />
     <Content Include="themes\RemarkClassicBase\css\bootstrap.min.css">
       <DependentUpon>bootstrap.css</DependentUpon>
@@ -901,11 +909,13 @@
     <Content Include="themes\RemarkClassicBase\css\site.min.css">
       <DependentUpon>site.css</DependentUpon>
     </Content>
+    <Content Include="themes\RemarkClassicBase\css\sweetalert.css" />
     <Content Include="themes\RemarkClassicBase\js\Base.js" />
     <Content Include="themes\RemarkClassicBase\js\Component.js" />
     <Content Include="themes\RemarkClassicBase\js\Config.js" />
     <Content Include="themes\RemarkClassicBase\js\Config\colors.js" />
     <Content Include="themes\RemarkClassicBase\js\jquery.validate.js" />
+    <Content Include="themes\RemarkClassicBase\js\numeral2.6.min.js" />
     <Content Include="themes\RemarkClassicBase\js\Plugin.js" />
     <Content Include="themes\RemarkClassicBase\js\Plugin\ace-editor.js" />
     <Content Include="themes\RemarkClassicBase\js\Plugin\action-btn.js" />
@@ -928,6 +938,7 @@
     <Content Include="themes\RemarkClassicBase\js\Plugin\bootstrap-select.js" />
     <Content Include="themes\RemarkClassicBase\js\Plugin\bootstrap-sweetalert.js" />
     <Content Include="themes\RemarkClassicBase\js\Plugin\bootstrap-tagsinput.js" />
+    <Content Include="themes\RemarkClassicBase\js\Plugin\bootstrap-toggle.js" />
     <Content Include="themes\RemarkClassicBase\js\Plugin\bootstrap-tokenfield.js" />
     <Content Include="themes\RemarkClassicBase\js\Plugin\bootstrap-touchspin.js" />
     <Content Include="themes\RemarkClassicBase\js\Plugin\bootstrap-treeview.js" />
@@ -991,6 +1002,7 @@
     <Content Include="themes\RemarkClassicBase\js\Plugin\raty.js" />
     <Content Include="themes\RemarkClassicBase\js\Plugin\responsive-tabs.js" />
     <Content Include="themes\RemarkClassicBase\js\Plugin\select2.js" />
+    <Content Include="themes\RemarkClassicBase\js\Plugin\select2.min.js" />
     <Content Include="themes\RemarkClassicBase\js\Plugin\selectable.js" />
     <Content Include="themes\RemarkClassicBase\js\Plugin\skintools.js" />
     <Content Include="themes\RemarkClassicBase\js\Plugin\slidepanel.js" />
@@ -1014,6 +1026,8 @@
     <Content Include="themes\RemarkClassicBase\js\Section\PageAside.js" />
     <Content Include="themes\RemarkClassicBase\js\Section\Sidebar.js" />
     <Content Include="themes\RemarkClassicBase\js\Site.js" />
+    <Content Include="themes\RemarkClassicBase\js\sweetalert.js" />
+    <Content Include="themes\RemarkClassicBase\js\waiting.js" />
     <Content Include="themes\RemarkClassicBase\libs\animsition\animsition.css" />
     <Content Include="themes\RemarkClassicBase\libs\animsition\animsition.js" />
     <Content Include="themes\RemarkClassicBase\libs\animsition\animsition.min.css" />
@@ -1171,6 +1185,7 @@
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\InvoiceController.cs" />
     <Compile Include="Controllers\JobOrderController.cs" />
+    <Compile Include="Controllers\JobOrderForSaleController.cs" />
     <Compile Include="Controllers\PileController.cs" />
     <Compile Include="Controllers\PileSeriesController.cs" />
     <Compile Include="Controllers\PositionController.cs" />
@@ -1187,6 +1202,8 @@
     <Compile Include="Controllers\TeamSaleController.cs" />
     <Compile Include="Controllers\TransferInController.cs" />
     <Compile Include="Controllers\TransferOutController.cs" />
+    <Compile Include="Controllers\TransferStockInController.cs" />
+    <Compile Include="Controllers\TransferStockOutController.cs" />
     <Compile Include="Controllers\UnitController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
@@ -1349,6 +1366,14 @@
     <Content Include="Views\RemarkClassicBase\Base\TransferIn\Detail.cshtml" />
     <Content Include="Views\RemarkClassicBase\Base\TransferOut\Detail.cshtml" />
     <Content Include="Views\RemarkClassicBase\Base\TransferOut\Index.cshtml" />
+    <Content Include="Views\RemarkClassicBase\Base\JobOrderForSale\Index.cshtml" />
+    <Content Include="Views\RemarkClassicBase\Base\JobOrderForSale\Detail.cshtml" />
+    <Content Include="Views\RemarkClassicBase\Base\Stock\Detail.cshtml" />
+    <Content Include="Views\RemarkClassicBase\Base\Stock\Index.cshtml" />
+    <Content Include="Views\RemarkClassicBase\Base\TransferStockIn\Detail.cshtml" />
+    <Content Include="Views\RemarkClassicBase\Base\TransferStockIn\Index.cshtml" />
+    <Content Include="Views\RemarkClassicBase\Base\TransferStockOut\Detail.cshtml" />
+    <Content Include="Views\RemarkClassicBase\Base\TransferStockOut\Index.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
