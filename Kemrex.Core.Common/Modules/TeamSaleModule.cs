@@ -85,5 +85,45 @@ namespace Kemrex.Core.Common.Modules
             { db.TeamSale.Add(ob); }
             else { db.TeamSale.Update(ob); }
         }
+
+        public Team GetManager(int EmpId)
+        {
+            var data = (from a in
+                           (from e in db.TblEmployee
+                            join d in db.TeamSaleDetail on e.AccountId equals d.AccountId
+                            where e.EmpId == EmpId
+                            select new Team
+                            {
+                                EmpId = e.EmpId,
+                                AccountId = (e.AccountId.HasValue ? e.AccountId.Value : 0),
+                                TeamId = d.TeamId
+                            })
+                        join s in db.TeamSale on a.TeamId equals s.TeamId
+                        select new Team
+                        {
+                            EmpId = a.EmpId,
+                            AccountId = a.AccountId,
+                            TeamId = a.TeamId,
+                            ManagerId = s.ManagerId
+                        }
+                       ).FirstOrDefault();
+            return data;
+        }
+        public TblEmployee IsManager(int EmpId)
+        {
+            var data = (from e in db.TblEmployee
+                        join s in db.TeamSale on e.AccountId equals s.ManagerId
+                        where e.EmpId == EmpId
+                        select e).FirstOrDefault();
+            return data;
+        }
+        public TblEmployee defaultManager()
+        {
+            var data = (from e in db.TblEmployee
+                        join s in db.TeamSale on e.AccountId equals s.ManagerId
+                        orderby s.TeamId ascending
+                        select e).FirstOrDefault();
+            return data;
+        }
     }
 }

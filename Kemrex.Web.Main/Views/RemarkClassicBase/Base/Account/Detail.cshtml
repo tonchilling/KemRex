@@ -99,7 +99,8 @@
             $('#EmpId').val($(this).closest('tr').attr('empid'));
             
             
-            $('#account_firstname').val($(this).closest('tr').attr('empNameTH'));
+            //$('#account_firstname').val($(this).closest('tr').attr('empNameTH'));
+            $('#account_firstname').val($(this).closest('tr').find('td:eq(2)').text());
             //('#account_lastname').val($(this).closest('tr').attr('empNameTH'));
             $('#account_username').val($(this).closest('tr').attr('empEmail'));
             $('#account_email').val($(this).closest('tr').attr('empEmail'));

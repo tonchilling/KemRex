@@ -21,4 +21,13 @@ namespace Kemrex.Core.Database.Models
         public virtual SysAccount Manager { get; set; }
         public virtual ICollection<TeamSaleDetail> TeamSaleDetail { get; set; }
     }
+    public partial class Team
+    {
+
+        public int EmpId { get; set; }
+        public long AccountId { get; set; }
+        public int TeamId { get; set; }
+        public long ManagerId { get; set; }
+
+    }
 }

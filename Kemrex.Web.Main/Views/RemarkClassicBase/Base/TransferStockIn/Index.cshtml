@@ -21,7 +21,7 @@
                     $(this).remove();
                 });
             }, 5000);
-            //waitingDialog.show('Waiting for loading data', { dialogSize: 'md', progressType: 'primary' });
+            waitingDialog.show('Waiting for loading data', { dialogSize: 'md', progressType: 'primary' });
             
             LoadTable();
             
@@ -95,7 +95,9 @@
                             order: [[4, 'desc']]
                         }
                     );
-                    waitingDialog.hide();
+                    window.setTimeout(function () {
+                        waitingDialog.hide();
+                    }, 2000);
                 },
                 error: function (error) {
                     alert(error);

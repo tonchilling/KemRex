@@ -7,18 +7,20 @@
     KemrexController kemrex = ((KemrexController)this.ViewContext.Controller);
     Layout = kemrex.PathViewShared("_lyDefault");
     WidgetAlertModel Alert = (WidgetAlertModel)ViewBag.Alert;
-    WidgetPaginationModel Pagination = (WidgetPaginationModel)ViewBag.Pagination;
+    //WidgetPaginationModel Pagination = (WidgetPaginationModel)ViewBag.Pagination;
 }
 
 @section Scripts {
     <script type="text/javascript">
+        var url = '@Url.Action("GetProductList", "Product")';
         $(document).ready(function () {
             window.setTimeout(function () {
                 $(".alert").fadeTo(1000, 0).slideUp(1000, function () {
                     $(this).remove();
                 });
             }, 5000);
-            //LoadTable();
+            waitingDialog.show('Waiting for loading data', { dialogSize: 'md', progressType: 'primary' });
+            LoadTable();
         });
 
         function LoadTable() {
@@ -28,7 +30,7 @@
             $(".divDetail").empty();
             html += '<table class="table  table-striped table-hover "  >';
             html += '<thead>';
-            html += '<tr class="table-primary" >';
+            html += '<tr class="table-primary" align="center" >';
             html += '<th align="center">หมวดหมู่</th>';
             html += '<th align="center">รหัสสินค้า</th>';
             html += '<th align="center">ชื่อสินค้า</th>';
@@ -57,7 +59,7 @@
                             html += '<td>' + item.Category.CategoryName + '</td>';
                             html += '<td align="center">' + item.ProductCode + '</td>';
                             html += '<td>' + item.ProductName + '</td>';
-                            html += '<td align="right">' + (item.PriceTot)..toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,') + '</td>';
+                            html += '<td align="right">' + (item.PriceTot).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,') + '</td>';
                             html += '<td align="right">' + item.QtyStock + '</td>';
                             html += '<td align="center">' + '' + '</td>';
                             html += '</tr>';
@@ -67,12 +69,18 @@
                     html += ' </table>';
 
                     $(".divDetail").append(html);
-                   
-                    //waitingDialog.hide();
+                    $(".divDetail table").DataTable(
+                        {
+                            order: [[0, 'asc'],[2, 'asc']]
+                        }
+                    );
+                    window.setTimeout(function () {
+                        waitingDialog.hide();
+                    }, 2000);
                 },
                 error: function (error) {
                     alert(error.statusText);
-                    //waitingDialog.hide();
+                    waitingDialog.hide();
                     //  waitingDialog.hide();
                 }
             });
@@ -103,21 +111,10 @@
                     </div>
                     <!-- /.box-header -->
                     <div class="panel-body">
-                        <div class="row">
-                            <div class="col-12 col-sm-6 form-inline">
-                                @Html.Partial(kemrex.PathViewShared("_wgPaginationSize"), Pagination)
-                            </div>
-                            <div class="col-12 col-sm-6">
-                                <div class="pull-right">
-                                    @Html.Partial(kemrex.PathViewShared("_wgPagination"), Pagination)
-                                </div>
-                                <div class="clear"></div>
-                            </div>
-                            <br /><br />
-                        </div>
+                        
                         <div class="row">
                             <div class="col-12">
-                                <div class="table-responsive">
+                                <div class="table-responsive divDetail">
                                     <table class="table table-bordered table-hover">
                                         <thead>
                                             <tr>
@@ -129,7 +126,7 @@
                                                 @*<th>เครื่องมือ</th>*@
                                             </tr>
                                         </thead>
-                                        <tbody>
+                                        @*<tbody>
                                             @if (Model.Count() <= 0)
                                             {
                                                 <tr>
@@ -146,22 +143,12 @@
                                                     <td>@ob.QtyStock.ToString()</td>
                                                 </tr>
                                             }
-                                        </tbody>
+                                        </tbody>*@
                                     </table>
                                 </div>
                             </div>
                         </div>
-                        <div class="row">
-                            <div class="col-12 col-sm-6">
-                                <span>@Pagination.CurrentDisplay</span>
-                            </div>
-                            <div class="col-12 col-sm-6">
-                                <div class="pull-right">
-                                    @Html.Partial(kemrex.PathViewShared("_wgPagination"), Pagination)
-                                </div>
-                                <div class="clear"></div>
-                            </div>
-                        </div>
+                        
                     </div>
                     <!-- /.box-body -->
                 </div>

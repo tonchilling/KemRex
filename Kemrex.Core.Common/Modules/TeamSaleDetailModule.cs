@@ -50,6 +50,14 @@ namespace Kemrex.Core.Common.Modules
                 .FirstOrDefault() ?? new TeamSaleDetail();
         }
 
+        public TeamSaleDetail GetbyAccount(long id)
+        {
+            return db.TeamSaleDetail
+                .Where(x => x.AccountId == id)
+                .Include(x => x.Account)
+                .FirstOrDefault() ?? new TeamSaleDetail();
+        }
+
         public List<TeamSaleDetail> Gets(int page = 1, int size = 0
             , int teamId = 0, string src = "")
         {
