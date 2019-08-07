@@ -85,7 +85,12 @@ namespace Kemrex.Core.Common.Modules
 
                 .FirstOrDefault() ?? new TblEmployee() { Prefix = new EnmPrefix() };
         }
-
+        public TblEmployee GetEmployeeByAccount(long id)
+        {
+            return db.TblEmployee
+                .Where(x => x.AccountId == id)
+                .FirstOrDefault() ?? new TblEmployee() { Prefix = new EnmPrefix() };
+        }
         private IQueryable<TblEmployee> Filter(IQueryable<TblEmployee> data, string src, string phone, string email)
         {
             if (!string.IsNullOrWhiteSpace(src))
