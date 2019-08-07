@@ -81,6 +81,7 @@ namespace Kemrex.Core.Database
         public virtual DbSet<TblPileSeries> TblPileSeries { get; set; }
         public virtual DbSet<TblPosition> TblPosition { get; set; }
         public virtual DbSet<TblProduct> TblProduct { get; set; }
+        public virtual DbSet<TblWareHouse> TblWareHouse { get; set; }
         public virtual DbSet<TblProductCategory> TblProductCategory { get; set; }
         public virtual DbSet<TblProductModel> TblProductModel { get; set; }
         public virtual DbSet<TblProductType> TblProductType { get; set; }
@@ -103,7 +104,7 @@ namespace Kemrex.Core.Database
         public virtual DbSet<SysSurveyHeaderTemplate> SysSurveyHeaderTemplate { get; set; }
         public virtual DbSet<TblSurveyDetail> TblSurveyDetail { get; set; }
         public virtual DbSet<TblSurveyHeader> TblSurveyHeader { get; set; }
-
+        public virtual DbSet<TransferHeaderReference> TransferHeaderReference { get; set; }
         // Unable to generate entity type for table 'dbo.Product_Temp'. Please see the warning messages.
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -1274,6 +1275,27 @@ namespace Kemrex.Core.Database
                 entity.Property(e => e.UpdatedDate).HasColumnType("datetime");
             });
 
+
+            modelBuilder.Entity<TblWareHouse>(entity =>
+            {
+                entity.HasKey(e => e.Whid)
+                    .HasName("PK__TblWareHouse");
+
+                entity.Property(e => e.Whid).HasColumnName("WHId");
+
+                entity.Property(e => e.CreatedDate).HasColumnType("datetime");
+
+                entity.Property(e => e.UpdatedDate).HasColumnType("datetime");
+
+                entity.Property(e => e.Whcode)
+                    .HasColumnName("WHCode")
+                    .HasMaxLength(100);
+
+                entity.Property(e => e.Whname)
+                    .HasColumnName("WHName")
+                    .HasMaxLength(100);
+            });
+
             modelBuilder.Entity<TblQuotation>(entity =>
             {
                 entity.HasKey(e => e.QuotationId);
@@ -1295,16 +1317,16 @@ namespace Kemrex.Core.Database
                 entity.Property(e => e.DiscountCash).HasColumnType("decimal(12, 2)");
 
                 entity.Property(e => e.DiscountNet)
-                    .HasColumnType("decimal(12, 2)")
-                    .HasComputedColumnSql("([dbo].[cplQuotationDiscountNet]([QuotationId]))");
+                    .HasColumnType("decimal(12, 2)");
+                //  .HasComputedColumnSql("([dbo].[cplQuotationDiscountNet]([QuotationId]))");
 
                 entity.Property(e => e.DiscountTot)
-                    .HasColumnType("decimal(12, 2)")
-                    .HasComputedColumnSql("([dbo].[cplQuotationDiscountTot]([QuotationId]))");
+                    .HasColumnType("decimal(12, 2)");
+                // .HasComputedColumnSql("([dbo].[cplQuotationDiscountTot]([QuotationId]))");
 
                 entity.Property(e => e.DiscountVat)
-                    .HasColumnType("decimal(12, 2)")
-                    .HasComputedColumnSql("([dbo].[cplQuotationDiscountVat]([QuotationId]))");
+                    .HasColumnType("decimal(12, 2)");
+                //  .HasComputedColumnSql("([dbo].[cplQuotationDiscountVat]([QuotationId]))");
 
                 entity.Property(e => e.DueDate).HasColumnType("datetime");
 
@@ -1325,28 +1347,28 @@ namespace Kemrex.Core.Database
                     .HasMaxLength(500);
 
                 entity.Property(e => e.SubTotalNet)
-                    .HasColumnType("decimal(12, 2)")
-                    .HasComputedColumnSql("([dbo].[cplQuotationPriceNet]([QuotationId]))");
+                    .HasColumnType("decimal(12, 2)");
+                // .HasComputedColumnSql("([dbo].[cplQuotationPriceNet]([QuotationId]))");
 
                 entity.Property(e => e.SubTotalTot)
-                    .HasColumnType("decimal(12, 2)")
-                    .HasComputedColumnSql("([dbo].[cplQuotationPriceTot]([QuotationId]))");
+                    .HasColumnType("decimal(12, 2)");
+                //   .HasComputedColumnSql("([dbo].[cplQuotationPriceTot]([QuotationId]))");
 
                 entity.Property(e => e.SubTotalVat)
-                    .HasColumnType("decimal(12, 2)")
-                    .HasComputedColumnSql("([dbo].[cplQuotationPriceVat]([QuotationId]))");
+                    .HasColumnType("decimal(12, 2)");
+                // .HasComputedColumnSql("([dbo].[cplQuotationPriceVat]([QuotationId]))");
 
                 entity.Property(e => e.SummaryNet)
-                    .HasColumnType("decimal(12, 2)")
-                    .HasComputedColumnSql("([dbo].[cplQuotationSummaryNet]([QuotationId]))");
+                    .HasColumnType("decimal(12, 2)");
+                //   .HasComputedColumnSql("([dbo].[cplQuotationSummaryNet]([QuotationId]))");
 
                 entity.Property(e => e.SummaryTot)
-                    .HasColumnType("decimal(12, 2)")
-                    .HasComputedColumnSql("([dbo].[cplQuotationSummaryTot]([QuotationId]))");
+                    .HasColumnType("decimal(12, 2)");
+                //   .HasComputedColumnSql("([dbo].[cplQuotationSummaryTot]([QuotationId]))");
 
                 entity.Property(e => e.SummaryVat)
-                    .HasColumnType("decimal(12, 2)")
-                    .HasComputedColumnSql("([dbo].[cplQuotationSummaryVat]([QuotationId]))");
+                    .HasColumnType("decimal(12, 2)");
+                //    .HasComputedColumnSql("([dbo].[cplQuotationSummaryVat]([QuotationId]))");
 
                 entity.Property(e => e.UpdatedDate).HasColumnType("datetime");
 
@@ -1380,19 +1402,12 @@ namespace Kemrex.Core.Database
 
                 entity.Property(e => e.PriceTot).HasColumnType("decimal(12, 2)");
 
-                entity.Property(e => e.PriceVat).HasColumnType("decimal(12, 2)");
+                entity.Property(e => e.TotalNet).HasColumnType("decimal(12, 2)");
+                entity.Property(e => e.TotalTot).HasColumnType("decimal(12, 2)");
+                entity.Property(e => e.TotalVat).HasColumnType("decimal(12, 2)");
 
-                entity.Property(e => e.TotalNet)
-                    .HasColumnType("decimal(13, 2)")
-                    .HasComputedColumnSql("([PriceNet]-[DiscountNet])");
 
-                entity.Property(e => e.TotalTot)
-                    .HasColumnType("decimal(13, 2)")
-                    .HasComputedColumnSql("([PriceTot]-[DiscountTot])");
 
-                entity.Property(e => e.TotalVat)
-                    .HasColumnType("decimal(13, 2)")
-                    .HasComputedColumnSql("([PriceVat]-[DiscountVat])");
 
                 entity.HasOne(d => d.Product)
                     .WithMany(p => p.TblQuotationDetail)
@@ -1422,16 +1437,16 @@ namespace Kemrex.Core.Database
                 entity.Property(e => e.DiscountCash).HasColumnType("decimal(12, 2)");
 
                 entity.Property(e => e.DiscountNet)
-                    .HasColumnType("decimal(12, 2)")
-                    .HasComputedColumnSql("([dbo].[cplSaleOrderPrice]([SaleOrderId],'DiscountNet'))");
+                    .HasColumnType("decimal(12, 2)");
+                // .HasComputedColumnSql("([dbo].[cplSaleOrderPrice]([SaleOrderId],'DiscountNet'))");
 
                 entity.Property(e => e.DiscountTot)
-                    .HasColumnType("decimal(12, 2)")
-                    .HasComputedColumnSql("([dbo].[cplSaleOrderPrice]([SaleOrderId],'DiscountTot'))");
+                    .HasColumnType("decimal(12, 2)");
+                // .HasComputedColumnSql("([dbo].[cplSaleOrderPrice]([SaleOrderId],'DiscountTot'))");
 
                 entity.Property(e => e.DiscountVat)
-                    .HasColumnType("decimal(12, 2)")
-                    .HasComputedColumnSql("([dbo].[cplSaleOrderPrice]([SaleOrderId],'DiscountVat'))");
+                    .HasColumnType("decimal(12, 2)");
+                //  .HasComputedColumnSql("([dbo].[cplSaleOrderPrice]([SaleOrderId],'DiscountVat'))");
 
                 entity.Property(e => e.OperationEndDate).HasColumnType("datetime");
 
@@ -1452,28 +1467,28 @@ namespace Kemrex.Core.Database
                 entity.Property(e => e.StatusId).HasDefaultValueSql("((1))");
 
                 entity.Property(e => e.SubTotalNet)
-                    .HasColumnType("decimal(12, 2)")
-                    .HasComputedColumnSql("([dbo].[cplSaleOrderPrice]([SaleOrderId],'PriceNet'))");
+                    .HasColumnType("decimal(12, 2)");
+                //  .HasComputedColumnSql("([dbo].[cplSaleOrderPrice]([SaleOrderId],'PriceNet'))");
 
                 entity.Property(e => e.SubTotalTot)
-                    .HasColumnType("decimal(12, 2)")
-                    .HasComputedColumnSql("([dbo].[cplSaleOrderPrice]([SaleOrderId],'PriceTot'))");
+                    .HasColumnType("decimal(12, 2)");
+                //  .HasComputedColumnSql("([dbo].[cplSaleOrderPrice]([SaleOrderId],'PriceTot'))");
 
                 entity.Property(e => e.SubTotalVat)
-                    .HasColumnType("decimal(12, 2)")
-                    .HasComputedColumnSql("([dbo].[cplSaleOrderPrice]([SaleOrderId],'PriceVat'))");
+                    .HasColumnType("decimal(12, 2)");
+                //  .HasComputedColumnSql("([dbo].[cplSaleOrderPrice]([SaleOrderId],'PriceVat'))");
 
                 entity.Property(e => e.SummaryNet)
-                    .HasColumnType("decimal(12, 2)")
-                    .HasComputedColumnSql("([dbo].[cplSaleOrderPrice]([SaleOrderId],'SummaryNet'))");
+                    .HasColumnType("decimal(12, 2)");
+                //  .HasComputedColumnSql("([dbo].[cplSaleOrderPrice]([SaleOrderId],'SummaryNet'))");
 
                 entity.Property(e => e.SummaryTot)
-                    .HasColumnType("decimal(12, 2)")
-                    .HasComputedColumnSql("([dbo].[cplSaleOrderPrice]([SaleOrderId],'SummaryTot'))");
+                    .HasColumnType("decimal(12, 2)");
+                // .HasComputedColumnSql("([dbo].[cplSaleOrderPrice]([SaleOrderId],'SummaryTot'))");
 
                 entity.Property(e => e.SummaryVat)
-                    .HasColumnType("decimal(12, 2)")
-                    .HasComputedColumnSql("([dbo].[cplSaleOrderPrice]([SaleOrderId],'SummaryVat'))");
+                    .HasColumnType("decimal(12, 2)");
+                //  .HasComputedColumnSql("([dbo].[cplSaleOrderPrice]([SaleOrderId],'SummaryVat'))");
 
                 entity.Property(e => e.UpdatedDate).HasColumnType("datetime");
 
@@ -1515,16 +1530,16 @@ namespace Kemrex.Core.Database
                 entity.Property(e => e.Remark).HasMaxLength(10);
 
                 entity.Property(e => e.TotalNet)
-                    .HasColumnType("decimal(13, 2)")
-                    .HasComputedColumnSql("([PriceNet]-[DiscountNet])");
+                    .HasColumnType("decimal(13, 2)");
+                //   .HasComputedColumnSql("([PriceNet]-[DiscountNet])");
 
                 entity.Property(e => e.TotalTot)
-                    .HasColumnType("decimal(13, 2)")
-                    .HasComputedColumnSql("([PriceTot]-[DiscountTot])");
+                    .HasColumnType("decimal(13, 2)");
+                // .HasComputedColumnSql("([PriceTot]-[DiscountTot])");
 
                 entity.Property(e => e.TotalVat)
-                    .HasColumnType("decimal(13, 2)")
-                    .HasComputedColumnSql("([PriceVat]-[DiscountVat])");
+                    .HasColumnType("decimal(13, 2)");
+                /// .HasComputedColumnSql("([PriceVat]-[DiscountVat])");
 
                 entity.HasOne(d => d.Product)
                     .WithMany(p => p.TblSaleOrderDetail)
@@ -1870,7 +1885,12 @@ namespace Kemrex.Core.Database
             });
 
 
+            modelBuilder.Entity<TransferHeaderReference>(entity =>
+            {
+                entity.HasKey(e => new { e.TransferId, e.RefTransferId });
 
+             
+            });
 
         }
     }

@@ -268,6 +268,7 @@
     <Content Include="fonts\web-icons\web-icons.min.css" />
     <Content Include="fonts\web-icons\web-icons.svg" />
     <Content Include="Global.asax" />
+    <Content Include="html\DepositInvoiceHTML.html" />
     <Content Include="html\img\checkbox_0.gif" />
     <Content Include="html\img\checkbox_1.gif" />
     <Content Include="html\DepositInvoiceHTML.html" />
@@ -283,6 +284,10 @@
     <Content Include="html\JobOrderHTML.html" />
     <Content Include="html\TransferInHTML.html" />
     <Content Include="html\InvoiceHTML.html" />
+    <Content Include="html\JobOrderHTML.html" />
+    <Content Include="html\QualityCheckHTML.html" />
+    <Content Include="html\QuotationHTML.html" />
+    <Content Include="html\TransferInHTML.html" />
     <Content Include="html\TransferOutHTML.html" />
     <Content Include="images\apple-touch-icon.png" />
     <Content Include="images\avatar\guest.png" />
@@ -1009,6 +1014,7 @@
     <Content Include="themes\RemarkClassicBase\js\Plugin\raty.js" />
     <Content Include="themes\RemarkClassicBase\js\Plugin\responsive-tabs.js" />
     <Content Include="themes\RemarkClassicBase\js\Plugin\select2.js" />
+    <Content Include="themes\RemarkClassicBase\js\Plugin\select2.min.js" />
     <Content Include="themes\RemarkClassicBase\js\Plugin\selectable.js" />
     <Content Include="themes\RemarkClassicBase\js\Plugin\skintools.js" />
     <Content Include="themes\RemarkClassicBase\js\Plugin\slidepanel.js" />
@@ -1372,12 +1378,14 @@
     <Content Include="Views\RemarkClassicBase\Base\TransferIn\Detail.cshtml" />
     <Content Include="Views\RemarkClassicBase\Base\TransferOut\Detail.cshtml" />
     <Content Include="Views\RemarkClassicBase\Base\TransferOut\Index.cshtml" />
+    <Content Include="Views\RemarkClassicBase\Base\JobOrderForSale\Index.cshtml" />
+    <Content Include="Views\RemarkClassicBase\Base\JobOrderForSale\Detail.cshtml" />
+    <Content Include="Views\RemarkClassicBase\Base\Stock\Detail.cshtml" />
+    <Content Include="Views\RemarkClassicBase\Base\Stock\Index.cshtml" />
     <Content Include="Views\RemarkClassicBase\Base\TransferStockIn\Detail.cshtml" />
     <Content Include="Views\RemarkClassicBase\Base\TransferStockIn\Index.cshtml" />
     <Content Include="Views\RemarkClassicBase\Base\TransferStockOut\Detail.cshtml" />
     <Content Include="Views\RemarkClassicBase\Base\TransferStockOut\Index.cshtml" />
-    <Content Include="Views\RemarkClassicBase\Base\Stock\Detail.cshtml" />
-    <Content Include="Views\RemarkClassicBase\Base\Stock\Index.cshtml" />
     <Content Include="Views\RemarkClassicBase\Base\JobOrderForSale\Detail.cshtml" />
     <Content Include="Views\RemarkClassicBase\Base\JobOrderForSale\Index.cshtml" />
     <None Include="Web.Debug.config">

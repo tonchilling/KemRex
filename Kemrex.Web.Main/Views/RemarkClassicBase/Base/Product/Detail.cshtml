@@ -10,6 +10,8 @@
     List<TblUnit> optUnit = (List<TblUnit>)ViewData["optUnit"];
     List<TblProductModel> optModel = (List<TblProductModel>)ViewData["optModel"];
     List<TblProductCategory> optCategory = (List<TblProductCategory>)ViewData["optCategory"];
+    List<TblWareHouse> optWareHouse = (List<TblWareHouse>)ViewData["optWareHouse"];
+    
 }
 
 @section Scripts {
@@ -142,6 +144,21 @@
                                 </div>
                             </div>
                             <div class="row">
+                              
+                                <div class="col-md-6 col-sm-12">
+                                    <div class="form-group">
+                                        <label for="WHId" class="form-control-label">คลังสินค้า</label>
+                                        <select class="form-control" name="WHId" id="WHId">
+                                            @foreach (TblWareHouse it in optWareHouse)
+                                            {
+                                                bool selected = it.Whid == Model.Whid;
+                                                <option value="@it.Whid" @(selected ? " selected=\"selected\"" : "")>@it.Whname</option>
+                                            }
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
                                 <div class="col-md-4 col-sm-4">
                                     <div class="form-group">
                                         <label for="PriceNet" class="form-control-label">ราคา (Exc.Vat)</label>
@@ -162,13 +179,13 @@
                                 </div>
                             </div>
                             @*<div class="row">
-                                <div class="col-md-3 col-sm-6">
-                                    <div class="form-group">
-                                        <label for="FlagDeactive" class="form-control-label">ใช้งาน</label>
-                                        <input type="checkbox" name="FlagDeactive" value="1" @(!(Model.FlagActive ?? false) ? " checked=\"checked\"" : "") />&nbsp;ยกเลิกการใช้งาน
-                                    </div>
-                                </div>
-                            </div>*@
+            <div class="col-md-3 col-sm-6">
+                <div class="form-group">
+                    <label for="FlagDeactive" class="form-control-label">ใช้งาน</label>
+                    <input type="checkbox" name="FlagDeactive" value="1" @(!(Model.FlagActive ?? false) ? " checked=\"checked\"" : "") />&nbsp;ยกเลิกการใช้งาน
+                </div>
+            </div>
+        </div>*@
                         </div>
                         <div class="panel-footer">
                             <div class="row">

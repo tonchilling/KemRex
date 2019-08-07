@@ -46,7 +46,7 @@ optEmployee = (List<TblEmployee>
 
 @section Scripts {
 <script src="~/themes/RemarkClassicBase/js/Plugin/select2.min.js?44d"></script>
-    <script type="text/javascript">
+<script type="text/javascript">
 
         var _contact = [];
 
@@ -80,7 +80,8 @@ optEmployee = (List<TblEmployee>
                 }
             });
 
-              if (@Model.StatusId> 2) {
+           var status=@Model.StatusId;
+              if (status> 2) {
 
                   $("#frmmain :input").prop("disabled", true);
             }
@@ -336,7 +337,7 @@ optEmployee = (List<TblEmployee>
 
 
 
-            var url = '@Url.Action("GetSaleOrder", "SaleOrder")';
+            var url = '@Url.Action("GetSaleOrderNotInJobOrder", "JobOrder")';
                    $.ajax({
                 type: "get",
                 url: url,
@@ -493,7 +494,7 @@ optEmployee = (List<TblEmployee>
             }
 
 
-    </script>
+</script>
 
 
 
@@ -937,9 +938,10 @@ optEmployee = (List<TblEmployee>
                                                                                 </tr>
                                                                             }
                                                                             @{int row = 1;
-
-                                                                                foreach (var ob in Model.JobOrderDetail)
+                                                                                if (Model.JobOrderDetail != null)
                                                                                 {
+                                                                                    foreach (var ob in Model.JobOrderDetail)
+                                                                                    {
                                                                                     <tr data="@ob.No">
                                                                                         <td>@row</td>
                                                                                         <td>@ob.Product.ProductCode @ob.Product.ProductName</td>
@@ -957,9 +959,10 @@ optEmployee = (List<TblEmployee>
                                                                                             }
                                                                                         </td>
                                                                                     </tr>
-                                                                                    row++;
+                                                                                            row++;
+                                                                                        }
+                                                                                    }
                                                                                 }
-                                                                            }
                                                                         </tbody>
                                                                     </table>
                                                                 </div>
@@ -1045,7 +1048,7 @@ optEmployee = (List<TblEmployee>
                                                                         </thead>
                                                                         <tbody>
 
-                                                                            @if (Model.TblJobOrderProperties.Count() <= 0)
+                                                                            @if (Model.TblJobOrderProperties!=null && Model.TblJobOrderProperties.Count() <= 0)
                                                                             {
                                                                                 <tr>
                                                                                     <td colspan="7">ไม่พบข้อมูล</td>
@@ -1053,8 +1056,10 @@ optEmployee = (List<TblEmployee>
                                                                             }
                                                                             @{ row = 1;
 
-                                                                                foreach (var ob in Model.TblJobOrderProperties)
+                                                                                if (Model.TblJobOrderProperties != null)
                                                                                 {
+                                                                                    foreach (var ob in Model.TblJobOrderProperties)
+                                                                                    {
                                                                                     <tr data="@ob.No">
                                                                                         <td>@row</td>
                                                                                         <td>@ob.Product.ProductCode @ob.Product.ProductName</td>
@@ -1072,9 +1077,10 @@ optEmployee = (List<TblEmployee>
                                                                                             }
                                                                                         </td>
                                                                                     </tr>
-                                                                                    row++;
+                                                                                            row++;
+                                                                                        }
+                                                                                    }
                                                                                 }
-                                                                            }
                                                                         </tbody>
                                                                     </table>
                                                                 </div>
@@ -1395,10 +1401,11 @@ optEmployee = (List<TblEmployee>
                                                                                     foreach (var ob in Model.SaleOrder.TblSaleOrderDetail)
                                                                                     {
                                                                                         <tr>
+                                                                                      
                                                                                             <td>@ob.Product.ProductCode @ob.Product.ProductName</td>
                                                                                             <td>@ob.Quantity</td>
                                                                                             <td>@ob.PriceNet.ToString("#,#0.00")</td>
-                                                                                            <td>@ob.DiscountNet.ToString("#,#0.00")</td>
+                                                                                            <td>@ob.DiscountNet.ToString("#,#0.00")  </td>
                                                                                             <td>@ob.TotalNet.Value.ToString("#,#0.00")</td>
                                                                                             <td>@ob.TotalTot.Value.ToString("#,#0.00")</td>
 

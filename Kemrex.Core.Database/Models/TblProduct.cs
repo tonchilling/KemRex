@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-
+using System.ComponentModel.DataAnnotations.Schema;
 namespace Kemrex.Core.Database.Models
 {
     [Serializable]
@@ -28,6 +28,7 @@ namespace Kemrex.Core.Database.Models
         public decimal PriceVat { get; set; }
         public decimal PriceTot { get; set; }
         public int QtyStock { get; set; }
+        public int Whid { get; set; }
         public bool? FlagVat { get; set; }
         public bool? FlagActive { get; set; }
         public long CreatedBy { get; set; }
@@ -38,8 +39,11 @@ namespace Kemrex.Core.Database.Models
         public virtual TblProductCategory Category { get; set; }
         public virtual TblProductModel Model { get; set; }
         public virtual TblUnit Unit { get; set; }
+       
+        public virtual TblWareHouse WareHouse { get; set; }
         public virtual ICollection<TblQuotationDetail> TblQuotationDetail { get; set; }
         public virtual ICollection<TblSaleOrderDetail> TblSaleOrderDetail { get; set; }
         public virtual ICollection<TransferDetail> TransferDetail { get; set; }
+      
     }
 }

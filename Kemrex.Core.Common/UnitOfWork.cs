@@ -96,6 +96,7 @@ namespace Kemrex.Core.Common
             private TransferModule _Transfer;
             private TransferStockModule _TransferStock;
             private SurveyModule _SurveyModule;
+            private WareHouseModule _WareHouse;
 
             public AccountModule Account => _Account ?? (_Account = new AccountModule(db));
             public CustomerAddressModule CustomerAddress => _CustomerAddress ?? (_CustomerAddress = new CustomerAddressModule(db));
@@ -137,6 +138,7 @@ namespace Kemrex.Core.Common
 
 
             public SurveyModule Survey => _SurveyModule ?? (_SurveyModule = new SurveyModule(db));
+            public WareHouseModule WareHouse => _WareHouse ?? (_WareHouse = new WareHouseModule(db));
 
 
         }

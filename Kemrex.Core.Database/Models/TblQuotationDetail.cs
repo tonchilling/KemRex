@@ -13,6 +13,7 @@ namespace Kemrex.Core.Database.Models
         public decimal PriceNet { get; set; }
         public decimal PriceVat { get; set; }
         public decimal PriceTot { get; set; }
+        public decimal Discount { get; set; }
         public decimal DiscountNet { get; set; }
         public decimal DiscountVat { get; set; }
         public decimal DiscountTot { get; set; }
@@ -20,7 +21,8 @@ namespace Kemrex.Core.Database.Models
         public decimal? TotalVat { get; set; }
         public decimal? TotalTot { get; set; }
         public string Remark { get; set; }
-
+        public int CalType { get; set; }
+        
         public virtual TblProduct Product { get; set; }
         public virtual TblQuotation Quotation { get; set; }
     }
