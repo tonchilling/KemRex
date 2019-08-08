@@ -541,42 +541,49 @@ namespace Kemrex.Web.Main.Controllers
                 html = html.Replace("@@TextfinalAmount@@", textFinalAmount);
 
                 //get employee sale for accountid
-                if (quo.SaleId == null)
+                if (quo.SaleId == 0)
                 {
                     html = html.Replace("@@Signature@@", "<br /><br />____________________<br />");
                     html = html.Replace("@@ManagerName@@", "");
                 }
                 else
                 {
-                    Team team = uow.Modules.TeamSale.GetManager(quo.SaleId);
-                    if (team != null) //เช็คว่าหัวหน้าใคร
+                    if (quo.StatusId == 3 || quo.StatusId == 4) //Approved from manager
                     {
-                        TblEmployee manager = uow.Modules.Employee.GetEmployeeByAccount(team.ManagerId);
-                        html = html.Replace("@@Signature@@", "<img src='" + HttpContext.Server.MapPath("~/"+manager.EmpSignature) + "' height='50' />");
-                        html = html.Replace("@@ManagerName@@", "( " + manager.EmpNameTh + " )");
+                        Team team = uow.Modules.TeamSale.GetManager(quo.SaleId);
+                        if (team != null) //เช็คว่าหัวหน้าใคร
+                        {
+                            TblEmployee manager = uow.Modules.Employee.GetEmployeeByAccount(team.ManagerId);
+                            html = html.Replace("@@Signature@@", "<img src='" + HttpContext.Server.MapPath("~/" + manager.EmpSignature) + "' height='50' />");
+                            html = html.Replace("@@ManagerName@@", "( " + manager.EmpNameTh + " )");
+                        }
+                        else
+                        {
+                            TblEmployee manager2 = uow.Modules.TeamSale.IsManager(quo.SaleId);
+                            if (manager2 != null) //หรือเป็นหัวหน้าเอง
+                            {
+                                html = html.Replace("@@Signature@@", "<img src='" + HttpContext.Server.MapPath("~/" + manager2.EmpSignature) + "' height='50' />");
+                                html = html.Replace("@@ManagerName@@", "( " + manager2.EmpNameTh + " )");
+                            }
+                            else //ถ้าไม่ใช่ ให้ Default
+                            {
+                                TblEmployee manager3 = uow.Modules.TeamSale.defaultManager();
+                                if (manager3 == null)
+                                {
+                                    html = html.Replace("@@Signature@@", "<br /><br />____________________<br />");
+                                }
+                                else
+                                {
+
+                                    html = html.Replace("@@Signature@@", "<img src='" + HttpContext.Server.MapPath("~/" + manager3.EmpSignature) + "' height='50' />");
+                                    html = html.Replace("@@ManagerName@@", "( " + manager3.EmpNameTh + " )");
+                                }
+                            }
+                        }
                     }
                     else
                     {
-                        TblEmployee manager2 = uow.Modules.TeamSale.IsManager(quo.SaleId);
-                        if (manager2 != null) //หรือเป็นหัวหน้าเอง
-                        {
-                            html = html.Replace("@@Signature@@", "<img src='" + HttpContext.Server.MapPath("~/" + manager2.EmpSignature) + "' height='50' />");
-                            html = html.Replace("@@ManagerName@@", "( " + manager2.EmpNameTh + " )");
-                        }
-                        else //ถ้าไม่ใช่ ให้ Default
-                        {
-                            TblEmployee manager3 = uow.Modules.TeamSale.defaultManager();
-                            if (manager3 == null)
-                            {
-                                html = html.Replace("@@Signature@@", "<br /><br />____________________<br />");
-                            }
-                            else
-                            {
-                                
-                                html = html.Replace("@@Signature@@", "<img src='" + HttpContext.Server.MapPath("~/" + manager3.EmpSignature) + "' height='50' />");
-                                html = html.Replace("@@ManagerName@@", "( " + manager3.EmpNameTh + " )");
-                            }
-                        }
+                        html = html.Replace("@@Signature@@", "<br /><br />____________________<br />");
                     }
                     
                 }
