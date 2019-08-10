@@ -1133,6 +1133,50 @@ namespace Kemrex.Web.Main.Controllers
                 //string textFinalAmount = ThaiBahtText(invoice.SaleOrder.SummaryTot.HasValue ? invoice.SaleOrder.SummaryTot.Value.ToString():"");
                 string textFinalAmount = ThaiBahtText(SummaryTot.ToString());
                 html = html.Replace("@@TextfinalAmount@@", textFinalAmount);
+
+                //get employee sale for accountid
+                if ((so.SaleId.HasValue? so.SaleId.Value:0) == 0)
+                {
+                    html = html.Replace("@@Signature@@", "<br /><br />____________________<br />");
+                    html = html.Replace("@@ManagerName@@", "");
+                }
+                else
+                {
+                        Team team = uow.Modules.TeamSale.GetManager(so.SaleId.HasValue ? so.SaleId.Value : 0);
+                        if (team != null) //เช็คว่าหัวหน้าใคร
+                        {
+                            TblEmployee manager = uow.Modules.Employee.GetEmployeeByAccount(team.ManagerId);
+                            html = html.Replace("@@Signature@@", "<img src='" + HttpContext.Server.MapPath("~/" + manager.EmpSignature) + "' height='50' />");
+                            html = html.Replace("@@ManagerName@@", "( " + manager.EmpNameTh + " )");
+                        }
+                        else
+                        {
+                            TblEmployee manager2 = uow.Modules.TeamSale.IsManager(so.SaleId.HasValue ? so.SaleId.Value : 0);
+                            if (manager2 != null) //หรือเป็นหัวหน้าเอง
+                            {
+                                html = html.Replace("@@Signature@@", "<img src='" + HttpContext.Server.MapPath("~/" + manager2.EmpSignature) + "' height='50' />");
+                                html = html.Replace("@@ManagerName@@", "( " + manager2.EmpNameTh + " )");
+                            }
+                            else //ถ้าไม่ใช่ ให้ Default
+                            {
+                                TblEmployee manager3 = uow.Modules.TeamSale.defaultManager();
+                                if (manager3 == null)
+                                {
+                                    html = html.Replace("@@Signature@@", "<br /><br />____________________<br />");
+                                }
+                                else
+                                {
+
+                                    html = html.Replace("@@Signature@@", "<img src='" + HttpContext.Server.MapPath("~/" + manager3.EmpSignature) + "' height='50' />");
+                                    html = html.Replace("@@ManagerName@@", "( " + manager3.EmpNameTh + " )");
+                                }
+                            }
+                        }
+
+                }
+                html = html.Replace("@@Signature@@", "<br /><br />____________________<br />");
+                html = html.Replace("@@ManagerName@@", "");
+
                 html = html.Replace("@@SaleName@@", TitleSale + so.SaleName);
 
 
