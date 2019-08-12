@@ -84,8 +84,19 @@ namespace Kemrex.Web.Main.Controllers
 
             return Json(Employee, JsonRequestBehavior.AllowGet);
         }
+        [HttpPost]
+        public JsonResult GetEmployeeList()
+        {
 
-      
+            List<TblEmployee> EmployeeList = uow.Modules.Employee.GetList();
+            // ob.TblSaleOrderDetail = uow.Modules.SaleOrderDetail.Gets(id ?? 0);
+            // TblCustomer objCustomer = uow.Modules.Customer.Get(Convert.ToInt32(ob.CustomerId));
+
+
+
+            return Json(EmployeeList, JsonRequestBehavior.AllowGet);
+        }
+
 
         [ValidateAntiForgeryToken]
         [HttpPost, ActionName("Detail")]
@@ -218,11 +229,11 @@ namespace Kemrex.Web.Main.Controllers
 
         [HttpPost]
         [Authorized]
-        public ActionResult Delete(int id)
+        public ActionResult Delete(int EmpId)
         {
             try
             {
-                TblEmployee ob = uow.Modules.Employee.Get(id);
+                TblEmployee ob = uow.Modules.Employee.Get(EmpId);
                 if (ob == null)
                 { return RedirectToAction("Index", MVCController, new { msg = "ไม่พบข้อมูลที่ต้องการ", msgType = AlertMsgType.Warning }); }
 
