@@ -16,6 +16,9 @@ namespace Kemrex.Core.Database.Models
         public string InvoiceRemark { get; set; }
         public int InvoiceTerm { get; set; }
         public decimal? InvoiceAmount { get; set; }
+        public int? ConditionId { get; set; }
+        [NotMapped]
+        public string ConditionName { get; set; }
         public int? StatusId { get; set; }
         public long? CreatedBy { get; set; }
         public DateTime? CreatedDate { get; set; }

@@ -434,8 +434,8 @@
                                                     <div class="form-group">
                                                         <label for="EmpId" class="col-sm-5 col-form-label">ผู้นำสินค้าเข้า</label>
                                                         @*<div class="col-sm-6">
-                                        <input type="text" class="form-control" name="EmpId" value="@Model.EmpId" />
-                                    </div>*@
+                <input type="text" class="form-control" name="EmpId" value="@Model.EmpId" />
+            </div>*@
                                                         <div class="col-sm-6">
                                                             <select class="form-control" id="EmpId" data-live-search="true"
                                                                     name="EmpId">
@@ -449,14 +449,22 @@
 
                                                         </div>
                                                     </div>
-                                                    @*<div class="form-group">
-                                    <label for="CreateBy" class="col-sm-5 col-form-label">Create By</label>
-                                    <div class="col-sm-6">
-                                        <input type="text" class="form-control" name="CreateBy" value="@Model.CreateBy" />
-                                    </div>
-                                </div>*@
+                                                    <div class="form-group">
+                                                        <label for="Warehouse" class="col-sm-5 col-form-label">คลังสินค้า</label>
+                                                        <div class="col-sm-6">
+                                                            <select class="form-control" id="Warehouse" data-live-search="true"
+                                                                    name="Warehouse">
+                                                                <option value="-1" )></option>
+                                                                @*@foreach (TblEmployee it in optEmployee)
+                                                                {
+                                                                    bool selected = it.EmpId == Model.EmpId;
+                                                                    <option value="@it.EmpId" @(selected ? " selected=\" selected\"" : "")>@it.EmpNameTh</option>
+                                                                }*@
+                                                            </select>
 
-
+                                                        </div>
+                                                    </div>
+                                               
                                                 </div>
                                             </div>
                                         </div>

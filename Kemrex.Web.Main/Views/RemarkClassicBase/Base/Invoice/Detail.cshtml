@@ -560,7 +560,7 @@
                                                 <div class="form-group">
                                                     <label class="col-sm-5 col-form-label">เงื่อนไขการชำระเงิน</label>
                                                     <div class="input-group col-sm-6">
-                                                        @{
+                                                        @*@{
                                                             string con = "";
                                                             int conid = 0;
                                                             if (Model.InvoiceId > 0)
@@ -572,7 +572,14 @@
                                                                 con = @optPayment.Find(c => c.ConditionId == conid).ConditionName;
                                                             }
                                                         }
-                                                        <input type="text" class="form-control border-0" value="@con" readonly />
+                                                        <input type="text" class="form-control border-0" value="@con" readonly />*@
+                                                        <select name="ConditionId" id="ConditionId" class="form-control"  @(canedit ? "" : "disabled")>
+                                                            @foreach (EnmPaymentCondition it in optPayment)
+                                                            {
+                                                                bool selected = it.ConditionId == Model.ConditionId;
+                                                                <option value="@it.ConditionId" @(selected ? " selected=\" selected\"" : "" )>@it.ConditionName</option>
+                                                            }
+                                                        </select>
                                                     </div>
                                                 </div>
                                                 

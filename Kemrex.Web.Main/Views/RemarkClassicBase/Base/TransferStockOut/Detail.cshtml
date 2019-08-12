@@ -422,7 +422,7 @@
                                                         <label for="TransferDate" class="col-sm-5 col-form-label">วันที่โอนสินค้าออกจากคลัง</label>
                                                         <div class="input-group col-sm-6 date" data-provide="datepicker" data-date-format="dd/mm/yyyy">
                                                             <input id="TransferDate" type="text" class="form-control" placeholder="dd/MM/yyyy ค.ศ." name="TransferDate"
-                                                                   value="@(Model.TransferDate.HasValue ? Model.TransferDate.Value.ToString("dd/MM/yyyy"):"")" required/>
+                                                                   value="@(Model.TransferDate.HasValue ? Model.TransferDate.Value.ToString("dd/MM/yyyy"):"")" required />
                                                             <span class="input-group-addon">
                                                                 <i class="icon wb-calendar icon-2-5x text-success" aria-hidden="true"></i>
                                                             </span>
@@ -432,8 +432,8 @@
                                                     <div class="form-group">
                                                         <label for="EmpId" class="col-sm-5 col-form-label">ผู้โอนสินค้าออก</label>
                                                         @*<div class="col-sm-6">
-                                        <input type="text" class="form-control" name="EmpId" value="@Model.EmpId" />
-                                    </div>*@
+                                                            <input type="text" class="form-control" name="EmpId" value="@Model.EmpId" />
+                                                        </div>*@
                                                         <div class="col-sm-6">
                                                             <select class="form-control" id="EmpId" data-live-search="true"
                                                                     name="EmpId" required>
@@ -444,16 +444,22 @@
                                                                     <option value="@it.EmpId" @(selected ? " selected=\" selected\"" : "")>@it.EmpNameTh</option>
                                                                 }
                                                             </select>
-
                                                         </div>
                                                     </div>
-                                                    @*<div class="form-group">
-                                    <label for="CreateBy" class="col-sm-5 col-form-label">Create By</label>
-                                    <div class="col-sm-6">
-                                        <input type="text" class="form-control" name="CreateBy" value="@Model.CreateBy" />
-                                    </div>
-                                </div>*@
-
+                                                    <div class="form-group">
+                                                        <label for="Warehouse" class="col-sm-5 col-form-label">คลังสินค้า</label>
+                                                        <div class="col-sm-6">
+                                                            <select class="form-control" id="Warehouse" data-live-search="true"
+                                                                    name="Warehouse">
+                                                                <option value="-1" )></option>
+                                                                @*@foreach (TblEmployee it in optEmployee)
+                                                                {
+                                                                    bool selected = it.EmpId == Model.EmpId;
+                                                                    <option value="@it.EmpId" @(selected ? " selected=\" selected\"" : "")>@it.EmpNameTh</option>
+                                                                }*@
+                                                            </select>
+                                                        </div>
+                                                    </div>
 
                                                 </div>
                                             </div>
