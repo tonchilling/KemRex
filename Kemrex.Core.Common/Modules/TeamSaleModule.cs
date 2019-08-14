@@ -7,7 +7,7 @@ using System.Linq;
 
 namespace Kemrex.Core.Common.Modules
 {
-    public class TeamSaleModule : IModule<TeamSale, int>
+    public class TeamSaleModule
     {
         private readonly mainContext db;
         public TeamSaleModule(mainContext context)
@@ -123,6 +123,29 @@ namespace Kemrex.Core.Common.Modules
                         join s in db.TeamSale on e.AccountId equals s.ManagerId
                         orderby s.TeamId ascending
                         select e).FirstOrDefault();
+            return data;
+        }
+        public TeamSale Manager(long AccountId)
+        {
+            var data = (from s in db.TeamSale
+                        where s.ManagerId == AccountId
+                        select s).FirstOrDefault();
+            return data;
+        }
+        
+        public Team CheckTeamSale(long AccountId)
+        {
+            var data = (from a in db.TeamSaleDetail
+                        join s in db.TeamSale on a.TeamId equals s.TeamId
+                        where a.AccountId == AccountId
+                        select new Team
+                        {
+                            EmpId = 0,
+                            AccountId = a.AccountId,
+                            TeamId = a.TeamId,
+                            ManagerId = s.ManagerId
+                        }
+                       ).FirstOrDefault();
             return data;
         }
     }
