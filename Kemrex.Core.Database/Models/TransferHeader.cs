@@ -16,7 +16,7 @@ namespace Kemrex.Core.Database.Models
         public string TransferTime { get; set; }
         public int JobOrderId { get; set; }
        
-        public int? RefTransferId { get; set; }
+        public int RefTransferId { get; set; }
         public string  ReceiveTo { get; set; }
         public string Reason { get; set; }
         public int CarType { get; set; }
@@ -77,6 +77,9 @@ namespace Kemrex.Core.Database.Models
         [NotMapped]
         public virtual List<TransferDetail> TransferDetail { get; set; }
 
-    
+        [NotMapped]
+        public virtual List<TransferRefHeader> TransferRefHeader { get; set; }
+
+
     }
 }

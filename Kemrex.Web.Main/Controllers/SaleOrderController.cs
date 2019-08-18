@@ -349,7 +349,7 @@ namespace Kemrex.Web.Main.Controllers
         {
 
            var quotationList = uow.Modules.Quotation.GetQuatationNotSale()
-                                            .Where(q => q.StatusId == 3)
+                                            .Where(q => q.StatusId == 4)
                                             .ToList();
             if (quotationList == null)
             {
@@ -370,7 +370,7 @@ namespace Kemrex.Web.Main.Controllers
             int sid = Request.Form["SaleOrderId"].ParseInt();
             try
             {
-                int id = Request.Form["Id"].ParseInt();
+                int id = Request.Form["SelQSaleOrderProductId"].ParseInt();
                 TblSaleOrderDetail ob = uow.Modules.SaleOrderDetail.Get(id);
                 if (ob == null)
                 { return RedirectToAction("Detail", MVCController, new { id = sid, tab = "Product", msg = "ไม่พบข้อมูลที่ต้องการ", msgType = AlertMsgType.Warning }); }
@@ -388,27 +388,64 @@ namespace Kemrex.Web.Main.Controllers
             int sid = Request.Form["SaleOrderId"].ParseInt();
             var id = Request.Form["selProduct"].Split(':');  //  ProductId:PriceNet
             int qty = Request.Form["ProductQty"].ParseInt();
+            var SelSaleOrdernProductId = Request.Form["SelQSaleOrderProductId"].ParseInt();  //  ProductId:PriceNet
+         
             Decimal price = Request.Form["ProductPrice"].ParseDecimal();
             Decimal discount = Request.Form["ProductDiscount"].ParseDecimal();
+            decimal realDiscount = 0;
 
+            var remark = Request.Form["Remark"];
             if (id.Count() > 0)
             {
                 int pid = int.Parse(id[0]);
-
-                TblSaleOrderDetail ob = uow.Modules.SaleOrderDetail.Get(0);
-
+             
+                TblSaleOrderDetail ob = uow.Modules.SaleOrderDetail.Get(SelSaleOrdernProductId);
+                realDiscount = discount;
                 ob.SaleOrderId = sid;
                 ob.ProductId = pid;
                 ob.Quantity = qty;
                 ob.PriceNet = price * qty;
+                ob.CalType = Request.Form["selCalType"].ParseInt();
                 ob.PriceVat = uow.Modules.System.GetVatFromNet(price * qty);
                 // ob.PriceVat = (price * qty * vat) - (price * qty);
                 ob.PriceTot = price * qty + ob.PriceVat;
-                ob.DiscountNet = discount;
-                ob.DiscountVat = uow.Modules.System.GetVatFromNet(discount);
-                ob.DiscountTot = discount + ob.DiscountVat;
+
+                if (ob.CalType == 1)
+                    realDiscount = ((ob.PriceNet * discount) / 100);
+
+
+
+                ob.Discount = discount;
+                ob.DiscountNet = realDiscount;
+                ob.DiscountVat = uow.Modules.System.GetVatFromNet(realDiscount);
+                ob.DiscountTot = realDiscount + ob.DiscountVat;
+
+
+                ob.TotalNet = ob.PriceNet - realDiscount;
+
+                ob.TotalVat = ob.PriceVat - ob.DiscountVat;
+                ob.TotalTot = ob.PriceTot - ob.DiscountTot;
+
+                ob.Remark = remark;
+
 
                 uow.Modules.SaleOrderDetail.Set(ob);
+                uow.SaveChanges();
+
+
+                TblSaleOrder objQuoation = uow.Modules.SaleOrder.GetDetail(sid);
+
+                objQuoation.SubTotalNet = objQuoation.TblSaleOrderDetail.Sum(o => o.PriceNet);
+                objQuoation.SubTotalVat = objQuoation.TblSaleOrderDetail.Sum(o => o.PriceVat);
+                objQuoation.SubTotalTot = objQuoation.TblSaleOrderDetail.Sum(o => o.PriceTot);
+                objQuoation.DiscountNet = objQuoation.TblSaleOrderDetail.Sum(o => o.DiscountNet);
+                objQuoation.DiscountVat = objQuoation.TblSaleOrderDetail.Sum(o => o.DiscountVat);
+                objQuoation.DiscountTot = objQuoation.TblSaleOrderDetail.Sum(o => o.DiscountTot);
+                objQuoation.SummaryNet = objQuoation.TblSaleOrderDetail.Sum(o => o.TotalNet);
+                objQuoation.SummaryVat = objQuoation.TblSaleOrderDetail.Sum(o => o.TotalVat);
+                objQuoation.SummaryTot = objQuoation.TblSaleOrderDetail.Sum(o => o.TotalTot);
+
+                uow.Modules.SaleOrder.Set(objQuoation);
                 uow.SaveChanges();
 
 

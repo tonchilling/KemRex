@@ -10,7 +10,12 @@ namespace Kemrex.Core.Database.Models
     
 
         public int TransferId { get; set; }
-     
+        public int RefTransferId { get; set; }
+        [NotMapped]
+        public string RefTransferNo { get; set; }
+
+        [NotMapped]
+        public string TransferNo { get; set; }
         public int? Seq { get; set; }
         public int? ProductId { get; set; }
         public string CurrentQty { get; set; }
@@ -27,4 +32,14 @@ namespace Kemrex.Core.Database.Models
         public virtual TblProduct Product { get; set; }
       /*  public virtual TransferHeader TransferHeader { get; set; }*/
     }
-}
+
+
+    [Serializable]
+    public partial class TransferRefHeader
+    {
+        public int TransferId { get; set; }
+        public int RefTransferId { get; set; }
+        public string RefTransferNo { get; set; }
+        public string TransferNo { get; set; }
+    }
+    }

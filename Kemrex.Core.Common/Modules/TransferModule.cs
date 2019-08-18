@@ -79,21 +79,28 @@ namespace Kemrex.Core.Common.Modules
                        
                    };
 
-            transferHeader.TransferDetail = (from q in db.TransferDetail.Include(x => x.Product)
-                                 where q.TransferId == id
-                                 select new TransferDetail
-                                 {
-                                     TransferId=q.TransferId,
-                                     Seq = q.Seq,
-                                   ProductId= q.ProductId,
-                                     CurrentQty = q.CurrentQty,
-                                     RequestQty = q.RequestQty,
-                                     RequestUnit = q.RequestUnit,
-                                     RequestUnitFactor = q.RequestUnitFactor,
-                                     LastModified = q.LastModified,
-                                     Product=db.TblProduct.Where(p=>p.ProductId== q.ProductId).FirstOrDefault()
-      
-    }).ToList();
+            var detail = (from q in db.TransferDetail.Where(t => t.TransferId == id) select q).ToList();
+
+            if (detail != null && detail.Count > 0)
+            {
+                transferHeader.TransferDetail = (from q in db.TransferDetail.Include(x => x.Product)
+                                                 where q.TransferId == id
+                                                 select new TransferDetail
+                                                 {
+                                                     TransferId = q.TransferId,
+                                                     RefTransferId = q.RefTransferId,
+                                                     RefTransferNo = (q.RefTransferId==0?null:(from tDetail in db.TransferHeader.Where(t => t.TransferId == q.RefTransferId) select tDetail.TransferNo).FirstOrDefault().ToString()),
+                                                     Seq = q.Seq,
+                                                     ProductId = q.ProductId,
+                                                     CurrentQty = q.CurrentQty,
+                                                     RequestQty = q.RequestQty,
+                                                     RequestUnit = q.RequestUnit,
+                                                     RequestUnitFactor = q.RequestUnitFactor,
+                                                     LastModified = q.LastModified,
+                                                     Product = db.TblProduct.Where(p => p.ProductId == q.ProductId).FirstOrDefault()
+
+                                                 }).ToList();
+            }
 
 
             transferHeader.JobOrder = (from q in db.TblJobOrder.Where(o => o.JobOrderId == transferHeader.JobOrderId)
@@ -171,6 +178,9 @@ namespace Kemrex.Core.Common.Modules
                     reader.NextResult();
 
                     header.TransferDetail = Converting.ConvertDataReaderToObjList<TransferDetail>(reader);
+                    reader.NextResult();
+
+                    header.TransferRefHeader = Converting.ConvertDataReaderToObjList<TransferRefHeader>(reader);
                 }
 
 
@@ -202,6 +212,34 @@ namespace Kemrex.Core.Common.Modules
             return (from detail in db.TransferDetail.Where(x => x.TransferId == id) select detail.ProductId).Count();
             //return db.TransferDetail
               //  .Where(x => x.TransferId == id).ToList();
+        }
+
+
+        public List<TransferDetail> GetTransferProductDetails(List<string> transferIds)
+        {
+            
+
+            List<TransferDetail> list = new List<TransferDetail>();
+            list = (from q in db.TransferDetail.Include(x => x.Product)
+                                             where  transferIds.Contains(q.TransferId.ToString())
+                    select new TransferDetail
+                                             {
+                                                 TransferId = q.TransferId,
+                                                 TransferNo= db.TransferHeader.Where(p => p.TransferId == q.TransferId).FirstOrDefault().TransferNo,
+                                                 Seq = q.Seq,
+                                                 ProductId = q.ProductId,
+                                                 CurrentQty = q.RequestQty.ToString(),
+                                                 RequestQty = q.RequestQty,
+                                                 RequestUnit = q.RequestUnit,
+                                                 RequestUnitFactor = q.RequestUnitFactor,
+                                                 LastModified = q.LastModified,
+                                                 Product = db.TblProduct.Where(p => p.ProductId == q.ProductId).FirstOrDefault()
+
+                                             }).ToList();
+
+            return list;
+
+
         }
 
 
@@ -358,30 +396,41 @@ namespace Kemrex.Core.Common.Modules
              else { db.Entry(ob).State = EntityState.Modified; }*/
         }
 
-        public bool Add(List<TransferDetail> dtoList)
+        public bool Add(string TransferId,List<TransferDetail> dtoList)
         {
             bool result = false;
-            string sql = "sp_TransferDetail_Insert";
+            string sql = "sp_TransferDetail_ClearAll";
 
 
             List<SqlParameter> paramList = new List<SqlParameter>();
 
 
+          
 
-
-
-
+           
             try
             {
-                foreach (var dto in dtoList)
+
+                paramList = new List<SqlParameter>();
+                paramList.Add(new SqlParameter("@TransferId", TransferId));
+                result = webdb.ExcecuteNonQuery(sql, paramList);
+
+
+                if (dtoList != null && dtoList.Count>0)
                 {
-                    paramList = new List<SqlParameter>();
-                    paramList.Add(new SqlParameter("@TransferId", dto.TransferId));
-                    paramList.Add(new SqlParameter("@ProductId", dto.ProductId));
-                    paramList.Add(new SqlParameter("@RequestQty", dto.RequestQty));
-                    paramList.Add(new SqlParameter("@CurrentQty", dto.CurrentQty));
-                    paramList.Add(new SqlParameter("@Seq", dto.Seq));
-                    result = webdb.ExcecuteNonQuery(sql, paramList);
+                    sql = "sp_TransferDetail_Insert";
+
+                    foreach (var dto in dtoList)
+                    {
+                        paramList = new List<SqlParameter>();
+                        paramList.Add(new SqlParameter("@TransferId", dto.TransferId));
+                        paramList.Add(new SqlParameter("@RefTransferId", dto.RefTransferId));
+                        paramList.Add(new SqlParameter("@ProductId", dto.ProductId));
+                        paramList.Add(new SqlParameter("@RequestQty", dto.RequestQty));
+                        paramList.Add(new SqlParameter("@CurrentQty", dto.CurrentQty));
+                        paramList.Add(new SqlParameter("@Seq", dto.Seq));
+                        result = webdb.ExcecuteNonQuery(sql, paramList);
+                    }
                 }
             }
             catch (Exception ex)
