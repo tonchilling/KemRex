@@ -249,7 +249,7 @@ namespace Kemrex.Web.Main.Controllers
             }
 
         }
-        public FileResult PDFQuotation(int id)
+        public FileResult PDFQuotationx(int id)
         {
             TblQuotation quo = uow.Modules.Quotation.Get(id);
             quo.TblQuotationDetail = uow.Modules.QuotationDetail.Gets(id);
@@ -360,6 +360,246 @@ namespace Kemrex.Web.Main.Controllers
                 pdfDoc.Close();
                 return File(stream.ToArray(), "application/pdf", "Quotation_" + quo.QuotationNo + ".pdf");
             }
+        }
+        public FileResult PDFQuotation(int id)
+        {
+            TblQuotation quo = uow.Modules.Quotation.Get(id);
+            quo.TblQuotationDetail = uow.Modules.QuotationDetail.Gets(id);
+            foreach (var pr in quo.TblQuotationDetail.ToList())
+            {
+                pr.Product = uow.Modules.Product.Get(pr.ProductId);
+                pr.Product.Unit = uow.Modules.Unit.Get(pr.Product.UnitId);
+            }
+            int cusid = quo.CustomerId.HasValue ? quo.CustomerId.Value : 0;
+            int GroupID = uow.Modules.Customer.GetByCondition(cusid).GroupId.HasValue ? uow.Modules.Customer.GetByCondition(cusid).GroupId.Value : 0;
+            string SaleTel = uow.Modules.Employee.GetByCondition(quo.SaleId).EmpMobile;
+            TblEmployee emp = uow.Modules.Employee.GetByCondition(quo.SaleId);
+            emp.Prefix = uow.Modules.Enum.PrefixGet(emp.PrefixId.HasValue ? emp.PrefixId.Value : 0);
+            //string TitleSale = emp.Prefix.PrefixNameTh;
+            string TitleSale = emp.Prefix.PrefixNameTh;
+
+            String html = string.Empty;
+            html = System.IO.File.ReadAllText(HttpContext.Server.MapPath("~/html/" + "QuotationHTML.html"));
+            string Header = System.IO.File.ReadAllText(HttpContext.Server.MapPath("~/html/" + "QuotationHeader.html"));
+            string Body = System.IO.File.ReadAllText(HttpContext.Server.MapPath("~/html/" + "QuotationBody.html"));
+            using (MemoryStream stream = new System.IO.MemoryStream())
+                {
+
+                    string tagItem = "";
+                    string tagBody = "";
+                    int num = 0;
+                    int line = 0;
+                    tagItem += Header;
+                    tagItem += Body;
+                    foreach (var d in quo.TblQuotationDetail.ToList())
+                    {
+
+                        num++;
+                        line++;
+                        tagBody += "<tr>";
+                        tagBody += "<td align='left' style='border-right:1px;'> " + d.Product.ProductCode + "</td>";
+                        tagBody += "<td align='left' style='border-right:1px;' >" + d.Product.ProductName + "</td>";
+                        tagBody += "<td align='right' style='border-right:1px;' >" + (d.Quantity != 0 ? d.Quantity.ToString("###,###") : "") + "</td>";
+                        tagBody += "<td align='center' style='border-right:1px;' >" + d.Product.Unit.UnitName + "</td>";
+                        tagBody += "<td align='right' style='border-right:1px;' >" + (d.Product.PriceNet != 0 ? d.Product.PriceNet.ToString("###,###,###.00") : "") + "</td>";
+                        tagBody += "<td align='right' style='border-right:1px;' >" + (d.DiscountNet != 0 ? d.DiscountNet.ToString("###,###,###.00") : "") + "</td>";
+                        tagBody += "<td align='right' >" + (d.TotalNet.HasValue ? d.TotalNet.Value.ToString("###,###,###.00") : "") + "</td>";
+                        tagBody += "</tr>";
+
+                        if (d.Remark != null && d.Remark.ToString() != "")
+                        {
+                            string[] lines = Regex.Split(d.Remark, "\r\n");
+                            foreach (string re in lines)
+                            {
+                                num++;
+                                line++;
+                                tagBody += "<tr>";
+                                tagBody += "<td align='left' style='border-right:1px;'> " + "" + "</td>";
+                                tagBody += "<td align='left' style='border-right:1px;' >" + re + "</td>";
+                                tagBody += "<td align='right' style='border-right:1px;' >" + "" + "</td>";
+                                tagBody += "<td align='center' style='border-right:1px;' >" + "" + "</td>";
+                                tagBody += "<td align='right' style='border-right:1px;' >" + "" + "</td>";
+                                tagBody += "<td align='right' style='border-right:1px;' >" + "" + "</td>";
+                                tagBody += "<td align='right' >" + "" + "</td>";
+                                tagBody += "</tr>";
+                                if (line % 31 == 0)
+                                {
+                                    num = 0;
+                                    tagItem = tagItem.Replace("@@body@@", tagBody);
+                                    tagItem += "<br/>";
+                                    tagItem += "<br/>";
+                                    tagItem += "<br/>";
+
+                                    tagItem += Header;
+                                    tagItem += Body;
+                                    tagBody = "";
+                                }
+                            }
+                        }
+
+                    }
+
+
+                    for (int i = 0; i <= 19 - num; i++)
+                    {
+                        tagBody += "<tr><td style='border-right:1px;'>&nbsp;</td>" +
+                            "<td style='border-right:1px;'>&nbsp;</td>" +
+                            "<td style='border-right:1px;'>&nbsp;</td>" +
+                            "<td style='border-right:1px;'>&nbsp;</td>" +
+                            "<td style='border-right:1px;'>&nbsp;</td>" +
+                            "<td style='border-right:1px;'>&nbsp;</td>" +
+                            "<td>&nbsp;</td></tr>";
+                    }
+                    tagItem = tagItem.Replace("@@body@@", tagBody);
+                    if (num > 25 && num <= 30)
+                    {
+                        for (int k = num + 1; k <= 31; k++)
+                        {
+                            tagItem += "<br/>";
+                        }
+                        tagItem += "<br/>";
+                        tagItem += Header;
+                        tagItem += Body;
+                        tagBody = "";
+                        for (int i = 0; i <= 20; i++)
+                        {
+                            tagBody += "<tr><td style='border-right:1px;'>&nbsp;</td>" +
+                                "<td style='border-right:1px;'>&nbsp;</td>" +
+                                "<td style='border-right:1px;'>&nbsp;</td>" +
+                                "<td style='border-right:1px;'>&nbsp;</td>" +
+                                "<td style='border-right:1px;'>&nbsp;</td>" +
+                                "<td style='border-right:1px;'>&nbsp;</td>" +
+                                "<td>&nbsp;</td></tr>";
+                        }
+                        tagItem = tagItem.Replace("@@body@@", tagBody);
+                    }
+
+                    html = html.Replace("@@item@@", tagItem);
+                    string[] RemarkLine = Regex.Split(quo.QuotationRemark, "\r\n");
+                    string remarkx = "";
+                    int countline = 1;
+                    foreach (string re in RemarkLine)
+                    {
+                        if (countline == RemarkLine.Count())
+                        {
+                            remarkx += re;
+                        }
+                        else
+                        {
+                            remarkx += re + "<br/>";
+                        }
+                        countline++;
+                    }
+
+                html = html.Replace("@@ImageBanner@@", HttpContext.Server.MapPath("~/images/logo-banner.png"));
+                html = html.Replace("@@Logo2@@", HttpContext.Server.MapPath("~/images/logo2.png"));
+                html = html.Replace("@@ImageCheckbox@@", HttpContext.Server.MapPath("~/html/img/checkbox_0.gif"));
+                html = html.Replace("@@QuotationNo@@", quo.QuotationNo);
+                string StrQuotationDate = quo.QuotationDate.Day.ToString("00") + "/" + quo.QuotationDate.Month.ToString("00") + "/" + quo.QuotationDate.Year;
+                html = html.Replace("@@QuotationDateStr@@", StrQuotationDate);
+                if (GroupID == 1) //นิติบุคคล
+                {
+                    html = html.Replace("@@ContactName@@", quo.ContractName);
+                    html = html.Replace("@@CompanyName@@", quo.CustomerName);
+                }
+                else //ไม่ใช่นิติบุคคล
+                {
+                    html = html.Replace("@@ContactName@@", quo.CustomerName);
+                    html = html.Replace("@@CompanyName@@", "");
+                }
+                html = html.Replace("@@Address@@", quo.BillingAddress);
+                html = html.Replace("@@Tel@@", quo.ContractPhone);
+                html = html.Replace("@@Fax@@", "");
+                html = html.Replace("@@ProjectName@@", "");
+
+                string DeliveryDate = quo.DeliveryDate.HasValue ? quo.DeliveryDate.Value.Day.ToString("00") + "/" + quo.DeliveryDate.Value.Month.ToString("00") + "/" + quo.DeliveryDate.Value.Year : "";
+                string DueDate = quo.DueDate.HasValue ? quo.DueDate.Value.Day.ToString("00") + "/" + quo.DueDate.Value.Month.ToString("00") + "/" + quo.DueDate.Value.Year : "";
+
+                html = html.Replace("@@DeliveryDate@@", DeliveryDate);
+                html = html.Replace("@@ValidDay@@", quo.QuotationValidDay.ToString());
+                html = html.Replace("@@DueDate@@", DueDate);
+                html = html.Replace("@@CreditDay@@", quo.QuotationCreditDay.ToString());
+                html = html.Replace("@@SaleTel@@", SaleTel);
+
+                html = html.Replace("@@Remark@@", quo.QuotationRemark);
+                decimal SubTotalNet = 0;
+                decimal DiscountNet = 0;
+                SubTotalNet = quo.SubTotalNet.HasValue ? quo.SubTotalNet.Value : 0;
+                DiscountNet = quo.DiscountNet.HasValue ? quo.DiscountNet.Value != 0 ? quo.DiscountNet.Value : 0 : 0;
+
+                decimal SummaryNet = 0;
+                SummaryNet = SubTotalNet - DiscountNet;
+                decimal SummaryVat = (SummaryNet * 7) / 100;
+                decimal SummaryTot = SummaryNet + SummaryVat;
+                html = html.Replace("@@SubTotalNet@@", SubTotalNet.ToString("###,###,##0.00"));
+                html = html.Replace("@@DiscountNet@@", DiscountNet.ToString("###,###,##0.00"));
+                html = html.Replace("@@SummaryNet@@", SummaryNet.ToString("###,###,##0.00"));
+                html = html.Replace("@@SummaryVat@@", SummaryVat.ToString("###,###,##0.00"));
+                html = html.Replace("@@SummaryTot@@", SummaryTot.ToString("###,###,##0.00"));
+                //string textFinalAmount = ThaiBahtText(invoice.SaleOrder.SummaryTot.HasValue ? invoice.SaleOrder.SummaryTot.Value.ToString():"");
+                string textFinalAmount = ThaiBahtText(SummaryTot.ToString());
+                html = html.Replace("@@TextfinalAmount@@", textFinalAmount);
+
+                //get employee sale for accountid
+                if (quo.SaleId == 0)
+                {
+                    html = html.Replace("@@Signature@@", "<br /><br />____________________<br />");
+                    html = html.Replace("@@ManagerName@@", "");
+                }
+                else
+                {
+                    if (quo.StatusId == 3 || quo.StatusId == 4) //Approved from manager
+                    {
+                        Team team = uow.Modules.TeamSale.GetManager(quo.SaleId);
+                        if (team != null) //เช็คว่าหัวหน้าใคร
+                        {
+                            TblEmployee manager = uow.Modules.Employee.GetEmployeeByAccount(team.ManagerId);
+                            html = html.Replace("@@Signature@@", "<img src='" + HttpContext.Server.MapPath("~/" + manager.EmpSignature) + "' height='50' />");
+                            html = html.Replace("@@ManagerName@@", "( " + manager.EmpNameTh + " )");
+                        }
+                        else
+                        {
+                            TblEmployee manager2 = uow.Modules.TeamSale.IsManager(quo.SaleId);
+                            if (manager2 != null) //หรือเป็นหัวหน้าเอง
+                            {
+                                html = html.Replace("@@Signature@@", "<img src='" + HttpContext.Server.MapPath("~/" + manager2.EmpSignature) + "' height='50' />");
+                                html = html.Replace("@@ManagerName@@", "( " + manager2.EmpNameTh + " )");
+                            }
+                            else //ถ้าไม่ใช่ ให้ Default
+                            {
+                                TblEmployee manager3 = uow.Modules.TeamSale.defaultManager();
+                                if (manager3 == null)
+                                {
+                                    html = html.Replace("@@Signature@@", "<br /><br />____________________<br />");
+                                }
+                                else
+                                {
+
+                                    html = html.Replace("@@Signature@@", "<img src='" + HttpContext.Server.MapPath("~/" + manager3.EmpSignature) + "' height='50' />");
+                                    html = html.Replace("@@ManagerName@@", "( " + manager3.EmpNameTh + " )");
+                                }
+                            }
+                        }
+                    }
+                    else
+                    {
+                        html = html.Replace("@@Signature@@", "<br /><br />____________________<br />");
+                    }
+                    
+                }
+                html = html.Replace("@@Signature@@", "<br /><br />____________________<br />");
+                html = html.Replace("@@ManagerName@@", "");
+                html = html.Replace("@@SaleName@@", TitleSale + quo.SaleName);
+
+
+                StringReader sr = new StringReader(html);
+                Document pdfDoc = new Document(PageSize.A4, 10f, 10f, 10f, 0f);
+                PdfWriter writer = PdfWriter.GetInstance(pdfDoc, stream);
+                pdfDoc.Open();
+                XMLWorkerHelper.GetInstance().ParseXHtml(writer, pdfDoc, sr);
+                pdfDoc.Close();
+                return File(stream.ToArray(), "application/pdf", "Quotation_" + quo.QuotationNo + ".pdf");
+                }
         }
         public FileResult PDFSaleOrderxx(int id)
         {
@@ -893,6 +1133,50 @@ namespace Kemrex.Web.Main.Controllers
                 //string textFinalAmount = ThaiBahtText(invoice.SaleOrder.SummaryTot.HasValue ? invoice.SaleOrder.SummaryTot.Value.ToString():"");
                 string textFinalAmount = ThaiBahtText(SummaryTot.ToString());
                 html = html.Replace("@@TextfinalAmount@@", textFinalAmount);
+
+                //get employee sale for accountid
+                if ((so.SaleId.HasValue? so.SaleId.Value:0) == 0)
+                {
+                    html = html.Replace("@@Signature@@", "<br /><br />____________________<br />");
+                    html = html.Replace("@@ManagerName@@", "");
+                }
+                else
+                {
+                        Team team = uow.Modules.TeamSale.GetManager(so.SaleId.HasValue ? so.SaleId.Value : 0);
+                        if (team != null) //เช็คว่าหัวหน้าใคร
+                        {
+                            TblEmployee manager = uow.Modules.Employee.GetEmployeeByAccount(team.ManagerId);
+                            html = html.Replace("@@Signature@@", "<img src='" + HttpContext.Server.MapPath("~/" + manager.EmpSignature) + "' height='50' />");
+                            html = html.Replace("@@ManagerName@@", "( " + manager.EmpNameTh + " )");
+                        }
+                        else
+                        {
+                            TblEmployee manager2 = uow.Modules.TeamSale.IsManager(so.SaleId.HasValue ? so.SaleId.Value : 0);
+                            if (manager2 != null) //หรือเป็นหัวหน้าเอง
+                            {
+                                html = html.Replace("@@Signature@@", "<img src='" + HttpContext.Server.MapPath("~/" + manager2.EmpSignature) + "' height='50' />");
+                                html = html.Replace("@@ManagerName@@", "( " + manager2.EmpNameTh + " )");
+                            }
+                            else //ถ้าไม่ใช่ ให้ Default
+                            {
+                                TblEmployee manager3 = uow.Modules.TeamSale.defaultManager();
+                                if (manager3 == null)
+                                {
+                                    html = html.Replace("@@Signature@@", "<br /><br />____________________<br />");
+                                }
+                                else
+                                {
+
+                                    html = html.Replace("@@Signature@@", "<img src='" + HttpContext.Server.MapPath("~/" + manager3.EmpSignature) + "' height='50' />");
+                                    html = html.Replace("@@ManagerName@@", "( " + manager3.EmpNameTh + " )");
+                                }
+                            }
+                        }
+
+                }
+                html = html.Replace("@@Signature@@", "<br /><br />____________________<br />");
+                html = html.Replace("@@ManagerName@@", "");
+
                 html = html.Replace("@@SaleName@@", TitleSale + so.SaleName);
 
 

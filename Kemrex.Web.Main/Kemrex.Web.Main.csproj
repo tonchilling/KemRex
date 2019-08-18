@@ -271,6 +271,18 @@
     <Content Include="html\DepositInvoiceHTML.html" />
     <Content Include="html\img\checkbox_0.gif" />
     <Content Include="html\img\checkbox_1.gif" />
+    <Content Include="html\DepositInvoiceHTML.html" />
+    <Content Include="html\InvoiceBody.html" />
+    <Content Include="html\InvoiceHeader.html" />
+    <Content Include="html\QuotationBody.html" />
+    <Content Include="html\SaleOrderBody.html" />
+    <Content Include="html\QuotationHeader.html" />
+    <Content Include="html\SaleOrderHeader.html" />
+    <Content Include="html\SaleOrderHTML.html" />
+    <Content Include="html\QuotationHTML.html" />
+    <Content Include="html\QualityCheckHTML.html" />
+    <Content Include="html\JobOrderHTML.html" />
+    <Content Include="html\TransferInHTML.html" />
     <Content Include="html\InvoiceHTML.html" />
     <Content Include="html\JobOrderHTML.html" />
     <Content Include="html\QualityCheckHTML.html" />
@@ -1202,8 +1214,8 @@
     <Compile Include="Controllers\TeamSaleController.cs" />
     <Compile Include="Controllers\TransferInController.cs" />
     <Compile Include="Controllers\TransferOutController.cs" />
-    <Compile Include="Controllers\TransferStockInController.cs" />
     <Compile Include="Controllers\TransferStockOutController.cs" />
+    <Compile Include="Controllers\TransferStockInController.cs" />
     <Compile Include="Controllers\UnitController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
@@ -1374,6 +1386,8 @@
     <Content Include="Views\RemarkClassicBase\Base\TransferStockIn\Index.cshtml" />
     <Content Include="Views\RemarkClassicBase\Base\TransferStockOut\Detail.cshtml" />
     <Content Include="Views\RemarkClassicBase\Base\TransferStockOut\Index.cshtml" />
+    <Content Include="Views\RemarkClassicBase\Base\JobOrderForSale\Detail.cshtml" />
+    <Content Include="Views\RemarkClassicBase\Base\JobOrderForSale\Index.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -1386,6 +1400,7 @@
     <Folder Include="Views\RemarkClassicBase\Base\System\" />
     <Folder Include="Views\TransferIn\" />
     <Folder Include="Views\TransferOut\" />
+    <Folder Include="Views\TransferStockIn\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Kemrex.Core.Common\Kemrex.Core.Common.csproj">

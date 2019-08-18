@@ -57,6 +57,7 @@ namespace Kemrex.Web.Main.Controllers
             
             List<TblInvoice> lst = new List<TblInvoice>();
             EnmPaymentCondition payCon = new EnmPaymentCondition();
+            EnmPaymentCondition payConInvoice = new EnmPaymentCondition();
             try
             {
                 lst = uow.Modules.Invoice.GetList();
@@ -66,6 +67,9 @@ namespace Kemrex.Web.Main.Controllers
                     pr.StrInvoiceDate = pr.InvoiceDate.Day.ToString("00") + "/" + pr.InvoiceDate.Month.ToString("00") + "/" + pr.InvoiceDate.Year;
                     payCon = uow.Modules.PaymentCondition.Get(pr.SaleOrder.ConditionId.HasValue ? pr.SaleOrder.ConditionId.Value : 0);
                     pr.SaleOrder.ConditionName = payCon.ConditionName;
+
+                    payConInvoice = uow.Modules.PaymentCondition.Get(pr.ConditionId.HasValue ? pr.ConditionId.Value : 0);
+                    pr.ConditionName = payConInvoice.ConditionName;
                 }
 
             }
@@ -130,6 +134,7 @@ namespace Kemrex.Web.Main.Controllers
                     ob.CreatedDate = CurrentDate;
                     ob.UpdatedDate = CurrentDate;
                     ob.InvoiceDate = CurrentDate;
+                    ob.ConditionId = ob.SaleOrder.ConditionId;
                     //ob.DueDate = CurrentDate.AddMonths(1);
                     switch (ob.SaleOrder.ConditionId)
                     {
@@ -149,6 +154,7 @@ namespace Kemrex.Web.Main.Controllers
                 {
                     ob.UpdatedBy = CurrentUID;
                     ob.UpdatedDate = CurrentDate;
+                    ob.ConditionId = Request.Form["ConditionId"].ParseInt();
                     ob.InvoiceAmount = 0;
                     if (Request.Form["InvoiceAmount"] != "")
                         ob.InvoiceAmount = decimal.Parse(Request.Form["InvoiceAmount"].ToString());
@@ -161,9 +167,10 @@ namespace Kemrex.Web.Main.Controllers
                     ob.StatusId = Request.Form["StatusId"].ParseInt();
                     ob.InvoiceTerm = Request.Form["InvoiceTerm"].ParseInt();
                     ob.InvoiceRemark = Request.Form["InvoiceRemark"];
+                    
                     //string hddIsDeposit = Request.Form["hddIsDeposit"].ToString();
                     //ob.IsDeposit = hddIsDeposit == ""? 0:int.Parse(Request.Form["hddIsDeposit"]);
-                   
+
                     //decimal reamin = Request.Form["remain"].ToString().ParseDecimal();
                     //if (ob.StatusId > 1)
                     //{
@@ -189,8 +196,17 @@ namespace Kemrex.Web.Main.Controllers
                     }
                     else
                     {
-                        uow.Modules.Invoice.Set(ob);
-                        uow.SaveChanges();
+                        AccountPermission permission = new AccountPermission();
+                        permission = GetPermissionSale(CurrentUser.AccountId, ob.CreatedBy.HasValue ? ob.CreatedBy.Value : 0);
+                        if (permission.IsEdit)
+                        {
+                            uow.Modules.Invoice.Set(ob);
+                            uow.SaveChanges();
+                        }
+                        else
+                        {
+                            return RedirectToAction("Index", MVCController, new { msg = "ไม่มีสิทธิ์แก้ไขงาน", msgType = AlertMsgType.Danger });
+                        }
                     }
                     return RedirectToAction("Detail", MVCController, new { id = ob.InvoiceId, msg = "บันทึกข้อมูลเรียบร้อยแล้ว", msgType = AlertMsgType.Success });
                 }
@@ -253,6 +269,8 @@ namespace Kemrex.Web.Main.Controllers
                         saleOrderList2.Add(so);
                     }
                 }
+                AccountPermission permission = new AccountPermission();
+                permission = GetPermissionSale(CurrentUser.AccountId, ob.CreatedBy.HasValue?ob.CreatedBy.Value:0);
 
 
                 ViewData["optSaleOrder"] = uow.Modules.SaleOrder.Gets();
@@ -260,7 +278,7 @@ namespace Kemrex.Web.Main.Controllers
                 ViewData["optQuotation"] = uow.Modules.Quotation.Gets();
                 ViewData["optPayment"] = uow.Modules.PaymentCondition.Gets();
                 ViewData["optRemain"] = uow.Modules.Invoice.GetRemain(ob.SaleOrderId);
-
+                ViewData["optPermission"] = permission;
 
                 return View(ob);
             }

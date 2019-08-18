@@ -79,7 +79,8 @@ namespace Kemrex.Core.Common.Modules
                             DueDate = i.DueDate,
                             DepositAmount = i.DepositAmount,
                             IsDeposit = i.IsDeposit,
-                            SaleOrder = null
+                            SaleOrder = null,
+                            ConditionId = i.ConditionId
                         });
             return data.ToList();
         }

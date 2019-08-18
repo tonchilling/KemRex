@@ -1,4 +1,6 @@
-﻿using DMN.Standard.Common.Extensions;
+﻿using DMN.Standard.Common.Constraints;
+using DMN.Standard.Common.Extensions;
+using Kemrex.Core.Common.Extensions.Database;
 using Kemrex.Core.Database.Models;
 using Kemrex.Web.Common.ActionFilters;
 using Kemrex.Web.Common.Constraints;
@@ -6,7 +8,11 @@ using Kemrex.Web.Common.Controllers;
 using Kemrex.Web.Common.Models;
 using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Web;
+using System.Web.Helpers;
 using System.Web.Mvc;
+using IOFile = System.IO.File;
 
 namespace Kemrex.Web.Main.Controllers
 {
@@ -78,8 +84,19 @@ namespace Kemrex.Web.Main.Controllers
 
             return Json(Employee, JsonRequestBehavior.AllowGet);
         }
+        [HttpPost]
+        public JsonResult GetEmployeeList()
+        {
 
-      
+            List<TblEmployee> EmployeeList = uow.Modules.Employee.GetList();
+            // ob.TblSaleOrderDetail = uow.Modules.SaleOrderDetail.Gets(id ?? 0);
+            // TblCustomer objCustomer = uow.Modules.Customer.Get(Convert.ToInt32(ob.CustomerId));
+
+
+
+            return Json(EmployeeList, JsonRequestBehavior.AllowGet);
+        }
+
 
         [ValidateAntiForgeryToken]
         [HttpPost, ActionName("Detail")]
@@ -154,6 +171,21 @@ namespace Kemrex.Web.Main.Controllers
             try
             {
                 //Validate model b4 save
+                bool clearOld = false;
+                string oldSignature = ob.EmpSignature;
+                if (Request.Files.Count > 0 && Request.Files["EmpSignature"] != null && Request.Files["EmpSignature"].ContentLength > 0)
+                {
+                    HttpPostedFileBase uploadedFile = Request.Files["EmpSignature"];
+                    string FilePath = string.Format("files/signature/{0}{1}", CurrentDate.ParseString(DateFormat._yyyyMMddHHmmssfff), Path.GetExtension(uploadedFile.FileName));
+                    if (!Directory.Exists(Server.MapPath("~/files"))) { Directory.CreateDirectory(Server.MapPath("~/files")); }
+                    if (!Directory.Exists(Server.MapPath("~/files/signature"))) { Directory.CreateDirectory(Server.MapPath("~/files/signature")); }
+                    uploadedFile.SaveAs(Server.MapPath("~/" + FilePath));
+
+                    ob.EmpSignature = FilePath;
+                    clearOld = true;
+                }
+                if (clearOld && !string.IsNullOrWhiteSpace(oldSignature) && IOFile.Exists(Server.MapPath("~/" + oldSignature)))
+                { IOFile.Delete(Server.MapPath("~/" + oldSignature)); }
 
                 uow.Modules.Employee.Set(ob);
                 uow.SaveChanges();
@@ -197,11 +229,11 @@ namespace Kemrex.Web.Main.Controllers
 
         [HttpPost]
         [Authorized]
-        public ActionResult Delete(int id)
+        public ActionResult Delete(int EmpId)
         {
             try
             {
-                TblEmployee ob = uow.Modules.Employee.Get(id);
+                TblEmployee ob = uow.Modules.Employee.Get(EmpId);
                 if (ob == null)
                 { return RedirectToAction("Index", MVCController, new { msg = "ไม่พบข้อมูลที่ต้องการ", msgType = AlertMsgType.Warning }); }
 

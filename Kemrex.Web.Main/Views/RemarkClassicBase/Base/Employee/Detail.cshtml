@@ -238,7 +238,7 @@
                                         <input type="file" class="form-control" name="EmpSignature" />
                                         @if (!string.IsNullOrWhiteSpace(Model.EmpSignature))
                                         {
-                                            <span class="help-block"><a href="@Url.Content(Model.EmpSignature)" target="_blank">กดที่นี่</a> เพื่อดูลายเซ็นต์ปัจจุบัน</span>
+                                            <span class="help-block"><a href="@Url.Content("~/" + Model.EmpSignature)" target="_blank">กดที่นี่</a> เพื่อดูลายเซ็นต์ปัจจุบัน</span>
                                         }
                                     </div>
                                 </div>

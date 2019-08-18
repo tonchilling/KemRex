@@ -68,8 +68,100 @@ namespace Kemrex.Web.Common.Controllers
             { md.Menus.Add(ConvertToMenuModel(menu, sysMenu)); }
             return md;
         }
-
-
+        public AccountPermission GetPermissionSale(long accountId, long accountId2)
+        {
+            AccountPermission ap = new AccountPermission();
+            TeamSale manager = uow.Modules.TeamSale.Manager(accountId);  //check manager
+            Team checkteam = uow.Modules.TeamSale.CheckTeamSale(accountId);
+            Team checkteam2 = uow.Modules.TeamSale.CheckTeamSale(accountId2);
+            if (manager != null)
+            {
+                ap.IsManager = true;
+                if (manager.ManagerId == checkteam2.ManagerId) ////team manager for owner transaction
+                {
+                    ap.IsTeam = true;
+                    ap.IsEdit = true;   //owner manager can edit
+                }
+            }
+            else
+            {
+                ap.IsManager = false;
+                if (accountId == accountId2)  //check account login = owner transaction
+                {
+                    ap.IsTeam = true;
+                    ap.IsEdit = true;    //owner can edit
+                }
+                else
+                {
+                    if (checkteam == null || checkteam2 == null)
+                    {
+                        ap.IsTeam = false;
+                        ap.IsEdit = false;
+                    }
+                    else
+                    {
+                        if (checkteam.TeamId == checkteam2.TeamId)  //check team account login = team owner transaction
+                        {
+                            ap.IsTeam = true;
+                            ap.IsEdit = false;     //team same but cannot edit
+                        }
+                        else
+                        {
+                            ap.IsTeam = false;
+                            ap.IsEdit = false;
+                        }
+                    }
+                }
+            }
+            return ap;
+        }
+        public AccountPermission GetPermissionOperation(long accountId, long accountId2)
+        {
+            AccountPermission ap = new AccountPermission();
+            TeamOperation manager = uow.Modules.TeamOperation.Manager(accountId);  //check manager
+            Team checkteam = uow.Modules.TeamOperation.CheckTeamOperation(accountId);
+            Team checkteam2 = uow.Modules.TeamOperation.CheckTeamOperation(accountId2);
+            if (manager != null)
+            {
+                ap.IsManager = true;
+                if (manager.ManagerId == checkteam2.ManagerId) ////team manager for owner transaction
+                {
+                    ap.IsTeam = true;
+                    ap.IsEdit = true;   //owner manager can edit
+                }
+            }
+            else
+            {
+                ap.IsManager = false;
+                if (accountId == accountId2)  //check account login = owner transaction
+                {
+                    ap.IsTeam = true;
+                    ap.IsEdit = true;    //owner can edit
+                }
+                else
+                {
+                    if (checkteam == null || checkteam2 == null)
+                    {
+                        ap.IsTeam = false;
+                        ap.IsEdit = false;
+                    }
+                    else
+                    {
+                        if (checkteam.TeamId == checkteam2.TeamId)  //check team account login = team owner transaction
+                        {
+                            ap.IsTeam = true;
+                            ap.IsEdit = false;     //team same but cannot edit
+                        }
+                        else
+                        {
+                            ap.IsTeam = false;
+                            ap.IsEdit = false;
+                        }
+                    }
+                }
+            }
+            return ap;
+        }
         #region Business Function
 
         public string CustomerAddressText(TblCustomerAddress ob)

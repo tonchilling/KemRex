@@ -73,7 +73,7 @@
                             html += '<td>' + item.SaleOrder.CustomerName + '</td>';
                             html += '<td>' + item.SaleOrder.SaleName + '</td>';
                             html += '<td align="center">' + item.SaleOrder.QuotationNo + '<br>' + item.SaleOrder.SaleOrderNo + '</td>';
-                            html += '<td>' + item.SaleOrder.ConditionName + '</td>';
+                            html += '<td>' + item.ConditionName + '</td>';
                             html += '<td align="right" class="money">' + (item.InvoiceAmount).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,') + '</td>';
 
                             //if (item.IsDeposit == 1) {

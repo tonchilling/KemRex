@@ -7,7 +7,7 @@ using System.Linq;
 
 namespace Kemrex.Core.Common.Modules
 {
-    public class TeamSaleModule : IModule<TeamSale, int>
+    public class TeamSaleModule
     {
         private readonly mainContext db;
         public TeamSaleModule(mainContext context)
@@ -84,6 +84,69 @@ namespace Kemrex.Core.Common.Modules
             if (ob.TeamId == 0)
             { db.TeamSale.Add(ob); }
             else { db.TeamSale.Update(ob); }
+        }
+
+        public Team GetManager(int EmpId)
+        {
+            var data = (from a in
+                           (from e in db.TblEmployee
+                            join d in db.TeamSaleDetail on e.AccountId equals d.AccountId
+                            where e.EmpId == EmpId
+                            select new Team
+                            {
+                                EmpId = e.EmpId,
+                                AccountId = (e.AccountId.HasValue ? e.AccountId.Value : 0),
+                                TeamId = d.TeamId
+                            })
+                        join s in db.TeamSale on a.TeamId equals s.TeamId
+                        select new Team
+                        {
+                            EmpId = a.EmpId,
+                            AccountId = a.AccountId,
+                            TeamId = a.TeamId,
+                            ManagerId = s.ManagerId
+                        }
+                       ).FirstOrDefault();
+            return data;
+        }
+        public TblEmployee IsManager(int EmpId)
+        {
+            var data = (from e in db.TblEmployee
+                        join s in db.TeamSale on e.AccountId equals s.ManagerId
+                        where e.EmpId == EmpId
+                        select e).FirstOrDefault();
+            return data;
+        }
+        public TblEmployee defaultManager()
+        {
+            var data = (from e in db.TblEmployee
+                        join s in db.TeamSale on e.AccountId equals s.ManagerId
+                        orderby s.TeamId ascending
+                        select e).FirstOrDefault();
+            return data;
+        }
+        public TeamSale Manager(long AccountId)
+        {
+            var data = (from s in db.TeamSale
+                        where s.ManagerId == AccountId
+                        select s).FirstOrDefault();
+            return data;
+        }
+        
+        public Team CheckTeamSale(long AccountId)
+        {
+            var data = (from a in db.TeamSaleDetail
+                        join s in db.TeamSale on a.TeamId equals s.TeamId
+                        where a.AccountId == AccountId
+                        select new Team
+                        {
+                            EmpId = 0,
+                            AccountId = a.AccountId,
+                            TeamId = a.TeamId,
+                            ManagerId = s.ManagerId
+                        }
+                       ).FirstOrDefault();
+            return data;
         }
     }
 }

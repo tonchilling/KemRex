@@ -47,4 +47,12 @@ namespace Kemrex.Core.Database.Models
         public virtual ICollection<TeamSale> TeamSale { get; set; }
         public virtual ICollection<TeamSaleDetail> TeamSaleDetail { get; set; }
     }
+
+    public partial class AccountPermission
+    {
+        public bool IsManager { get; set; }
+        public bool IsEdit { get; set; }
+        public bool IsTeam { get; set; }
+
+    }
 }

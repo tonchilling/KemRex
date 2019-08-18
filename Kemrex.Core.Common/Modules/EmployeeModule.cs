@@ -78,6 +78,30 @@ namespace Kemrex.Core.Common.Modules
 
             return empList;
         }
+        public List<TblEmployee> GetList()
+        {
+            //return db.TblEmployee
+            //    .Where(x => x.EmpCode == EmpCode).ToList();
+            var empList = (from emp in db.TblEmployee
+                           .Include(a => a.Department)
+                           .Include(b => b.Position)
+                           select new TblEmployee
+                           {
+                               EmpId = emp.EmpId,
+                               EmpCode = emp.EmpCode,
+                               EmpNameTh = emp.EmpNameTh,
+                               EmpNameEn = emp.EmpNameEn,
+                               EmpEmail = emp.EmpEmail,
+                               EmpMobile = emp.EmpMobile,
+                               Status = emp.Status,
+                               Department = emp.Department,
+                               Position = emp.Position
+                               
+                           }).ToList();
+
+
+            return empList;
+        }
         public TblEmployee GetEmployeeByEmpCode(string id)
         {
             return db.TblEmployee
@@ -85,7 +109,12 @@ namespace Kemrex.Core.Common.Modules
 
                 .FirstOrDefault() ?? new TblEmployee() { Prefix = new EnmPrefix() };
         }
-
+        public TblEmployee GetEmployeeByAccount(long id)
+        {
+            return db.TblEmployee
+                .Where(x => x.AccountId == id)
+                .FirstOrDefault() ?? new TblEmployee() { Prefix = new EnmPrefix() };
+        }
         private IQueryable<TblEmployee> Filter(IQueryable<TblEmployee> data, string src, string phone, string email)
         {
             if (!string.IsNullOrWhiteSpace(src))

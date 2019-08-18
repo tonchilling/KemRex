@@ -7,7 +7,7 @@ using System.Linq;
 
 namespace Kemrex.Core.Common.Modules
 {
-    public class TeamOperationModule : IModule<TeamOperation, int>
+    public class TeamOperationModule
     {
         private readonly mainContext db;
         public TeamOperationModule(mainContext context)
@@ -139,6 +139,29 @@ CreatedDate = team.CreatedDate,
             if (ob.TeamId == 0)
             { db.TeamOperation.Add(ob); }
             else { db.TeamOperation.Update(ob); }
+        }
+        public TeamOperation Manager(long AccountId)
+        {
+            var data = (from s in db.TeamOperation
+                        where s.ManagerId == AccountId
+                        select s).FirstOrDefault();
+            return data;
+        }
+
+        public Team CheckTeamOperation(long AccountId)
+        {
+            var data = (from a in db.TeamOperationDetail
+                        join s in db.TeamOperation on a.TeamId equals s.TeamId
+                        where a.AccountId == AccountId
+                        select new Team
+                        {
+                            EmpId = 0,
+                            AccountId = a.AccountId,
+                            TeamId = a.TeamId,
+                            ManagerId = s.ManagerId
+                        }
+                       ).FirstOrDefault();
+            return data;
         }
     }
 }
