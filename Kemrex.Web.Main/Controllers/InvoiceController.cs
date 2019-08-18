@@ -196,8 +196,17 @@ namespace Kemrex.Web.Main.Controllers
                     }
                     else
                     {
-                        uow.Modules.Invoice.Set(ob);
-                        uow.SaveChanges();
+                        AccountPermission permission = new AccountPermission();
+                        permission = GetPermissionSale(CurrentUser.AccountId, ob.CreatedBy.HasValue ? ob.CreatedBy.Value : 0);
+                        if (permission.IsEdit)
+                        {
+                            uow.Modules.Invoice.Set(ob);
+                            uow.SaveChanges();
+                        }
+                        else
+                        {
+                            return RedirectToAction("Index", MVCController, new { msg = "ไม่มีสิทธิ์แก้ไขงาน", msgType = AlertMsgType.Danger });
+                        }
                     }
                     return RedirectToAction("Detail", MVCController, new { id = ob.InvoiceId, msg = "บันทึกข้อมูลเรียบร้อยแล้ว", msgType = AlertMsgType.Success });
                 }
