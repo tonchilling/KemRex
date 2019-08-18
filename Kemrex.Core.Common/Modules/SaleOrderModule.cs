@@ -57,6 +57,16 @@ namespace Kemrex.Core.Common.Modules
                    };
         }
 
+        public TblSaleOrder GetDetail(int id)
+        {
+            return db.TblSaleOrder.Include(detail => detail.TblSaleOrderDetail)
+                   .Where(x => x.SaleOrderId == id)
+                   .FirstOrDefault() ?? new TblSaleOrder()
+                   {
+                       CreatedDate = DateTime.Now
+                   };
+        }
+
         public List<SaleOrderHeader> GetHeader(DateTime dateTime)
         {
             List<SaleOrderHeader> result = new List<SaleOrderHeader>();

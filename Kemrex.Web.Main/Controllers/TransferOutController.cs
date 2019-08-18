@@ -204,20 +204,20 @@ namespace Kemrex.Web.Main.Controllers
 
         public ActionResult AddProduct()
         {
-            string qid = Request.Form["TransferId"].ToString();
+            string transferId = Request.Form["TransferId"].ToString();
             var productids = Request.Form["ProductIds"].ToString();  //  ProductId:PriceNet
             string qtys = Request.Form["RequestQtys"].ToString();
             string currentQty= Request.Form["currentQty"].ToString();
             List<TransferDetail> list = new List<TransferDetail>();
 
           
-           if (qid.Count() > 0)
+           if (transferId.Count() > 0)
             {
                 int row = 0;
                 for(row=0;row < productids.Split(',').Count();row++)
                 {
                     TransferDetail   ob = new TransferDetail();
-                           ob.TransferId = qid.ParseInt();
+                           ob.TransferId = transferId.ParseInt();
                            ob.ProductId = productids.Split(',')[row].ParseInt();
                            ob.RequestQty = qtys.Split(',')[row].ParseInt();
                     ob.CurrentQty = currentQty.Split(',')[row];
@@ -251,11 +251,11 @@ namespace Kemrex.Web.Main.Controllers
                   //  uow.SaveChanges();
                 }
 
-                uow.Modules.Transfer.Add(list);
+                uow.Modules.Transfer.Add(transferId,list);
 
 
             }
-            return RedirectToAction("Detail", MVCController, new { id = qid, tab = "Product", msg = "บันทึกข้อมูลสินค้าเรียบร้อยแล้ว", msgType = AlertMsgType.Success });
+            return RedirectToAction("Detail", MVCController, new { id = transferId, tab = "Product", msg = "บันทึกข้อมูลสินค้าเรียบร้อยแล้ว", msgType = AlertMsgType.Success });
         }
 
         [HttpPost]
