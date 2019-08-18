@@ -16,12 +16,18 @@
     List<TblSaleOrder> optSaleOrder = (List<TblSaleOrder>)ViewData["optSaleOrder"];
     List<EnmPaymentCondition> optPayment = (List<EnmPaymentCondition>
       )ViewData["optPayment"];
+    AccountPermission optPermission = (AccountPermission
+     )ViewData["optPermission"];
     //decimal optRemain = (decimal)ViewData["optRemain"];
     bool canedit = false;
     bool changestatus = false;
     if (Model.StatusId != 3 && Model.SaleOrderId > 0)
     {
-        changestatus = true;
+        if (optPermission.IsEdit)
+        {
+            changestatus = true;
+        }
+
     }
 
     if (Model.StatusId == 1 || Model.StatusId == null)
@@ -418,7 +424,8 @@
                                                                 </button>
                                                                 <div class="input-group-append">
                                                                     <button class="btn btn-outline-secondary btn-warning" type="button"
-                                                                            id="btnSO2INV">
+                                                                            id="btnSO2INV"
+                                                                            @(canedit ? "" : "disabled")>
                                                                         ดึงข้อมูล
                                                                     </button>
 

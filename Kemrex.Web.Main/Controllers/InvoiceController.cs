@@ -260,6 +260,8 @@ namespace Kemrex.Web.Main.Controllers
                         saleOrderList2.Add(so);
                     }
                 }
+                AccountPermission permission = new AccountPermission();
+                permission = GetPermissionSale(CurrentUser.AccountId, ob.CreatedBy.HasValue?ob.CreatedBy.Value:0);
 
 
                 ViewData["optSaleOrder"] = uow.Modules.SaleOrder.Gets();
@@ -267,7 +269,7 @@ namespace Kemrex.Web.Main.Controllers
                 ViewData["optQuotation"] = uow.Modules.Quotation.Gets();
                 ViewData["optPayment"] = uow.Modules.PaymentCondition.Gets();
                 ViewData["optRemain"] = uow.Modules.Invoice.GetRemain(ob.SaleOrderId);
-
+                ViewData["optPermission"] = permission;
 
                 return View(ob);
             }
