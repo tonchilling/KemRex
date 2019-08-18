@@ -93,15 +93,23 @@ namespace Kemrex.Web.Common.Controllers
                 }
                 else
                 {
-                    if (checkteam.TeamId == checkteam2.TeamId)  //check team account login = team owner transaction
-                    {
-                        ap.IsTeam = true;
-                        ap.IsEdit = false;     //team same but cannot edit
-                    }
-                    else
+                    if (checkteam == null || checkteam2 == null)
                     {
                         ap.IsTeam = false;
                         ap.IsEdit = false;
+                    }
+                    else
+                    {
+                        if (checkteam.TeamId == checkteam2.TeamId)  //check team account login = team owner transaction
+                        {
+                            ap.IsTeam = true;
+                            ap.IsEdit = false;     //team same but cannot edit
+                        }
+                        else
+                        {
+                            ap.IsTeam = false;
+                            ap.IsEdit = false;
+                        }
                     }
                 }
             }
@@ -132,15 +140,23 @@ namespace Kemrex.Web.Common.Controllers
                 }
                 else
                 {
-                    if (checkteam.TeamId == checkteam2.TeamId)  //check team account login = team owner transaction
-                    {
-                        ap.IsTeam = true;
-                        ap.IsEdit = false;     //team same but cannot edit
-                    }
-                    else
+                    if (checkteam == null || checkteam2 == null)
                     {
                         ap.IsTeam = false;
                         ap.IsEdit = false;
+                    }
+                    else
+                    {
+                        if (checkteam.TeamId == checkteam2.TeamId)  //check team account login = team owner transaction
+                        {
+                            ap.IsTeam = true;
+                            ap.IsEdit = false;     //team same but cannot edit
+                        }
+                        else
+                        {
+                            ap.IsTeam = false;
+                            ap.IsEdit = false;
+                        }
                     }
                 }
             }
