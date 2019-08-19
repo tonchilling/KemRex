@@ -272,6 +272,9 @@ namespace Kemrex.Web.Main.Controllers
                 {
                     quotationList = new List<TblQuotation>();
                 }
+                AccountPermission permission = new AccountPermission();
+                permission = GetPermissionSale(CurrentUser.AccountId, ob.CreatedBy.HasValue ? ob.CreatedBy.Value : 0);
+
                 quotationList.Add(uow.Modules.Quotation.Get(ob.QuotationNo));
                 ViewData["optSoDetail"] = uow.Modules.SaleOrderDetail.Gets(ob.SaleOrderId);
                 ViewData["optQuotation"] = quotationList;
@@ -284,6 +287,7 @@ namespace Kemrex.Web.Main.Controllers
                 ViewData["optAttachment"] = uow.Modules.SaleOrderAttachment.Gets(ob.SaleOrderId);
                 ViewData["optTeam"] = uow.Modules.TeamOperation.Gets();
                 ViewData["userAccount"] = CurrentUser;
+                ViewData["optPermission"] = permission;
                 return View(ob);
             }
             catch (Exception ex)
