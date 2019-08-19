@@ -143,6 +143,60 @@ namespace Kemrex.Core.Common
             return isCan;
         }
 
+        public bool ExcecuteWitTranNonQuery(string procName, List<SqlParameter> param)
+        {
+            bool isCan = false;
+            DataTable table = new DataTable();
+            SqlTransaction transaction = null;
+            try
+            {
+                connect.Open();
+                transaction = connect.BeginTransaction(IsolationLevel.Serializable);
+                sqlCommand = new SqlCommand(procName, connect);
+                sqlCommand.Transaction = transaction;
+                sqlCommand.CommandType = CommandType.StoredProcedure;
+                sqlCommand.CommandTimeout = 0;
+                sqlCommand.Parameters.AddRange(param.ToArray());
+                sqlCommand.ExecuteNonQuery();
+                transaction.Commit();
+                CloseConnection();
+                isCan = true;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("ExcecuteNonQuery.Error:" + ex.ToString());
+
+            }
+            return isCan;
+        }
+
+        public string ExcecuteNonScalar(string procName, List<SqlParameter> param)
+        {
+            string isCan = "";
+            DataTable table = new DataTable();
+
+            try
+            {
+                connect.Open();
+                sqlCommand = new SqlCommand();
+                sqlCommand.CommandText = procName;
+                sqlCommand.CommandType = CommandType.StoredProcedure;
+                sqlCommand.Connection = connect;
+                sqlCommand.CommandTimeout = 0;
+                sqlCommand.Parameters.AddRange(param.ToArray());
+                isCan= (string)sqlCommand.ExecuteScalar();
+                CloseConnection();
+              
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("ExcecuteNonQuery.Error:" + ex.ToString());
+
+            }
+            return isCan;
+        }
+
+
         protected bool ExcecuteNonQuery(string procName, SqlTransaction trasaction, List<SqlParameter> param)
         {
             bool isCan = false;

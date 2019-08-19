@@ -29,16 +29,90 @@
     optEmployee = (List<TblEmployee>
     )ViewData["optEmployee"];
 
-   
+    SysAccount sysAccount = (SysAccount
+)ViewData["userAccount"];
 
-    
 
-var canEdit = false;
+
+
+    var canEdit = false;
 }
 
 @section Styles {
 
     <link href="~/themes/RemarkClassicBase/css/bootstrap-datepicker.min.css" rel="stylesheet" />
+    
+    <style type="text/css">
+
+        /* Customize the label (the container) */
+        .container {
+            display: block;
+            position: relative;
+            padding-left: 35px;
+            margin-bottom: 12px;
+            cursor: pointer;
+            font-size: 22px;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+
+            /* Hide the browser's default checkbox */
+            .container input {
+                position: absolute;
+                opacity: 0;
+                cursor: pointer;
+                height: 0;
+                width: 0;
+            }
+
+        /* Create a custom checkbox */
+        .checkmark {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 25px;
+            width: 25px;
+            background-color: #eee;
+        }
+
+        /* On mouse-over, add a grey background color */
+        .container:hover input ~ .checkmark {
+            background-color: #ccc;
+        }
+
+        /* When the checkbox is checked, add a blue background */
+        .container input:checked ~ .checkmark {
+            background-color: #2196F3;
+        }
+
+        /* Create the checkmark/indicator (hidden when not checked) */
+        .checkmark:after {
+            content: "";
+            position: absolute;
+            display: none;
+        }
+
+        /* Show the checkmark when checked */
+        .container input:checked ~ .checkmark:after {
+            display: block;
+        }
+
+        /* Style the checkmark/indicator */
+        .container .checkmark:after {
+            left: 9px;
+            top: 5px;
+            width: 5px;
+            height: 10px;
+            border: solid white;
+            border-width: 0 3px 3px 0;
+            -webkit-transform: rotate(45deg);
+            -ms-transform: rotate(45deg);
+            transform: rotate(45deg);
+        }
+
+    </style>
 
 }
 
@@ -50,7 +124,8 @@ var canEdit = false;
     <script type="text/javascript">
 
         var _contact = [];
-
+        var objSelectHeaderAll = [];
+        var objSelectDetailAll = [];
         $(document).ready(function () {
 
             window.setTimeout(function () {
@@ -102,17 +177,30 @@ var canEdit = false;
                 $("#" + tab_id).addClass('current');
             })
 
-       //     var tab = TabPages.init('myTabPage');
-            //tab.selectTab('navInfo');
-
-          //  var myTabElement = new TabPages('myTabPage');
-          //  myTabElement.initTabs();
-         //   myTabElement.selectTab('navInfo');
 
 
 
-            calDiscount();
-        });
+            $('.divTranferOut table > tbody').find('tr').each(function () {
+                var row = $(this);
+                objSelect = {};
+                objSelect.TransferId = row.attr("title");
+                objSelect.TransferNo = row.find('td').eq(0).text();
+                objSelectHeaderAll.push(objSelect);
+            });
+
+          //  alert(objSelectHeaderAll)
+
+                //     var tab = TabPages.init('myTabPage');
+                //tab.selectTab('navInfo');
+
+                //  var myTabElement = new TabPages('myTabPage');
+                //  myTabElement.initTabs();
+                //   myTabElement.selectTab('navInfo');
+
+
+
+                calDiscount();
+            });
 
         function getUrlVars() {
             var vars = [], hash;
@@ -373,11 +461,150 @@ var canEdit = false;
 
 
 
-        $(document).on("click", ".btnRefTransfer", function () {
-            $('#RefTransferId').val($(this).closest('tr').attr('data'));
-            $('#RefTransferNo').val($(this).closest('td').next().html());
+        $(document).on("click", "#btnRefTransfer", function () {
+
+            $('.divSearch table > tbody').empty();
+          //  $('#RefTransferId').val($(this).closest('tr').attr('data'));
+         //   $('#RefTransferNo').val($(this).closest('td').next().html());
+           $('#JobOrderModal').modal('show');
+        });
+
+
+        $(document).on("click", ".btnSelectItem", function () {
+
+       //   var chkAll=  $('.divSearch table').find('input[type="checkbox"]:checked');
+            var objSelect = {};
+         //   objSelectHeaderAll = [];
+
+            $('.divTranferOut table > tbody').empty();
+            $('.divSearch table').find('tr').each(function () {
+                var row = $(this);
+                if (row.find('input[type="checkbox"]').is(':checked') ) {
+                    objSelect = {};
+
+                    objSelect.TransferId = row.find('input[type="checkbox"]').attr("title");
+                    objSelect.TransferNo = row.find('td:eq(1)')[0].innerText;
+
+                    objSelectHeaderAll.push(objSelect);
+                }
+            });
+
+            LoadTransferout(objSelectHeaderAll);
+
+
             $('#JobOrderModal').modal('hide');
         });
+
+        $(document).on("click", ".btnTransferDelete", function () {
+
+
+            var row = $(this).closest("tr");
+            var data = $.grep(objSelectHeaderAll, function (e) {
+                return e.TransferId != row.attr("title");
+            });
+            objSelectHeaderAll = data;
+            LoadTransferout(objSelectHeaderAll);
+
+            return false;
+        });
+
+
+        function LoadTransferout(objTransferList) {
+
+              var urlLoadProduct = '@Url.Action("GetProductFromTransfer", "TransferIn")';
+            var html = '';
+            html += "<tbody>";
+
+            var transferRef = '';
+
+            for (var key in objSelectHeaderAll) {
+                var item = objSelectHeaderAll[key];
+                html += '<tr title=' + item.TransferId + '>';
+                html += '<td>' + item.TransferNo + '</td>';
+                html += '<td><button class="btn btn-danger btn-xs btnTransferDelete"><i class="fa fa-trash" aria-hidden="true"></i>&nbsp;ลบ</button></td>';
+                html += '</tr>';
+
+                transferRef += item.TransferId + ',';
+            }
+
+
+            html += "</tbody>";
+            $('.divTranferOut table > tbody').empty();
+
+            $('.divTranferOut table').append(html);
+
+            transferRef = transferRef.substring(0, transferRef.length-1);
+            //tblProduct
+
+
+            html = '';
+            html += "<tbody>";
+            $.get(urlLoadProduct, { "transferIds": transferRef }, function (data) {
+                var row = 1
+                var objProductTemp;
+
+
+                $('.tblProduct > tbody > tr').each(function () {
+
+                    objProductTemp = objSelectDetailAll.filter(o => o.TransferId == $(this).attr('TransferId')
+                        && o.ProductId == $(this).attr('ProductId'));
+
+                    if (objProductTemp != null && objProductTemp.length > 0) {
+                        objProductTemp[0].RequestQty = $(this).find('.RequestQtys').val();
+                    }
+
+                });
+
+
+                if (objSelectDetailAll != null && objSelectDetailAll.length == 0) {
+
+                    objSelectDetailAll = data;
+                } else {
+
+                    $.each(data, function (index, item) {
+
+                        objProductTemp = objSelectDetailAll.filter(o => o.TransferId == item.TransferId
+                            && o.ProductId == item.ProductId);
+
+                        if (objProductTemp != null && objProductTemp.length > 0) {
+                            item.RequestQty = objProductTemp[0].RequestQty
+                        }
+
+                    });
+
+                    objSelectDetailAll = data;
+
+                }
+                $.each(objSelectDetailAll, function (index, item) {
+                    html += '<tr TransferId=' + item.TransferId + ' ProductId=' + item.ProductId+'>';
+                    html += '<td width="5%">' + row + '</td>';
+                    html += '<td width="10%">' + item.TransferNo + '</td>';
+
+                    html += '<td width="50%">' + item.Product.ProductCode + ' ' + item.Product.ProductName + '</td>';
+                    html += '<td  width="15%"><input type="hidden" name="currentQty" class="currentQty" value="' + item.CurrentQty + '" />' + item.CurrentQty +'</td>';
+                    html += '<td  width="20%"><input type="text" name="RequestQtys" class="RequestQtys" value="' + item.RequestQty + '" />';
+                    html += ' <input type="hidden" name="ProductIds" class="ProductIds" value="' + item.ProductId + '"  />';
+                    html += ' <input type="hidden" name="TransferIds" class="TransferIds" value="' + item.TransferId + '"  />';
+                    html += '</td>';
+                    html += '<tr>';
+
+                    row++;
+
+                });
+
+
+
+                html += "</tbody>";
+                $('.tblProduct > tbody').empty();
+
+                $('.tblProduct').append(html);
+
+
+                $('ul.tabs li[data-tab="tab-2"]').trigger('click');
+
+            });
+
+        }
 
         $("#btnSearchJobOrder").click(function () {
               $('.divSearch').empty();
@@ -394,15 +621,25 @@ var canEdit = false;
 
 
             var url = '@Url.Action("GetTransferOutByDate", "TransferIn")';
+
+
+
                    $.ajax({
                 type: "get",
                 url: url,
                        data: { startDate: $("#JobStartDate").val(), toDate: $("#JobEndDate").val() },
                        success: function (obj) {
-                           $.each(obj, function (index, item) {
+                           var objFilter = obj;
 
-                               html += '<tr data=' + item.TransferId +'>';
-                               html += '<td><button type="button" class="btn btn-primary btnRefTransfer">เลิอก</button></td>';
+                           if (objSelectHeaderAll != null && objSelectHeaderAll.length)
+                            objFilter = $.grep(obj, function (e) {
+                                return objSelectHeaderAll.filter(o => o.TransferId == e.TransferId).length == 0;//e.TransferId != row.attr("title");
+                           });
+                           $.each(objFilter, function (index, item) {
+
+                               html += '<tr data=' + item.TransferId + '>';
+                             //  html += '<td><button type="button" class="btn btn-primary btnRefTransfer">เลิอก</button></td>';
+                               html += '<td><label class="container"><input type = "checkbox" title="' + item.TransferId+'" ><span class="checkmark"></span></label > </td>';
                                html += '<td>' + item.TransferNo + '</td>';
                                html += '</tr>';
                            });
@@ -426,7 +663,53 @@ var canEdit = false;
 
         $("#btnAddProduct").click(function () {
 
-               $('#frmmain').attr('action', '@Url.Action("AddProduct", "TransferIn")');
+
+            var url ='@Url.Action("AddProduct", "TransferIn")';
+
+         /*   $('.tblProduct > tbody > tr').each(function () {
+
+                objProductTemp = objSelectDetailAll.filter(o => o.TransferId == $(this).attr('TransferId')
+                    && o.ProductId == $(this).attr('ProductId'));
+
+                if (objProductTemp != null && objProductTemp.length > 0) {
+                    objProductTemp[0].RequestQty = $(this).find('.RequestQty').val();
+                }
+
+            });
+
+
+            $.ajax({
+                type: "post",
+                url: url,
+                data: {
+                    Header: objSelectHeaderAll,
+                    Detail: objse
+                }
+                , success: function (obj) {
+
+
+                }
+            });
+            */
+            var isConfirm = false;
+            swal({
+                title: "Add Product",
+                text: "Do you want to add product?",
+                type: "info",
+                showCancelButton: true,
+                closeOnConfirm: false,
+                showLoaderOnConfirm: true
+            },
+                function (isConfirm) {
+                    if (isConfirm) {
+
+                        $('#frmmain').attr('action', '@Url.Action("AddProduct", "TransferIn")');
+                        $('#frmmain').submit();
+                    }
+                });
+
+            return false;
+
 
             //tblProduct
 
@@ -435,14 +718,58 @@ var canEdit = false;
 
         $("#btnApprove").click(function () {
 
-               $('#frmmain').attr('action', '@Url.Action("Approve", "TransferIn")');
+            var isConfirm = false;
+            swal({
+                title: "Approve",
+                text: "Do you want to approve?",
+                type: "success",
+                showCancelButton: true,
+                closeOnConfirm: false,
+                showLoaderOnConfirm: true
+            },
+                function (isConfirm) {
+                    if (isConfirm) {
+
+                        $('#frmmain').attr('action', '@Url.Action("Approve", "TransferIn")');
+                        $('#frmmain').submit();
+
+                    }
+                });
+
+            return false;
+            
 
             //tblProduct
 
         });
         $("#btnNextStep").click(function () {
 
-            return ValidationAll();
+
+              var isConfirm = false;
+            swal({
+                title: "SAVE",
+                text: "Do you want to save?",
+                type: "info",
+                showCancelButton: true,
+                closeOnConfirm: false,
+                showLoaderOnConfirm: true
+            },
+                function (isConfirm) {
+                    if (isConfirm) {
+
+                        if (ValidationAll()) {
+                             $('#frmmain').attr('action', '@Url.Action("SetDetail", "TransferIn")');
+                        $('#frmmain').submit();
+
+                        }
+                       
+
+                    }
+                });
+
+            return false;
+
+          
         });
 
 
@@ -558,27 +885,74 @@ var canEdit = false;
                                         </div>
                                     </div>
 
-                                    <div class="col-md-4">
-                                        <label class="col-md-3 form-control-label">ใบนำวัสดุออก  : </label>
-                                        <div class="col-md-9">
-                                            <div class="input-group">
-                                                <input type="hidden" id="RefTransferId" name="RefTransferId" value="@Model.RefTransferId" />
-                                                <input type="text" class="form-control" id="RefTransferNo" name="RefTransferNo"
-                                                       value="@(Model.RefTransfer!=null ? Model.RefTransfer.TransferNo:"")" required readonly />
+                                    <div class="col-md-6">
+                                        <input type="hidden" id="RefTransferId" name="RefTransferId" value="@Model.RefTransferId" />
+                               :
+                                          
+                                        @if (Model.TransferId > 0)
+                                        {
 
-                                                @if (canEdit)
-                                                {
-                                                    <div class="input-group-append">
-                                                        <button class="btn btn-outline-secondary btn-primary"
-                                                                data-toggle="modal"
-                                                                data-target="#JobOrderModal"
-                                                                type="button"
-                                                                id="btnRefTransfer">
-                                                            ...
-                                                        </button>
-                                                    </div>
-                                                }
+
+                                            <div class="col-md-9">
+                                                <div class="divTranferOut">
+                                                    <table class="table table-bordered table-hover">
+                                                        <thead>
+                                                            @if (canEdit)
+                                                            {
+                                                                <tr>
+                                                                    <th colspan="2">
+                                                                        
+                                                                            <div class="input-group-append">
+                                                                                <button class="btn btn-outline-secondary btn-primary"
+                                                                                        type="button"
+                                                                                        id="btnRefTransfer">
+                                                                                    ใบนำวัสดุออก
+                                                                                </button>
+                                                                            </div>
+                                                                       
+
+
+                                                                    </th>
+
+                                                                </tr>
+                                                            }
+                                                                <tr>
+                                                                    <th>เลขที่ใบนำออก</th>
+                                                                    @if (canEdit)
+                                                                    {
+                                                                        <th>ลบ</th>
+                                                                    }
+                                                                </tr>
+                                                            </thead>
+                                                        <tbody>
+                                                            @if (Model.RefTransfer != null && Model.RefTransfer.TransferRefHeader != null
+                                            && Model.RefTransfer.TransferRefHeader.Count > 0)
+                                                            {
+                                                                foreach (var ob in Model.RefTransfer.TransferRefHeader)
+                                                                {
+                                                            <tr title="@ob.RefTransferId">
+                                                                <td>@ob.RefTransferNo</td>
+                                                                @if (canEdit)
+                                                                {
+                                                                    <td>
+
+                                                                        <button class="btn btn-danger btn-xs btnTransferDelete"><i class="fa fa-trash" aria-hidden="true"></i>&nbsp;ลบ</button>
+                                                                        
+                                                                    </td>
+                                                                }
+                                                                </tr>
+                                                                }
+                                                            }
+
+                                                        </tbody>
+
+
+                                                    </table>
+
+                                                </div>
+
                                             </div>
+                                        }
                                         </div>
                                     </div>
 
@@ -596,7 +970,7 @@ var canEdit = false;
                                                     <button type="submit" id="btnNextStep" class="btn btn-primary">@(Model.TransferId > 0 ? "บันทึก" : "ต่อไป")</button>
 
                                                 }
-                                                if (Model.RefTransferId > 0)
+                                                if (Model.TransferId > 0)
                                                 {
                                                     <button type="submit" id="btnApprove" class="btn btn-success">อนุมัติ</button>
                                                 }
@@ -615,11 +989,11 @@ var canEdit = false;
 
                     <ul class="tabs">
                         <li class="tab-link current" data-tab="tab-1">ข้อมูลพื้นฐาน</li>
-                        @if (Model.RefTransferId > 0)
+                        @if (Model.TransferId > 0)
                         {
                             <li class="tab-link" data-tab="tab-2">รายการสินค้า</li>
                         }
-                    </ul>
+                        </ul>
 
                     <div id="tab-1" class="tab-content current">
 
@@ -687,9 +1061,19 @@ var canEdit = false;
                                                 <div class="form-group row">
                                                     <label class="col-md-3 form-control-label">อนุญาติให้  : </label>
                                                     <div class="col-md-9">
-                                                        <input type="text" class="form-control" id="EmpId" @(canEdit ? "" : "readonly")
-                                                               value="@(Model.EmpId!=null ? @Model.EmpId:(Model.RefTransfer!=null ? Model.RefTransfer.EmpId:"") )"
-                                                               name="EmpId" placeholder="กรุณากรอกชื่อ/ตำแหน่ง">
+
+                                                        <select class="form-control" id="EmpId" data-live-search="true"
+                                                                name="EmpId" required>
+                                                            <option value="-1" )>กรุณาเลือก</option>
+                                                            @foreach (TblEmployee it in optEmployee)
+                                                            {
+                                                                bool selectEmp = it.EmpId == (Model.EmpId == null ? (sysAccount.TblEmployee != null ? sysAccount.TblEmployee.EmpId: 0) : Model.EmpId.AsInt());
+                                                                <option value="@it.EmpId" @(selectEmp ? " selected=\" selected\"" : "")>@it.EmpNameTh</option>
+                                                            }
+                                                        </select>
+                                                      
+
+
                                                     </div>
                                                 </div>
                                                 <div class="form-group row">
@@ -899,7 +1283,6 @@ var canEdit = false;
                                                                     }
 
                                                                     
-
                                                                     <li>
                                                                         <input type="radio" id="inputRadiosChecked2" value="3" class="SendToDepartment" name="inputRadios2" @(selected ? "Checked" : "") />
                                                                         <label class="col-md-6" for="inputRadiosChecked2">Factory</label>
@@ -976,7 +1359,10 @@ var canEdit = false;
                                 <div class="panel">
                                     <div class="panel-heading">
                                         <h3 class="panel-title">
-                                            รายการสินค้า&nbsp;
+                                            รายการสินค้า   @if (canEdit)
+                                            {
+                                                <button type="submit" id="btnAddProduct" class="btn btn-primary pull-right">บันทึกรายการเบิก</button>
+                                            }
                                         </h3>
                                     </div>
                                     <div class="panel-body">
@@ -987,6 +1373,7 @@ var canEdit = false;
                                                         <thead>
                                                             <tr>
                                                                 <th>ลำดับที่</th>
+                                                                <th>ใบนำออก</th>
                                                                 <th>สินค้า</th>
                                                                 <th>จำนวนที่นำออก</th>
                                                                 <th>จำนวนที่เบิกเข้า</th>
@@ -1004,52 +1391,56 @@ var canEdit = false;
                                                             }
                                                             @{int row = 1;
 
-                                                                if (Model.RefTransferId>0
-                                                                    && Model.TransferDetail != null
+                                                                if ( Model.TransferDetail != null
                                                                     && Model.TransferDetail.Count > 0)
                                                                 {
                                                                     foreach (var ob in Model.TransferDetail)
                                                                     {
-                                                                        <tr>
-                                                                            <td>@row</td>
-                                                                            <td width="50%">@ob.Product.ProductCode @ob.Product.ProductName</td>
-                                                                            <td width="30%">
-                                                                                <input type="hidden" name="currentQty" class="currentQty" value="@ob.CurrentQty" />
-                                                                                @ob.CurrentQty
-                                                                            </td>
-                                                                            <td>
-                                                                                <input type="hidden" name="ProductIds" class="ProductIds" value="@ob.Product.ProductId" />
-                                                                                <input type="text" name="RequestQtys" class="form-control RequestQtys"
-                                                                                       value="@ob.RequestQty" @(canEdit ? "" : "readonly")
-                                                                                       placeholder="">
-                                                                            </td>
+                                                                <tr>
+                                                                    <td  width="5%">@row</td>
+                                                                    <td width="10%">@ob.RefTransferNo</td>
+                                                                    <td width="50%">@ob.Product.ProductCode @ob.Product.ProductName</td>
+
+                                                                    <td width="15%">
+                                                                        <input type="hidden" name="currentQty" class="currentQty" value="@ob.CurrentQty" />
+                                                                        @ob.CurrentQty
+                                                                    </td>
+                                                                    <td width="20%">
+                                                                        <input type="hidden" name="ProductIds" class="ProductIds" value="@ob.Product.ProductId" />
+                                                                       <input type="hidden" name="TransferIds" class="TransferIds" value="@ob.RefTransferId" />
+                                                                        <input type="text" name="RequestQtys" class="form-control RequestQtys"
+                                                                               value="@ob.RequestQty" @(canEdit ? "" : "readonly")
+                                                                               placeholder="">
+                                                                    </td>
 
 
-                                                                        </tr>
+                                                                </tr>
                                                                         row++;
                                                                     }
                                                                 }
-                                                                else if (Model.RefTransfer != null && Model.RefTransfer.TransferDetail.Count > 0)
+                                                                else if (Model.RefTransfer!=null && Model.RefTransfer.TransferDetail.Count > 0)
                                                                 {
 
                                                                     foreach (var ob in Model.RefTransfer.TransferDetail)
                                                                     {
-                                                                        <tr>
-                                                                            <td>@row</td>
-                                                                            <td width="50%">@ob.ProductCode @ob.ProductName</td>
-                                                                            <td width="30%">
-                                                                                <input type="hidden" name="currentQty" class="currentQty" value="@ob.CurrentQty" />
-                                                                                @ob.CurrentQty
-                                                                            </td>
-                                                                            <td>
-                                                                                <input type="hidden" name="ProductIds" class="ProductIds" value="@ob.ProductId" />
-                                                                                <input type="text" name="RequestQtys" class="form-control RequestQtys"
-                                                                                       value="@ob.RequestQty" @(canEdit ? "" : "readonly")
-                                                                                       placeholder="">
-                                                                            </td>
+                                                                <tr>
+                                                                    <td>@row</td>
+                                                                    <td width="10%">@ob.TransferNo</td>
+                                                                    <td width="50%">@ob.ProductCode @ob.ProductName</td>
+
+                                                                    <td width="30%">
+                                                                        <input type="hidden" name="currentQty" class="currentQty" value="@ob.CurrentQty" />
+                                                                        @ob.CurrentQty
+                                                                    </td>
+                                                                    <td>
+                                                                        <input type="hidden" name="ProductIds" class="ProductIds" value="@ob.ProductId" />
+                                                                        <input type="text" name="RequestQtys" class="form-control RequestQtys"
+                                                                               value="@ob.RequestQty" @(canEdit ? "" : "readonly")
+                                                                               placeholder="">
+                                                                    </td>
 
 
-                                                                        </tr>
+                                                                </tr>
                                                                         row++;
                                                                     }
 
@@ -1066,10 +1457,10 @@ var canEdit = false;
                                     <div class="panel-footer">
                                         <div class="row">
                                             <div class="col-12">
-                                                @if (canEdit)
-                                                {
-                                                    <button type="submit" id="btnAddProduct" class="btn btn-primary pull-right">บันทึกรายการเบิก</button>
-                                                }
+                                              
+
+
+                                             
                                             </div>
                                         </div>
                                     </div>
@@ -1142,6 +1533,10 @@ var canEdit = false;
                             <button class="btn btn-outline-secondary btn-primary btnSearchJobOrder" style="margin-top:34px" type="button"
                                     id="btnSearchJobOrder">
                                 ค้นหา
+                            </button>
+                            <button class="btn btn-outline-secondary btn-success btnSelectItem" style="margin-top:34px" type="button"
+                                    id="btnSelectItem">
+                               เลือก
                             </button>
                         </div>
                     </div>
