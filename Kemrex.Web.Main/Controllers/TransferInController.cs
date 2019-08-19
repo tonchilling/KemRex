@@ -122,7 +122,7 @@ namespace Kemrex.Web.Main.Controllers
                 obj.TransferDate = dd.ParseDate(DateFormat.ddMMyyyy, culInfo: _cultureTHInfo);
             }
 
-            obj.EmpId = "1";
+        //    obj.EmpId = "1";
 
 
 
@@ -138,8 +138,8 @@ namespace Kemrex.Web.Main.Controllers
             try
             {
 
-                uow.Modules.Transfer.Set(obj);
-                uow.SaveChanges();
+                uow.Modules.Transfer.TrasferInHeaderAdd(obj);
+              //  uow.SaveChanges();
 
 
 
@@ -205,8 +205,8 @@ namespace Kemrex.Web.Main.Controllers
                 ViewData["optProduct"] = uow.Modules.Product.Gets();
                 ViewData["optContact"] = uow.Modules.CustomerContact.Gets();
                 ViewData["optEmployee"] = uow.Modules.Employee.Gets();
-
-                if(ob.RefTransferId !=null)
+                ViewData["userAccount"] = CurrentUser;
+                if (ob.RefTransferId !=null)
                 ob.RefTransfer = uow.Modules.Transfer.GetTransferHeader(ob.TransferId);
                 return View(ob);
             }
