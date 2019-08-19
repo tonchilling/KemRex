@@ -430,7 +430,8 @@ namespace Kemrex.Web.Main.Controllers
                     if (msgType.HasValue) { alert.Type = msgType.Value; }
                     ViewBag.Alert = alert;
                 }
-
+                AccountPermission permission = new AccountPermission();
+                permission = GetPermissionOperation(CurrentUser.AccountId, ob.CreatedBy.HasValue ? ob.CreatedBy.Value : 0);
 
                 ViewData["JobOrderDetail"] = uow.Modules.JobOrder.Gets();
                 ViewData["SysCategoryDetail"] = uow.Modules.SysCategory.Gets();
@@ -441,6 +442,7 @@ namespace Kemrex.Web.Main.Controllers
                 ViewData["optProduct"] = uow.Modules.Product.Gets().ToList();
                 ViewData["optAttachment"] = uow.Modules.SaleOrderAttachment.Gets(ob.SaleOrderId.HasValue ? ob.SaleOrderId.Value : -1);
                 //    ViewData["optCustomerAddress"] = uow.Modules.CustomerAddress.Get(customer.addHasValue ? saleOrder.CustomerId.Value : -1); 
+                ViewData["optPermission"] = permission;
                 return View(ob);
             }
             catch (Exception ex)

@@ -53,6 +53,7 @@ namespace Kemrex.Core.Database.Models
         public bool IsManager { get; set; }
         public bool IsEdit { get; set; }
         public bool IsTeam { get; set; }
+        public bool IsAdminTeam { get; set; }
 
     }
 }

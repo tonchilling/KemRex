@@ -76,15 +76,17 @@ namespace Kemrex.Web.Common.Controllers
                 ap.IsManager = true;
                 ap.IsTeam = true;
                 ap.IsEdit = true;
+                ap.IsAdminTeam = true;
                 return ap;
             }
-            TeamSale manager = uow.Modules.TeamSale.Manager(accountId);  //check manager
+            TeamSale manager = uow.Modules.TeamSale.Manager(accountId);  //check is manager
             if (accountId2 == 0)
             {
                 if (manager != null) ap.IsManager = true;
                 else ap.IsManager = false;
                 ap.IsTeam = true;
                 ap.IsEdit = true;
+                ap.IsAdminTeam = false;
                 return ap;
             }
             Team checkteam = uow.Modules.TeamSale.CheckTeamSale(accountId);
@@ -92,10 +94,25 @@ namespace Kemrex.Web.Common.Controllers
             if (manager != null)
             {
                 ap.IsManager = true;
-                if (manager.ManagerId == checkteam2.ManagerId) ////team manager for owner transaction
+                if (checkteam2 == null)
                 {
-                    ap.IsTeam = true;
-                    ap.IsEdit = true;   //owner manager can edit
+                    ap.IsEdit = false;   //owner manager can edit
+                    ap.IsAdminTeam = false;
+                }
+                else
+                {
+                    if (manager.ManagerId == checkteam2.ManagerId) ////team manager for owner transaction
+                    {
+                        ap.IsTeam = true;
+                        ap.IsEdit = true;   //owner manager can edit
+                        ap.IsAdminTeam = false;
+                    }
+                    else
+                    {
+                        ap.IsTeam = false;
+                        ap.IsEdit = false;   //owner manager can edit
+                        ap.IsAdminTeam = false;
+                    }
                 }
             }
             else
@@ -105,6 +122,7 @@ namespace Kemrex.Web.Common.Controllers
                 {
                     ap.IsTeam = true;
                     ap.IsEdit = true;    //owner can edit
+                    ap.IsAdminTeam = false;
                 }
                 else
                 {
@@ -112,6 +130,7 @@ namespace Kemrex.Web.Common.Controllers
                     {
                         ap.IsTeam = false;
                         ap.IsEdit = false;
+                        ap.IsAdminTeam = false;
                     }
                     else
                     {
@@ -119,11 +138,13 @@ namespace Kemrex.Web.Common.Controllers
                         {
                             ap.IsTeam = true;
                             ap.IsEdit = false;     //team same but cannot edit
+                            ap.IsAdminTeam = false;
                         }
                         else
                         {
                             ap.IsTeam = false;
                             ap.IsEdit = false;
+                            ap.IsAdminTeam = false;
                         }
                     }
                 }
@@ -138,6 +159,7 @@ namespace Kemrex.Web.Common.Controllers
                 ap.IsManager = true;
                 ap.IsTeam = true;
                 ap.IsEdit = true;
+                ap.IsAdminTeam = true;
                 return ap;
             }
             TeamOperation manager = uow.Modules.TeamOperation.Manager(accountId);  //check manager
@@ -147,17 +169,47 @@ namespace Kemrex.Web.Common.Controllers
                 else ap.IsManager = false;
                 ap.IsTeam = true;
                 ap.IsEdit = true;
+                ap.IsAdminTeam = false;
                 return ap;
             }
             Team checkteam = uow.Modules.TeamOperation.CheckTeamOperation(accountId);
+            //// Team Operation Admin
+            if (checkteam != null)
+            {
+                if (checkteam.TeamId == 1)  ///teamId 1 only
+                {
+                    if (manager != null) ap.IsManager = true;
+                    else ap.IsManager = false;
+                    ap.IsTeam = false;
+                    ap.IsEdit = false;
+                    ap.IsAdminTeam = true;
+                    return ap;
+                }
+            }
+            ///
             Team checkteam2 = uow.Modules.TeamOperation.CheckTeamOperation(accountId2);
             if (manager != null)
             {
                 ap.IsManager = true;
-                if (manager.ManagerId == checkteam2.ManagerId) ////team manager for owner transaction
+                if (checkteam2 == null)
                 {
-                    ap.IsTeam = true;
-                    ap.IsEdit = true;   //owner manager can edit
+                    ap.IsEdit = false;   //owner manager can edit
+                    ap.IsAdminTeam = false;
+                }
+                else
+                {
+                    if (manager.ManagerId == checkteam2.ManagerId) ////team manager for owner transaction
+                    {
+                        ap.IsTeam = true;
+                        ap.IsEdit = true;   //owner manager can edit
+                        ap.IsAdminTeam = false;
+                    }
+                    else
+                    {
+                        ap.IsTeam = false;
+                        ap.IsEdit = false;   //owner manager can edit
+                        ap.IsAdminTeam = false;
+                    }
                 }
             }
             else
@@ -167,6 +219,7 @@ namespace Kemrex.Web.Common.Controllers
                 {
                     ap.IsTeam = true;
                     ap.IsEdit = true;    //owner can edit
+                    ap.IsAdminTeam = false;
                 }
                 else
                 {
@@ -174,6 +227,7 @@ namespace Kemrex.Web.Common.Controllers
                     {
                         ap.IsTeam = false;
                         ap.IsEdit = false;
+                        ap.IsAdminTeam = false;
                     }
                     else
                     {
@@ -181,11 +235,13 @@ namespace Kemrex.Web.Common.Controllers
                         {
                             ap.IsTeam = true;
                             ap.IsEdit = false;     //team same but cannot edit
+                            ap.IsAdminTeam = false;
                         }
                         else
                         {
                             ap.IsTeam = false;
                             ap.IsEdit = false;
+                            ap.IsAdminTeam = false;
                         }
                     }
                 }

@@ -177,7 +177,33 @@ namespace Kemrex.Web.Main.Controllers
                 return UrlRedirect(PathHelper.OperationTeam, rs);
             }
         }
+        [HttpPost]
+        [Authorized]
+        public ActionResult DeleteDetail()
+        {
+            Dictionary<string, dynamic> rs = new Dictionary<string, dynamic>()
+            {
+                { "msg", "การทำงานไม่ถูกต้อง" },
+                { "msgType", AlertMsgType.Danger }
+            };
+            try
+            {
+                int id = Request.Form["id"].ParseInt();
+                int TeamId = Request.Form["TeamId"].ParseInt();
+                TeamOperationDetail ob = uow.Modules.TeamOperationDetail.Get(id);
+                if (ob == null)
+                { return RedirectToAction("Detail", "TeamOperation", new { id = TeamId, msg = "ไม่พบข้อมูลที่ต้องการ", msgType = AlertMsgType.Warning }); }
 
+                uow.Modules.TeamOperationDetail.Delete(ob);
+                uow.SaveChanges();
+                return RedirectToAction("Detail", "TeamOperation", new { id= TeamId, msg = "ลบข้อมูลเรียบร้อยแล้ว", msgType = AlertMsgType.Success });
+            }
+            catch (Exception ex)
+            {
+                int TeamId = Request.Form["TeamId"].ParseInt();
+                return RedirectToAction("Detail", "TeamOperation", new { id = TeamId, msg = ex.GetMessage(), msgType = AlertMsgType.Danger });
+            }
+        }
         #region Private Action
 
         [HttpGet]

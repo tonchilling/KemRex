@@ -42,6 +42,9 @@ optEmployee = (List<TblEmployee>
     List<SysSurveyHeaderTemplate>
   SurveyTemplate = (List<SysSurveyHeaderTemplate>
 )ViewData["SurveyTemplate"];
+
+    AccountPermission optPermission = (AccountPermission
+    )ViewData["optPermission"];
 }
 
 @section Scripts {
@@ -706,7 +709,7 @@ optEmployee = (List<TblEmployee>
                                                         <input type="text" id="TeamName" class="form-control" name="TeamName"
                                                                value="@(Model.TeamId!=null?TeamOperationList.Find(o=>o.TeamId==Model.TeamId).TeamName:"")" required />
                                                         <div class="input-group-append">
-                                                            @if (Converting.ToInt(Model.Status) <= 1)
+                                                            @if (Converting.ToInt(Model.Status) <= 1 && optPermission.IsAdminTeam)
                                                             {
                                                                 <button class="btn btn-outline-secondary btn-primary" type="button"
                                                                         data-toggle="modal"

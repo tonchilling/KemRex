@@ -120,9 +120,10 @@
                                                         <td>@ob.Account.AccountEmail</td>
                                                         <td>@ob.TeamRemark</td>
                                                         <td>
-                                                            <form method="post" action="@kemrex.UrlAction(PathHelper.SaleTeamDetailDelete)"
+                                                            <form method="post" action="@Url.Action("DeleteDetail", new { controller = "TeamSale", are = "" })"
                                                                   class="fnc-delete inline-block">
                                                                 <input type="hidden" name="id" value="@ob.Id" />
+                                                                <input type="hidden" name="TeamId" value="@Model.TeamId" />
                                                                 @Html.AntiForgeryToken()
                                                                 <button type="submit" class="btn btn-danger btn-xs"><i class="fa fa-trash" aria-hidden="true"></i>&nbsp;ลบ</button>
                                                             </form>
