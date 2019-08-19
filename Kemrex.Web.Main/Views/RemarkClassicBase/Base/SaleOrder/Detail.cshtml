@@ -46,6 +46,9 @@ optQuotation = (List<TblQuotation>
     List<TeamOperation> optTeam = (List<TeamOperation>
      )ViewData["optTeam"];
 
+    AccountPermission optPermission = (AccountPermission
+        )ViewData["optPermission"];
+
 }
 
 @section Styles {
@@ -1132,10 +1135,13 @@ optQuotation = (List<TblQuotation>
                                             <div class="row">
                                                 <div class="col-12">
                                                     <div class="form-group">
-                                                        <button type="submit" id="btnNextStep" class="btn btn-primary">@(Model.SaleOrderId > 0 ? "บันทึก" : "ต่อไป")</button>&nbsp;
-                                                        <button type="submit" id="btnConfirm" class="btn btn-success btnConfirm">
-                                                            อนุมัติ
-                                                        </button>&nbsp;
+                                                        @if (optPermission.IsEdit)
+                                                        {
+                                                            <button type="submit" id="btnNextStep" class="btn btn-primary">@(Model.SaleOrderId > 0 ? "บันทึก" : "ต่อไป")</button><b>&nbsp;</b>
+                                                            <button type="submit" id="btnConfirm" class="btn btn-success btnConfirm">
+                                                                อนุมัติ
+                                                            </button><b>&nbsp;</b>
+                                                        }
 
                                                         <a href="@Url.Action("Index", "SaleOrder")" class="btn btn-default">ยกเลิก</a>
                                                         @if (Model.SaleOrderId > 0)
@@ -1227,8 +1233,10 @@ optQuotation = (List<TblQuotation>
                                                             <textarea class="form-control" id="Remark" name="Remark"></textarea>
                                                         </div>
                                                     </div>
-
-                                                    <button type="submit" class="btn btn-primary" id="btnAddProduct">เพิ่ม</button>&nbsp;
+                                                    @if (optPermission.IsEdit)
+                                                    {
+                                                        <button type="submit" class="btn btn-primary" id="btnAddProduct">เพิ่ม</button>
+                                                    }
                                                 </form>
                                             </div>
                                         </div>
@@ -1352,7 +1360,7 @@ optQuotation = (List<TblQuotation>
                                         </div>
                                         <div class="row">
                                             <div class="col-12">
-                                                @if (isCanEdit)
+                                                @if (isCanEdit && optPermission.IsEdit)
                                                 {
                                                     <div class="form-group">
                                                         <button type="submit" class="btn btn-primary btnSaveDiscount">บันทึกส่วนลด</button>&nbsp;

@@ -71,7 +71,22 @@ namespace Kemrex.Web.Common.Controllers
         public AccountPermission GetPermissionSale(long accountId, long accountId2)
         {
             AccountPermission ap = new AccountPermission();
+            if (accountId == 1) //admin
+            {
+                ap.IsManager = true;
+                ap.IsTeam = true;
+                ap.IsEdit = true;
+                return ap;
+            }
             TeamSale manager = uow.Modules.TeamSale.Manager(accountId);  //check manager
+            if (accountId2 == 0)
+            {
+                if (manager != null) ap.IsManager = true;
+                else ap.IsManager = false;
+                ap.IsTeam = true;
+                ap.IsEdit = true;
+                return ap;
+            }
             Team checkteam = uow.Modules.TeamSale.CheckTeamSale(accountId);
             Team checkteam2 = uow.Modules.TeamSale.CheckTeamSale(accountId2);
             if (manager != null)
@@ -118,7 +133,22 @@ namespace Kemrex.Web.Common.Controllers
         public AccountPermission GetPermissionOperation(long accountId, long accountId2)
         {
             AccountPermission ap = new AccountPermission();
+            if (accountId == 1) //admin
+            {
+                ap.IsManager = true;
+                ap.IsTeam = true;
+                ap.IsEdit = true;
+                return ap;
+            }
             TeamOperation manager = uow.Modules.TeamOperation.Manager(accountId);  //check manager
+            if (accountId2 == 0)
+            {
+                if (manager != null) ap.IsManager = true;
+                else ap.IsManager = false;
+                ap.IsTeam = true;
+                ap.IsEdit = true;
+                return ap;
+            }
             Team checkteam = uow.Modules.TeamOperation.CheckTeamOperation(accountId);
             Team checkteam2 = uow.Modules.TeamOperation.CheckTeamOperation(accountId2);
             if (manager != null)

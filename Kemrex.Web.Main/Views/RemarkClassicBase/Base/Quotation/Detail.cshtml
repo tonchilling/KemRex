@@ -32,7 +32,8 @@ optContact = (List<TblCustomerContact>
     List<TblEmployee>
 optEmployee = (List<TblEmployee>
 )ViewData["optEmployee"];
-
+AccountPermission optPermission = (AccountPermission
+        )ViewData["optPermission"];
 
 }
 
@@ -1040,11 +1041,14 @@ optEmployee = (List<TblEmployee>
                                                 <div class="form-group">
                                                     @if (Model.StatusId <= 3)
                                                     {
-                                                        <button type="submit" id="btnNextStep" class="btn btn-primary">@(Model.QuotationId > 0 ? "บันทึก" : "ต่อไป")</button>
+                                                        if (optPermission.IsEdit)
+                                                        {
+                                                            <button type="submit" id="btnNextStep" class="btn btn-primary">@(Model.QuotationId > 0 ? "บันทึก" : "ต่อไป")</button>
+                                                        }
                                                         <a href="#" class="btn btn-default btnCancel ">ยกเลิก</a>
                                                     }
 
-                                                    @if (Model.StatusId > 0 && Model.StatusId < 4)
+                                                    @if (Model.StatusId > 0 && Model.StatusId < 4 && optPermission.IsManager)
                                                     {
                                                         <button type="submit" id="btnConfirm" class="btn btn-success btnConfirm">
                                                             อนุมัติ
@@ -1128,7 +1132,7 @@ optEmployee = (List<TblEmployee>
                                                     <textarea class="form-control" id="Remark" name="Remark"></textarea>
                                                 </div>
                                                     </div>
-                                                @if (Model.StatusId <= 3)
+                                                @if (Model.StatusId <= 3 && optPermission.IsEdit)
                                                 {
                                                     <button type="submit" id="btnAddProduct" class="btn btn-primary">เพิ่ม</button>
                                                 }
@@ -1259,7 +1263,10 @@ optEmployee = (List<TblEmployee>
                                                 <div class="form-group">
                                                     @if (Model.StatusId <= 3)
                                                     {
-                                                        <button type="submit" class="btn btn-primary">บันทึก/ส่วนลด</button>
+                                                        if (optPermission.IsEdit)
+                                                        {
+                                                            <button type="submit" class="btn btn-primary">บันทึก/ส่วนลด</button>
+                                                        }
                                                         <a href="@Url.Action("Detail", "Quotation")" class="btn btn-default">ยกเลิก</a>
                                                     }
                                                 </div>

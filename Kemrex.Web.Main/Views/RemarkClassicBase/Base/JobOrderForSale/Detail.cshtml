@@ -34,6 +34,8 @@
     List<TblSaleOrderAttachment> optAttachment = (List<TblSaleOrderAttachment>
       )ViewData["optAttachment"];
 
+    AccountPermission optPermission = (AccountPermission
+    )ViewData["optPermission"];
 
 }
 
@@ -671,10 +673,13 @@
                                         <div class="form-group">
                                             @if (Model.StatusId == null || Model.StatusId == 1)
                                             {
-                                                <button type="submit" id="btnSave" class="btn btn-primary">บันทึก</button>
+                                                if (optPermission.IsEdit)
+                                                {
+                                                    <button type="submit" id="btnSave" class="btn btn-primary">บันทึก</button>
+                                                }
 
                                             }
-                                            @if (Model.SaleOrderId > 0 )
+                                            @if (Model.SaleOrderId > 0 && optPermission.IsEdit)
                                             {
                                                 <button type="submit" id="btnApprove" class="btn btn-success">ยืนยัน</button>
                                             }
