@@ -174,17 +174,17 @@ namespace Kemrex.Web.Main.Controllers
             {
                 jobOrder.JobOrderNo = getJobId();
                 jobOrder.CreatedDate = DateTime.Now;
-                jobOrder.CreatedBy = Convert.ToInt32(CurrentUID);
+                jobOrder.CreatedBy = CurrentUID;
             }
             else {
                 jobOrder.UpdatedDate = DateTime.Now;
-                jobOrder.UpdatedBy = Convert.ToInt32(CurrentUID);
+                jobOrder.UpdatedBy = CurrentUID;
             }
 
 
             if (approveStatus == 3)
             {
-                jobOrder.ClosedBy = Convert.ToInt32(CurrentUID);
+                jobOrder.ClosedBy = CurrentUID;
             }
 
             if (Request.Form["StartDate"].ToString() !="")
@@ -431,7 +431,7 @@ namespace Kemrex.Web.Main.Controllers
                     ViewBag.Alert = alert;
                 }
                 AccountPermission permission = new AccountPermission();
-                permission = GetPermissionOperation(CurrentUser.AccountId, ob.CreatedBy.HasValue ? ob.CreatedBy.Value : 0);
+                permission = GetPermissionOperation(CurrentUID, ob.Team);
 
                 ViewData["JobOrderDetail"] = uow.Modules.JobOrder.Gets();
                 ViewData["SysCategoryDetail"] = uow.Modules.SysCategory.Gets();

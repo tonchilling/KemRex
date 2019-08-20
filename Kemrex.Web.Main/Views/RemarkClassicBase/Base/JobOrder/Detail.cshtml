@@ -632,7 +632,8 @@ optEmployee = (List<TblEmployee>
                                                         <button class="btn btn-outline-secondary btn-primary" type="button"
                                                                 data-toggle="modal"
                                                                 data-target="#SaleOrderModal"
-                                                                id="button-quotation">
+                                                                id="button-quotation"
+                                                                disabled>
                                                             ...
                                                         </button>
                                                     </div>
@@ -646,12 +647,12 @@ optEmployee = (List<TblEmployee>
                                 <div class="row">
                                     <div class="col-12">
                                         <div class="form-group">
-                                            @if (Model.StatusId <= 2)
+                                            @if (Model.StatusId <= 2 && optPermission.IsManager && optPermission.IsEdit)
                                             {
                                                 <button type="submit" id="btnSave" class="btn btn-primary">บันทึก</button>
                                             }
 
-                                            @if (Model.SaleOrderId > 0 && Model.StatusId <= 2)
+                                            @if (Model.SaleOrderId > 0 && Model.StatusId <= 2 && optPermission.IsManager && optPermission.IsEdit)
                                             {
                                                 <button type="submit" id="btnCloseJob" class="btn btn-success">ปิดงาน</button>
                                             }
@@ -954,7 +955,7 @@ optEmployee = (List<TblEmployee>
                                                                                         <td>
 
 
-                                                                                            @if (Converting.ToInt(Model.Status) <= 1)
+                                                                                            @if (Converting.ToInt(Model.Status) <= 1 && optPermission.IsManager && optPermission.IsEdit)
                                                                                             {
 
                                                                                                 @* @Html.AntiForgeryToken()*@
@@ -1008,7 +1009,7 @@ optEmployee = (List<TblEmployee>
 
                                                                         </div>
                                                                         <div class="col-2 col-md-2 form-group">
-                                                                            @if (Converting.ToInt(Model.Status) <= 1)
+                                                                            @if (Converting.ToInt(Model.Status) <= 1 && optPermission.IsManager && optPermission.IsEdit)
                                                                             {
                                                                                 <button type="submit" id="btnAddProduct" style="margin-top:40px" class="btn btn-primary">เพิ่ม</button>
                                                                             }
@@ -1073,7 +1074,7 @@ optEmployee = (List<TblEmployee>
 
 
 
-                                                                                            @if (Converting.ToInt(Model.Status) <= 1)
+                                                                                            @if (Converting.ToInt(Model.Status) <= 1 && optPermission.IsManager && optPermission.IsEdit)
                                                                                             {
                                                                                                 @* @Html.AntiForgeryToken()*@
                                                                                                 <button type="submit" class="btn btn-danger btn-xs btnDeleteProperties"><i class="fa fa-trash" aria-hidden="true"></i>&nbsp;ลบ</button>
@@ -1126,7 +1127,7 @@ optEmployee = (List<TblEmployee>
 
                                                                         </div>
                                                                         <div class="col-2 col-md-2 form-group">
-                                                                            @if (Converting.ToInt(Model.Status) <= 1)
+                                                                            @if (Converting.ToInt(Model.Status) <= 1 && optPermission.IsManager && optPermission.IsEdit)
                                                                             {
                                                                                 <button type="submit" id="btnAddProperty" style="margin-top:40px" class="btn btn-primary">เพิ่มอุปกรณ์</button>
                                                                             }
