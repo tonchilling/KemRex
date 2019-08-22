@@ -651,13 +651,15 @@
                                                         <button class="btn btn-outline-secondary btn-primary" type="button"
                                                                 data-toggle="modal"
                                                                 data-target="#SaleOrderModal"
-                                                                id="button-quotation">
+                                                                id="button-quotation"
+                                                                @(optPermission.IsEdit ? "" : "disabled") >
                                                             ...
                                                         </button>
                                                     </div>
                                                     <div class="input-group-append">
                                                         <button class="btn btn-outline-secondary btn-warning" type="submit"
-                                                                id="btnSOToJob">
+                                                                id="btnSOToJob"
+                                                                @(optPermission.IsEdit ? "" : "disabled") >
                                                             ดึงข้อมูล
                                                         </button>
 
@@ -732,7 +734,7 @@
                                                                 <button class="btn btn-outline-secondary btn-primary" type="button"
                                                                         data-toggle="modal"
                                                                         data-target="#TeamModal"
-                                                                        id="button-quotation">
+                                                                        id="button-quotation" disabled>
                                                                     ...
                                                                 </button>
                                                             </div>

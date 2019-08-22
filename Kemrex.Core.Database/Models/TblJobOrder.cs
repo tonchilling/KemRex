@@ -42,12 +42,12 @@ namespace Kemrex.Core.Database.Models
         [NotMapped]
         public string Status { get; set; }
         public int? TeamId { get; set; }
-        public int? CreatedBy { get; set; }
+        public long? CreatedBy { get; set; }
         public DateTime? CreatedDate { get; set; }
         public DateTime? UpdatedDate { get; set; }
-        public int? UpdatedBy { get; set; }
-        public int? ApprovedBy { get; set; }
-        public int? ClosedBy { get; set; }
+        public long? UpdatedBy { get; set; }
+        public long? ApprovedBy { get; set; }
+        public long? ClosedBy { get; set; }
         [NotMapped]
         public virtual string CreateDateToString { get; set; }
         public virtual TblSaleOrder SaleOrder { get; set; }

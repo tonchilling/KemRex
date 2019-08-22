@@ -76,15 +76,17 @@ namespace Kemrex.Web.Common.Controllers
                 ap.IsManager = true;
                 ap.IsTeam = true;
                 ap.IsEdit = true;
+                ap.IsAdminTeam = true;
                 return ap;
             }
-            TeamSale manager = uow.Modules.TeamSale.Manager(accountId);  //check manager
+            TeamSale manager = uow.Modules.TeamSale.Manager(accountId);  //check is manager
             if (accountId2 == 0)
             {
                 if (manager != null) ap.IsManager = true;
                 else ap.IsManager = false;
                 ap.IsTeam = true;
                 ap.IsEdit = true;
+                ap.IsAdminTeam = false;
                 return ap;
             }
             Team checkteam = uow.Modules.TeamSale.CheckTeamSale(accountId);
@@ -92,10 +94,25 @@ namespace Kemrex.Web.Common.Controllers
             if (manager != null)
             {
                 ap.IsManager = true;
-                if (manager.ManagerId == checkteam2.ManagerId) ////team manager for owner transaction
+                if (checkteam2 == null)
                 {
-                    ap.IsTeam = true;
-                    ap.IsEdit = true;   //owner manager can edit
+                    ap.IsEdit = false;   //owner manager can edit
+                    ap.IsAdminTeam = false;
+                }
+                else
+                {
+                    if (manager.ManagerId == checkteam2.ManagerId) ////team manager for owner transaction
+                    {
+                        ap.IsTeam = true;
+                        ap.IsEdit = true;   //owner manager can edit
+                        ap.IsAdminTeam = false;
+                    }
+                    else
+                    {
+                        ap.IsTeam = false;
+                        ap.IsEdit = false;   //owner manager can edit
+                        ap.IsAdminTeam = false;
+                    }
                 }
             }
             else
@@ -105,6 +122,7 @@ namespace Kemrex.Web.Common.Controllers
                 {
                     ap.IsTeam = true;
                     ap.IsEdit = true;    //owner can edit
+                    ap.IsAdminTeam = false;
                 }
                 else
                 {
@@ -112,6 +130,7 @@ namespace Kemrex.Web.Common.Controllers
                     {
                         ap.IsTeam = false;
                         ap.IsEdit = false;
+                        ap.IsAdminTeam = false;
                     }
                     else
                     {
@@ -119,18 +138,20 @@ namespace Kemrex.Web.Common.Controllers
                         {
                             ap.IsTeam = true;
                             ap.IsEdit = false;     //team same but cannot edit
+                            ap.IsAdminTeam = false;
                         }
                         else
                         {
                             ap.IsTeam = false;
                             ap.IsEdit = false;
+                            ap.IsAdminTeam = false;
                         }
                     }
                 }
             }
             return ap;
         }
-        public AccountPermission GetPermissionOperation(long accountId, long accountId2)
+        public AccountPermission GetPermissionOperation(long accountId, TeamOperation jobTeam)
         {
             AccountPermission ap = new AccountPermission();
             if (accountId == 1) //admin
@@ -138,55 +159,68 @@ namespace Kemrex.Web.Common.Controllers
                 ap.IsManager = true;
                 ap.IsTeam = true;
                 ap.IsEdit = true;
+                ap.IsAdminTeam = true;
                 return ap;
             }
             TeamOperation manager = uow.Modules.TeamOperation.Manager(accountId);  //check manager
-            if (accountId2 == 0)
+            Team checkteam = uow.Modules.TeamOperation.CheckTeamOperation(accountId);
+           
+            //// Team Operation Admin
+            if (checkteam != null)
+            {
+                if (checkteam.TeamId == 1)  ///teamId 1 only
+                {
+                    if (manager != null) ap.IsManager = true;
+                    else ap.IsManager = false;
+                    ap.IsTeam = false;
+                    ap.IsEdit = false;
+                    ap.IsAdminTeam = true;
+                    return ap;
+                }
+            }
+            //no jobTeam 
+            if (jobTeam == null)   //This job are not assignment to team
             {
                 if (manager != null) ap.IsManager = true;
                 else ap.IsManager = false;
-                ap.IsTeam = true;
-                ap.IsEdit = true;
+                ap.IsTeam = false;
+                ap.IsEdit = false;
+                ap.IsAdminTeam = false;
                 return ap;
             }
-            Team checkteam = uow.Modules.TeamOperation.CheckTeamOperation(accountId);
-            Team checkteam2 = uow.Modules.TeamOperation.CheckTeamOperation(accountId2);
-            if (manager != null)
+            else  //this job assignment team
             {
-                ap.IsManager = true;
-                if (manager.ManagerId == checkteam2.ManagerId) ////team manager for owner transaction
+                if (manager != null) 
                 {
-                    ap.IsTeam = true;
-                    ap.IsEdit = true;   //owner manager can edit
-                }
-            }
-            else
-            {
-                ap.IsManager = false;
-                if (accountId == accountId2)  //check account login = owner transaction
-                {
-                    ap.IsTeam = true;
-                    ap.IsEdit = true;    //owner can edit
+                    ap.IsManager = true;
+                    if (checkteam.TeamId == jobTeam.TeamId)  //team curenent userid  = job Team
+                    {
+                        ap.IsTeam = true;
+                        ap.IsEdit = true;   //owner manager can edit
+                        ap.IsAdminTeam = false;
+                    }
+                    else //team curenent userid  != job Team
+                    {
+                        ap.IsTeam = false;
+                        ap.IsEdit = false;   //manager but team not match jobteam
+                        ap.IsAdminTeam = false;
+                    }
+
                 }
                 else
                 {
-                    if (checkteam == null || checkteam2 == null)
+                    ap.IsManager = false;
+                    if (checkteam.TeamId == jobTeam.TeamId)  //team curenent userid  = job Team
+                    {
+                        ap.IsTeam = true;
+                        ap.IsEdit = false;   //owner team
+                        ap.IsAdminTeam = false;
+                    }
+                    else  //team curenent userid  != job Team
                     {
                         ap.IsTeam = false;
-                        ap.IsEdit = false;
-                    }
-                    else
-                    {
-                        if (checkteam.TeamId == checkteam2.TeamId)  //check team account login = team owner transaction
-                        {
-                            ap.IsTeam = true;
-                            ap.IsEdit = false;     //team same but cannot edit
-                        }
-                        else
-                        {
-                            ap.IsTeam = false;
-                            ap.IsEdit = false;
-                        }
+                        ap.IsEdit = false;   //manager but team not match jobteam
+                        ap.IsAdminTeam = false;
                     }
                 }
             }

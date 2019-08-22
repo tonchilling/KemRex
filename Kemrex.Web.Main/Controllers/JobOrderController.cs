@@ -174,17 +174,17 @@ namespace Kemrex.Web.Main.Controllers
             {
                 jobOrder.JobOrderNo = getJobId();
                 jobOrder.CreatedDate = DateTime.Now;
-                jobOrder.CreatedBy = Convert.ToInt32(CurrentUID);
+                jobOrder.CreatedBy = CurrentUID;
             }
             else {
                 jobOrder.UpdatedDate = DateTime.Now;
-                jobOrder.UpdatedBy = Convert.ToInt32(CurrentUID);
+                jobOrder.UpdatedBy = CurrentUID;
             }
 
 
             if (approveStatus == 3)
             {
-                jobOrder.ClosedBy = Convert.ToInt32(CurrentUID);
+                jobOrder.ClosedBy = CurrentUID;
             }
 
             if (Request.Form["StartDate"].ToString() !="")
@@ -430,7 +430,8 @@ namespace Kemrex.Web.Main.Controllers
                     if (msgType.HasValue) { alert.Type = msgType.Value; }
                     ViewBag.Alert = alert;
                 }
-
+                AccountPermission permission = new AccountPermission();
+                permission = GetPermissionOperation(CurrentUID, ob.Team);
 
                 ViewData["JobOrderDetail"] = uow.Modules.JobOrder.Gets();
                 ViewData["SysCategoryDetail"] = uow.Modules.SysCategory.Gets();
@@ -441,6 +442,7 @@ namespace Kemrex.Web.Main.Controllers
                 ViewData["optProduct"] = uow.Modules.Product.Gets().ToList();
                 ViewData["optAttachment"] = uow.Modules.SaleOrderAttachment.Gets(ob.SaleOrderId.HasValue ? ob.SaleOrderId.Value : -1);
                 //    ViewData["optCustomerAddress"] = uow.Modules.CustomerAddress.Get(customer.addHasValue ? saleOrder.CustomerId.Value : -1); 
+                ViewData["optPermission"] = permission;
                 return View(ob);
             }
             catch (Exception ex)
