@@ -162,8 +162,8 @@ namespace Kemrex.Web.Common.Controllers
                 ap.IsAdminTeam = true;
                 return ap;
             }
-            TeamOperation manager = uow.Modules.TeamOperation.Manager(accountId);  //check manager
-            Team checkteam = uow.Modules.TeamOperation.CheckTeamOperation(accountId);
+            List<TeamOperation> manager = uow.Modules.TeamOperation.Manager(accountId);  //check manager
+            Team checkteam = uow.Modules.TeamOperation.CheckTeamOperation(accountId); //check team for non-manager
            
             //// Team Operation Admin
             if (checkteam != null)
@@ -193,17 +193,38 @@ namespace Kemrex.Web.Common.Controllers
                 if (manager != null) 
                 {
                     ap.IsManager = true;
-                    if (checkteam.TeamId == jobTeam.TeamId)  //team curenent userid  = job Team
+                    if (checkteam != null)
                     {
-                        ap.IsTeam = true;
-                        ap.IsEdit = true;   //owner manager can edit
-                        ap.IsAdminTeam = false;
+                        if (checkteam.TeamId == jobTeam.TeamId)  //team curenent userid  = job Team
+                        {
+                            ap.IsTeam = true;
+                            ap.IsEdit = true;   //owner manager can edit
+                            ap.IsAdminTeam = false;
+                        }
+                        else //team curenent userid  != job Team
+                        {
+                            ap.IsTeam = false;
+                            ap.IsEdit = false;   //manager but team not match jobteam
+                            ap.IsAdminTeam = false;
+                        }
                     }
-                    else //team curenent userid  != job Team
+                    else
                     {
+                        foreach (TeamOperation m in manager)
+                        {
+                            if (m.ManagerId == jobTeam.ManagerId)
+                            {
+                                ap.IsTeam = true;
+                                ap.IsEdit = true;   //owner manager can edit
+                                ap.IsAdminTeam = false;
+                                return ap;
+                            }
+                        }
+                        
                         ap.IsTeam = false;
-                        ap.IsEdit = false;   //manager but team not match jobteam
+                        ap.IsEdit = false;   //other manager can't edit
                         ap.IsAdminTeam = false;
+                                             
                     }
 
                 }
