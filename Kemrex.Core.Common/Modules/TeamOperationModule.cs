@@ -122,6 +122,8 @@ CreatedDate = team.CreatedDate,
         public List<SysAccount> GetNotMembers(string src = "")
         {
             var data = db.SysAccount
+                 .Include(a => a.SysAccountRole)
+                 .Include(a => a.SysAccountRole.Role)
                 .Where(x =>
                     //!db.TeamOperation.Select(y => y.ManagerId).Contains(x.AccountId)
                     //&&

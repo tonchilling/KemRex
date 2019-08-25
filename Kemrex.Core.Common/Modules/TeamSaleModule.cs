@@ -67,6 +67,9 @@ namespace Kemrex.Core.Common.Modules
         public List<SysAccount> GetNotMembers(string src = "")
         {
             var data = db.SysAccount
+                .Include(a => a.SysAccountRole)
+                 .Include(a => a.SysAccountRole.Role)
+
                 .Where(x =>
                     !db.TeamSale.Select(y => y.ManagerId).Contains(x.AccountId)
                     && !db.TeamSaleDetail.Select(y => y.AccountId).Contains(x.AccountId)

@@ -166,6 +166,7 @@ namespace Kemrex.Web.Main.Controllers
                 }
 
                 uow.Modules.TeamSale.Delete(ob);
+                uow.SaveChanges();
                 rs["msg"] = "ลบข้อมูลเรียบร้อยแล้ว";
                 rs["msgType"] = AlertMsgType.Success;
                 return UrlRedirect(PathHelper.SaleTeam, rs);
