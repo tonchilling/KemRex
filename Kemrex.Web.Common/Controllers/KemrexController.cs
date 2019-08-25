@@ -46,6 +46,16 @@ namespace Kemrex.Web.Common.Controllers
             return PartialView(name, md);
         }
 
+
+        public AccountPermission GetPermission(long? CreateBy)
+        {
+
+            AccountPermission permission = new AccountPermission();
+            permission = GetPermissionSale(CurrentUser.AccountId, CreateBy.HasValue? CreateBy.Value:0);
+
+            return permission;
+        }
+
         public MenuLayoutModel GetMenus()
         {
             MenuLayoutModel md = new MenuLayoutModel();
