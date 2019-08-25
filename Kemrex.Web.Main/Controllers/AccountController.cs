@@ -285,6 +285,20 @@ namespace Kemrex.Web.Main.Controllers
             { return RedirectToAction("Index", "Account", new { msg = ex.GetMessage(), msgType = AlertMsgType.Danger }); }
         }
 
+        [HttpPost]
+        [Authorized]
+        public JsonResult GetAccountList()
+        {
+
+            List<SysAccount> AccountList = uow.Modules.Account.GetList();
+            // ob.TblSaleOrderDetail = uow.Modules.SaleOrderDetail.Gets(id ?? 0);
+            // TblCustomer objCustomer = uow.Modules.Customer.Get(Convert.ToInt32(ob.CustomerId));
+
+
+
+            return Json(AccountList, JsonRequestBehavior.AllowGet);
+        }
+
         #region Private Action
         private ActionResult ViewDetail(SysAccount ob, string msg, AlertMsgType? msgType)
         {

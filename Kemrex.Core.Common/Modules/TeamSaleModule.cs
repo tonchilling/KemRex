@@ -67,9 +67,27 @@ namespace Kemrex.Core.Common.Modules
         public List<SysAccount> GetNotMembers(string src = "")
         {
             var data = db.SysAccount
+                .Include(a => a.SysAccountRole)
+                 .Include(a => a.SysAccountRole.Role)
+
                 .Where(x =>
                     !db.TeamSale.Select(y => y.ManagerId).Contains(x.AccountId)
-                    && !db.TeamSaleDetail.Select(y => y.AccountId).Contains(x.AccountId));
+                    && !db.TeamSaleDetail.Select(y => y.AccountId).Contains(x.AccountId)
+                    && db.SysAccountRole.Where(z => z.RoleId==202).Select(y => y.AccountId).Contains(x.AccountId)
+                    );
+
+            //var data = (from a in db.SysAccount
+            //            join r in db.SysAccountRole on a.AccountId equals r.AccountId
+            //            where r.RoleId == 202
+            //            && !db.TeamSale.Select(y => y.ManagerId).Contains(x.AccountId)
+            //            select new Team
+            //            {
+            //                EmpId = e.EmpId,
+            //                AccountId = (e.AccountId.HasValue ? e.AccountId.Value : 0),
+            //                TeamId = d.TeamId
+            //            })
+
+
             if (!string.IsNullOrWhiteSpace(src))
             { data = data.Where(x => x.AccountName.Contains(src) || x.AccountEmail.Contains(src)); }
             data = data.OrderBy(x => x.AccountName);
@@ -138,6 +156,7 @@ namespace Kemrex.Core.Common.Modules
             var data = (from a in db.TeamSaleDetail
                         join s in db.TeamSale on a.TeamId equals s.TeamId
                         where a.AccountId == AccountId
+                        || s.ManagerId == AccountId
                         select new Team
                         {
                             EmpId = 0,

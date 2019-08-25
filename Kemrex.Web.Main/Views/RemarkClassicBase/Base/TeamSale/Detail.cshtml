@@ -66,11 +66,11 @@
                                         <select name="managerId" class="form-control">
                                             @if (Model.ManagerId > 0 && Model.Manager != null)
                                             {
-                                                <option value="@Model.ManagerId" selected="selected">@Model.Manager.AccountName</option>
+                                            <option value="@Model.ManagerId" selected="selected">@Model.Manager.AccountName</option>
                                             }
                                             @foreach (SysAccount it in optSale)
                                             {
-                                                <option value="@it.AccountId">@it.AccountName</option>
+                                                <option value="@it.AccountId">@it.AccountName &nbsp;(@it.SysAccountRole.Role.RoleName)</option>
                                             }
                                         </select>
                                     </div>
@@ -147,7 +147,7 @@
                                             <select name="accountId" class="form-control">
                                                 @foreach (SysAccount it in optSale)
                                                 {
-                                                    <option value="@it.AccountId">@it.AccountName</option>
+                                                <option value="@it.AccountId">@it.AccountName &nbsp;(@it.SysAccountRole.Role.RoleName)</option>
                                                 }
                                             </select>
                                         </div>

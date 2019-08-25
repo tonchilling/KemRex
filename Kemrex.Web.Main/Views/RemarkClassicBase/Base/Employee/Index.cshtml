@@ -72,7 +72,7 @@
                             html += '<form method="post" action="@Url.Action("Delete", new { controller = "Employee", are = "" })"';
                             html += 'class="fnc-delete inline-block"><input type="hidden" name="EmpId" value="' + item.EmpId + '" /> @Html.AntiForgeryToken()';
                             html += '<button type="submit" class="btn btn-danger btn-xs"><i class="fa fa-trash" aria-hidden="true"></i>&nbsp;ลบ</button></form>';
-
+                            html += '</td> ';
                             html += '</tr>';
                         });
                     }

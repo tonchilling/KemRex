@@ -198,7 +198,23 @@ namespace Kemrex.Web.Main.Controllers
                     if (msgType.HasValue) { alert.Type = msgType.Value; }
                     ViewBag.Alert = alert;
                 }
-
+                AccountPermission permission = new AccountPermission();
+                if (ob.JobOrder != null)
+                {
+                    ob.JobOrder.Team = uow.Modules.TeamOperation.Get(ob.JobOrder.TeamId.HasValue ? ob.JobOrder.TeamId.Value : 0);
+                    permission = GetPermissionOperation(CurrentUID, ob.JobOrder.Team);
+                }
+                else
+                {
+                    List<TeamOperation> manager = uow.Modules.TeamOperation.Manager(CurrentUID);
+                    if (manager != null)
+                    {
+                        permission.IsManager = true;
+                        permission.IsEdit = true;
+                        permission.IsTeam = true;
+                        permission.IsAdminTeam = false;
+                    }
+                }
 
                 ViewData["optCustomer"] = uow.Modules.Customer.GetAllAddress();
                 ViewData["optCustomerAddress"] = uow.Modules.CustomerAddress.Gets();
@@ -206,6 +222,7 @@ namespace Kemrex.Web.Main.Controllers
                 ViewData["optContact"] = uow.Modules.CustomerContact.Gets();
                 ViewData["optEmployee"] = uow.Modules.Employee.Gets();
                 ViewData["userAccount"] = CurrentUser;
+                ViewData["optPermission"] = permission;
                 if (ob.RefTransferId !=null)
                 ob.RefTransfer = uow.Modules.Transfer.GetTransferHeader(ob.TransferId);
                 return View(ob);

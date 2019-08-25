@@ -1175,17 +1175,20 @@ optWareHouse = (List<TblWareHouse>
                                                         @if (optPermission.IsEdit)
                                                         {
                                                             <button type="submit" id="btnNextStep" class="btn btn-primary">@(Model.SaleOrderId > 0 ? "บันทึก" : "ต่อไป")</button><b>&nbsp;</b>
+                                                        }
+                                                        @if (optPermission.IsManager)
+                                                        {
                                                             <button type="submit" id="btnConfirm" class="btn btn-success btnConfirm">
                                                                 อนุมัติ
                                                             </button><b>&nbsp;</b>
                                                         }
 
-                                                        <a href="@Url.Action("Index", "SaleOrder")" class="btn btn-default">ยกเลิก</a>
-                                                        @if (Model.SaleOrderId > 0)
-                                                        {
-                                                            <!-- <a href="@Url.Action("Detail", new { controller = "JobOrder", area = "", SaleOrderId = Model.SaleOrderId })" class="btn btn-warning">สร้างใบสั่งงาน</a>-->
-                                                        }
-                                                    </div>
+                                                            <a href="@Url.Action("Index", "SaleOrder")" class="btn btn-default">ยกเลิก</a>
+                                                            @if (Model.SaleOrderId > 0)
+                                                            {
+                                                                <!-- <a href="@Url.Action("Detail", new { controller = "JobOrder", area = "", SaleOrderId = Model.SaleOrderId })" class="btn btn-warning">สร้างใบสั่งงาน</a>-->
+                                                            }
+                                                        </div>
                                                 </div>
                                             </div>
                                         </div>

@@ -122,9 +122,14 @@ CreatedDate = team.CreatedDate,
         public List<SysAccount> GetNotMembers(string src = "")
         {
             var data = db.SysAccount
+                 .Include(a => a.SysAccountRole)
+                 .Include(a => a.SysAccountRole.Role)
                 .Where(x =>
-                    !db.TeamOperation.Select(y => y.ManagerId).Contains(x.AccountId)
-                    && !db.TeamOperationDetail.Select(y => y.AccountId).Contains(x.AccountId));
+                    //!db.TeamOperation.Select(y => y.ManagerId).Contains(x.AccountId)
+                    //&&
+                    !db.TeamOperationDetail.Select(y => y.AccountId).Contains(x.AccountId)
+                    && db.SysAccountRole.Where(z => z.RoleId == 203).Select(y => y.AccountId).Contains(x.AccountId)
+                    );
             if (!string.IsNullOrWhiteSpace(src))
             { data = data.Where(x => x.AccountName.Contains(src) || x.AccountEmail.Contains(src)); }
             data = data.OrderBy(x => x.AccountName);
@@ -140,11 +145,11 @@ CreatedDate = team.CreatedDate,
             { db.TeamOperation.Add(ob); }
             else { db.TeamOperation.Update(ob); }
         }
-        public TeamOperation Manager(long AccountId)
+        public List<TeamOperation> Manager(long AccountId)
         {
             var data = (from s in db.TeamOperation
                         where s.ManagerId == AccountId
-                        select s).FirstOrDefault();
+                        select s).ToList();
             return data;
         }
 
@@ -153,6 +158,7 @@ CreatedDate = team.CreatedDate,
             var data = (from a in db.TeamOperationDetail
                         join s in db.TeamOperation on a.TeamId equals s.TeamId
                         where a.AccountId == AccountId
+                        || s.ManagerId == AccountId
                         select new Team
                         {
                             EmpId = 0,
