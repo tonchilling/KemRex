@@ -48,6 +48,9 @@ optQuotation = (List<TblQuotation>
 
     AccountPermission optPermission = (AccountPermission
         )ViewData["optPermission"];
+    List<TblWareHouse>
+optWareHouse = (List<TblWareHouse>
+   )ViewData["optWareHouse"];
 
 }
 
@@ -392,7 +395,7 @@ optQuotation = (List<TblQuotation>
                 swal({
                     title: "Delete",
                     text: "Do you want to delete?",
-                    type: "danger",
+                    type: "warning",
                     showCancelButton: true,
                     closeOnConfirm: false,
                     showLoaderOnConfirm: true
@@ -531,8 +534,29 @@ optQuotation = (List<TblQuotation>
         });
 
 
-        function CalProductPrice() {
+        function CalProductPrice(loadProductOnhand) {
 
+
+            if (loadProductOnhand) {
+                waitingDialog.show('Waiting for loading', { dialogSize: 'md', progressType: 'primary' });
+                if ($("#ProductDiscount").val() == "") {
+                    $("#ProductDiscount").val(0)
+                }
+                GetProductOnhand($("#selProduct").val(),
+                    $("#selWareHose").val(),
+                    function (data) {
+                        $("#ProductOnhandQty").val(data.QtyStock);
+                        window.setTimeout(function () {
+                            waitingDialog.hide();
+                        }, 1000);
+
+                    }, function (error) {
+                        window.setTimeout(function () {
+                            waitingDialog.hide();
+                        }, 1000);
+                    });
+
+            }
             if ($("#ProductDiscount").val() == "") {
                 $("#ProductDiscount").val(0)
             }
@@ -549,6 +573,8 @@ optQuotation = (List<TblQuotation>
                     break;
             }
 
+          
+
             $("#NetPrice").val(numeral(netTotal).format('0,0.00'));
         }
 
@@ -557,7 +583,18 @@ optQuotation = (List<TblQuotation>
         $(document).on("click", ".btnSelectProduct", function () {
             $('#selProduct').val($(this).closest('tr').attr('data'));
             $('#ProductPrice').val($(this).closest('tr').find("td:eq(3)").html());
+            $("#selWareHose").val($(this).closest('tr').attr('whid'));
             $("#ProductModal").modal('hide');
+            CalProductPrice(true);
+
+        });
+
+
+        $("#selWareHose").change(function () {
+
+
+
+            CalProductPrice(true);
 
         });
         $(".btnEditProduct").click(function () {
@@ -566,12 +603,12 @@ optQuotation = (List<TblQuotation>
 
             $("#SelQSaleOrderProductId").val($(this).closest("tr").attr("data"));
             $("#selProduct").val($(this).closest("tr").attr("ProductId"));
-            $("#ProductQty").val($(this).closest("tr").find('td:eq(1)').text());
-            $("#ProductPrice").val($(this).closest("tr").find('td:eq(2)').text());
+            $("#ProductQty").val($(this).closest("tr").find('td:eq(2)').text());
+            $("#ProductPrice").val($(this).closest("tr").find('td:eq(3)').text());
             $("#ProductDiscount").val($(this).closest("tr").find('.Discount').val());
-            $("#Remark").val($(this).closest("tr").find('td:eq(7)').text());
+            $("#Remark").val($(this).closest("tr").find('td:eq(8)').text());
             $(".selCalType").val($(this).closest("tr").find('.CalType').val());
-
+            $("#selWareHose").val($(this).closest("tr").attr("Whid"));
             CalProductPrice();
             return false;
 
@@ -1180,7 +1217,7 @@ optQuotation = (List<TblQuotation>
 
                                                     <input type="hidden" name="SelQSaleOrderProductId" id="SelQSaleOrderProductId" />
                                                     <div class="row">
-                                                        <div class="col-4 col-md-4 form-group">
+                                                        <div class="col-3 col-md-3 form-group">
                                                             <label for="PileId" class="form-control-label">รหัสสินค้า</label>
                                                             <div class="input-group">
                                                                 <select class="form-control" id="selProduct" data-live-search="true"
@@ -1202,11 +1239,35 @@ optQuotation = (List<TblQuotation>
                                                                     </button>
                                                                 </div>
                                                             </div>
-                                                        </div><div class="col-2 col-md-2 form-group">
-                                                            <label for="Qty" class="form-control-label">จำนวน</label>
-                                                            <input type="number" class="form-control" id="ProductQty" name="ProductQty" />
                                                         </div>
-                                                        <div class="col-2 col-md-2 form-group">
+                                                        <div class="col-2 col-md-2">
+                                                            <div class="form-group">
+                                                                <label for="Qty" class="form-control-label">คลัง</label>
+                                                                <select class="form-control" id="selWareHose" data-live-search="true"
+                                                                        name="selWareHose">
+                                                                    <option value="">กรุณาเลือก</option>
+
+                                                                    @foreach (var it in optWareHouse)
+                                                                    {
+                                                                        <option value="@it.Whid">@it.Whname</option>
+                                                                    }
+
+
+
+                                                                </select>
+
+                                                            </div>
+
+                                                        </div>
+                                                        <div class="col-1 col-md-1 form-group">
+                                                            <label for="Qty" class="form-control-label">จำนวนคงเหลือ</label>
+                                                            <input type="number" class="form-control" id="ProductOnhandQty" name="ProductOnhandQty" readonly value="1" />
+                                                        </div>
+                                                        <div class="col-1 col-md-1 form-group">
+                                                            <label for="Qty" class="form-control-label">จำนวน</label>
+                                                            <input type="number" class="form-control" id="ProductQty" name="ProductQty" value="1" />
+                                                        </div>
+                                                        <div class="col-2 col-md-1 form-group">
                                                             <label for="Price" class="form-control-label">ราคา</label>
                                                             <input type="text" class="form-control" id="ProductPrice" name="ProductPrice" />
                                                         </div>
@@ -1249,6 +1310,7 @@ optQuotation = (List<TblQuotation>
                                                     <thead>
                                                         <tr>
                                                             <th>สินค้า</th>
+                                                            <th>คลังสินค้า</th>
                                                             <th>จำนวน</th>
                                                             <th>ราคา</th>
                                                             <th>ส่วนลด</th>
@@ -1259,31 +1321,33 @@ optQuotation = (List<TblQuotation>
                                                         </tr>
                                                     </thead>
                                                     <tbody>
-                                                        @if (Model.TblSaleOrderDetail.Count() <= 0)
+                                                        @if (optSoDetail.Count() <= 0)
                                                         {
                                                             <tr>
                                                                 <td colspan="7">ไม่พบข้อมูล</td>
                                                             </tr>
                                                         }
-                                                        @foreach (var ob in Model.TblSaleOrderDetail)
+                                                        @foreach (var ob in optSoDetail)
                                                         {
                                                             string calType = (ob.CalType == 1 ? string.Format("({0}%)", ob.Discount.ToString("#,#0.0")) : "(บาท)");
-                                                            <tr data="@ob.Id" ProductId="@ob.ProductId">
+                                                            <tr data="@ob.Id" ProductId="@ob.ProductId" Whid="@ob.WHId">
                                                                 <td>@ob.Product.ProductCode @ob.Product.ProductName</td>
+                                                                <td>@ob.WareHouse.Whname</td>
                                                                 <td>@ob.Quantity</td>
                                                                 <td>@ob.PriceNet.ToString("#,#0.00")</td>
                                                                 <td>@ob.DiscountNet.ToString("#,#0.00") @calType</td>
                                                                 <td>@ob.TotalNet.Value.ToString("#,#0.00")</td>
                                                                 <td>@ob.TotalTot.Value.ToString("#,#0.00")</td>
                                                                 <td>
+                                                                    <input type="hidden" class="Discount" name="Discount" value="@ob.Discount" />
+
+                                                                    <input type="hidden" class="CalType" name="CalType" value="@ob.CalType" />
+                                                                    <input type="hidden" name="SaleOrderId" value="@Model.SaleOrderId" />
+                                                                    <input type="hidden" name="Id" id="Id" value="@ob.Id" />
 
                                                                     @if (isCanEdit)
                                                                     {
-                                                                        <input type="hidden" class="Discount" name="Discount" value="@ob.Discount" />
 
-                                                                        <input type="hidden" class="CalType" name="CalType" value="@ob.CalType" />
-                                                                        <input type="hidden" name="SaleOrderId" value="@Model.SaleOrderId" />
-                                                                        <input type="hidden" name="Id" id="Id" value="@ob.Id" />
                                                                         @* @Html.AntiForgeryToken()*@
                                                                         <button type="submit" class="btn btn-primary btn-xs btnEditProduct" id="btnEditProduct"><i class="fa fa-pencil" aria-hidden="true"></i>&nbsp;แก้ไข</button>
                                                                         <button type="submit" class="btn btn-danger btn-xs btnDelete"><i class="fa fa-trash" aria-hidden="true"></i>&nbsp;ลบ</button>
