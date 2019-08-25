@@ -156,7 +156,7 @@ namespace Kemrex.Web.Main.Controllers
             };
             try
             {
-                int id = Request.Form["id"].ParseInt();
+                int id = Request.Form["TeamId"].ParseInt();
                 TeamOperation ob = uow.Modules.TeamOperation.Get(id);
                 if (ob == null)
                 {
