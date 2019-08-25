@@ -24,6 +24,7 @@ namespace Kemrex.Web.Main.Controllers
             int year, int month, string src = "")
         {
             List<CalendarDayModel> data = new List<CalendarDayModel>();
+            List<TblSaleOrder> lstAll = new List<TblSaleOrder>();
             List<TblSaleOrder> lst = new List<TblSaleOrder>();
             try
             {
@@ -36,7 +37,55 @@ namespace Kemrex.Web.Main.Controllers
                 DateTime firstDt = new DateTime(year, month, 1);
                 ViewBag.FocusDate = firstDt;
                 int total = uow.Modules.SaleOrder.Count(month, src);
-                lst = uow.Modules.SaleOrder.Gets(1, -1, month, src);
+
+                //lst = uow.Modules.SaleOrder.Gets(1, -1, month, src);
+                lstAll = uow.Modules.SaleOrder.Gets(1, -1, month, src);
+                if (CurrentUID == 1) //admin
+                {
+                    lst = lstAll;
+                }
+                else
+                {
+                    Team userTeam = uow.Modules.TeamSale.CheckTeamSale(CurrentUID);
+                    Team jobTeam = new Team();
+                    if (userTeam != null)
+                    {
+                        foreach (var x in lstAll)
+                        {
+                            jobTeam = uow.Modules.TeamSale.CheckTeamSale(x.CreatedBy.HasValue?x.CreatedBy.Value:0);
+                            if (jobTeam == null) continue;
+                            if (userTeam.TeamId == jobTeam.TeamId)
+                            {
+                                if(CurrentUID == jobTeam.AccountId || CurrentUID == jobTeam.ManagerId)
+                                lst.Add(x);
+
+                            }
+                        }
+                    }
+                    else
+                    {
+                        lst = null;
+                    }
+
+                    /* Team checkteam = uow.Modules.TeamOperation.CheckTeamOperation(CurrentUID);
+                    if (checkteam != null)
+                    {
+                        if (checkteam.TeamId == 1)
+                        {
+                            lst = lstAll;
+                        }
+                        else if (checkteam.TeamId > 1)
+                        {
+                            lst = (from a in lstAll
+                                   where a.TeamId == checkteam.TeamId
+                                   select a).ToList();
+                        }
+                    }
+                    else
+                    {
+                        lst = null;
+                    }*/
+                }
                 #region Calculate first week
                 for (int i = firstDt.DayOfWeek.ToInt(); i > 0; i--)
                 {
@@ -79,3 +128,4 @@ namespace Kemrex.Web.Main.Controllers
         }
     }
 }
+ 

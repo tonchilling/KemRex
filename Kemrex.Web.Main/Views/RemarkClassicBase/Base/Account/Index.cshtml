@@ -6,7 +6,7 @@
     KemrexController kemrex = ((KemrexController)this.ViewContext.Controller);
     Layout = kemrex.PathViewShared("_lyDefault");
     WidgetAlertModel AlertModel = (WidgetAlertModel)ViewBag.Alert;
-    WidgetPaginationModel Pagination = (WidgetPaginationModel)ViewBag.Pagination;
+    //WidgetPaginationModel Pagination = (WidgetPaginationModel)ViewBag.Pagination;
 }
 
 @section Scripts {
@@ -17,7 +17,78 @@
                     $(this).remove();
                 });
             }, 5000);
+            waitingDialog.show('Waiting for loading data', { dialogSize: 'md', progressType: 'primary' });
+            LoadTable();
         });
+        function LoadTable() {
+
+            var html = '';
+            var criteria = "";
+            var url = '@Url.Action("GetAccountList", new { controller = "Account"})';
+            var urlDetail = '@Url.Action("Detail", new { controller = "Account", area = ""})';
+            var urlDelete = '@Url.Action("Delete", new { controller = "Account", area = ""})';
+            $(".divDetail").empty();
+            html += '<table class="table  table-striped table-hover "  >';
+            html += '<thead>';
+            html += '<tr class="table-primary" >';
+            html += '<th>ชื่อบัญชี</th>';
+            html += '<th>กลุ่มผุ้ใช้งาน</th>';
+            html += '<th>ชื่อผู้ใช้งานา</th>';
+            html += '<th>เครื่องมือ</th>';
+            html += '</tr>';
+            html += '</thead>';
+            html += '<tbody>';
+
+           
+
+            $.ajax({
+                url: url,
+                type: "POST",
+                // data: JSON.stringify(criteria),
+                dataType: "json",
+                contentType: "application/json; charset=utf-8",
+                success: function (data) {
+
+                    if (data != null) {
+
+                        $.each(data, function (index, item) {
+                            html += '<tr>';
+                            html += '<td>' + item.AccountUsername + '</td>';
+                            html += '<td>' + (item.SysAccountRole != null && item.SysAccountRole.Role != null ? item.SysAccountRole.Role.RoleName : "") + '</td>';
+                            html += '<td>' + item.AccountFirstName + '</td>';
+                            
+                            html += '<td>';
+                            html += '<a href="' + urlDetail + '/' + item.AccountId + '" class="btn btn-xs btn-primary">';
+                            html += '<i class="fa fa-pencil" aria-hidden="true"></i>&nbsp;แก้ไข </a>&nbsp;';
+                            html += '<form method="post" action="@Url.Action("Delete", new { controller = "Account", are = "" })"';
+                            html += 'class="fnc-delete inline-block"><input type="hidden" id="account_id" name="account_id" value="' + item.AccountId + '" /> @Html.AntiForgeryToken()';
+                            html += '<button type="submit" class="btn btn-danger btn-xs"><i class="fa fa-trash" aria-hidden="true"></i>&nbsp;ลบ</button></form>';
+                            html += '</td>';
+                            html += '</tr>';
+                        });
+                    }
+                    html += '</tbody>';
+                    html += ' </table>';
+
+                    $(".divDetail").append(html);
+                    $(".divDetail table").DataTable(
+                        {
+                            //columnDefs: [
+                            //    { type: 'date-uk', targets: 4 }
+                            //],
+                            order: [[0, 'asc']]
+                        }
+                    );
+                    window.setTimeout(function () {
+                        waitingDialog.hide();
+                    }, 2000);
+                },
+                error: function (error) {
+                    waitingDialog.hide();
+                    //  waitingDialog.hide();
+                }
+            });
+        }
     </script>
 }
 
@@ -45,20 +116,8 @@
                     <!-- /.box-header -->
                     <div class="panel-body dataTables_wrapper">
                         <div class="row">
-                            <div class="col-12 col-sm-6 form-inline">
-                                @Html.Partial(kemrex.PathViewShared("_wgPaginationSize"), Pagination)
-                            </div>
-                            <div class="col-12 col-sm-6">
-                                <div class="dataTables_paginate float-right">
-                                    @Html.Partial(kemrex.PathViewShared("_wgPagination"), Pagination)
-                                </div>
-                                <div class="clear"></div>
-                            </div>
-                            <br /><br />
-                        </div>
-                        <div class="row">
                             <div class="col-12">
-                                <div class="table-responsive">
+                                <div class="table-responsive divDetail">
                                     <table class="table table-bordered table-hover">
                                         <thead>
                                             <tr>
@@ -68,50 +127,12 @@
                                                 <th>เครื่องมือ</th>
                                             </tr>
                                         </thead>
-                                        <tbody>
-                                            @if (Model.Count() <= 0)
-                                            {
-                                                <tr>
-                                                    <td colspan="4">ไม่พบข้อมูล</td>
-                                                </tr>
-                                            }
-                                            @foreach (var ob in Model)
-                                            {
-                                                <tr>
-                                                    <td>@ob.AccountUsername</td>
-                                                    <td>@(ob.SysAccountRole!=null && ob.SysAccountRole.Role!=null? ob.SysAccountRole.Role.RoleName:"")</td>
-                                                    <td>@ob.AccountName</td>
-                                                  
-                                                    <td>
-                                                        <a href="@Url.Action("Detail", new { controller = "Account", are = "", id = ob.AccountId })"
-                                                           class="btn btn-xs btn-primary">
-                                                            <i class="fa fa-pencil" aria-hidden="true"></i>&nbsp;แก้ไข
-                                                        </a>
-                                                        <form method="post" action="@Url.Action("Delete", new { controller = "Account", are = "", id = ob.AccountId })"
-                                                              class="fnc-delete inline-block">
-                                                            <input type="hidden" name="account_id" value="@ob.AccountId" />
-                                                            @Html.AntiForgeryToken()
-                                                            <button type="submit" class="btn btn-danger btn-xs"><i class="fa fa-trash" aria-hidden="true"></i>&nbsp;ลบ</button>
-                                                        </form>
-                                                    </td>
-                                                </tr>
-                                            }
-                                        </tbody>
+                                        
                                     </table>
                                 </div>
                             </div>
                         </div>
-                        <div class="row">
-                            <div class="col-12 col-sm-6">
-                                <span>@Pagination.CurrentDisplay</span>
-                            </div>
-                            <div class="col-12 col-sm-6">
-                                <div class="dataTables_paginate float-right">
-                                    @Html.Partial(kemrex.PathViewShared("_wgPagination"), Pagination)
-                                </div>
-                                <div class="clear"></div>
-                            </div>
-                        </div>
+                      
                     </div>
                     <!-- /.box-body -->
                 </div>

@@ -28,6 +28,8 @@
     List<TblEmployee>
     optEmployee = (List<TblEmployee>
     )ViewData["optEmployee"];
+    AccountPermission optPermission = (AccountPermission
+    )ViewData["optPermission"];
 
     var canEdit = false;
 }
@@ -591,10 +593,12 @@
                                             {
                                                 if (Model.TransferStatus == null || Model.TransferStatus == 0)
                                                 {
-                                                    <button type="submit" id="btnNextStep" class="btn btn-primary">@(Model.TransferId > 0  ? "บันทึก" : "ต่อไป")</button>
-
+                                                    if (optPermission.IsEdit)
+                                                    {
+                                                        <button type="submit" id="btnNextStep" class="btn btn-primary">@(Model.TransferId > 0 ? "บันทึก" : "ต่อไป")</button>
+                                                    }
                                                 }
-                                                if (Model.JobOrderId > 0)
+                                                if (Model.JobOrderId > 0 && optPermission.IsEdit)
                                                 {
                                                     <button type="submit" id="btnApprove" class="btn btn-success">อนุมัติ</button>
                                                 }

@@ -84,7 +84,41 @@ namespace Kemrex.Core.Common.Modules
             { data = data.Skip((page - 1) * size).Take(size); }
             return data.ToList();
         }
+        public List<SysAccount> GetList()
+        {
+            var data = (from ac in db.SysAccount
+                          .Include(a => a.AccountName)
+                          .Include(b => b.TblEmployee)
+                          .Include(c => c.SysAccountRole)
+                        select new SysAccount
+                        {
+                            AccountId = ac.AccountId,
+                            AccountUsername = ac.AccountUsername,
+                            AccountFirstName = ac.AccountFirstName,
+                            AccountLastName = ac.AccountLastName,
+                            TblEmployee = ac.TblEmployee,
+                            SysAccountRole = ac.SysAccountRole
+                        }).ToList();
+                        foreach (SysAccount obj in data)
+                        {
+                            if (obj.SysAccountRole != null)
+                            {
+                                obj.SysAccountRole.Role = (from r in db.SysRole
+                                                           where r.RoleId == obj.SysAccountRole.RoleId
+                                                           select new SysRole
+                                                           {
+                                                               RoleName = r.RoleName,
+                                                               RoleDescription = r.RoleDescription
+                                                               
 
+                                                           }).FirstOrDefault();
+                            }
+                        
+                        }
+
+
+            return data;
+        }
         private IQueryable<SysAccount> Filter(IQueryable<SysAccount> data, int siteId
             , string src, string username, string email)
         {

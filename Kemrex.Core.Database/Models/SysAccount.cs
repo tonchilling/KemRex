@@ -37,6 +37,7 @@ namespace Kemrex.Core.Database.Models
         public string DepartmentName { get; set; }
         [NotMapped]
         public string PositionName { get; set; }
+        
 
         public virtual ICollection<CalcAccountStaff> CalcAccountStaffAccount { get; set; }
         public virtual ICollection<CalcAccountStaff> CalcAccountStaffStaff { get; set; }
