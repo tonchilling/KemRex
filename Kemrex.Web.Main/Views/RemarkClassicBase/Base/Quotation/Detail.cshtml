@@ -32,8 +32,13 @@ optContact = (List<TblCustomerContact>
     List<TblEmployee>
 optEmployee = (List<TblEmployee>
 )ViewData["optEmployee"];
-AccountPermission optPermission = (AccountPermission
-        )ViewData["optPermission"];
+    AccountPermission optPermission = (AccountPermission
+            )ViewData["optPermission"];
+
+    List<TblWareHouse>
+   optWareHouse = (List<TblWareHouse>
+       )ViewData["optWareHouse"];
+    
 
 }
 
@@ -258,37 +263,44 @@ AccountPermission optPermission = (AccountPermission
         
             $("#SelQuotationProductId").val($(this).closest("tr").attr("data"));
             $("#selProduct").val($(this).closest("tr").attr("ProductId"));
-            $("#ProductQty").val($(this).closest("tr").find('td:eq(1)').text());
-            $("#ProductPrice").val($(this).closest("tr").find('td:eq(2)').text());
+            $("#ProductQty").val($(this).closest("tr").find('td:eq(2)').text());
+            $("#ProductPrice").val($(this).closest("tr").find('td:eq(3)').text());
             $("#ProductDiscount").val($(this).closest("tr").find('.Discount').val());
-            $("#Remark").val($(this).closest("tr").find('td:eq(7)').text());
+            $("#Remark").val($(this).closest("tr").find('td:eq(8)').text());
             $(".selCalType").val($(this).closest("tr").find('.CalType').val());
-            
-            CalProductPrice();
+            $("#selWareHose").val($(this).closest("tr").attr("Whid"));
+            CalProductPrice(true);
             return false;
-
+            
         })
 
 
         $(".btnDelete").click(function () {
 
-            
+
+            var delQuoProductId = $(this).closest("tr").attr("data");
+       
                 swal({
                     title: "Delete",
                     text: "Do you want to delete?",
-                    type: "danger",
+                    type: "warning",
                     showCancelButton: true,
                     closeOnConfirm: false,
                     showLoaderOnConfirm: true
                 },
                     function (isConfirm) {
                         if (isConfirm) {
-                            $("#SelQuotationProductId").val($(this).closest("tr").attr("data"));
+                            $("#SelQuotationProductId").val(delQuoProductId);
                      $('#frmProduct').attr('action', '@Url.Action("DetailDelete", new { controller = "Quotation" })');
                       $('#frmProduct').submit();
 
                         }
-                    });
+                   });
+
+
+
+            
+              
          
           
             return false;
@@ -343,7 +355,7 @@ AccountPermission optPermission = (AccountPermission
 
 
 
-                               html += '<tr data=' + item.ProductId + ' >';
+                               html += '<tr data=' + item.ProductId + ' whid=' + item.WareHouse.Whid+' >';
                                html += '<td><button type="button" class="btn btn-primary btnSelectProduct">เลิอก</button>';
 
                                html += '</td>';
@@ -351,7 +363,7 @@ AccountPermission optPermission = (AccountPermission
                                html += '<td>' + item.ProductName + '</td>';
                                html += '<td>' + item.PriceNet + '</td>';
                                html += '<td>' + item.QtyStock + '</td>';
-                               html += '<td></td>';
+                               html += '<td>' + item.WareHouse.Whname + '</td>';
                                html += '</tr>';
                            });
 
@@ -372,10 +384,28 @@ AccountPermission optPermission = (AccountPermission
         });
 
 
-        function CalProductPrice() {
+        function CalProductPrice(loadProductOnhand) {
 
-            if ($("#ProductDiscount").val() == "") {
-                $("#ProductDiscount").val(0)
+
+            if (loadProductOnhand) {
+                waitingDialog.show('Waiting for loading', { dialogSize: 'md', progressType: 'primary' });
+                if ($("#ProductDiscount").val() == "") {
+                    $("#ProductDiscount").val(0)
+                }
+                GetProductOnhand($("#selProduct").val(),
+                    $("#selWareHose").val(),
+                    function (data) {
+                        $("#ProductOnhandQty").val(data.QtyStock);
+                        window.setTimeout(function () {
+                            waitingDialog.hide();
+                        }, 1000);
+
+                    }, function (error) {
+                        window.setTimeout(function () {
+                            waitingDialog.hide();
+                        }, 1000);
+                    });
+
             }
           var discount=  $("#ProductDiscount").val();
             var netTotal = parseFloat($("#ProductQty").val().replace(",", "")) * parseFloat($("#ProductPrice").val().replace(",", ""))
@@ -391,9 +421,13 @@ AccountPermission optPermission = (AccountPermission
             }
 
             $("#NetPrice").val(numeral(netTotal).format('0,0.00'));
+
+        
         }
 
-       
+         $("#ProductQty").change(function () {
+            CalProductPrice();
+        });
         $("#ProductQty").keyup(function () {
             CalProductPrice();
         });
@@ -475,7 +509,9 @@ AccountPermission optPermission = (AccountPermission
         $(document).on("click", ".btnSelectProduct", function () {
             $('#selProduct').val($(this).closest('tr').attr('data'));
             $('#ProductPrice').val($(this).closest('tr').find("td:eq(3)").html());
-        $("#ProductModal").modal('hide');
+            $("#selWareHose").val($(this).closest('tr').attr('whid'));
+            $("#ProductModal").modal('hide');
+            CalProductPrice(true);
 
         });
 
@@ -523,6 +559,9 @@ AccountPermission optPermission = (AccountPermission
         }
 
 
+        
+
+
         function ValidationAll() {
             var chkValidate = true;
             if ($("#CustomerId").val() == "") {
@@ -554,6 +593,9 @@ AccountPermission optPermission = (AccountPermission
             } else {
                 $("#SaleId").removeClass("has-error");
             }
+            
+           
+
 
 
 
@@ -718,8 +760,17 @@ AccountPermission optPermission = (AccountPermission
 
 
 
+        $("#selWareHose").change(function () {
+
+
+         
+            CalProductPrice(true);
+         
+        });
         // Product section
         $("#selProduct").change(function () {
+
+         
             var dt = document.getElementById("selProduct").value;
             var price = 0;
             var p = dt.split(':');
@@ -730,8 +781,14 @@ AccountPermission optPermission = (AccountPermission
             document.getElementById("ProductPrice").value = $("#selProduct option:selected").attr("title");
             document.getElementById("ProductDiscount").value = 0;
 
-            CalProductPrice();
+            CalProductPrice(true);
+
+
+
         })
+
+
+            
 
         $("#button-EditCustomerAddress").click(function () {
             var id = document.getElementById("CustomerId").value;
@@ -1074,38 +1131,67 @@ AccountPermission optPermission = (AccountPermission
                                     </h3>
                                 </div>
                                 <div class="panel-body">
-                                    <div class="row">
-                                        <div class="col-12">
-                                            <form method="post" action="@Url.Action("AddProduct", "Quotation")" id="frmProduct" enctype="multipart/form-data">
+                                    <form method="post" action="@Url.Action("AddProduct", "Quotation")" id="frmProduct" enctype="multipart/form-data">
+                                        <div class="row">
+                                            <div class="col-12">
+
                                                 <input type="hidden" name="QuotationId" value="@Model.QuotationId" />
                                                 <input type="hidden" name="SelQuotationProductId" id="SelQuotationProductId" />  <div class="row">
-    <div class="col-4 col-md-4 form-group">
-        <label for="PileId" class="form-control-label">รหัสสินค้า</label>
-        <div class="input-group">
-            <select class="form-control" id="selProduct" data-live-search="true"
-                    name="selProduct">
+    <div class="col-2 col-md-3">
+        <div class=" form-group">
+            <label for="PileId" class="form-control-label">รหัสสินค้า</label>
+            <div class="input-group">
+                <select class="form-control" id="selProduct" data-live-search="true"
+                        name="selProduct">
+                    <option value="">กรุณาเลือก</option>
+
+                    @foreach (var it in optProduct.Where(o => o.PriceNet > 0))
+                    {
+                        <option value="@it.ProductId" title="@it.PriceNet">@it.ProductCode @it.ProductName [@it.PriceNet]</option>
+                    }
+
+
+
+                </select>
+                <div class="input-group-append">
+                    <button class="btn btn-outline-secondary btn-info" type="button"
+                            id="btnProduct">
+                        ...
+                    </button>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+    <div class="col-2 col-md-2">
+        <div class="form-group">
+            <label for="Qty" class="form-control-label">คลัง</label>
+            <select class="form-control" id="selWareHose" data-live-search="true"
+                    name="selWareHose">
                 <option value="">กรุณาเลือก</option>
 
-                @foreach (var it in optProduct.Where(o => o.PriceNet > 0))
+                @foreach (var it in optWareHouse)
                 {
-                    <option value="@it.ProductId" title="@it.PriceNet">@it.ProductCode @it.ProductName [@it.PriceNet]  Qty:@it.QtyStock</option>
+                    <option value="@it.Whid">@it.Whname</option>
                 }
 
 
 
             </select>
-            <div class="input-group-append">
-                <button class="btn btn-outline-secondary btn-info" type="button"
-                        id="btnProduct">
-                    ...
-                </button>
-            </div>
+
         </div>
-    </div><div class="col-2 col-md-2 form-group">
+
+    </div>
+    <div class="col-1 col-md-1 form-group">
+        <label for="Qty" class="form-control-label">จำนวนคงเหลือ</label>
+        <input type="number" class="form-control" id="ProductOnhandQty" name="ProductOnhandQty" readonly value="" />
+    </div>
+    <div class="col-1 col-md-1 form-group">
         <label for="Qty" class="form-control-label">จำนวน</label>
         <input type="number" class="form-control" id="ProductQty" name="ProductQty" value="1" />
     </div>
-    <div class="col-2 col-md-2 form-group">
+    <div class="col-1 col-md-1 form-group">
         <label for="Price" class="form-control-label">ราคา</label>
         <input type="text" class="form-control Number" readonly id="ProductPrice" name="ProductPrice" />
     </div>
@@ -1127,19 +1213,19 @@ AccountPermission optPermission = (AccountPermission
     </div>
 </div>
                                                 <div class="row">
-                                                <div class="col-4 col-md-4 form-group">
-                                                    <label for="Remark" class="form-control-label">หมายเหตุ</label>
-                                                    <textarea class="form-control" id="Remark" name="Remark"></textarea>
-                                                </div>
+                                                    <div class="col-4 col-md-4 form-group">
+                                                        <label for="Remark" class="form-control-label">หมายเหตุ</label>
+                                                        <textarea class="form-control" id="Remark" name="Remark"></textarea>
                                                     </div>
+                                                </div>
                                                 @if (Model.StatusId <= 3 && optPermission.IsEdit)
                                                 {
                                                     <button type="submit" id="btnAddProduct" class="btn btn-primary">เพิ่ม</button>
                                                 }
-                                            </form>
+
+                                            </div>
                                         </div>
-                                    </div>
-                                  
+
                                         <div class="row">
                                             <div class="col-12">
                                                 <div class="table-responsive">
@@ -1148,6 +1234,7 @@ AccountPermission optPermission = (AccountPermission
                                                         <thead>
                                                             <tr>
                                                                 <th>สินค้า</th>
+                                                                <th>คลัง</th>
                                                                 <th>จำนวน</th>
                                                                 <th>ราคา</th>
                                                                 <th>ส่วนลด</th>
@@ -1158,26 +1245,28 @@ AccountPermission optPermission = (AccountPermission
                                                             </tr>
                                                         </thead>
                                                         <tbody>
-                                                            @if (Model.TblQuotationDetail.Count() <= 0)
+                                                            @if (optQtDetail.Count() <= 0)
                                                             {
                                                                 <tr>
                                                                     <td colspan="7">ไม่พบข้อมูล</td>
                                                                 </tr>
                                                             }
-                                                            @foreach (var ob in Model.TblQuotationDetail)
+                                                            @foreach (var ob in optQtDetail)
                                                             {
                                                                 string calType = (ob.CalType == 1 ? string.Format("({0}%)", ob.Discount.ToString("#,#0.0")) : "(บาท)");
-                                                                <tr data="@ob.Id" ProductId="@ob.ProductId">
+                                                                <tr data="@ob.Id" ProductId="@ob.ProductId" Whid="@ob.WHId">
 
                                                                     <td>@ob.Product.ProductCode @ob.Product.ProductName</td>
+                                                                    <td>@ob.WareHouse.Whname</td>
                                                                     <td>@ob.Quantity</td>
                                                                     <td>@ob.PriceNet.ToString("#,#0.00")</td>
                                                                     <td>@ob.DiscountNet.ToString("#,#0.00") @calType</td>
                                                                     <td>@ob.TotalNet.Value.ToString("#,#0.00")</td>
                                                                     <td>@ob.TotalTot.Value.ToString("#,#0.00")</td>
                                                                     <td>
-                                                                        <input type="hidden" class="Discount"  name="Discount" value="@ob.Discount" />
-                                                                        <input type="hidden" name="QuotationId" value="@Model.QuotationId" />
+                                                                        <input type="hidden" class="Discount" name="Discount" value="@ob.Discount" />
+
+                                                                       
                                                                         <input type="hidden" name="Id" value="@ob.Id" />
                                                                         <input type="hidden" class="CalType" name="CalType" value="@ob.CalType" />
                                                                         @* @Html.AntiForgeryToken()*@
@@ -1186,7 +1275,7 @@ AccountPermission optPermission = (AccountPermission
                                                                             <button type="submit" class="btn btn-primary btn-xs btnEditProduct" id="btnEditProduct"><i class="fa fa-pencil" aria-hidden="true"></i>&nbsp;แก้ไข</button>
 
 
-                                                                            <button type="submit" class="btn btn-danger btn-xs btnDelete"><i class="fa fa-trash" aria-hidden="true"></i>&nbsp;ลบ</button>
+                                                                            <span type="submit" name="btnDelete" class="btn btn-danger btn-xs btnDelete"><i class="fa fa-trash" aria-hidden="true"></i>&nbsp;ลบ</span>
                                                                         }
 
                                                                     </td>
@@ -1199,7 +1288,7 @@ AccountPermission optPermission = (AccountPermission
                                                 </div>
                                             </div>
                                         </div>
-                                  
+                                    </form>
                                 </div>
                                 <div class="panel-footer">
                                 

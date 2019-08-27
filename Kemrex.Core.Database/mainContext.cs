@@ -105,6 +105,8 @@ namespace Kemrex.Core.Database
         public virtual DbSet<TblSurveyDetail> TblSurveyDetail { get; set; }
         public virtual DbSet<TblSurveyHeader> TblSurveyHeader { get; set; }
         public virtual DbSet<TransferHeaderReference> TransferHeaderReference { get; set; }
+        public virtual DbSet<TblProductOfWareHouse> TblProductOfWareHouse { get; set; }
+
         // Unable to generate entity type for table 'dbo.Product_Temp'. Please see the warning messages.
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -1276,6 +1278,29 @@ namespace Kemrex.Core.Database
             });
 
 
+            modelBuilder.Entity<TblProductOfWareHouse>(entity =>
+            {
+                entity.HasKey(e => new { e.ProductId, e.Whid });
+
+                entity.Property(e => e.Whid).HasColumnName("WHId");
+
+                entity.Property(e => e.CostNet).HasColumnType("decimal(12, 2)");
+
+                entity.Property(e => e.CostTot).HasColumnType("decimal(12, 2)");
+
+                entity.Property(e => e.CostVat).HasColumnType("decimal(12, 2)");
+
+                entity.Property(e => e.CreatedDate).HasColumnType("datetime");
+
+                entity.Property(e => e.PriceNet).HasColumnType("decimal(12, 2)");
+
+                entity.Property(e => e.PriceTot).HasColumnType("decimal(12, 2)");
+
+                entity.Property(e => e.PriceVat).HasColumnType("decimal(12, 2)");
+
+                entity.Property(e => e.UpdatedDate).HasColumnType("datetime");
+            });
+
             modelBuilder.Entity<TblWareHouse>(entity =>
             {
                 entity.HasKey(e => e.Whid)
@@ -1407,6 +1432,12 @@ namespace Kemrex.Core.Database
                 entity.Property(e => e.TotalVat).HasColumnType("decimal(12, 2)");
 
 
+
+
+                
+
+             
+                    
 
 
                 entity.HasOne(d => d.Product)
@@ -1546,6 +1577,9 @@ namespace Kemrex.Core.Database
                     .HasForeignKey(d => d.ProductId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_TblSaleOrderDetail_Product");
+
+
+            
 
                 entity.HasOne(d => d.SaleOrder)
                     .WithMany(p => p.TblSaleOrderDetail)

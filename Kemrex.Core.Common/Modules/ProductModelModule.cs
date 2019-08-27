@@ -38,6 +38,9 @@ namespace Kemrex.Core.Common.Modules
             return data;
         }
 
+
+   
+
         public TblProductModel Get(int id)
         {
             return db.TblProductModel

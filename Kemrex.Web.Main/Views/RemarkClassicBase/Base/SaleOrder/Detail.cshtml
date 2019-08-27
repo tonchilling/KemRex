@@ -609,7 +609,8 @@ optWareHouse = (List<TblWareHouse>
             $("#Remark").val($(this).closest("tr").find('td:eq(8)').text());
             $(".selCalType").val($(this).closest("tr").find('.CalType').val());
             $("#selWareHose").val($(this).closest("tr").attr("Whid"));
-            CalProductPrice();
+            CalProductPrice(true);
+           
             return false;
 
         })
@@ -646,7 +647,7 @@ optWareHouse = (List<TblWareHouse>
             document.getElementById("ProductPrice").value = $("#selProduct option:selected").attr("title");
             document.getElementById("ProductDiscount").value = 0;
 
-            CalProductPrice();
+            CalProductPrice(true);
         })
 
         $("#button-EditCustomerAddress").click(function () {
@@ -1229,7 +1230,7 @@ optWareHouse = (List<TblWareHouse>
 
                                                                     @foreach (var it in optProduct.Where(o => o.PriceNet > 0))
                                                                     {
-                                                                        <option value="@it.ProductId" title="@it.PriceNet">@it.ProductCode @it.ProductName [@it.PriceNet]  Qty:@it.QtyStock</option>
+                                                                        <option value="@it.ProductId" title="@it.PriceNet">@it.ProductCode @it.ProductName [@it.PriceNet] </option>
                                                                     }
 
 
@@ -1264,7 +1265,7 @@ optWareHouse = (List<TblWareHouse>
                                                         </div>
                                                         <div class="col-1 col-md-1 form-group">
                                                             <label for="Qty" class="form-control-label">จำนวนคงเหลือ</label>
-                                                            <input type="number" class="form-control" id="ProductOnhandQty" name="ProductOnhandQty" readonly value="1" />
+                                                            <input type="number" class="form-control" id="ProductOnhandQty" name="ProductOnhandQty" readonly value="" />
                                                         </div>
                                                         <div class="col-1 col-md-1 form-group">
                                                             <label for="Qty" class="form-control-label">จำนวน</label>

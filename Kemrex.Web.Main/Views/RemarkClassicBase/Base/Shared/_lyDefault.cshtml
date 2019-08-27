@@ -330,6 +330,15 @@
         });
 
 
+
+
+        function GetProductOnhand(productId, WarehouseId, fnSuccess,fnFailed) {
+
+
+            $.get('@Url.Action("GetProductOnHand", new { controller = "api/CommonService" })', { productId: productId, wareHouseId: WarehouseId }, fnSuccess).fail(fnFailed);
+        }
+
+
         var BasicMenu = '#2200'
         var SaleMenu = '#2300'
         var EngineerMenu = '#2400'

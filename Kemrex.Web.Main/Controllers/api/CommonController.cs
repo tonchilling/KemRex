@@ -32,5 +32,20 @@ namespace Kemrex.Web.Main.Controllers.api
             return Json(ob);
         }
 
+
+
+        [HttpGet]
+        [Route("GetProductOnHand")]
+        public IHttpActionResult GetProductOnHand(int productId,int wareHouseId = 0)
+        {
+            uow = new UnitOfWork(SystemHelper.GetConfigurationKey(ConfigKey.CONNECTION_DB));
+            TblProductOfWareHouse ob = uow.Modules.ProductOfWareHouse.Get(productId, wareHouseId);
+          
+           
+
+
+
+            return Json(ob);
+        }
     }
 }

@@ -10,6 +10,7 @@ namespace Kemrex.Core.Database.Models
         public int SaleOrderId { get; set; }
         public int ProductId { get; set; }
         public int Quantity { get; set; }
+        public int? WHId { get; set; }
         public decimal PriceNet { get; set; }
         public decimal PriceVat { get; set; }
         public decimal PriceTot { get; set; }
@@ -24,5 +25,6 @@ namespace Kemrex.Core.Database.Models
         public int CalType { get; set; }
         public virtual TblProduct Product { get; set; }
         public virtual TblSaleOrder SaleOrder { get; set; }
+         public virtual TblWareHouse WareHouse { get; set; }
     }
 }
