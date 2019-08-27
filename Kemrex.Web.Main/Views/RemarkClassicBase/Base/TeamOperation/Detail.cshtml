@@ -148,7 +148,13 @@
                                             <select name="accountId" class="form-control">
                                                 @foreach (SysAccount it in optOperation)
                                                 {
-                                                <option value="@it.AccountId">@it.AccountName &nbsp;(@it.SysAccountRole.Role.RoleName)</option>
+
+                                                    if (it.AccountId == Model.ManagerId)
+                                                    {  }
+                                                    else
+                                                    {
+                                                        <option value="@it.AccountId">@it.AccountName &nbsp;(@it.SysAccountRole.Role.RoleName)</option>
+                                                    }
                                                 }
                                             </select>
                                         </div>
