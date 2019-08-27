@@ -56,29 +56,31 @@ namespace Kemrex.Core.Common.Modules
         {
 
 
+            var query = (from q in  db.TblProductOfWareHouse
+                         join o in db.TblProduct
+                          on q.ProductId equals o.ProductId
+                         join w in db.TblWareHouse
+                          on q.Whid equals w.Whid
+                         select new TblProduct
+                         {
+                             ProductId = o.ProductId,
+                             ProductCode = o.ProductCode,
+                             ProductName = o.ProductName,
+                             PriceNet = o.PriceNet,
+                             QtyStock = q.QtyStock.Value,
+                             WareHouse = w
 
-
-            var data = db.TblProduct.Select(o => new TblProduct
-            {
-                ProductId = o.ProductId,
-                ProductCode=o.ProductCode,
-                ProductName = o.ProductName,
-                PriceNet=o.PriceNet,
-                QtyStock=o.QtyStock,
-                /*      WareHouse=(from q in db.TblWareHouse.Where(xx=>xx.Whid==o.Whid) select new TblWareHouse {
-                           Whid=q.Whid,
-                           Whcode=q.Whcode,
-                           Whname=q.Whname
-                       }).FirstOrDefault()*/
-
-
-            }).Where(
+                         }).Where(
                    o => (o.ProductCode.ToString().IndexOf(productCode) > -1 || productCode == "")
                         && (o.ProductName.IndexOf(productName) > -1 || productName == "")
-                  );
+                  ).ToList();
 
 
-            return data.ToList();
+
+
+
+
+            return query;
         }
 
         public List<TblProduct> Gets(string categoryType)
