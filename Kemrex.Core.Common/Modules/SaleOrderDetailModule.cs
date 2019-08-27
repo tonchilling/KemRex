@@ -35,16 +35,48 @@ namespace Kemrex.Core.Common.Modules
                 .Where(x => x.Id == id)
                 .FirstOrDefault() ?? new TblSaleOrderDetail();
         }
+
+        public TblSaleOrderDetail Get(int SaleorderId = 0, int ProductId = 0, int WhId = 0)
+        {
+            return db.TblSaleOrderDetail
+                .Where(x => x.SaleOrderId == SaleorderId && x.ProductId == ProductId && x.WHId == WhId)
+                .FirstOrDefault() ?? new TblSaleOrderDetail();
+        }
+
         public List<TblSaleOrderDetail> Gets(int SaleOrderId = 0)
         {
-            var data = db.TblSaleOrderDetail
-              .AsQueryable();
+          
             // data = Filter(data, groupId, src);
-            var query = (from qd in data
+            var query = (from qd in db.TblSaleOrderDetail
                          join p in db.TblProduct
                          on qd.ProductId equals p.ProductId
+                         join w in db.TblWareHouse
+                          on qd.WHId equals w.Whid
+
                          where qd.SaleOrderId == SaleOrderId
-                         select qd);
+                         select new TblSaleOrderDetail
+                         {
+
+                            Id=qd.Id,
+        SaleOrderId =qd.SaleOrderId,
+         ProductId =qd.ProductId,
+       Quantity =qd.Quantity,
+       WHId =qd.WHId,
+       PriceNet =qd.PriceNet,
+       PriceVat = qd.PriceVat,
+        PriceTot= qd.PriceTot,
+       DiscountNet =qd.DiscountNet,
+       DiscountVat  =qd.DiscountVat,
+        DiscountTot =qd.DiscountTot,
+        Discount=qd.Discount,
+       TotalNet  = qd.TotalNet,
+       TotalVat = qd.TotalVat,
+       TotalTot = qd.TotalTot,
+         Remark = qd.Remark,
+       CalType=qd.CalType,
+      WareHouse = w,
+       Product = p
+                         });
             return query.ToList();
         }
         public bool IsExist(int id)
