@@ -334,8 +334,7 @@ namespace Kemrex.Web.Main.Controllers
                     if (msgType.HasValue) { alert.Type = msgType.Value; }
                     ViewBag.Alert = alert;
                 }
-                AccountPermission permission = new AccountPermission();
-                permission = GetPermissionSale(CurrentUser.AccountId, ob.CreatedBy.HasValue ? ob.CreatedBy.Value : 0);
+             
 
 
                 ViewData["optQtDetail"] = uow.Modules.QuotationDetail.Gets(ob.QuotationId);
@@ -345,7 +344,8 @@ namespace Kemrex.Web.Main.Controllers
                 ViewData["optContact"] = uow.Modules.CustomerContact.Gets();
                 ViewData["optEmployee"] = uow.Modules.Employee.Gets();
                 ViewData["userAccount"] = CurrentUser;
-                ViewData["optPermission"] = permission;
+                ViewData["optWareHouse"] = uow.Modules.WareHouse.Gets();
+                ViewData["optPermission"] = GetPermission(ob.CreatedBy);
                 return View(ob);
             }
             catch (Exception ex)
@@ -394,15 +394,17 @@ namespace Kemrex.Web.Main.Controllers
             int qty = Request.Form["ProductQty"].ParseInt();
             Decimal price = Request.Form["ProductPrice"].ParseDecimal();
             Decimal discount = Request.Form["ProductDiscount"].ParseDecimal();
+            int WHId = Request.Form["selWareHose"].ParseInt();
             decimal realDiscount = 0;
             var remark = Request.Form["Remark"];
             if (productId.Count() > 0)
             {
                 int pid = int.Parse(productId[0]);
 
-                TblQuotationDetail ob = uow.Modules.QuotationDetail.Get(SelQuotationProductId);
+                TblQuotationDetail ob = SelQuotationProductId >0 ? uow.Modules.QuotationDetail.Get(SelQuotationProductId) : uow.Modules.QuotationDetail.Get(qid, Converting.ToInt(productId[0]), WHId);
                 realDiscount = discount;
                 ob.QuotationId = qid;
+                ob.WHId = WHId;
                 ob.ProductId = pid;
                 ob.Quantity = qty;
                 ob.CalType= Request.Form["selCalType"].ParseInt(); 

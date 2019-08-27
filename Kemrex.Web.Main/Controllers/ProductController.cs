@@ -58,6 +58,52 @@ namespace Kemrex.Web.Main.Controllers
         }
 
         [ValidateAntiForgeryToken]
+        [HttpPost, ActionName("AddProductOfWareHouse")]
+        public ActionResult AddProductOfWareHouse()
+        {
+            int productid = Request.Form["ProductId"].ParseInt();
+            int WareHouseId = Request.Form["WHId"].ParseInt();
+            string QtyOfWareHouse = Request.Form["QtyOfWareHouse"].ToString();
+            TblProduct product = uow.Modules.Product.Get(productid);
+            TblProductOfWareHouse ob = uow.Modules.ProductOfWareHouse.Get(productid, WareHouseId);
+            if (ob.ProductId <= 0)
+            {
+                ob.IsUpdate = false;
+                ob.ProductId = productid;
+                ob.Whid = WareHouseId;
+                ob.QtyStock = Request.Form["QtyOfWareHouse"].ParseInt();
+                ob.CreatedBy = Convert.ToInt32(CurrentUID);
+                ob.CreatedDate = CurrentDate;
+            }
+            else {
+                ob.IsUpdate = true;
+                ob.ProductId = productid;
+                ob.Whid = WareHouseId;
+                ob.QtyStock = Request.Form["QtyOfWareHouse"].ParseInt();
+                ob.UpdatedBy = Convert.ToInt32(CurrentUID);
+                ob.UpdatedDate = CurrentDate;
+            }
+
+
+            try
+            {
+                //Validate model b4 save
+
+                uow.Modules.ProductOfWareHouse.Set(ob);
+                uow.SaveChanges();
+                return RedirectToAction("Detail", MVCController, new { id = ob.ProductId, msg = "บันทึกข้อมูลเรียบร้อยแล้ว", msgType = AlertMsgType.Success });
+            }
+            catch (Exception ex)
+            {
+                string msg = ex.GetMessage(true);
+                return ViewDetail(product, msg, AlertMsgType.Danger);
+            }
+
+            
+
+        }
+
+        [ValidateAntiForgeryToken]
         [HttpPost, ActionName("Detail")]
         public ActionResult SetDetail()
         {
@@ -156,6 +202,8 @@ namespace Kemrex.Web.Main.Controllers
                 ViewData["optModel"] = uow.Modules.ProductModel.Gets();
                 ViewData["optUnit"] = uow.Modules.Unit.Gets();
                 ViewData["optWareHouse"] = uow.Modules.WareHouse.Gets();
+
+                ViewData["optProductOfWareHouse"] = uow.Modules.ProductOfWareHouse.Gets(ob.ProductId);
 
                 return View(ob);
             }

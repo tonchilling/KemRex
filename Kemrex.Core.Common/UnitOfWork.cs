@@ -73,6 +73,7 @@ namespace Kemrex.Core.Common
             private PileSeriesModule _PileSeries;
             private PositionModule _Position;
             private ProductModule _Product;
+            private ProductOfWareHouseModule _ProductOfWareHouseModule;
             private ProductCategoryModule _ProductCategory;
             private ProductModelModule _ProductModel;
             private ProductTypeModule _ProductType;
@@ -112,6 +113,8 @@ namespace Kemrex.Core.Common
             public PileSeriesModule PileSeries => _PileSeries ?? (_PileSeries = new PileSeriesModule(db));
             public PositionModule Position => _Position ?? (_Position = new PositionModule(db));
             public ProductModule Product => _Product ?? (_Product = new ProductModule(db));
+
+            public ProductOfWareHouseModule ProductOfWareHouse => _ProductOfWareHouseModule ?? (_ProductOfWareHouseModule = new ProductOfWareHouseModule(db));
             public ProductCategoryModule ProductCategory => _ProductCategory ?? (_ProductCategory = new ProductCategoryModule(db));
             public ProductModelModule ProductModel => _ProductModel ?? (_ProductModel = new ProductModelModule(db));
             public ProductTypeModule ProductType => _ProductType ?? (_ProductType = new ProductTypeModule(db));

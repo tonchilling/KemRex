@@ -288,6 +288,7 @@ namespace Kemrex.Web.Main.Controllers
                 ViewData["optTeam"] = uow.Modules.TeamOperation.Gets();
                 ViewData["userAccount"] = CurrentUser;
                 ViewData["optPermission"] = permission;
+                ViewData["optWareHouse"] = uow.Modules.WareHouse.Gets();
                 return View(ob);
             }
             catch (Exception ex)
@@ -390,22 +391,23 @@ namespace Kemrex.Web.Main.Controllers
         public ActionResult AddProduct()
         {
             int sid = Request.Form["SaleOrderId"].ParseInt();
-            var id = Request.Form["selProduct"].Split(':');  //  ProductId:PriceNet
+            var productId = Request.Form["selProduct"].Split(':');  //  ProductId:PriceNet
             int qty = Request.Form["ProductQty"].ParseInt();
             var SelSaleOrdernProductId = Request.Form["SelQSaleOrderProductId"].ParseInt();  //  ProductId:PriceNet
-         
+            int WHId = Request.Form["selWareHose"].ParseInt();
             Decimal price = Request.Form["ProductPrice"].ParseDecimal();
             Decimal discount = Request.Form["ProductDiscount"].ParseDecimal();
             decimal realDiscount = 0;
 
             var remark = Request.Form["Remark"];
-            if (id.Count() > 0)
+            if (productId.Count() > 0)
             {
-                int pid = int.Parse(id[0]);
-             
-                TblSaleOrderDetail ob = uow.Modules.SaleOrderDetail.Get(SelSaleOrdernProductId);
+                int pid = Converting.ToInt(productId[0]);
+             //   SelQuotationProductId > 0 ? uow.Modules.QuotationDetail.Get(SelQuotationProductId) : uow.Modules.QuotationDetail.Get(qid, Converting.ToInt(productId[0]), WHId);
+                TblSaleOrderDetail ob = SelSaleOrdernProductId>0 ? uow.Modules.SaleOrderDetail.Get(SelSaleOrdernProductId) :  uow.Modules.SaleOrderDetail.Get(sid, pid, WHId);
                 realDiscount = discount;
                 ob.SaleOrderId = sid;
+                ob.WHId = WHId;
                 ob.ProductId = pid;
                 ob.Quantity = qty;
                 ob.PriceNet = price * qty;

@@ -39,6 +39,13 @@ namespace Kemrex.Core.Common.Modules
                 .Where(x => x.Id == id)
                 .FirstOrDefault() ?? new TblQuotationDetail();
         }
+
+        public TblQuotationDetail Get(int QuationId = 0,int ProductId = 0, int WhId= 0)
+        {
+            return db.TblQuotationDetail
+                .Where(x => x.QuotationId == QuationId && x.ProductId== ProductId && x.WHId== WhId)
+                .FirstOrDefault() ?? new TblQuotationDetail();
+        }
         public List<TblQuotationDetail> Gets(int QuotationId=0)
         {
             var data = db.TblQuotationDetail
@@ -47,8 +54,31 @@ namespace Kemrex.Core.Common.Modules
             var query = (from qd in data
                          join p in db.TblProduct
                          on qd.ProductId equals p.ProductId
-                         where qd.QuotationId == QuotationId
-                         select qd).ToList();
+                         join w in db.TblWareHouse
+                          on qd.WHId equals w.Whid
+                         where qd.QuotationId== QuotationId
+                         select new TblQuotationDetail{
+                     Id= qd.Id,
+       QuotationId= qd.QuotationId,
+                             ProductId= qd.ProductId,
+                             Product=p,
+       WHId = qd.WHId,
+      Quantity= qd.Quantity,
+       PriceNet=qd.PriceNet,
+        PriceVat=qd.PriceVat,
+       PriceTot=qd.PriceTot,
+       Discount=qd.Discount,
+      DiscountNet =qd.DiscountNet,
+     DiscountVat=qd.DiscountVat,
+     DiscountTot=qd.DiscountTot,
+    TotalNet=qd.TotalNet,
+     TotalVat=qd.TotalVat,
+      TotalTot=qd.TotalTot,
+        Remark=qd.Remark,
+       CalType=qd.CalType,
+       WareHouse= w
+
+                         }).ToList();
             return query;
         }
         bool IModule<TblQuotationDetail, int>.IsExist(int id) => throw new NotImplementedException();
