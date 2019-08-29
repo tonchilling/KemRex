@@ -132,7 +132,9 @@
                             order: [[6, 'desc']]
                         }
                     );
-                    waitingDialog.hide();
+                    window.setTimeout(function () {
+                        waitingDialog.hide();
+                    }, 2000);
                 },
                 error: function (error) {
                     alert(error);
