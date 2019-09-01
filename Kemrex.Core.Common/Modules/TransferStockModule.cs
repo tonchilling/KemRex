@@ -78,9 +78,6 @@ namespace Kemrex.Core.Common.Modules
         }
         public TransferStockHeader Get(int id)
         {
-          
-                
-                
                TransferStockHeader transferStockHeader= db.TransferStockHeader
                    .Where(x => x.TransferStockId == id)
                    .FirstOrDefault() ?? new TransferStockHeader()
@@ -100,9 +97,12 @@ namespace Kemrex.Core.Common.Modules
                                      RequestUnit = q.RequestUnit,
                                      RequestUnitFactor = q.RequestUnitFactor,
                                      LastModified = q.LastModified,
-                                     Product=db.TblProduct.Where(p=>p.ProductId== q.ProductId).FirstOrDefault()
-      
-    }).ToList();
+                                     WHId = q.WHId,
+                                     Product=db.TblProduct.Where(p=>p.ProductId== q.ProductId).FirstOrDefault(),
+                                     WareHouse = db.TblWareHouse.Where(w => w.Whid == q.WHId).FirstOrDefault(),
+
+
+                                 }).ToList();
 
             return transferStockHeader;
 
@@ -210,6 +210,7 @@ namespace Kemrex.Core.Common.Modules
             paramList.Add(new SqlParameter("@ProductId", dto.ProductId));
             paramList.Add(new SqlParameter("@RequestQty", dto.RequestQty));
             paramList.Add(new SqlParameter("@Seq", dto.Seq));
+            paramList.Add(new SqlParameter("@WHId", dto.WHId));
             try
             {
 
