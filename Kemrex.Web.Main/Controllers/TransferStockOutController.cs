@@ -163,6 +163,9 @@ namespace Kemrex.Web.Main.Controllers
                 ViewData["optProduct"] = uow.Modules.Product.Gets();
                 ViewData["optContact"] = uow.Modules.CustomerContact.Gets();
                 ViewData["optEmployee"] = uow.Modules.Employee.Gets();
+                ViewData["optWareHouse"] = uow.Modules.WareHouse.Gets();
+                CurrentUser.TblEmployee = uow.Modules.Employee.GetEmployeeByAccount(CurrentUID);
+                ViewData["userAccount"] = CurrentUser;
                 return View(ob);
             }
             catch (Exception ex)
@@ -181,6 +184,7 @@ namespace Kemrex.Web.Main.Controllers
             int qid = Request.Form["TransferStockId"].ParseInt();
             var id = Request.Form["selProduct"].Split(':');  //  ProductId:PriceNet
             int qty = Request.Form["RequestQty"].ParseInt();
+            int WHId = Request.Form["selWareHose"].ParseInt();
             if (id.Count() > 0)
             {
                 int pid = int.Parse(id[0]);
@@ -191,6 +195,7 @@ namespace Kemrex.Web.Main.Controllers
                 ob.ProductId = pid;
                 ob.RequestQty = qty;
                 ob.Seq = seq;
+                ob.WHId = WHId;
 
                 bool result = uow.Modules.TransferStock.Add(ob);
 

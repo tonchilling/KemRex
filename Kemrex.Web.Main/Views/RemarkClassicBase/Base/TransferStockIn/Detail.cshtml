@@ -16,6 +16,13 @@
     List<TblEmployee>
     optEmployee = (List<TblEmployee>
     )ViewData["optEmployee"];
+
+    List<TblWareHouse>
+    optWareHouse = (List<TblWareHouse>
+)ViewData["optWareHouse"];
+
+    SysAccount sysAccount = (SysAccount
+)ViewData["userAccount"];
     bool canedit = false;
     bool canconf = false;
     if (Model.TransferStatus < 1 || Model.TransferStatus == null)
@@ -219,7 +226,43 @@
 
         // Event
 
-       
+        function CalProductPrice(loadProductOnhand) {
+
+
+            if (loadProductOnhand) {
+                waitingDialog.show('Waiting for loading', { dialogSize: 'md', progressType: 'primary' });
+                GetProductOnhand($("#selProduct").val(),
+                    $("#selWareHose").val(),
+                    function (data) {
+                        $("#ProductOnhandQty").val(data.QtyStock);
+                        window.setTimeout(function () {
+                            waitingDialog.hide();
+                        }, 1000);
+
+                    }, function (error) {
+                        window.setTimeout(function () {
+                            waitingDialog.hide();
+                        }, 1000);
+                    });
+
+            }
+            var discount = $("#ProductDiscount").val();
+            var netTotal = parseFloat($("#ProductQty").val().replace(",", "")) * parseFloat($("#ProductPrice").val().replace(",", ""))
+
+            switch ($(".selCalType").val()) {
+
+                case '1':
+                    netTotal = (netTotal - (netTotal * (discount / 100))).toFixed(2);
+                    break;
+                case '2':
+                    netTotal = (netTotal - discount).toFixed(2);
+                    break;
+            }
+
+            $("#NetPrice").val(numeral(netTotal).format('0,0.00'));
+
+
+        }
 
 
         $("#btnAddProduct").click(function () {
@@ -239,7 +282,11 @@
             return ValidationAll();
         });
 
+        $("#selWareHose").change(function () {
 
+            CalProductPrice(true);
+
+        });
 
 
         // Product section
@@ -260,6 +307,117 @@
             document.getElementById("caCustomerId").value = id;
             document.getElementById("lbcaCustomerName").innerHTML = document.getElementById("lbCustomerName").innerText;
         });
+
+
+        $("#btnProduct").click(function () {
+
+
+
+            $("#ProductModal").modal('show');
+
+        })
+        $(document).on("click", ".btnSelectProduct", function () {
+            $('#selProduct').val($(this).closest('tr').attr('data'));
+            $('#ProductPrice').val($(this).closest('tr').find("td:eq(3)").html());
+            $("#selWareHose").val($(this).closest('tr').attr('whid'));
+            $("#ProductModal").modal('hide');
+            CalProductPrice(true);
+
+        });
+
+        $("#btnSearchProduct").click(function () {
+
+
+            var html = '';
+                    $('.divProduct').empty();
+
+            html += '<table class="table table-hover">';
+            html += '<thead> ';
+            html += '<tr>';
+                        html += '<th>กรุณาเลือก</th>';
+                        html += '<th>รหัสสินค้า</th>';
+                        html += '<th>ชื่อสินค้า</th>';
+                        html += '<th>ราคาต่อหน่วย</th>';
+                        html += '<th>Qty คงเหลือ</th>';
+                        html += '<th>คลังสินค้า</th>';
+            html += '</tr>';
+            html += '</thead>';
+            html += '<tbody>';
+
+
+
+            var url = '@Url.Action("GetProduct", "Product")';
+                   objAddressList = [];
+                   objContacList = [];
+                   $.ajax({
+                type: "get",
+                url: url,
+                       data: {
+                           ProductCode: $("#searchProductCode").val(),
+                           ProductName: $("#searchProductName").val()
+                       }
+                       ,success: function (obj) {
+                           $.each(obj, function (index, item) {
+
+
+
+                               html += '<tr data=' + item.ProductId + ' whid=' + item.WareHouse.Whid+' >';
+                               html += '<td><button type="button" class="btn btn-primary btnSelectProduct">เลิอก</button>';
+
+                               html += '</td>';
+                               html += '<td>' + item.ProductCode + '</td>';
+                               html += '<td>' + item.ProductName + '</td>';
+                               html += '<td>' + item.PriceNet + '</td>';
+                               html += '<td>' + item.QtyStock + '</td>';
+                               html += '<td>' + item.WareHouse.Whname + '</td>';
+                               html += '</tr>';
+                           });
+
+                           html += '</tbody>';
+                           html += '</table>';
+                           html += ' </div>';
+
+
+                           $('.divProduct').append(html);
+                           $('.divProduct table').DataTable();
+                       },
+                       error: function (jqXHR, textStatus, errorThrown) {
+                           alert(errorThrown);
+                           //or you can put jqXHR.responseText somewhere as complete response. Its html.
+                       }
+                      });
+                      
+                    
+                      $("#ProductQty").change(function () {
+                          CalProductPrice();
+                      });
+                      $("#ProductQty").keyup(function () {
+                          CalProductPrice();
+                      });
+                      $("#ProductDiscount").keyup(function () {
+                          CalProductPrice();
+                      });
+                      $(".selCalType").change(function () {
+                          CalProductPrice();
+                      });
+            $(".btnEditProduct").click(function () {
+
+                $("#SelQuotationProductId").val($(this).closest("tr").attr("data"));
+                $("#selProduct").val($(this).closest("tr").attr("ProductId"));
+                $("#ProductQty").val($(this).closest("tr").find('td:eq(2)').text());
+                $("#ProductPrice").val($(this).closest("tr").find('td:eq(3)').text());
+                $("#ProductDiscount").val($(this).closest("tr").find('.Discount').val());
+                $("#Remark").val($(this).closest("tr").find('td:eq(8)').text());
+                $(".selCalType").val($(this).closest("tr").find('.CalType').val());
+                $("#selWareHose").val($(this).closest("tr").attr("Whid"));
+                CalProductPrice(true);
+                return false;
+
+            })
+
+
+        });
+
     </script>
 }
 
@@ -327,333 +485,369 @@
 </style>
 
 <body data-spy="scroll" data-target="#myTap" data-offset="300">
-    
-        <div class="page">
-            <div class="page-header">
-                <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="@Url.Action("Index", new { controller = "TransferStockIn", area = "" })" })">ย้อนกลับ</a></li>
-                </ol>
-            </div>
-            <div class="page-content container-fluid">
-                @if (ViewBag.Alert != null)
-                {
-                    <div class="row">
-                        <div class="col-12">
-                            @Html.Partial(kemrex.PathViewShared("_wgAlert"), Alert)
-                        </div>
+
+    <div class="page">
+        <div class="page-header">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="@Url.Action("Index", new { controller = "TransferStockIn", area = "" })" })">ย้อนกลับ</a></li>
+            </ol>
+        </div>
+        <div class="page-content container-fluid">
+            @if (ViewBag.Alert != null)
+            {
+                <div class="row">
+                    <div class="col-12">
+                        @Html.Partial(kemrex.PathViewShared("_wgAlert"), Alert)
                     </div>
-                }
-                <div class="panel-heading">
-                    <h3 class="panel-title">
-                        @(Model.TransferStockId > 0 ? "แก้ไข" : "เพิ่ม")เอกสาร
-                        <span class="panel-desc">รับสินค้าเข้า (Stock In) </span>
-                    </h3>
                 </div>
-                <div data-tabs="myTabPage">
+            }
+            <div class="panel-heading">
+                <h3 class="panel-title">
+                    @(Model.TransferStockId > 0 ? "แก้ไข" : "เพิ่ม")เอกสาร
+                    <span class="panel-desc">รับสินค้าเข้า (Stock In) </span>
+                </h3>
+            </div>
+            <div data-tabs="myTabPage">
 
-                    <ul class="tabs">
-                        <li class="tab-link current" data-tab="tab-1">ข้อมูลพื้นฐาน</li>
-                        @if (Model.TransferStockId > 0)
-                        {
-                            <li class="tab-link" data-tab="tab-2">รายการสินค้า</li>
-                        }
-                    </ul>
+                <ul class="tabs">
+                    <li class="tab-link current" data-tab="tab-1">ข้อมูลพื้นฐาน</li>
+                    @if (Model.TransferStockId > 0)
+                    {
+                        <li class="tab-link" data-tab="tab-2">รายการสินค้า</li>
+                    }
+                </ul>
 
-                    <div id="tab-1" class="tab-content current">
-                        <form method="post" action="@Url.Action("SetDetail", "TransferStockIn")" enctype="multipart/form-data">
-                            <div class="card-block" id="navInfo" data-tab-page="navInfo">
+                <div id="tab-1" class="tab-content current">
+                    <form method="post" action="@Url.Action("SetDetail", "TransferStockIn")" enctype="multipart/form-data">
+                        <div class="card-block" id="navInfo" data-tab-page="navInfo">
 
-                                <div class="col-12">
-                                    <div class="panel">
-
-                                        @Html.AntiForgeryToken()
-                                        <input type="hidden" id="TransferStockId" name="TransferStockId" value="@Model.TransferStockId" />
-
-                                        <div class="panel-body">
-                                            <div class="row">
-                                                @*Left panel*@
-                                                <div class="col-md-6">
-
-                                                    <div class="form-group">
-                                                        <label for="TransferNo" class="col-sm-4 col-form-label">เลขที่นำเข้าสินค้า</label>
-                                                        <div class="col-sm-6">
-                                                            <input type="text" class="form-control" name="TransferNo" id="TransferNo"
-                                                                   placeholder="บันทึกเพื่อสร้าง" value="@Model.TransferNo" readonly />
-                                                        </div>
-
-                                                    </div>
-
-                                                    <div class="form-group">
-
-                                                        <label for="BillNo" class="col-sm-4 col-form-label">Ref No./Bill No.</label>
-                                                        <div class="col-sm-6">
-                                                            <div class="input-group mb-3">
-                                                                <input type="text" class="form-control" id="BillNo" name="BillNo"
-                                                                       placeholder="" value="@Model.BillNo" />
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="form-group">
-                                                        <label for="ReceiveTo" class="col-sm-5 col-form-label">รับสินค้าจาก</label>
-                                                        <div class="col-sm-9">
-                                                            <input type="text" class="form-control" name="ReceiveTo" id="ReceiveTo" value="@Model.ReceiveTo" />
-                                                        </div>
-                                                    </div>
-                                                    <div class="form-group">
-                                                        <label for="Note1" class="col-sm-4 col-form-label">Note</label>
-                                                        <div class="col-sm-9">
-                                                            <textarea rows="4" cols="47" class="form-control" name="Note1" id="Note1">@Model.Note1</textarea>
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                                @*Right panel*@
-
-                                                <div class="col-md-5 col-sm-8">
-                                                    <div class="form-group">
-                                                        <label for="CreateDate" class="col-sm-5 col-form-label">วันที่สร้างรายการ</label>
-                                                        <div class="input-group col-sm-6">
-                                                            <input type="text" class="form-control" name="CreatedDate" value="@(Model.CreateDate.HasValue ? Model.CreateDate.Value.ToString("dd/MM/yyyy"):"")" readonly />
-                                                            <span class="input-group-addon">
-                                                                <i class="icon wb-calendar icon-2-5x text-success" aria-hidden="true"></i>
-                                                            </span>
-                                                        </div>
-
-                                                    </div>
-                                                    <div class="form-group">
-                                                        <label for="TransferDate" class="col-sm-5 col-form-label">วันที่นำสินค้าเข้าคลัง</label>
-                                                        <div class="input-group col-sm-6 date" data-provide="datepicker" data-date-format="dd/mm/yyyy">
-                                                            <input id="TransferDate" type="text" class="form-control" placeholder="dd/MM/yyyy ค.ศ." name="TransferDate"
-                                                                   value="@(Model.TransferDate.HasValue ? Model.TransferDate.Value.ToString("dd/MM/yyyy"):"")" />
-                                                            <span class="input-group-addon">
-                                                                <i class="icon wb-calendar icon-2-5x text-success" aria-hidden="true"></i>
-                                                            </span>
-                                                        </div>
-
-                                                    </div>
-                                                    <div class="form-group">
-                                                        <label for="EmpId" class="col-sm-5 col-form-label">ผู้นำสินค้าเข้า</label>
-                                                        @*<div class="col-sm-6">
-                <input type="text" class="form-control" name="EmpId" value="@Model.EmpId" />
-            </div>*@
-                                                        <div class="col-sm-6">
-                                                            <select class="form-control" id="EmpId" data-live-search="true"
-                                                                    name="EmpId">
-                                                                <option value="-1" )></option>
-                                                                @foreach (TblEmployee it in optEmployee)
-                                                                {
-                                                                    bool selected = it.EmpId == Model.EmpId;
-                                                                    <option value="@it.EmpId" @(selected ? " selected=\" selected\"" : "")>@it.EmpNameTh</option>
-                                                                }
-                                                            </select>
-
-                                                        </div>
-                                                    </div>
-                                                    <div class="form-group">
-                                                        <label for="Warehouse" class="col-sm-5 col-form-label">คลังสินค้า</label>
-                                                        <div class="col-sm-6">
-                                                            <select class="form-control" id="Warehouse" data-live-search="true"
-                                                                    name="Warehouse">
-                                                                <option value="-1" )></option>
-                                                                @*@foreach (TblEmployee it in optEmployee)
-                                                                {
-                                                                    bool selected = it.EmpId == Model.EmpId;
-                                                                    <option value="@it.EmpId" @(selected ? " selected=\" selected\"" : "")>@it.EmpNameTh</option>
-                                                                }*@
-                                                            </select>
-
-                                                        </div>
-                                                    </div>
-                                               
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <div class="panel-footer">
-                                            <div class="row">
-                                                <div class="col-12">
-                                                    <div class="form-group">
-                                                        @if (canedit)
-                                                        {
-                                                            <button type="submit" id="btnNextStep" class="btn btn-primary" >@(Model.TransferStockId > 0 ? "บันทึก" : "ต่อไป")</button>
-                                                        }
-                                                        <a href="@Url.Action("Index", "TransferStockIn")" class="btn btn-default">ยกเลิก</a>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                </div>
-                            </div>
-                        </form>
-                    </div>
-
-                    <div id="tab-2" class="tab-content">
-
-                        <div class="card-block" id="navProducts" data-tab-page="navProducts">
                             <div class="col-12">
                                 <div class="panel">
-                                    <div class="panel-heading">
-                                        <h3 class="panel-title">
-                                            รายการสินค้า&nbsp;
-                                        </h3>
-                                    </div>
+
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" id="TransferStockId" name="TransferStockId" value="@Model.TransferStockId" />
+
                                     <div class="panel-body">
                                         <div class="row">
-                                            <div class="col-12">
-                                                <div class="table-responsive">
-                                                    <table class="table table-hover table-striped">
-                                                        <thead>
-                                                            <tr>
-                                                                <th>ลำดับที่</th>
-                                                                <th>สินค้า</th>
-                                                                <th>จำนวน</th>
+                                            @*Left panel*@
+                                            <div class="col-md-6">
 
+                                                <div class="form-group">
+                                                    <label for="TransferNo" class="col-sm-4 col-form-label">เลขที่นำเข้าสินค้า</label>
+                                                    <div class="col-sm-6">
+                                                        <input type="text" class="form-control" name="TransferNo" id="TransferNo"
+                                                               placeholder="บันทึกเพื่อสร้าง" value="@Model.TransferNo" readonly />
+                                                    </div>
 
-                                                                <th>เครื่องมือ</th>
-                                                            </tr>
-                                                        </thead>
-                                                        <tbody>
-
-                                                            @if (Model.TransferStockDetail.Count() <= 0)
-                                                            {
-                                                                <tr>
-                                                                    <td colspan="7">ไม่พบข้อมูล</td>
-                                                                </tr>
-                                                            }
-                                                            @{int row = 1;
-
-                                                                foreach (var ob in Model.TransferStockDetail)
-                                                                {
-                                                                    <tr>
-                                                                        <td>@row</td>
-                                                                        <td>@ob.Product.ProductCode @ob.Product.ProductName</td>
-                                                                        <td>@ob.RequestQty</td>
-
-
-                                                                        <td>
-                                                                            <form method="post" action="@Url.Action("DetailDelete", new { controller = "TransferStockIn" })"
-                                                                                  class="fnc-delete inline-block">
-
-                                                                                <input type="hidden" id="TransferStockId" name="TransferStockId" value="@Model.TransferStockId" />
-                                                                                <input type="hidden" id="Seq" name="Seq" value="@ob.Seq" />
-                                                                                @* @Html.AntiForgeryToken()*@
-                                                                                @if (canedit)
-                                                                                {
-                                                                                    <button type="submit" class="btn btn-danger btn-xs" ><i class="fa fa-trash" aria-hidden="true"></i>&nbsp;ลบ</button>
-                                                                                }
-                                                                                </form>
-                                                                        </td>
-                                                                    </tr>
-                                                                    row++;
-                                                                }
-                                                            }
-                                                        </tbody>
-                                                    </table>
                                                 </div>
+
+                                                <div class="form-group">
+
+                                                    <label for="BillNo" class="col-sm-4 col-form-label">Ref No./Bill No.</label>
+                                                    <div class="col-sm-6">
+                                                        <div class="input-group mb-3">
+                                                            <input type="text" class="form-control" id="BillNo" name="BillNo"
+                                                                   placeholder="" value="@Model.BillNo" />
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="ReceiveTo" class="col-sm-5 col-form-label">รับสินค้าจาก</label>
+                                                    <div class="col-sm-9">
+                                                        <input type="text" class="form-control" name="ReceiveTo" id="ReceiveTo" value="@Model.ReceiveTo" />
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="Note1" class="col-sm-4 col-form-label">Note</label>
+                                                    <div class="col-sm-9">
+                                                        <textarea rows="4" cols="47" class="form-control" name="Note1" id="Note1">@Model.Note1</textarea>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            @*Right panel*@
+
+                                            <div class="col-md-5 col-sm-8">
+                                                <div class="form-group">
+                                                    <label for="CreateDate" class="col-sm-5 col-form-label">วันที่สร้างรายการ</label>
+                                                    <div class="input-group col-sm-6">
+                                                        <input type="text" class="form-control" name="CreatedDate" value="@(Model.CreateDate.HasValue ? Model.CreateDate.Value.ToString("dd/MM/yyyy"):"")" readonly />
+                                                        <span class="input-group-addon">
+                                                            <i class="icon wb-calendar icon-2-5x text-success" aria-hidden="true"></i>
+                                                        </span>
+                                                    </div>
+
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="TransferDate" class="col-sm-5 col-form-label">วันที่นำสินค้าเข้าคลัง</label>
+                                                    <div class="input-group col-sm-6 date" data-provide="datepicker" data-date-format="dd/mm/yyyy">
+                                                        <input id="TransferDate" type="text" class="form-control" placeholder="dd/MM/yyyy ค.ศ." name="TransferDate"
+                                                               value="@(Model.TransferDate.HasValue ? Model.TransferDate.Value.ToString("dd/MM/yyyy"):"")" />
+                                                        <span class="input-group-addon">
+                                                            <i class="icon wb-calendar icon-2-5x text-success" aria-hidden="true"></i>
+                                                        </span>
+                                                    </div>
+
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="EmpId" class="col-sm-5 col-form-label">ผู้นำสินค้าเข้า</label>
+                                                    @*<div class="col-sm-6">
+                                                            <input type="text" class="form-control" name="EmpId" value="@Model.EmpId" />
+                                                        </div>*@
+                                                    <div class="col-sm-6">
+                                                        <select class="form-control" id="EmpId" data-live-search="true"
+                                                                name="EmpId">
+                                                            <option value="-1" )></option>
+                                                            @foreach (TblEmployee it in optEmployee)
+                                                            {
+                                                                bool selected = it.EmpId == (sysAccount.TblEmployee.EmpId == null ? -1 : sysAccount.TblEmployee.EmpId);
+                                                                <option value="@it.EmpId" @(selected ? " selected=\" selected\"" : "")>@it.EmpNameTh</option>
+                                                            }
+                                                        </select>
+
+                                                    </div>
+                                                </div>
+
+
                                             </div>
                                         </div>
                                     </div>
+
                                     <div class="panel-footer">
                                         <div class="row">
                                             <div class="col-12">
-                                                <form method="post" id="frmftr" action="@Url.Action("AddProduct", "TransferStockIn")" enctype="multipart/form-data">
-                                                    <input type="hidden" name="TransferStockId" value="@Model.TransferStockId" />
-                                                    <div class="row">
-                                                        <div class="col-4 col-md-4 form-group">
-                                                            <label for="PileId" class="form-control-label">รหัสสินค้า</label>
+                                                <div class="form-group">
+                                                    @if (canedit)
+                                                    {
+                                                        <button type="submit" id="btnNextStep" class="btn btn-primary">@(Model.TransferStockId > 0 ? "บันทึก" : "ต่อไป")</button>
+                                                    }
+                                                    <a href="@Url.Action("Index", "TransferStockIn")" class="btn btn-default">ยกเลิก</a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+                <div id="tab-2" class="tab-content">
+
+                    <div class="card-block" id="navProducts" data-tab-page="navProducts">
+                        <div class="col-12">
+                            <div class="panel">
+                                <div class="panel-heading">
+                                    <h3 class="panel-title">
+                                        รายการสินค้า&nbsp;
+                                    </h3>
+                                </div>
+                                <div class="panel-body">
+                                    <div class="row">
+                                        <div class="col-12">
+                                            <div class="table-responsive">
+                                                <table class="table table-hover table-striped">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>ลำดับที่</th>
+                                                            <th>สินค้า</th>
+                                                            <th>คลังสินค้า</th>
+                                                            <th>จำนวน</th>
+                                                            <th>เครื่องมือ</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+
+                                                        @if (Model.TransferStockDetail.Count() <= 0)
+                                                        {
+                                                            <tr>
+                                                                <td colspan="7">ไม่พบข้อมูล</td>
+                                                            </tr>
+                                                        }
+                                                        @{int row = 1;
+
+                                                            foreach (var ob in Model.TransferStockDetail)
+                                                            {
+                                                            <tr>
+                                                                <td>@row</td>
+                                                                <td>@ob.Product.ProductCode @ob.Product.ProductName</td>
+                                                                <td>@ob.WareHouse.Whname</td>
+                                                                <td>@ob.RequestQty</td>
+
+
+                                                                <td>
+                                                                    <form method="post" action="@Url.Action("DetailDelete", new { controller = "TransferStockIn" })"
+                                                                          class="fnc-delete inline-block">
+
+                                                                        <input type="hidden" id="TransferStockId" name="TransferStockId" value="@Model.TransferStockId" />
+                                                                        <input type="hidden" id="Seq" name="Seq" value="@ob.Seq" />
+                                                                        @* @Html.AntiForgeryToken()*@
+                                                                        @if (canedit)
+                                                                        {
+                                                                            <button type="submit" class="btn btn-danger btn-xs"><i class="fa fa-trash" aria-hidden="true"></i>&nbsp;ลบ</button>
+                                                                        }
+                                                                    </form>
+                                                                </td>
+                                                            </tr>
+                                                                row++;
+                                                            }
+                                                        }
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="panel-footer">
+                                    <div class="row">
+                                        <div class="col-12">
+                                            <form method="post" id="frmftr" action="@Url.Action("AddProduct", "TransferStockIn")" enctype="multipart/form-data">
+                                                <input type="hidden" name="TransferStockId" value="@Model.TransferStockId" />
+                                                <div class="row">
+                                                    <div class="col-4 col-md-4 form-group">
+                                                        <label for="PileId" class="form-control-label">รหัสสินค้า</label>
+                                                        <div class="input-group">
                                                             <select class="form-control" id="selProduct" data-live-search="true" @(canedit ? "" : "readonly")
                                                                     name="selProduct">
                                                                 <option value="">กรุณาเลือก</option>
-
                                                                 @foreach (var it in optProduct)
                                                                 {
-                                                                    <option value="@it.ProductId:@it.PriceNet">@it.ProductCode @it.ProductName  Qty:@it.QtyStock</option>
+                                                                    <option value="@it.ProductId" title="@it.PriceNet">@it.ProductCode @it.ProductName [@it.PriceNet]</option>
+                                                                }
+                                                            </select>
+                                                            <div class="input-group-append">
+                                                                <button class="btn btn-outline-secondary btn-info" type="button"
+                                                                        id="btnProduct">
+                                                                    ...
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-2 col-md-2">
+                                                        <div class="form-group">
+                                                            <label for="Qty" class="form-control-label">คลัง</label>
+                                                            <select class="form-control" id="selWareHose" data-live-search="true"
+                                                                    name="selWareHose">
+                                                                <option value="">กรุณาเลือก</option>
+
+                                                                @foreach (var it in optWareHouse)
+                                                                {
+                                                                    <option value="@it.Whid">@it.Whname</option>
                                                                 }
 
 
 
                                                             </select>
-                                                        </div><div class="col-2 col-md-2 form-group">
-                                                            <label for="Qty" class="form-control-label">จำนวน</label>
-                                                            <input type="number" class="form-control" id="RequestQty" name="RequestQty" value="1" @(canedit ? "" : "readonly")/>
-                                                        </div>
-                                                        <div class="col-2 col-md-2 form-group">
-                                                            <label for="Price" class="form-control-label">ราคา</label>
-                                                            <input type="text" class="form-control Number" readonly id="ProductPrice" name="ProductPrice" />
+
                                                         </div>
 
                                                     </div>
-                                                    @if (canedit)
-                                                    {
-                                                        <button type="submit" id="btnAddProduct" class="btn btn-primary" >เพิ่ม</button>
-                                                    }
-                                                    @if(canconf)
-                                                    { 
-                                                        <button type="submit" id="btnConfirmProduct" name="btnConfirmProduct" class="btn btn-success" style="margin-left:10px;">Confirm</button>
-                                                    }
-                                                </form>
-                                            </div>
+                                                    <div class="col-1 col-md-1 form-group">
+                                                        <label for="Qty" class="form-control-label">คงเหลือ</label>
+                                                        <input type="number" class="form-control" id="ProductOnhandQty" name="ProductOnhandQty" readonly value="" />
+                                                    </div>
+                                                    <div class="col-1 col-md-1 form-group">
+                                                        <label for="Qty" class="form-control-label">จำนวน</label>
+                                                        <input type="number" class="form-control" id="RequestQty" name="RequestQty" value="1" @(canedit ? "" : "readonly") />
+                                                    </div>
+                                                    <div class="col-2 col-md-2 form-group">
+                                                        <label for="Price" class="form-control-label">ราคา</label>
+                                                        <input type="text" class="form-control Number" readonly id="ProductPrice" name="ProductPrice" />
+                                                    </div>
+
+                                                </div>
+                                                @if (canedit)
+                                                {
+                                                    <button type="submit" id="btnAddProduct" class="btn btn-primary">เพิ่ม</button>
+                                                }
+                                                @if (canconf)
+                                                {
+                                                    <button type="submit" id="btnConfirmProduct" name="btnConfirmProduct" class="btn btn-success" style="margin-left:10px;">Confirm</button>
+                                                }
+                                            </form>
                                         </div>
                                     </div>
                                 </div>
-                                
                             </div>
+
                         </div>
                     </div>
-
-
-
-
-                    @*Panel Address*@
-                    <div class="card-block" data-tab-page="navAddress">
-
-                    </div>
-                    @*End Panel Address*@
-
-                    @*panel Add Product*@
-
-
-                    @*End panel Add product*@
                 </div>
+
+
+
+
+                @*Panel Address*@
+                <div class="card-block" data-tab-page="navAddress">
+
+                </div>
+                @*End Panel Address*@
+
+                @*panel Add Product*@
+
+
+                @*End panel Add product*@
             </div>
         </div>
-    
-    <!-- Address Modal -->
-    <div class="modal fade" id="AddressModal" tabindex="-1" role="dialog" aria-labelledby="จัดการที่อยู่" aria-hidden="true">
+    </div>
+
+    <!-- Product Modal -->
+    <div class="modal fade" id="ProductModal" tabindex="-1" role="dialog" aria-labelledby="" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="AddressModalTitle"><label id="lbCustomerId" hidden></label></h5>
-                    <h2><label id="lbCustomerName">ไม่พบข้อมูล</label></h2>
+                    <button class="btn btn-outline-secondary btn-primary btnSearchProduct " type="button"
+                            id="btnSearchProduct">
+                        ค้นหา
+                    </button>
+                    <h5 class="modal-title" id="AddressModalTitle"><label id="lbCustomerName" hidden></label></h5>
+                    <h2></h2>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
 
                 </div>
                 <div class="modal-body">
-                    @*<a href="@Url.Action("Detail", new { area = "", cusId = Model.CustomerId, qtid = Model.QuotationId, controller = "CustomerAddress" })"
-                        class="btn btn-xs btn-primary" style="color:white;" id="bnAddnewAddress">เพิ่ม</a>*@
-                    <a href="#"
-                       onclick="location.href='@Url.Action("Detail", "CustomerAddress")?cusId=' + $('#CustomerId').val() + '&qtid=' + $('#QuotationId').val()"
-                       class="btn btn-xs btn-primary" style="color:white;" id="bnAddnewAddress">เพิ่ม</a>
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <label for="Discount" class="col-sm-12 col-form-label">รหัสสินค้า</label>
+                                <div class="col-sm-12">
+                                    <input type="text" class="form-control" id="searchProductCode" />
+                                </div>
+                            </div>
 
-                    @*<a href="@Url.Action("Detail", "CustomerContact", new { area = "",cusId=Model.CustomerId,qtid=Model.QuotationId })"*@
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <label for="Discount" class="col-sm-12 col-form-label">ชื่อสินค้า</label>
+                                <div class="col-sm-12">
+                                    <input type="text" class="form-control" id="searchProductName" />
+                                </div>
+                            </div>
 
-                    <a href="#"
-                       onclick="location.href='@Url.Action("Detail", "CustomerContact")?cusId=' + $('#CustomerId').val() + '&qtid=' + $('#QuotationId').val()"
-                       class="btn btn-xs btn-primary" style="color:white;" id="bnAddnewContact">เพิ่ม</a>
-                    <div class="table-responsive">
-                        <table class="table table-hover">
-                            <thead>
-                                <tr>
-                                    <th>กรุณาเลือก</th>
-                                    <th>รายการ</th>
-                                </tr>
-                            </thead>
-                            <tbody id="manageCustomerAddress"></tbody>
-                        </table>
+                        </div>
+
+
+                    </div>
+
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="table-responsive divProduct">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>กรุณาเลือก</th>
+                                            <th>รหัสสินค้า</th>
+                                            <th>ชื่อสินค้า</th>
+                                            <th>ราคาต่อหน่วย</th>
+                                            <th>Qty คงเหลือ</th>
+                                        </tr>
+                                    </thead>
+                                </table>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <div class="modal-footer">

@@ -31,7 +31,7 @@ namespace Kemrex.Core.Database.Models
         public int CreateBy { get; set; }
         public DateTime? UpdateDate { get; set; }
         public bool? Status { get; set; }
-        
+
         public List<TransferStockDetail> TransferStockDetail { get; set; }
         public virtual TblEmployee Employee { get; set; }
 

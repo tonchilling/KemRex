@@ -39,7 +39,6 @@
             html += '<th align="center">เลขที่โอนสินค้าออก</th>';
             html += '<th align="center">เลขที่อ้างอิง</th>';
             html += '<th align="center">ผู้โอนสินค้าออก</th>';
-            html += '<th align="center">คลัง</th>';
             html += '<th align="center">สถานะ</th>';
             html += '<th align="center">วันที่โอนสินค้าออก</th>';
             html += '<th align="center">วันที่สร้างรายการ</th>';
@@ -66,7 +65,6 @@
                             html += '<td align="center">' + item.TransferNo + '</td>';
                             html += '<td>' + item.BillNo + '</td>';
                             html += '<td>' + item.Employee.EmpNameTh + '</td>';
-                            html += '<td>' + '' + '</td>';    //Warehouse
 
                             if (item.TransferStatus == 0) {
                                 statusName = "ร่าง";

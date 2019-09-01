@@ -7,6 +7,9 @@ using Kemrex.Web.Common.Models;
 using System;
 using System.Collections.Generic;
 using System.Web.Mvc;
+using System.Linq;
+using DMN.Standard.Common.Constraints;
+using Kemrex.Core.Common.Helper;
 
 namespace Kemrex.Web.Main.Controllers
 {
@@ -228,6 +231,19 @@ namespace Kemrex.Web.Main.Controllers
                 lst = uow.Modules.Product.GetList();
           
             return Json(lst);
+        }
+        [HttpGet]
+        public JsonResult GetProduct(string ProductCode, string ProductName)
+        {
+            List<TblProduct> customerResult = null;
+            try
+            {
+                customerResult = uow.Modules.Product.GetByCondition(ProductCode, ProductName).Where(o => o.PriceNet > 0).ToList();
+            }
+            catch (Exception ex)
+            { }
+
+            return Json(customerResult, JsonRequestBehavior.AllowGet);
         }
     }
 }

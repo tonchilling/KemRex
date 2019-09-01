@@ -41,7 +41,6 @@
             html += '<th align="center">เลขที่นำเข้าสินค้า</th>';
             html += '<th align="center">เลขที่อ้างอิง/เลขที่ใบเสร็จ</th>';
             html += '<th align="center">ผู้นำสินค้าเข้า</th>';
-            html += '<th align="center">คลัง</th>';
             html += '<th align="center">สถานะ</th>';
             html += '<th align="center">วันที่นำสินค้าเข้า</th>';
             html += '<th align="center">วันที่สร้างรายการ</th>';
@@ -68,7 +67,6 @@
                             html += '<td align="center">' + item.TransferNo + '</td>';
                             html += '<td>' + item.BillNo + '</td>';
                             html += '<td>' + item.Employee.EmpNameTh + '</td>';
-                            html += '<td>' + '' + '</td>';    //Warehouse
 
                             if (item.TransferStatus == 0) {
                                 statusName = "ร่าง";
