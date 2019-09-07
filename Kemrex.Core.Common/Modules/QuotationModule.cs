@@ -63,7 +63,9 @@ namespace Kemrex.Core.Common.Modules
 
         public string GetLastId()
         {
-            return db.TblQuotation.OrderByDescending(x => x.QuotationId).Select(x => x.QuotationNo).First();
+          //  return db.TblQuotation.OrderByDescending(x => x.QuotationId).Select(x => x.QuotationNo).First();
+
+            return (from q in db.TblQuotation select q.QuotationNo).Max();
         }
 
         public List<TblQuotation> Gets(int page = 1, int size = 0, string src = "")
@@ -182,9 +184,9 @@ namespace Kemrex.Core.Common.Modules
             return result.OrderByDescending(o => o.QuotationDate).ToList();
         }
 
-        public List<TblQuotation> GetList()
+        public List<TblQuotation> GetList(long userId)
         {
-            var data = (from order in db.TblQuotation
+            var data = (from order in db.TblQuotation.Where(o=>o.CreatedBy== userId || userId==0)
                         select new TblQuotation
                         {
                          QuotationId = order.QuotationId,
@@ -202,7 +204,8 @@ namespace Kemrex.Core.Common.Modules
         SummaryVat = order.SummaryVat,
         SummaryTot = order.SummaryTot,
         StatusId=order.StatusId,
-        Status= (from emp in db.EnmStatusQuotation.Where(o => o.StatusId == order.StatusId)
+                            CreatedByName = (from emp in db.SysAccount.Where(o => o.AccountId == order.CreatedBy) select emp.AccountName).FirstOrDefault(),
+        Status = (from emp in db.EnmStatusQuotation.Where(o => o.StatusId == order.StatusId)
                  select new EnmStatusQuotation
                  {
                      StatusId = emp.StatusId,

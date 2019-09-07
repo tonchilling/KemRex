@@ -38,14 +38,19 @@ namespace Kemrex.Core.Database.Models
         public string SaleOrderRemark { get; set; }
         public int StatusId { get; set; }
         public long? CreatedBy { get; set; }
+        [NotMapped]
+        public string CreatedByName { get; set; }
         public DateTime? CreatedDate { get; set; }
         public DateTime? UpdatedDate { get; set; }
         public long? UpdatedBy { get; set; }
         public int ApprovedBy { get; set; }
         [NotMapped]
         public virtual string CreatedDateToString { get; set; }
-        
-       
+
+        [NotMapped]
+        public string Status { get; set; }
+
+
         public string CancelReason { get; set; }
         public decimal? SubTotalNet { get; set; }
         public decimal? SubTotalVat { get; set; }
@@ -101,6 +106,10 @@ namespace Kemrex.Core.Database.Models
         public decimal? SummaryNet { get; set; }
         public decimal? SummaryVat { get; set; }
         public decimal? SummaryTot { get; set; }
+        public long? CreatedBy { get; set; }
+        [NotMapped]
+        public string CreatedByName { get; set; }
+        
     }
 
 

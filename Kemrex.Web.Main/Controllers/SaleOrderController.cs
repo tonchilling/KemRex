@@ -272,6 +272,7 @@ namespace Kemrex.Web.Main.Controllers
                 {
                     quotationList = new List<TblQuotation>();
                 }
+
                 AccountPermission permission = new AccountPermission();
                 permission = GetPermissionSale(CurrentUser.AccountId, ob.CreatedBy.HasValue ? ob.CreatedBy.Value : 0);
 
@@ -340,8 +341,11 @@ namespace Kemrex.Web.Main.Controllers
         public JsonResult GetList()
         {
             string formateDate = "yyyy-MM-dd";
-          //  DateTime searchOrderDate = Converting.StringToDate(saleOrderDate, formateDate);
-            List<SaleOrderHeader> ob = uow.Modules.SaleOrder.GetHeader();
+
+            AccountPermission permission = GetPermission(CurrentUID);
+
+            //  DateTime searchOrderDate = Converting.StringToDate(saleOrderDate, formateDate);
+            List<SaleOrderHeader> ob = uow.Modules.SaleOrder.GetHeader((permission.IsAdminTeam || permission.IsManager) ? 0 : CurrentUID);
             var js = new JavaScriptSerializer();
 
 
@@ -606,6 +610,7 @@ namespace Kemrex.Web.Main.Controllers
                         TblSaleOrderDetail sod = uow.Modules.SaleOrderDetail.Get(0);
                         sod.SaleOrderId = sid;
                         sod.ProductId = dt.ProductId;
+                        sod.WHId = dt.WHId;
                         sod.Quantity = dt.Quantity;
                         sod.PriceNet = dt.PriceNet;
                         sod.PriceVat = dt.PriceVat;

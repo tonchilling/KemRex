@@ -183,7 +183,7 @@ namespace Kemrex.Web.Common.Controllers
                     if (manager != null) ap.IsManager = true;
                     else ap.IsManager = false;
                     ap.IsTeam = false;
-                    ap.IsEdit = false;
+                    ap.IsEdit = true;
                     ap.IsAdminTeam = true;
                     return ap;
                 }

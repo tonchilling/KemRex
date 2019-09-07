@@ -57,6 +57,47 @@ namespace Kemrex.Core.Common.Modules
                    };
         }
 
+        public TblSaleOrder GetById(long id)
+        {
+            TblSaleOrder result = new TblSaleOrder();
+
+            result = db.TblSaleOrder.Where(o => o.SaleOrderId == id).Select(o => new TblSaleOrder
+            {
+
+                SaleOrderId = o.SaleOrderId,
+                SaleOrderNo = o.SaleOrderNo,
+               
+                SaleName = o.SaleName,
+                QuotationNo = o.QuotationNo,
+                ConditionId=o.ConditionId,
+                //QuotationDate  = Converting.ToDDMMYYYY(o.q),
+                CustomerId = o.CustomerId,
+                CustomerName = o.CustomerName != null ? o.CustomerName : "",
+               /* JobOrderId = o.JobOrder != null ? o.JobOrder.JobOrderId.ToString() : "",
+                JobOrderNo = o.JobOrder != null ? o.JobOrder.JobOrderNo.ToString() : "",
+                JobOrderName = o.JobOrder != null ? o.JobOrder.JobName : "",
+                JobOrderDate = o.JobOrder != null ? Converting.ToDDMMYYYY(o.JobOrder.StartDate) : "",*/
+                StatusId = o.StatusId,
+                SubTotalNet = o.StatusId,
+                SubTotalVat = o.SubTotalVat,
+                SubTotalTot = o.SubTotalTot,
+                DiscountNet = o.DiscountNet,
+                DiscountVat = o.DiscountVat,
+                DiscountTot = o.DiscountTot,
+                DiscountCash = o.DiscountCash,
+                SummaryNet = o.SummaryNet,
+                SummaryVat = o.SummaryVat,
+                SummaryTot = o.SummaryTot,
+                CreatedByName = (from emp in db.SysAccount.Where(acc => acc.AccountId == o.CreatedBy) select emp.AccountName).FirstOrDefault(),
+                Status = Converting.SaleOrderStatus(o.StatusId)
+            }).FirstOrDefault();
+
+
+
+            return result;
+        }
+
+
         public TblSaleOrder GetDetail(int id)
         {
             return db.TblSaleOrder.Include(detail => detail.TblSaleOrderDetail)
@@ -97,11 +138,11 @@ namespace Kemrex.Core.Common.Modules
             return result;
         }
 
-        public List<SaleOrderHeader> GetHeader()
+        public List<SaleOrderHeader> GetHeader(long userId)
         {
             List<SaleOrderHeader> result = new List<SaleOrderHeader>();
 
-            result = db.TblSaleOrder.Select(o => new SaleOrderHeader
+            result = db.TblSaleOrder.Where(o => o.CreatedBy == userId || userId == 0).Select(o => new SaleOrderHeader
                   {
 
                       SaleOrderId = o.SaleOrderId,
@@ -128,8 +169,8 @@ namespace Kemrex.Core.Common.Modules
        SummaryNet = o.SummaryNet,
         SummaryVat = o.SummaryVat,
         SummaryTot = o.SummaryTot,
-       
-        Status = Converting.SaleOrderStatus(o.StatusId)
+                CreatedByName = (from emp in db.SysAccount.Where(acc => acc.AccountId == o.CreatedBy) select emp.AccountName).FirstOrDefault(),
+                Status = Converting.SaleOrderStatus(o.StatusId)
                   }).OrderByDescending(o=>o.DSaleOrderDate).ToList();
 
 

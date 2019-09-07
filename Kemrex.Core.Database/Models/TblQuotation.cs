@@ -46,6 +46,8 @@ namespace Kemrex.Core.Database.Models
         public decimal? SummaryTot { get; set; }
         public int StatusId { get; set; }
         public long? CreatedBy { get; set; }
+        [NotMapped]
+        public string CreatedByName { get; set; }
         public DateTime? CreatedDate { get; set; }
         public DateTime? UpdatedDate { get; set; }
         public long? UpdatedBy { get; set; }

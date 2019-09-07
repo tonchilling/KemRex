@@ -320,7 +320,7 @@ optWareHouse = (List<TblWareHouse>
                        data: { startDate: $("#txtStartDate").val(), toDate: $("#txtEndDate").val() }
                        ,success: function (obj) {
                            $.each(obj, function (index, item) {
-
+                        
                                html += '<tr data=' + item.QuotationId + '>';
                                html += '<td><button type="button" class="btn btn-primary btnSelectQuotation">เลิอก</button></td>';
                                html += '<td>' + item.QuotationNo + '</td>';
@@ -504,8 +504,8 @@ optWareHouse = (List<TblWareHouse>
                            $.each(obj, function (index, item) {
 
 
-
-                               html += '<tr data=' + item.ProductId + ' >';
+                           
+                               html += '<tr data=' + item.ProductId + ' whid=' + item.WareHouse.Whid + ' >';
                                html += '<td><button type="button" class="btn btn-primary btnSelectProduct">เลิอก</button>';
 
                                html += '</td>';
@@ -737,6 +737,9 @@ optWareHouse = (List<TblWareHouse>
                 $("#CustomerId").removeClass("has-error");
             }
 
+           
+
+
             if ($("#DeliveryDate").val() == "") {
                 $("#DeliveryDate").addClass("has-error");
                 chkValidate = false;
@@ -766,6 +769,8 @@ optWareHouse = (List<TblWareHouse>
             } else {
                 $("#SaleId").removeClass("has-error");
             }
+
+
 
 
 
@@ -808,10 +813,17 @@ optWareHouse = (List<TblWareHouse>
                 $("#selProduct").addClass("has-error");
                 chkValidate = false;
             } else {
-                $("#ProductQty").removeClass("has-error");
+                $("#selProduct").removeClass("has-error");
             }
 
+            if ($("#selWareHose").val() == "") {
+                $("#selWareHose").addClass("has-error");
+                chkValidate = false;
+            } else {
+                $("#selWareHose").removeClass("has-error");
+            }
 
+           
 
 
             if ($("#ProductQty").val() == "") {
@@ -835,6 +847,13 @@ optWareHouse = (List<TblWareHouse>
                 chkValidate = false;
             } else {
                 $("#ProductDiscount").removeClass("has-error");
+            }
+
+            if ($("#selWareHose").val() == "") {
+                $("#selWareHose").addClass("has-error");
+                chkValidate = false;
+            } else {
+                $("#selWareHose").removeClass("has-error");
             }
 
 
@@ -1121,7 +1140,7 @@ optWareHouse = (List<TblWareHouse>
                                                             @foreach (TblEmployee it in optEmployee)
                                                             {
 
-                                                                bool selected = it.EmpNameTh == (Model.SaleName == null ? (sysAccount.TblEmployee != null ? sysAccount.TblEmployee.EmpNameTh : "") : Model.SaleName);
+                                                                bool selected = it.EmpId == (Model.SaleId == 0 ? (sysAccount.TblEmployee != null ? sysAccount.TblEmployee.EmpId : 0) : Model.SaleId);
                                                                 <option value="@it.EmpId" @(selected ? " selected=\" selected\"" : "" )>@it.EmpNameTh</option>
                                                             }
                                                         </select>
@@ -1298,7 +1317,7 @@ optWareHouse = (List<TblWareHouse>
                                                             <textarea class="form-control" id="Remark" name="Remark"></textarea>
                                                         </div>
                                                     </div>
-                                                    @if (optPermission.IsEdit)
+                                                    @if (optPermission.IsEdit && optPermission.IsEdit)
                                                     {
                                                         <button type="submit" class="btn btn-primary" id="btnAddProduct">เพิ่ม</button>
                                                     }
@@ -1349,8 +1368,8 @@ optWareHouse = (List<TblWareHouse>
                                                                     <input type="hidden" name="SaleOrderId" value="@Model.SaleOrderId" />
                                                                     <input type="hidden" name="Id" id="Id" value="@ob.Id" />
 
-                                                                    @if (isCanEdit)
-                                                                    {
+                                                                   @if (isCanEdit && optPermission.IsEdit)
+                                                {
 
                                                                         @* @Html.AntiForgeryToken()*@
                                                                         <button type="submit" class="btn btn-primary btn-xs btnEditProduct" id="btnEditProduct"><i class="fa fa-pencil" aria-hidden="true"></i>&nbsp;แก้ไข</button>

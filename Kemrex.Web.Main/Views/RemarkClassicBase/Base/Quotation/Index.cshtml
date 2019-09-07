@@ -75,12 +75,13 @@
             html += '<th>วันที่</th>';
             html += '<th>ใบเสนอราคาอ้างอิง</th>';
             html += '<th>สถานะ</th>';
+            html += '<th>ผู้สร้าง</th>';
             html += '<th>เครื่องมือ</th>';
             html += '</tr>';
 
             html += ' </tr>';
             html += '</thead>';
-            html += '<tbody>';
+        
 
 
 
@@ -93,8 +94,8 @@
                 success: function (data) {
 
 
-                        if (data != null) {
-
+                    if (data != null && data.length>0) {
+                        html += '<tbody>';
                             $.each(data, function (index, item) {
                                 html += '<tr>';
                                 html += '<td>' + item.QuotationNo + '</td>';
@@ -112,6 +113,8 @@
                                 }
                                 html += '</td>'
                                 html += '<td>' + item.Status.StatusName + '</td>';
+                                html += '<td>' + item.CreatedByName + '</td>';
+                                
                               //  html += '<td> <a href="' + urlDetail + '/' + item.QuotationId + '" class="btn btn-xs btn-primary">';
                                 html += '<td> <a href="' + urlDetail + '/' + item.QuotationId + '" class="btn btn-xs ' + (item.StatusId <= 3 ? " btn-default" : " btn-success") + '">';
                                 html += '<i class=" ' + (item.StatusId <= 3 ? "fa fa-pencil" : "glyphicon glyphicon-search") + '" aria-hidden="true"></i>&nbsp;' + (item.StatusId <= 3 ? "แก้ไข" : "เรียกดู") + ' </a>&nbsp;';
@@ -126,12 +129,13 @@
 
 
                                 html += '</tr>';
-                            });
+                        });
+                        html += '</tbody>';
                         }
 
 
 
-                    html += '</tbody>';
+                  
                     html += ' </table>';
 
                     $(".divDetail").append(html);
@@ -142,7 +146,10 @@
                         order: [[3, 'desc']]
                     }
                     );
-                    waitingDialog.hide();
+
+                    window.setTimeout(function () {
+                        waitingDialog.hide();
+                    }, 2000);
                 },
                 error: function (error) {
                     alert(error);
@@ -300,42 +307,7 @@
         </div>
     </form>
     <script type="text/javascript">
-        $(document).ready(function () {
-            $("#tblIndex").DataTable({
-                "processing": true, // for show progress bar
-                "serverSide": true, // for process server side
-                "filter": true, // this is for disable filter (search box)
-                "orderMulti": false, // for disable multiple column at once
-                "ajax": {
-                    "url": "/DemoGrid/LoadData",
-                    "type": "POST",
-                    "datatype": "json"
-                },
-                "columnDefs":
-                    [{
-                        "targets": [0],
-                        "visible": false,
-                        "searchable": false
-                    }],
-                "columns": [
-                    { "data": "CustomerID", "name": "CustomerID", "autoWidth": true },
-                    { "data": "Name", "name": "Name", "autoWidth": true },
-                    { "data": "Address", "name": "Address", "autoWidth": true },
-                    { "data": "Country", "name": "Country", "autoWidth": true },
-                    { "data": "City", "name": "City", "autoWidth": true },
-                    { "data": "Phoneno", "name": "Phoneno", "autoWidth": true },
-                    {
-                        "render": function (data, type, full, meta) { return '<a class="btn btn-info" href="/DemoGrid/Edit/' + full.CustomerID + '">Edit</a>'; }
-                    },
-                    {
-                        data: null, render: function (data, type, row) {
-                            return "<a href='#' class='btn btn-danger' onclick=DeleteData('" + row.CustomerID + "'); >Delete</a>";
-                        }
-                    },
-                ]
-
-            });
-        });
+   
 
 
     </script>

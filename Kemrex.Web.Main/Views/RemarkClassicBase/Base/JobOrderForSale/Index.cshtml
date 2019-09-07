@@ -43,7 +43,8 @@
               html += '<th>ชื่องาน</th>';
               html += '<th>ลูกค้า</th>';
              html += '<th>วันที่</th>';
-            html += '<th>สถานะ</th>';
+             html += '<th>สถานะ</th>';
+             html += '<th>ผู้สร้าง</th>';
             html += '<th>เครื่องมือ</th>';
             html += '</tr>';
 
@@ -71,6 +72,7 @@
                                 html += '<td>' + item.CustomerName + '</td>';
                                 html += '<td>' + item.StartDateToString + '</td>';
                                 html += '<td>' + item.Status + '</td>';
+                                html += '<td>' + item.CreatedByName + '</td>';
                                 html += '<td> <a href="' + urlDetail + '/' + item.JobOrderId + '" class="btn btn-xs ' + (item.StatusId <= 1 ? " btn-primary" : " btn-success") + '">';
                                 html += '<i class=" ' + (item.StatusId <= 1 ? "fa fa-pencil" : "glyphicon glyphicon-search") + '" aria-hidden="true"></i>&nbsp;' + (item.StatusId <= 1 ? "แก้ไข" : "เรียกดู") + ' </a>&nbsp;';
                               //  html += '<i class="fa glyphicon glyphicon-search" aria-hidden="true"></i>&nbsp;' + (item.StatusId<=1? "แก้ไข":"เรียกดู") +' </a>&nbsp;';

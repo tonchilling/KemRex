@@ -42,7 +42,7 @@ namespace Kemrex.Core.Common.Modules
         public List<SysMenu> GetMenus(int siteId)
         {
             var data = db.SysMenu
-                .Where(x => x.SiteId == siteId)
+                .Where(x => x.SiteId == siteId && x.FlagActive==true)
                 .Include(x => x.InverseParent)
                     .ThenInclude(x => x.InverseParent)
                         .ThenInclude(x => x.SysMenuPermission)
@@ -61,6 +61,7 @@ namespace Kemrex.Core.Common.Modules
                 .Where(x =>
                     x.MvcArea == MVCArea
                     && x.MvcController == MVCController
+                     && x.MvcController!= "XXX"
                     && x.MvcAction == MVCAction)
                 .Include(x => x.Menu)
                     .ThenInclude(x => x.Parent)
