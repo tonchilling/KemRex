@@ -49,22 +49,30 @@ namespace Kemrex.Web.Common.Controllers
 
         public AccountPermission GetPermission(long? UserId)
         {
-            Team checkteam = null;
+            Team checkteamSale = null;
+            Team checkteamOperation = null;
             AccountPermission permission = new AccountPermission();
 
             
-             checkteam = uow.Modules.TeamSale.CheckTeamSale(UserId.Value);
+             checkteamSale = uow.Modules.TeamSale.CheckTeamSale(UserId.Value);
+             checkteamOperation = uow.Modules.TeamOperation.CheckTeamOperation(UserId.Value);
 
-            if (UserId.Value == 1 || checkteam != null) //admin
+            if (UserId.Value == 1 || checkteamSale != null) //admin or sale
             {
                 permission = GetPermissionSale(CurrentUser.AccountId, UserId.HasValue ? UserId.Value : 0);
                 permission.TeamType = TeamType.Sale;
+                permission.TeamId = (UserId.Value == 1) ? 0: checkteamSale.TeamId;
             }
-            else {
-                checkteam = uow.Modules.TeamOperation.CheckTeamOperation(UserId.Value); //check team for non-manager
-
-                permission = GetPermissionOperation(UserId.HasValue ? UserId.Value : 0,null);
+            else if (checkteamOperation != null) //operation
+            {
+                //checkteamOperation = uow.Modules.TeamOperation.CheckTeamOperation(UserId.Value); //check team for non-manager
+                permission = GetPermissionOperation(UserId.HasValue ? UserId.Value : 0, null);
                 permission.TeamType = TeamType.Operation;
+                permission.TeamId = checkteamOperation.TeamId;
+            }
+            else
+            {
+
             }
 
             if (UserId.Value == 1)

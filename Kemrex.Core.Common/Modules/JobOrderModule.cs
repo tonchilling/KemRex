@@ -380,7 +380,7 @@ namespace Kemrex.Core.Common.Modules
 
 
         public List<TblJobOrder> Gets(int page = 1, int size = 0
-            , string src = "", int id = 0)
+            , string src = "", long id = 0)
         {
             var data = (from q in db.TblJobOrder select q )
 
@@ -626,6 +626,20 @@ namespace Kemrex.Core.Common.Modules
             /* if (ob.TransferId == 0)
              { db.TransferDetail.Add(ob); }
              else { db.Entry(ob).State = EntityState.Modified; }*/
+        }
+
+        public List<TblJobOrder> GetAll(int page = 1, int size = 0, int month = 0, string src = "", int TeamId = 0)
+        {
+            var data = (from order in db.TblJobOrder.Where(o => o.TeamId == TeamId || TeamId == 0)
+                        select order)
+                        .OrderByDescending(c => c.SaleOrderId).AsQueryable();
+
+
+            if (month > 0) { data = data.Where(x => x.StartDate.Value.Month == month && x.EndDate.Value.Month == month); }
+
+            if (size > 0)
+            { data = data.Skip((page - 1) * size).Take(size); }
+            return data.ToList();
         }
     }
 }
