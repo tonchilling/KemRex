@@ -918,9 +918,11 @@
     </Content>
     <Content Include="themes\RemarkClassicBase\css\sweetalert.css" />
     <Content Include="themes\RemarkClassicBase\js\Base.js" />
+    <Content Include="themes\RemarkClassicBase\js\ChartOptions.js" />
     <Content Include="themes\RemarkClassicBase\js\Component.js" />
     <Content Include="themes\RemarkClassicBase\js\Config.js" />
     <Content Include="themes\RemarkClassicBase\js\Config\colors.js" />
+    <Content Include="themes\RemarkClassicBase\js\echarts.min.js" />
     <Content Include="themes\RemarkClassicBase\js\jquery.validate.js" />
     <Content Include="themes\RemarkClassicBase\js\numeral2.6.min.js" />
     <Content Include="themes\RemarkClassicBase\js\Plugin.js" />
@@ -1201,6 +1203,7 @@
     <Compile Include="Controllers\ProductModelController.cs" />
     <Compile Include="Controllers\ProductTypeController.cs" />
     <Compile Include="Controllers\QuotationController.cs" />
+    <Compile Include="Controllers\ReportController.cs" />
     <Compile Include="Controllers\RoleController.cs" />
     <Compile Include="Controllers\SaleOrderController.cs" />
     <Compile Include="Controllers\StockController.cs" />
@@ -1381,6 +1384,7 @@
     <Content Include="Views\RemarkClassicBase\Base\TransferStockOut\Index.cshtml" />
     <Content Include="Views\RemarkClassicBase\Base\JobOrderForSale\Detail.cshtml" />
     <Content Include="Views\RemarkClassicBase\Base\JobOrderForSale\Index.cshtml" />
+    <Content Include="Views\RemarkClassicBase\Base\Report\Index.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -1391,9 +1395,7 @@
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Views\RemarkClassicBase\Base\System\" />
-    <Folder Include="Views\TransferIn\" />
-    <Folder Include="Views\TransferOut\" />
-    <Folder Include="Views\TransferStockIn\" />
+    <Folder Include="Views\Report\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Kemrex.Core.Common\Kemrex.Core.Common.csproj">
