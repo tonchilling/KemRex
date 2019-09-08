@@ -47,14 +47,39 @@ namespace Kemrex.Web.Common.Controllers
         }
 
 
-        public AccountPermission GetPermission(long? CreateBy)
+        public AccountPermission GetPermission(long? UserId)
         {
-
+            Team checkteam = null;
             AccountPermission permission = new AccountPermission();
-            permission = GetPermissionSale(CurrentUser.AccountId, CreateBy.HasValue? CreateBy.Value:0);
+
+            
+             checkteam = uow.Modules.TeamSale.CheckTeamSale(UserId.Value);
+
+            if (UserId.Value == 1 || checkteam != null) //admin
+            {
+                permission = GetPermissionSale(CurrentUser.AccountId, UserId.HasValue ? UserId.Value : 0);
+                permission.TeamType = TeamType.Sale;
+            }
+            else {
+                checkteam = uow.Modules.TeamOperation.CheckTeamOperation(UserId.Value); //check team for non-manager
+
+                permission = GetPermissionOperation(UserId.HasValue ? UserId.Value : 0,null);
+                permission.TeamType = TeamType.Operation;
+            }
+
+            if (UserId.Value == 1)
+            {
+                permission.TeamType = TeamType.Admin;
+            }
+
+
+
+
 
             return permission;
         }
+
+
 
         public MenuLayoutModel GetMenus()
         {
