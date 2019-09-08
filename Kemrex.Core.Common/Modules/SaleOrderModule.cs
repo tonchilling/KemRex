@@ -228,10 +228,17 @@ namespace Kemrex.Core.Common.Modules
                                             Reason = jobOrder.Reason,
                                             Solution = jobOrder.Solution,
                                             TeamId = jobOrder.TeamId,
-                                             Team = jobOrder.Team
+                                             Team = jobOrder.Team,
+                                          
 
                                         }).FirstOrDefault();
-
+            tblSaleOrder.Sale = (from emp in db.TblEmployee.Where(o => o.EmpId == tblSaleOrder.SaleId)
+                                 select new TblEmployee
+                                 {
+                                     EmpId = emp.EmpId,
+                                     EmpCode = emp.EmpCode,
+                                     EmpNameTh = emp.EmpNameTh
+                                 }).FirstOrDefault();
             tblSaleOrder.Customer =  (from customer in db.TblCustomer where customer.CustomerId == tblSaleOrder.CustomerId select customer).FirstOrDefault();
             tblSaleOrder.TblSaleOrderDetail = (from q in db.TblSaleOrderDetail.Include(x => x.Product)
                                                where q.SaleOrderId == id select new TblSaleOrderDetail
@@ -335,7 +342,8 @@ namespace Kemrex.Core.Common.Modules
                     dto.SaleId = Converting.ToInt(reader["SaleId"].ToString());
                     dto.SaleName = reader["SaleName"].ToString();
                     dto.TeamId = Converting.ToInt(reader["TeamId"].ToString());
-        list.Add(dto);
+                    dto.CreatedBy = Converting.ToInt(reader["CreatedBy"].ToString());
+                    list.Add(dto);
 
                 }
             }
@@ -415,6 +423,144 @@ var data = (from order in db.TblSaleOrder select new TblSaleOrder {
             { data = data.Skip((page - 1) * size).Take(size); }
             return data.ToList();
         }
+
+        public List<TblSaleOrder> GetAll(int page = 1, int size = 0, int month = 0, string src = "",long userId=0)
+        {
+
+
+
+            var data = (from order in db.TblSaleOrder.Where(o => o.CreatedBy == userId || userId == 0)
+                        select new TblSaleOrder
+                        {
+                            SaleOrderId = order.SaleOrderId,
+                            SaleOrderNo = order.SaleOrderNo,
+                            SaleOrderDate = order.SaleOrderDate,
+                            OperationStartDate = order.OperationStartDate,
+                            OperationEndDate = order.OperationEndDate,
+                            QuotationNo = order.QuotationNo,
+                            CustomerId = order.CustomerId,
+                            CustomerName = order.CustomerName,
+                            ContractName = order.ContractName,
+                            ConditionId = order.ConditionId,
+                            PoNo = order.PoNo,
+                            SaleId = order.SaleId,
+                            SaleName = order.SaleName,
+                            Sale = (from emp in db.TblEmployee.Where(o => o.EmpId == order.SaleId)
+                                    select new TblEmployee
+                                    {
+                                        EmpId = emp.EmpId,
+                                        EmpCode = emp.EmpCode,
+                                        EmpNameTh = emp.EmpNameTh
+                                    }).FirstOrDefault(),
+
+                            TeamId = order.TeamId,
+                            BillingAddress = order.BillingAddress,
+                            ShippingAddress = order.ShippingAddress,
+                            SaleOrderRemark = order.SaleOrderRemark,
+                            StatusId = order.StatusId,
+                            CreatedBy = order.CreatedBy,
+                            CreatedDate = order.CreatedDate,
+
+                            CreatedDateToString = order.CreatedDateToString,
+                            UpdatedBy = order.UpdatedBy,
+                            UpdatedDate = order.UpdatedDate,
+                            CancelReason = order.CancelReason,
+                            SubTotalNet = order.SubTotalNet,
+                            SubTotalVat = order.SubTotalVat,
+                            SubTotalTot = order.SubTotalTot,
+                            DiscountNet = order.DiscountNet,
+                            DiscountVat = order.DiscountVat,
+                            DiscountTot = order.DiscountTot,
+                            DiscountCash = order.DiscountCash,
+                            SummaryNet = order.SummaryNet,
+                            SummaryVat = order.SummaryVat,
+                            SummaryTot = order.SummaryTot,
+                            DeliveryDate = order.DeliveryDate,
+                            DeliveryDateToString = order.DeliveryDateToString,
+                            SaleOrderCreditDay = order.SaleOrderCreditDay,
+                            JobOrder = db.TblJobOrder.Where(o => o.SaleOrderId == order.SaleOrderId).FirstOrDefault(),
+                            HasJob = db.TblJobOrder.Where(o => o.SaleOrderId == order.SaleOrderId).Count()
+
+                        })
+                                    .OrderByDescending(c => c.SaleOrderId).AsQueryable();
+
+
+            if (month > 0) { data = data.Where(x => x.SaleOrderDate.Value.Month == month); }
+
+            if (size > 0)
+            { data = data.Skip((page - 1) * size).Take(size); }
+            return data.ToList();
+        }
+
+
+        public List<TblSaleOrder> GetAllByTeamOperation(int page = 1, int size = 0, int month = 0, string src = "", long userId = 0)
+        {
+
+
+
+            var data = (from order in db.TblSaleOrder.Where(o => o.CreatedBy == userId || userId == 0)
+                        select new TblSaleOrder
+                        {
+                            SaleOrderId = order.SaleOrderId,
+                            SaleOrderNo = order.SaleOrderNo,
+                            SaleOrderDate = order.SaleOrderDate,
+                            OperationStartDate = order.OperationStartDate,
+                            OperationEndDate = order.OperationEndDate,
+                            QuotationNo = order.QuotationNo,
+                            CustomerId = order.CustomerId,
+                            CustomerName = order.CustomerName,
+                            ContractName = order.ContractName,
+                            ConditionId = order.ConditionId,
+                            PoNo = order.PoNo,
+                            SaleId = order.SaleId,
+                            SaleName = order.SaleName,
+                            Sale = (from emp in db.TblEmployee.Where(o => o.EmpId == order.SaleId)
+                                    select new TblEmployee
+                                    {
+                                        EmpId = emp.EmpId,
+                                        EmpCode = emp.EmpCode,
+                                        EmpNameTh = emp.EmpNameTh
+                                    }).FirstOrDefault(),
+
+                            TeamId = order.TeamId,
+                            BillingAddress = order.BillingAddress,
+                            ShippingAddress = order.ShippingAddress,
+                            SaleOrderRemark = order.SaleOrderRemark,
+                            StatusId = order.StatusId,
+                            CreatedBy = order.CreatedBy,
+                            CreatedDate = order.CreatedDate,
+
+                            CreatedDateToString = order.CreatedDateToString,
+                            UpdatedBy = order.UpdatedBy,
+                            UpdatedDate = order.UpdatedDate,
+                            CancelReason = order.CancelReason,
+                            SubTotalNet = order.SubTotalNet,
+                            SubTotalVat = order.SubTotalVat,
+                            SubTotalTot = order.SubTotalTot,
+                            DiscountNet = order.DiscountNet,
+                            DiscountVat = order.DiscountVat,
+                            DiscountTot = order.DiscountTot,
+                            DiscountCash = order.DiscountCash,
+                            SummaryNet = order.SummaryNet,
+                            SummaryVat = order.SummaryVat,
+                            SummaryTot = order.SummaryTot,
+                            DeliveryDate = order.DeliveryDate,
+                            DeliveryDateToString = order.DeliveryDateToString,
+                            SaleOrderCreditDay = order.SaleOrderCreditDay,
+                            JobOrder = db.TblJobOrder.Where(o => o.SaleOrderId == order.SaleOrderId).FirstOrDefault(),
+                            HasJob = db.TblJobOrder.Where(o => o.SaleOrderId == order.SaleOrderId).Count()
+
+                        })
+                                    .OrderByDescending(c => c.SaleOrderId).AsQueryable();
+
+
+            if (month > 0) { data = data.Where(x => x.SaleOrderDate.Value.Month == month); }
+
+            if (size > 0)
+            { data = data.Skip((page - 1) * size).Take(size); }
+            return data.ToList();
+        }
+
 
         public List<TblSaleOrder> GetFindByCondition(string fromDate="", string toDate="")
         {

@@ -165,6 +165,13 @@ namespace Kemrex.Core.Common.Modules
                 jobOrder.SaleOrder = (from q in db.TblSaleOrder
                                       where q.SaleOrderId == jobOrder.SaleOrderId
                                       select q).FirstOrDefault();
+                jobOrder.SaleOrder.Sale = (from emp in db.TblEmployee.Where(o => o.EmpId == jobOrder.SaleOrder.SaleId)
+                                           select new TblEmployee
+                                           {
+                                               EmpId = emp.EmpId,
+                                               EmpCode = emp.EmpCode,
+                                               EmpNameTh = emp.EmpNameTh
+                                           }).FirstOrDefault();
                 jobOrder.Team = (from q in db.TeamOperation
                                       where q.TeamId == jobOrder.TeamId
                                       select q).FirstOrDefault();
@@ -348,6 +355,7 @@ namespace Kemrex.Core.Common.Modules
                           ProjectName = o.ProjectName,
                           Status = Converting.JobOrderStatus(o.StatusId.Value),
                           StatusId= o.StatusId,
+                          CreatedByName = (from emp in db.SysAccount.Where(x => x.AccountId == o.CreatedBy) select emp.AccountName).FirstOrDefault(),
                           SaleOrder = (from oo in db.TblSaleOrder.Where(od => od.SaleOrderId == o.SaleOrderId)
                                        select new TblSaleOrder
                                        {
@@ -466,6 +474,73 @@ namespace Kemrex.Core.Common.Modules
                
                  db.TblJobOrder.Update(ob);
                // db.Entry(ob).State = EntityState.Modified;
+
+
+            }
+        }
+        public void SetByOperTeam(TblJobOrder ob)
+        {
+            if (ob.JobOrderId == 0)
+            { db.TblJobOrder.Add(ob); }
+            else
+            {
+
+
+
+
+
+
+
+
+                if (ob.AttachmentType != null)
+                {
+                    db.TblJobOrderAttachmentType.RemoveRange(db.TblJobOrderAttachmentType.Where(o => o.JobOrderId == ob.JobOrderId));
+                    db.TblJobOrderAttachmentType.AddRange(ob.AttachmentType);
+                }
+                if (ob.ProjectType != null)
+                {
+                    db.TblJobOrderProjectType.RemoveRange(db.TblJobOrderProjectType.Where(o => o.JobOrderId == ob.JobOrderId));
+                    db.TblJobOrderProjectType.AddRange(ob.ProjectType);
+                }
+                if (ob.EquipmentType != null)
+                {
+                    db.TblJobOrderEquipmentType.RemoveRange(db.TblJobOrderEquipmentType.Where(o => o.JobOrderId == ob.JobOrderId));
+                    db.TblJobOrderEquipmentType.AddRange(ob.EquipmentType);
+                }
+
+                if (ob.LandType != null)
+                {
+                    db.TblJobOrderLandType.RemoveRange(db.TblJobOrderLandType.Where(o => o.JobOrderId == ob.JobOrderId));
+                    db.TblJobOrderLandType.AddRange(ob.LandType);
+                }
+
+                if (ob.ObstructionType != null)
+                {
+                    db.TblJobOrderObstructionType.RemoveRange(db.TblJobOrderObstructionType.Where(o => o.JobOrderId == ob.JobOrderId));
+                    db.TblJobOrderObstructionType.AddRange(ob.ObstructionType);
+                }
+
+                if (ob.UndergroundType != null)
+                {
+                    db.TblJobOrderUndergroundType.RemoveRange(db.TblJobOrderUndergroundType.Where(o => o.JobOrderId == ob.JobOrderId));
+                    db.TblJobOrderUndergroundType.AddRange(ob.UndergroundType);
+                }
+
+                if (ob.SurveyDetail != null)
+                {
+                    db.TblJobOrderSurveyDetail.RemoveRange(db.TblJobOrderSurveyDetail.Where(o => o.JobOrderId == ob.JobOrderId));
+                    db.TblJobOrderSurveyDetail.AddRange(ob.SurveyDetail);
+                }
+
+
+
+
+                db.SaveChanges();
+                //db.Entry(ob).Property(x => x.CreatedBy).IsModified = true;
+                //   db.Entry(ob).Property(x => x.CreatedBy).IsModified = false;
+                //  db.Entry(ob).Property(x => x.CreatedDate).IsModified = false;
+                db.TblJobOrder.Update(ob);
+               
 
 
             }

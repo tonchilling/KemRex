@@ -225,13 +225,13 @@ optEmployee = (List<TblEmployee>
             }
 
 
-              if ($("#SurveyDate").val() == "") {
+        /*      if ($("#SurveyDate").val() == "") {
                   $("#SurveyDate").addClass("has-error");
                 chkValidate = false;
             } else {
                   $("#SurveyDate").removeClass("has-error");
             }
-
+            */
 
 
 
@@ -574,6 +574,8 @@ optEmployee = (List<TblEmployee>
     <form role="form" method="post" id="frmmain">
         <input type="hidden" id="hdApprove" name="hdApprove" />
         <input type="hidden" id="StatusId" name="StatusId" value="@Model.StatusId" />
+        <input type="hidden" id="CreatedBy" name="CreatedBy" value="@Model.CreatedBy" />
+        <input type="hidden" id="CreatedDate" name="CreatedDate" value="@(Model.CreatedDate.HasValue ? Model.CreatedDate.Value.ToString("dd/MM/yyyy hh:mm:ss"):"")" />
         <div class="page">
             <div class="page-header">
                 <ol class="breadcrumb">
@@ -752,11 +754,11 @@ optEmployee = (List<TblEmployee>
                                                 <div class="form-group">
                                                     <label for="EndDate" class="form-control-label">กำหนดเสร็จ</label>
                                                     @*<div class="input-group col-sm-6">
-                                                            <span class="input-group-addon">
-                                                                <i class="icon wb-calendar" aria-hidden="true"></i>
-                                                            </span>
-                                                            <input type="date" class="form-control" name="JobOrderCompleteDate" value="" />
-                                                        </div>*@
+                                                        <span class="input-group-addon">
+                                                            <i class="icon wb-calendar" aria-hidden="true"></i>
+                                                        </span>
+                                                        <input type="date" class="form-control" name="JobOrderCompleteDate" value="" />
+                                                    </div>*@
                                                     <div class="input-group col-sm-6 date" data-provide="datepicker" data-date-format="dd/mm/yyyy">
                                                         <input id="EndDate" type="text" class="form-control" placeholder="dd/MM/yyyy ค.ศ." name="EndDate"
                                                                value="@(Model.EndDate == null ? null : Model.EndDate.Value.ToString("dd/MM/yyyy"))" required />
@@ -845,13 +847,13 @@ optEmployee = (List<TblEmployee>
                                             <div class="col-md-5">
                                                 <div class="form-group">
                                                     <label for="" class="form-control-label">ชื่อฝ่ายขาย</label>
-                                                    <input type="text" id="SaleName" class="form-control" name="SaleName" value="@(Model.SaleOrder!=null?Model.SaleOrder.SaleName:"")" readonly />
+                                                    <input type="text" id="SaleName" class="form-control" name="SaleName" value="@(Model.SaleOrder!=null?Model.SaleOrder.Sale.EmpNameTh:"")" readonly />
                                                 </div>
                                             </div>
                                             <div class="col-md-2 col-sm-8">
                                                 <div class="form-group">
                                                     <label for="" class="form-control-label">โทรศัพท์</label>
-                                                    <input type="tel" id="SaleMobile" class="form-control" name="SaleMobile" value="" readonly />
+                                                    <input type="tel" id="SaleMobile" class="form-control" name="SaleMobile" value="@(Model.SaleOrder!=null?Model.SaleOrder.Sale.EmpMobile:"")" readonly />
                                                 </div>
                                             </div>
                                         </div>
@@ -943,7 +945,7 @@ optEmployee = (List<TblEmployee>
                                                                         </thead>
                                                                         <tbody>
 
-                                                                            @if (Model.JobOrderDetail!=null && Model.JobOrderDetail.Count() <= 0)
+                                                                            @if (Model.JobOrderDetail != null && Model.JobOrderDetail.Count() <= 0)
                                                                             {
                                                                                 <tr>
                                                                                     <td colspan="7">ไม่พบข้อมูล</td>
@@ -954,27 +956,27 @@ optEmployee = (List<TblEmployee>
                                                                                 {
                                                                                     foreach (var ob in Model.JobOrderDetail)
                                                                                     {
-                                                                                    <tr data="@ob.No">
-                                                                                        <td>@row</td>
-                                                                                        <td>@ob.Product.ProductCode @ob.Product.ProductName</td>
-                                                                                        <td>@ob.Quantity</td>
+                                                                                        <tr data="@ob.No">
+                                                                                            <td>@row</td>
+                                                                                            <td>@ob.Product.ProductCode @ob.Product.ProductName</td>
+                                                                                            <td>@ob.Quantity</td>
 
 
-                                                                                        <td>
+                                                                                            <td>
 
 
-                                                                                            @if (Model.StatusId == 2 && optPermission.IsManager && optPermission.IsEdit)
-                                                                                            {
+                                                                                                @if (Model.StatusId == 2 && optPermission.IsManager && optPermission.IsEdit)
+                                                                                                {
 
-                                                                                                @* @Html.AntiForgeryToken()*@
-                                                                                                <button type="submit" class="btn btn-danger btn-xs btnDeleteProduct"><i class="fa fa-trash" aria-hidden="true"></i>&nbsp;ลบ</button>
-                                                                                            }
-                                                                                        </td>
-                                                                                    </tr>
-                                                                                            row++;
-                                                                                        }
+                                                                                                    @* @Html.AntiForgeryToken()*@
+                                                                                                    <button type="submit" class="btn btn-danger btn-xs btnDeleteProduct"><i class="fa fa-trash" aria-hidden="true"></i>&nbsp;ลบ</button>
+                                                                                                }
+                                                                                            </td>
+                                                                                        </tr>
+                                                                                        row++;
                                                                                     }
                                                                                 }
+                                                                            }
                                                                         </tbody>
                                                                     </table>
                                                                 </div>
@@ -1017,7 +1019,7 @@ optEmployee = (List<TblEmployee>
 
                                                                         </div>
                                                                         <div class="col-2 col-md-2 form-group">
-                                                                            @if (Model.StatusId==2 && optPermission.IsManager && optPermission.IsEdit)
+                                                                            @if (Model.StatusId == 2 && optPermission.IsManager && optPermission.IsEdit)
                                                                             {
                                                                                 <button type="submit" id="btnAddProduct" style="margin-top:40px" class="btn btn-primary">เพิ่ม</button>
                                                                             }
@@ -1060,7 +1062,7 @@ optEmployee = (List<TblEmployee>
                                                                         </thead>
                                                                         <tbody>
 
-                                                                            @if (Model.TblJobOrderProperties!=null && Model.TblJobOrderProperties.Count() <= 0)
+                                                                            @if (Model.TblJobOrderProperties != null && Model.TblJobOrderProperties.Count() <= 0)
                                                                             {
                                                                                 <tr>
                                                                                     <td colspan="7">ไม่พบข้อมูล</td>
@@ -1072,27 +1074,27 @@ optEmployee = (List<TblEmployee>
                                                                                 {
                                                                                     foreach (var ob in Model.TblJobOrderProperties)
                                                                                     {
-                                                                                    <tr data="@ob.No">
-                                                                                        <td>@row</td>
-                                                                                        <td>@ob.Product.ProductCode @ob.Product.ProductName</td>
-                                                                                        <td>@ob.Quantity</td>
+                                                                                        <tr data="@ob.No">
+                                                                                            <td>@row</td>
+                                                                                            <td>@ob.Product.ProductCode @ob.Product.ProductName</td>
+                                                                                            <td>@ob.Quantity</td>
 
 
-                                                                                        <td>
+                                                                                            <td>
 
 
 
-                                                                                            @if (Model.StatusId  == 2 && optPermission.IsManager && optPermission.IsEdit)
-                                                                                            {
-                                                                                                @* @Html.AntiForgeryToken()*@
-                                                                                                <button type="submit" class="btn btn-danger btn-xs btnDeleteProperties"><i class="fa fa-trash" aria-hidden="true"></i>&nbsp;ลบ</button>
-                                                                                            }
-                                                                                        </td>
-                                                                                    </tr>
-                                                                                            row++;
-                                                                                        }
+                                                                                                @if (Model.StatusId == 2 && optPermission.IsManager && optPermission.IsEdit)
+                                                                                                {
+                                                                                                    @* @Html.AntiForgeryToken()*@
+                                                                                                    <button type="submit" class="btn btn-danger btn-xs btnDeleteProperties"><i class="fa fa-trash" aria-hidden="true"></i>&nbsp;ลบ</button>
+                                                                                                }
+                                                                                            </td>
+                                                                                        </tr>
+                                                                                        row++;
                                                                                     }
                                                                                 }
+                                                                            }
                                                                         </tbody>
                                                                     </table>
                                                                 </div>
@@ -1108,7 +1110,7 @@ optEmployee = (List<TblEmployee>
                                                         </div>
                                                     </div>
                                                     <div class="panel-footer">
-                                                        @if (Model.JobOrderId > 0 && Model.StatusId ==2)
+                                                        @if (Model.JobOrderId > 0 && Model.StatusId == 2)
                                                         {
                                                             <div class="row">
                                                                 <div class="col-12">
@@ -1272,7 +1274,7 @@ optEmployee = (List<TblEmployee>
                                                 <div class="form-group">
                                                     <label for="" class="form-control-label">ที่อยู่</label>
                                                     <input type="text" class="form-control" name="Address" value="@Model.Address" />
-                                                    
+
                                                 </div>
                                             </div>
                                         </div>
@@ -1414,7 +1416,7 @@ optEmployee = (List<TblEmployee>
                                                                                     foreach (var ob in Model.SaleOrder.TblSaleOrderDetail)
                                                                                     {
                                                                                         <tr>
-                                                                                      
+
                                                                                             <td>@ob.Product.ProductCode @ob.Product.ProductName</td>
                                                                                             <td>@ob.Quantity</td>
                                                                                             <td>@ob.PriceNet.ToString("#,#0.00")</td>
@@ -1578,7 +1580,7 @@ optEmployee = (List<TblEmployee>
                                                         <label for="StartDate" class="form-control-label">วันที่ประเมิน</label>
                                                         <div class="input-group col-sm-6 date" data-provide="datepicker" data-date-format="dd/mm/yyyy">
                                                             <input id="SurveyDate" name="SurveyDate" type="text" class="form-control" placeholder="dd/MM/yyyy ค.ศ." name="SurveyDate"
-                                                                   value="@(Model.SurveyDate.HasValue ?Model.SurveyDate.Value.ToString("dd/MM/yyyy") : "" )" required /> 
+                                                                   value="@(Model.SurveyDate.HasValue ?Model.SurveyDate.Value.ToString("dd/MM/yyyy") : "" )" required />
                                                             <span class="input-group-addon">
                                                                 <i class="icon wb-calendar icon-2-5x text-success" style="padding-left:2px" aria-hidden="true"></i>
                                                             </span>
@@ -1595,7 +1597,7 @@ optEmployee = (List<TblEmployee>
                                                                 @foreach (TblEmployee it in optEmployee)
                                                                 {
                                                                     // <option value="@it.EmpId">@it.EmpNameTh</option>
-                                                                    bool selected = it.EmpId == (Model.SurveyEmployee == null || Model.SurveyEmployee==-1 ? (sysAccount.TblEmployee != null ? sysAccount.TblEmployee.EmpId : -1) : Model.SurveyEmployee);
+                                                                    bool selected = it.EmpId == (Model.SurveyEmployee == null || Model.SurveyEmployee == -1 ? (sysAccount.TblEmployee != null ? sysAccount.TblEmployee.EmpId : -1) : Model.SurveyEmployee);
 
                                                                     <option value="@it.EmpId" @(selected ? " selected=\" selected\"" : "")>@it.EmpNameTh</option>
                                                                 }
@@ -1632,41 +1634,41 @@ optEmployee = (List<TblEmployee>
                                                             </div>
                                                         </div>
 ;
-                                                        foreach (SysSurveyDetailTemplate detail in subheader.SurveyDetailList)
-                                                        {
-                                                            <div class="col-md-12">
-                                                                <div class="checkbox">
-                                                                    <label>
-                                                                       @{bool selected = (Model.SurveyDetail != null && Model.SurveyDetail.Find(o => o.SurveyDetailId == detail.SurveyDetailID) != null ? true : false);}
-                                                                        <input data-toggle="toggle" data-onstyle="success"
-                                                                               type="checkbox" @(selected?"Checked":"") class="selSurvey" value="@detail.SurveyDetailID" />@detail.Title
-                                                                            @if (detail.IsReason > 0)
-                                                                            {
+                                                                                foreach (SysSurveyDetailTemplate detail in subheader.SurveyDetailList)
+                                                                                {
+                                                                                    <div class="col-md-12">
+                                                                                        <div class="checkbox">
+                                                                                            <label>
+                                                                                                @{bool selected = (Model.SurveyDetail != null && Model.SurveyDetail.Find(o => o.SurveyDetailId == detail.SurveyDetailID) != null ? true : false);}
+                                                                                                <input data-toggle="toggle" data-onstyle="success"
+                                                                                                       type="checkbox" @(selected ? "Checked" : "") class="selSurvey" value="@detail.SurveyDetailID" />@detail.Title
+                                                                                                    @if (detail.IsReason > 0)
+                                                                                                    {
 
-                                                                                <label for="" class="form-control-label">@detail.Reason :</label>
-                                                                               string comment= (Model.SurveyDetail.Find(o => o.SurveyDetailId == detail.SurveyDetailID) != null ? Model.SurveyDetail.Find(o => o.SurveyDetailId == detail.SurveyDetailID).Desc : "");
-                                                                                <input type="text" data="@detail.SurveyDetailID" value="@comment" class="form-comment selSurveyComment" />
+                                                                                                        <label for="" class="form-control-label">@detail.Reason :</label>
+                                                                                                        string comment = (Model.SurveyDetail.Find(o => o.SurveyDetailId == detail.SurveyDetailID) != null ? Model.SurveyDetail.Find(o => o.SurveyDetailId == detail.SurveyDetailID).Desc : "");
+                                                                                                        <input type="text" data="@detail.SurveyDetailID" value="@comment" class="form-comment selSurveyComment" />
+
+                                                                                                    }
+                                                                                                </label>
+
+                                                                                            </div>
+
+
+                                                                                        </div>
+                                                                                    }
+                                                                                    i++;
+                                                                                }
 
                                                                             }
-                                                                        </label>
-
-                                                                    </div>
-
-
-                                                                </div>
-                                                            }
-                                                            i++;
-                                                        }
-
-                                                    }
 
                                             }
 
                                             <input type="hidden" name="hddSurveyType" id="hddSurveyType" />
                                             <input type="hidden" name="hddSurveyComment" id="hddSurveyComment" />
                                         </div>
-                                            </div>
-                                        </div>
+                                    </div>
+                                </div>
                             </div>
 
                         </div>

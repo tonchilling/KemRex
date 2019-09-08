@@ -33,10 +33,11 @@ namespace Kemrex.Web.Main.Controllers
                     if (msgType.HasValue) { alert.Type = msgType.Value; }
                     ViewBag.Alert = alert;
                 }
+                AccountPermission permission = GetPermission(CurrentUID);
                 DateTime firstDt = new DateTime(year, month, 1);
                 ViewBag.FocusDate = firstDt;
                 int total = uow.Modules.SaleOrder.Count(month, src);
-                lst = uow.Modules.SaleOrder.Gets(1, -1, month, src);
+                lst = uow.Modules.SaleOrder.GetAll(1, -1, month, src,(permission.IsAdminTeam || permission.IsManager) ? 0 : CurrentUID);
                 #region Calculate first week
                 for (int i = firstDt.DayOfWeek.ToInt(); i > 0; i--)
                 {

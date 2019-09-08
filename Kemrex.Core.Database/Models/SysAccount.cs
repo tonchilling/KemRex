@@ -55,6 +55,15 @@ namespace Kemrex.Core.Database.Models
         public bool IsEdit { get; set; }
         public bool IsTeam { get; set; }
         public bool IsAdminTeam { get; set; }
+        public TeamType TeamType { get; set; }
+
 
     }
+    public enum TeamType {
+        Sale=1,
+        Operation=2,
+        Admin
+    }
 }
+
+

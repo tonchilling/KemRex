@@ -585,6 +585,8 @@
         <input type="hidden" id="hdApprove" name="hdApprove" />
         <input type="hidden" id="SaleOrderId" name="SaleOrderId" value="@Model.SaleOrderId" />
         <input type="hidden" id="StatusId" name="StatusId" value="@Model.StatusId" />
+        <input type="hidden" id="CreatedBy" name="CreatedBy" value="@Model.CreatedBy" />
+        <input type="hidden" id="CreatedDate" name="CreatedDate" value="@(Model.CreatedDate.HasValue ? Model.CreatedDate.Value.ToString("dd/MM/yyyy hh:mm:ss"):"")" />
         <div class="page">
             <div class="page-header">
                 <ol class="breadcrumb">
@@ -652,14 +654,14 @@
                                                                 data-toggle="modal"
                                                                 data-target="#SaleOrderModal"
                                                                 id="button-quotation"
-                                                                @(optPermission.IsEdit ? "" : "disabled") >
+                                                                @(optPermission.IsEdit ? "" : "disabled")>
                                                             ...
                                                         </button>
                                                     </div>
                                                     <div class="input-group-append">
                                                         <button class="btn btn-outline-secondary btn-warning" type="submit"
                                                                 id="btnSOToJob"
-                                                                @(optPermission.IsEdit ? "" : "disabled") >
+                                                                @(optPermission.IsEdit ? "" : "disabled")>
                                                             ดึงข้อมูล
                                                         </button>
 
@@ -673,7 +675,7 @@
                                 <div class="row">
                                     <div class="col-12">
                                         <div class="form-group">
-                                            @if (Model.StatusId == null || Model.StatusId == 1)
+                                            @if (Model.StatusId == null || Model.StatusId <= 1)
                                             {
                                                 if (optPermission.IsEdit)
                                                 {
@@ -682,7 +684,7 @@
                                                 }
 
                                             }
-                                           
+
                                             <a href="@Url.Action("Index", new { controller = "JobOrderForSale", area = "" })" class="btn btn-default">ยกเลิก</a>
                                         </div>
                                     </div>
@@ -723,13 +725,13 @@
                                                 <div class="form-group">
                                                     <label for="TeamName" class="form-control-label">ทีมติดตั้ง</label>
                                                     <div class="input-group ">
-                                                        <input type="text" id="TeamName" disabled class="form-control" name="TeamName" 
+                                                        <input type="text" id="TeamName" disabled class="form-control" name="TeamName"
                                                                value="@(Model.TeamId!=null?TeamOperationList.Find(o=>o.TeamId==Model.TeamId).TeamName:"")" />
 
                                                         @if (Model.Status == null || Model.Status == "0")
                                                         {
                                                             <div class="input-group-append">
-                                                                <button class="btn btn-outline-secondary btn-primary invisible"  type="button"
+                                                                <button class="btn btn-outline-secondary btn-primary invisible" type="button"
                                                                         data-toggle="modal"
                                                                         data-target="#TeamModal"
                                                                         id="button-quotation">
@@ -854,7 +856,7 @@
                                             <div class="col-md-5">
                                                 <div class="form-group">
                                                     <label for="" class="form-control-label">ชื่อฝ่ายขาย</label>
-                                                    <input type="text" id="SaleName" class="form-control" name="SaleName" value="@(Model.SaleOrder!=null?Model.SaleOrder.SaleName:"")" readonly />
+                                                    <input type="text" id="SaleName" class="form-control" name="SaleName" value="@(Model.SaleOrder!=null?Model.SaleOrder.Sale.EmpNameTh:"")" readonly />
                                                 </div>
                                             </div>
                                             <div class="col-md-2 col-sm-8">
@@ -1406,7 +1408,7 @@
                 </div>
             </div>
 
-            <script  type="text/javascript">
+            <script type="text/javascript">
 
                 $(document).ready(function () {
                     if ($("#StatusId").val() >= 2) {

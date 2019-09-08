@@ -67,6 +67,8 @@ namespace Kemrex.Web.Main.Controllers
             DateTime? StDate=null;
             DateTime? ToDate = null;
 
+            AccountPermission permission = GetPermission(CurrentUID);
+
             if (startDate != "")
             {
                 StDate = DateTime.ParseExact(startDate, "dd/MM/yyyy", new System.Globalization.CultureInfo("en-US"));
@@ -75,8 +77,8 @@ namespace Kemrex.Web.Main.Controllers
 
             }
                 List<TblSaleOrder> saleOrderList = uow.Modules.SaleOrder.GetSaleOrderInInvoice(StDate, ToDate);
-            
-
+            long userId = (permission.IsAdminTeam || permission.IsManager) ? 0 : CurrentUID;
+            saleOrderList = saleOrderList.Where(o => o.CreatedBy == userId || userId == 0).ToList();
 
 
             return Json(saleOrderList, JsonRequestBehavior.AllowGet);
@@ -170,24 +172,33 @@ namespace Kemrex.Web.Main.Controllers
             jobOrder.ProductId= this.Request.Form["ProductId"].ParseInt();
             jobOrder.StartWorkingTime = StartHH + ":" + StartMM;
             jobOrder.EndWorkingTime = EndHH + ":" + EndMM;
+           
+       //  var   jobOrderOrg = uow.Modules.JobOrder.GetHeaderByPK(JobOrderId.ParseInt());
+
             if (JobOrderId == "" || JobOrderId == "0")
             {
                 jobOrder.JobOrderNo = getJobId();
-                jobOrder.CreatedDate = DateTime.Now;
-                jobOrder.CreatedBy = CurrentUID;
+            //    jobOrder.CreatedDate = DateTime.Now;
+               // jobOrder.CreatedBy = CurrentUID;
             }
             else {
                 jobOrder.UpdatedDate = DateTime.Now;
                 jobOrder.UpdatedBy = CurrentUID;
             }
 
-
+            //jobOrder.CreatedBy = jobOrderOrg.CreatedBy;
+           // jobOrder.CreatedDate = jobOrderOrg.CreatedDate;
             if (approveStatus == 3)
             {
                 jobOrder.ClosedBy = CurrentUID;
             }
 
-            if (Request.Form["StartDate"].ToString() !="")
+            if (Request.Form["CreatedDate"].ToString() != "")
+            {
+                var dd = Request.Form["CreatedDate"];
+                jobOrder.CreatedDate = dd.ParseDate(DateFormat.ddMMyyyyHHmmss, culInfo: _cultureTHInfo);
+            }
+                if (Request.Form["StartDate"].ToString() !="")
             {
                 var dd = Request.Form["StartDate"]+ " 00:00:00";
 
@@ -333,9 +344,9 @@ namespace Kemrex.Web.Main.Controllers
                 }
                 #endregion
 
-
+               
                 uow.Modules.JobOrder.Set(jobOrder);
-
+                
                 uow.SaveChanges();
 
                 return RedirectToAction("Detail", MVCController, new { id = jobOrder.JobOrderId, msg = "บันทึกข้อมูลเรียบร้อยแล้ว", msgType = AlertMsgType.Success });
