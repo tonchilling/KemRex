@@ -245,12 +245,12 @@
             }
 
 
-            if ($("#TeamName").val() == "") {
+          /*  if ($("#TeamName").val() == "") {
                 $("#TeamName").addClass("has-error");
                 chkValidate = false;
             } else {
                 $("#TeamName").removeClass("has-error");
-            }
+            }*/
 
 
 
@@ -678,13 +678,11 @@
                                                 if (optPermission.IsEdit)
                                                 {
                                                     <button type="submit" id="btnSave" class="btn btn-primary">บันทึก</button>
+                                                    <button type="submit" id="btnApprove" class="btn btn-success">ยืนยัน</button>
                                                 }
 
                                             }
-                                            @if (Model.SaleOrderId > 0 && optPermission.IsEdit)
-                                            {
-                                                <button type="submit" id="btnApprove" class="btn btn-success">ยืนยัน</button>
-                                            }
+                                           
                                             <a href="@Url.Action("Index", new { controller = "JobOrderForSale", area = "" })" class="btn btn-default">ยกเลิก</a>
                                         </div>
                                     </div>
@@ -723,18 +721,18 @@
                                         <div class="row">
                                             <div class="col-sm-4">
                                                 <div class="form-group">
-                                                    <label for="TeamName" class="form-control-label">เลือกทีม</label>
+                                                    <label for="TeamName" class="form-control-label">ทีมติดตั้ง</label>
                                                     <div class="input-group ">
-                                                        <input type="text" id="TeamName" class="form-control" name="TeamName" required
+                                                        <input type="text" id="TeamName" disabled class="form-control" name="TeamName" 
                                                                value="@(Model.TeamId!=null?TeamOperationList.Find(o=>o.TeamId==Model.TeamId).TeamName:"")" />
 
                                                         @if (Model.Status == null || Model.Status == "0")
                                                         {
                                                             <div class="input-group-append">
-                                                                <button class="btn btn-outline-secondary btn-primary" type="button"
+                                                                <button class="btn btn-outline-secondary btn-primary invisible"  type="button"
                                                                         data-toggle="modal"
                                                                         data-target="#TeamModal"
-                                                                        id="button-quotation" disabled>
+                                                                        id="button-quotation">
                                                                     ...
                                                                 </button>
                                                             </div>

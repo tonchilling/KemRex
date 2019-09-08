@@ -101,7 +101,28 @@ namespace Kemrex.Core.Common.Modules
 
         }
 
-        public TblJobOrder Get(int id)
+        public TblJobOrder GetHeaderByPK(int id)
+        {
+            /*   public int JobOrderId { get; set; }
+        public int No { get; set; }
+        public int? ProductId { get; set; }
+        public int? Quantity { get; set; }
+        public decimal? Weight { get; set; }
+
+        public virtual TblProduct Product { get; set; }
+          */
+
+            TblJobOrder jobOrder = db.TblJobOrder
+                   .Where(x => x.JobOrderId == id)
+               .FirstOrDefault() ?? new TblJobOrder()
+                        {
+
+                        };
+
+            return jobOrder;
+        }
+
+            public TblJobOrder Get(int id)
         {
             /*   public int JobOrderId { get; set; }
         public int No { get; set; }
@@ -144,7 +165,9 @@ namespace Kemrex.Core.Common.Modules
                 jobOrder.SaleOrder = (from q in db.TblSaleOrder
                                       where q.SaleOrderId == jobOrder.SaleOrderId
                                       select q).FirstOrDefault();
-
+                jobOrder.Team = (from q in db.TeamOperation
+                                      where q.TeamId == jobOrder.TeamId
+                                      select q).FirstOrDefault();
 
                 jobOrder.SaleOrder.TblSaleOrderDetail = (from q in db.TblSaleOrderDetail.Include(x => x.Product)
                                                    where q.SaleOrderId == jobOrder.SaleOrderId
@@ -191,20 +214,23 @@ namespace Kemrex.Core.Common.Modules
 
         }
 
+
+
+
         public List<int> GetTeamByPeriod(System.DateTime tempStartDate,System.DateTime tempEndDate)
         {
             return (from job in db.TblJobOrder.Where(o => (o.StartDate>= tempStartDate  && o.EndDate<= tempEndDate))
-                    select job.TeamId.Value).ToList();
+                    select job.TeamId.HasValue? job.TeamId.Value:0).ToList();
                    
                  
         }
 
 
-        public List<TblJobOrder> GetHeader()
+        public List<TblJobOrder> GetHeader(long userId)
         {
             List<TblJobOrder> result = new List<TblJobOrder>();
 
-            result = (from o in db.TblJobOrder.Include(x=>x.Team).Include(x=>x.SaleOrder) select new TblJobOrder
+            result = (from o in db.TblJobOrder.Where(o => o.CreatedBy == userId || userId == 0).Include(x=>x.Team).Include(x=>x.SaleOrder) select new TblJobOrder
             {
 
 
@@ -228,13 +254,13 @@ namespace Kemrex.Core.Common.Modules
                 Status = o.StatusId.HasValue ? Converting.JobOrderStatus(o.StatusId.Value): Converting.JobOrderStatus(0),
                SaleOrder =(from oo in db.TblSaleOrder.Where(od=> od.SaleOrderId == o.SaleOrderId) select new TblSaleOrder {
                    SaleOrderId=oo.SaleOrderId,
-                   SaleOrderNo=oo.SaleOrderNo
-
+                   SaleOrderNo=oo.SaleOrderNo,
+                    CreatedByName = (from emp in db.SysAccount.Where(acc => acc.AccountId == o.CreatedBy) select emp.AccountName).FirstOrDefault(),
 
                }).FirstOrDefault(),
                 SubDistrict = o.SubDistrict,
                 Team = o.Team,
-               
+                CreatedByName = (from emp in db.SysAccount.Where(x => x.AccountId == o.CreatedBy) select emp.AccountName).FirstOrDefault(),
                 CreatedDate = o.CreatedDate,
                 CreateDateToString = o.CreatedDate.HasValue ? Converting.ToDDMMYYYY(o.CreatedDate.Value) : "",
 

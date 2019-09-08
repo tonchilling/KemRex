@@ -41,7 +41,8 @@
              html += '<th>ใบเสนอราคา</th>';
             html += '<th>ยอดเงิน</th>';
             html += '<th>วันที่เอกสาร</th>';
-            html += '<th>สถานะ</th>';
+             html += '<th>สถานะ</th>';
+             html += '<th>ผู้สร้าง</th>';
             html += '<th>เครื่องมือ</th>';
             html += '</tr>';
 
@@ -70,6 +71,7 @@
                                 html += '<td>' + numeral(item.SummaryTot - item.DiscountCash).format('0,0.00')   + '</td>';
                                 html += '<td data-order="' + item.DSaleOrderDate+'">' + item.SaleOrderDate + '</td>';
                                 html += '<td>' + item.Status + '</td>';
+                                html += '<td>' + item.CreatedByName + '</td>';
                                 html += '<td> <a href="' + urlDetail + '/' + item.SaleOrderId + '" class="btn btn-xs ' + (item.StatusId <= 1 ? " btn-primary" : " btn-success") +'">';
                                 html += '<i class="fa glyphicon glyphicon-search" aria-hidden="true"></i>&nbsp;' + (item.StatusId<=1? "แก้ไข":"เรียกดู") +' </a>&nbsp;';
                                 html += '<a href="' + urlExport + '/' + item.SaleOrderId + '" class="btn btn-xs btn-warning">';

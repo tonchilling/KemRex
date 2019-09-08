@@ -225,6 +225,14 @@ optEmployee = (List<TblEmployee>
             }
 
 
+              if ($("#SurveyDate").val() == "") {
+                  $("#SurveyDate").addClass("has-error");
+                chkValidate = false;
+            } else {
+                  $("#SurveyDate").removeClass("has-error");
+            }
+
+
 
 
             return chkValidate;
@@ -647,12 +655,12 @@ optEmployee = (List<TblEmployee>
                                 <div class="row">
                                     <div class="col-12">
                                         <div class="form-group">
-                                            @if (Model.StatusId <= 2 && optPermission.IsManager && optPermission.IsEdit)
+                                            @if (Model.StatusId == 2 && optPermission.IsManager && optPermission.IsEdit)
                                             {
                                                 <button type="submit" id="btnSave" class="btn btn-primary">บันทึก</button>
                                             }
 
-                                            @if (Model.SaleOrderId > 0 && Model.StatusId <= 2 && optPermission.IsManager && optPermission.IsEdit)
+                                            @if (Model.SaleOrderId > 0 && Model.StatusId == 2 && optPermission.IsManager && optPermission.IsEdit)
                                             {
                                                 <button type="submit" id="btnCloseJob" class="btn btn-success">ปิดงาน</button>
                                             }
@@ -707,10 +715,10 @@ optEmployee = (List<TblEmployee>
                                                 <div class="form-group">
                                                     <label for="SaleOrderId" class="form-control-label">เลือกทีม</label>
                                                     <div class="input-group ">
-                                                        <input type="text" id="TeamName" class="form-control" name="TeamName"
+                                                        <input type="text" id="TeamName" class="form-control" name="TeamName" readonly
                                                                value="@(Model.TeamId!=null?TeamOperationList.Find(o=>o.TeamId==Model.TeamId).TeamName:"")" required />
                                                         <div class="input-group-append">
-                                                            @if (Converting.ToInt(Model.Status) <= 1 && optPermission.IsAdminTeam)
+                                                            @if (Model.StatusId == 2 && optPermission.IsAdminTeam)
                                                             {
                                                                 <button class="btn btn-outline-secondary btn-primary" type="button"
                                                                         data-toggle="modal"
@@ -955,7 +963,7 @@ optEmployee = (List<TblEmployee>
                                                                                         <td>
 
 
-                                                                                            @if (Converting.ToInt(Model.Status) <= 1 && optPermission.IsManager && optPermission.IsEdit)
+                                                                                            @if (Model.StatusId == 2 && optPermission.IsManager && optPermission.IsEdit)
                                                                                             {
 
                                                                                                 @* @Html.AntiForgeryToken()*@
@@ -982,7 +990,7 @@ optEmployee = (List<TblEmployee>
                                                         </div>
                                                     </div>
                                                     <div class="panel-footer">
-                                                        @if (Model.JobOrderId > 0 && Converting.ToInt(Model.Status) <= 1)
+                                                        @if (Model.JobOrderId > 0 && Model.StatusId == 2)
                                                         {
                                                             <div class="row">
                                                                 <div class="col-12">
@@ -1009,7 +1017,7 @@ optEmployee = (List<TblEmployee>
 
                                                                         </div>
                                                                         <div class="col-2 col-md-2 form-group">
-                                                                            @if (Converting.ToInt(Model.Status) <= 1 && optPermission.IsManager && optPermission.IsEdit)
+                                                                            @if (Model.StatusId==2 && optPermission.IsManager && optPermission.IsEdit)
                                                                             {
                                                                                 <button type="submit" id="btnAddProduct" style="margin-top:40px" class="btn btn-primary">เพิ่ม</button>
                                                                             }
@@ -1074,7 +1082,7 @@ optEmployee = (List<TblEmployee>
 
 
 
-                                                                                            @if (Converting.ToInt(Model.Status) <= 1 && optPermission.IsManager && optPermission.IsEdit)
+                                                                                            @if (Model.StatusId  == 2 && optPermission.IsManager && optPermission.IsEdit)
                                                                                             {
                                                                                                 @* @Html.AntiForgeryToken()*@
                                                                                                 <button type="submit" class="btn btn-danger btn-xs btnDeleteProperties"><i class="fa fa-trash" aria-hidden="true"></i>&nbsp;ลบ</button>
@@ -1100,7 +1108,7 @@ optEmployee = (List<TblEmployee>
                                                         </div>
                                                     </div>
                                                     <div class="panel-footer">
-                                                        @if (Model.JobOrderId > 0 && Converting.ToInt(Model.Status) <= 1)
+                                                        @if (Model.JobOrderId > 0 && Model.StatusId ==2)
                                                         {
                                                             <div class="row">
                                                                 <div class="col-12">
@@ -1127,7 +1135,7 @@ optEmployee = (List<TblEmployee>
 
                                                                         </div>
                                                                         <div class="col-2 col-md-2 form-group">
-                                                                            @if (Converting.ToInt(Model.Status) <= 1 && optPermission.IsManager && optPermission.IsEdit)
+                                                                            @if (Model.StatusId == 2 && optPermission.IsManager && optPermission.IsEdit)
                                                                             {
                                                                                 <button type="submit" id="btnAddProperty" style="margin-top:40px" class="btn btn-primary">เพิ่มอุปกรณ์</button>
                                                                             }
@@ -1586,8 +1594,8 @@ optEmployee = (List<TblEmployee>
                                                                 <option value="-1" )></option>
                                                                 @foreach (TblEmployee it in optEmployee)
                                                                 {
-                                                                   // <option value="@it.EmpId">@it.EmpNameTh</option>
-                                                                    bool selected = it.EmpId == (Model.SurveyEmployee == null ? (sysAccount.TblEmployee != null ? sysAccount.TblEmployee.EmpId : -1) : Model.SurveyEmployee);
+                                                                    // <option value="@it.EmpId">@it.EmpNameTh</option>
+                                                                    bool selected = it.EmpId == (Model.SurveyEmployee == null || Model.SurveyEmployee==-1 ? (sysAccount.TblEmployee != null ? sysAccount.TblEmployee.EmpId : -1) : Model.SurveyEmployee);
 
                                                                     <option value="@it.EmpId" @(selected ? " selected=\" selected\"" : "")>@it.EmpNameTh</option>
                                                                 }

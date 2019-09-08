@@ -70,8 +70,9 @@ namespace Kemrex.Web.Main.Controllers
         [HttpPost]
         public ActionResult GetList()
         {
-            List<TblQuotation> obList = uow.Modules.Quotation.GetList();
-
+            AccountPermission permission = GetPermission(CurrentUID);
+            List<TblQuotation> obList = uow.Modules.Quotation.GetList((permission.IsAdminTeam || permission.IsManager) ?0 : CurrentUID);
+         
             return Json(obList);
         }
 
@@ -121,8 +122,8 @@ namespace Kemrex.Web.Main.Controllers
             string Id = uow.Modules.Quotation.GetLastId();
             string qid = "QU";
             var dt = DateTime.Now.ToString("yyMMdd", _cultureTHInfo);
-            string preid = Id.Split('-')[0];
-            int runid = int.Parse(Id.Split('-')[1]);
+            string preid = Id!=null ?Id.Split('-')[0] :"";
+            int runid = Id != null ? int.Parse(Id.Split('-')[1]):0;
 
             if (preid.Contains(dt))
             {
@@ -245,7 +246,7 @@ namespace Kemrex.Web.Main.Controllers
 
             if (approveStatus == 3)
             {
-                ob.StatusId = 3;
+               // ob.StatusId = 3;
                 ob.ApprovedBy = Convert.ToInt32(CurrentUID);
             }
             ob.QuotationRemark = Request.Form["QuotationRemark"]; ;

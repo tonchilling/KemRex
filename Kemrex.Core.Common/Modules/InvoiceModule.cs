@@ -58,9 +58,9 @@ namespace Kemrex.Core.Common.Modules
             { data = data.Skip((page - 1) * size).Take(size); }
             return data.ToList();
         }
-        public List<TblInvoice> GetList()
+        public List<TblInvoice> GetList(long userId)
         {
-            var data = (from i in db.TblInvoice
+            var data = (from i in db.TblInvoice.Where(o => o.CreatedBy == userId || userId == 0)
                         select new TblInvoice
                         {
                             InvoiceId = i.InvoiceId,
@@ -80,7 +80,8 @@ namespace Kemrex.Core.Common.Modules
                             DepositAmount = i.DepositAmount,
                             IsDeposit = i.IsDeposit,
                             SaleOrder = null,
-                            ConditionId = i.ConditionId
+                            ConditionId = i.ConditionId,
+                            CreatedByName = (from emp in db.SysAccount.Where(acc => acc.AccountId ==i.CreatedBy) select emp.AccountName).FirstOrDefault()
                         });
             return data.ToList();
         }

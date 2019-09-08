@@ -60,10 +60,12 @@ namespace Kemrex.Web.Main.Controllers
             EnmPaymentCondition payConInvoice = new EnmPaymentCondition();
             try
             {
-                lst = uow.Modules.Invoice.GetList();
+                AccountPermission permission = GetPermission(CurrentUID);
+
+                lst = uow.Modules.Invoice.GetList((permission.IsAdminTeam || permission.IsManager) ? 0 : CurrentUID);
                 foreach (var pr in lst)
                 {
-                    pr.SaleOrder = uow.Modules.SaleOrder.Get(pr.SaleOrderId);
+                    pr.SaleOrder = uow.Modules.SaleOrder.GetById(pr.SaleOrderId);
                     pr.StrInvoiceDate = pr.InvoiceDate.Day.ToString("00") + "/" + pr.InvoiceDate.Month.ToString("00") + "/" + pr.InvoiceDate.Year;
                     payCon = uow.Modules.PaymentCondition.Get(pr.SaleOrder.ConditionId.HasValue ? pr.SaleOrder.ConditionId.Value : 0);
                     pr.SaleOrder.ConditionName = payCon.ConditionName;

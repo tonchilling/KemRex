@@ -63,8 +63,10 @@ namespace Kemrex.Web.Main.Controllers
         public JsonResult GetList()
         {
             string formateDate = "yyyy-MM-dd";
+
+            AccountPermission permission = GetPermission(CurrentUID);
             //  DateTime searchOrderDate = Converting.StringToDate(saleOrderDate, formateDate);
-            List<TblJobOrder> ob = uow.Modules.JobOrder.GetHeader();
+            List<TblJobOrder> ob = uow.Modules.JobOrder.GetHeader((permission.IsAdminTeam || permission.IsManager) ? 0 : CurrentUID);
 
 
             return Json(ob);
@@ -133,7 +135,7 @@ namespace Kemrex.Web.Main.Controllers
             jobOrder.ProductId = this.Request.Form["ProductId"].ParseInt();
             jobOrder.StartWorkingTime = StartHH + ":" + StartMM;
             jobOrder.EndWorkingTime = EndHH + ":" + EndMM;
-            if (JobOrderId == "" || JobOrderId == "0")
+            if (JobOrderId==null || JobOrderId == "" || JobOrderId == "0")
             {
                 jobOrder.JobOrderNo = getJobId();
                 jobOrder.CreatedDate = DateTime.Now;
@@ -141,11 +143,13 @@ namespace Kemrex.Web.Main.Controllers
             }
             else
             {
+
+                jobOrder = uow.Modules.JobOrder.GetHeaderByPK(JobOrderId.ParseInt());
                 jobOrder.UpdatedDate = DateTime.Now;
                 jobOrder.UpdatedBy = CurrentUID;
             }
 
-
+         
             if (approveStatus == 2)
             {
                

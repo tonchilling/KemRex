@@ -155,7 +155,10 @@ CreatedDate = team.CreatedDate,
 
         public Team CheckTeamOperation(long AccountId)
         {
-            var data = (from a in db.TeamOperationDetail
+            Team data =null;
+
+
+             data = (from a in db.TeamOperationDetail
                         join s in db.TeamOperation on a.TeamId equals s.TeamId
                         where a.AccountId == AccountId
                         || s.ManagerId == AccountId
@@ -167,6 +170,21 @@ CreatedDate = team.CreatedDate,
                             ManagerId = s.ManagerId
                         }
                        ).FirstOrDefault();
+
+            if (data == null)
+            {
+                data = (from a in db.TeamOperation
+                        where a.ManagerId == AccountId
+                        select new Team
+                        {
+                            EmpId = 0,
+                            AccountId = AccountId,
+                            TeamId = a.TeamId,
+                            ManagerId = a.ManagerId
+                        }
+                       ).FirstOrDefault();
+            }
+
             return data;
         }
     }

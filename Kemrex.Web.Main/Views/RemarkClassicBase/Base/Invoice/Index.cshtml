@@ -48,6 +48,7 @@
             //html += '<th align="center">มัดจำ</th>';
             html += '<th align="center">วันที่เอกสาร</th>';
             html += '<th align="center">งวดที่</th>';
+            html += '<th>ผู้สร้าง</th>';
             html += '<th align="center">สถานะ</th>';
             html += '<th align="center">เครื่องมือ</th>';
             html += '</tr>';
@@ -99,6 +100,7 @@
                             }
 
                             html += '<td align="center">' + statusName + '</td>';
+                            html += '<td>' + item.CreatedByName + '</td>';
                             html += '<td> <a href="' + urlDetail + '/' + item.InvoiceId + '" class="btn btn-xs btn-primary">';
                             html += '<i class="fa fa-pencil" aria-hidden="true"></i>&nbsp;แก้ไข </a>&nbsp;';
 

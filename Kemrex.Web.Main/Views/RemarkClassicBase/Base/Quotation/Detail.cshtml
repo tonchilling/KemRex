@@ -318,6 +318,28 @@ optEmployee = (List<TblEmployee>
 
         })
 
+        $(".btnDiscount").click(function () {
+
+            var isConfirm = true;
+            if (isConfirm) {
+                swal({
+                    title: "SAVE",
+                    text: "Do you want to add discount?",
+                    type: "info",
+                    showCancelButton: true,
+                    closeOnConfirm: false,
+                    showLoaderOnConfirm: true
+                },
+                    function (isConfirm) {
+                        if (isConfirm) {
+                            $('#frmDiscount').submit();
+
+                        }
+                    });
+            }
+            return false;
+        });
+
 
                   $("#btnSearchProduct").click(function () {
 
@@ -531,11 +553,11 @@ optEmployee = (List<TblEmployee>
             });
 
 
-            $('#ContractName').val(Contact!=null?Contact[0].ContactName:"");
-            $('#ContractPhone').val(Contact != null ? Contact[0].ContactPhone : "");
-            $('#ContractEmail').val(Contact != null ? Contact[0].ContactEmail : "");
-            $('#BillingAddress').val(Address != null ? Address[0].AddressName : "");
-            $('#ShippingAddress').val(Address != null ? Address[0].AddressName : "");
+            $('#ContractName').val(Contact!=null && Contact.length>0?Contact[0].ContactName:"");
+            $('#ContractPhone').val(Contact != null && Contact.length>0 ? Contact[0].ContactPhone : "");
+            $('#ContractEmail').val(Contact != null && Contact.length > 0  ? Contact[0].ContactEmail : "");
+            $('#BillingAddress').val(Address != null && Address.length>0  ? Address[0].AddressName : "");
+            $('#ShippingAddress').val(Address != null && Contact.length>0 ? Address[0].AddressName : "");
             $("#CustomerModal").modal('hide');
         });
 
@@ -646,7 +668,15 @@ optEmployee = (List<TblEmployee>
                 $("#ProductDiscount").removeClass("has-error");
             }
 
+            if ($("#selWareHose").val() == "") {
+                $("#selWareHose").addClass("has-error");
+                chkValidate = false;
+            } else {
+                $("#selWareHose").removeClass("has-error");
+            }
 
+
+         
 
 
 
@@ -1081,7 +1111,7 @@ optEmployee = (List<TblEmployee>
                                                             <option value="-1" )></option>
                                                             @foreach (TblEmployee it in optEmployee)
                                                             {
-                                                                bool selected = it.EmpNameTh == (Model.SaleName == null ? (sysAccount.TblEmployee != null ? sysAccount.TblEmployee.EmpNameTh : "") : Model.SaleName);
+                                                                bool selected = it.EmpId == (Model.SaleId==0 ? (sysAccount.TblEmployee != null ? sysAccount.TblEmployee.EmpId : 0) : Model.SaleId);
                                                                 <option value="@it.EmpId" @(selected ? " selected=\" selected\"" : "")>@it.EmpNameTh</option>
                                                             }
                                                         </select>
@@ -1299,7 +1329,7 @@ optEmployee = (List<TblEmployee>
                                 <div class="col-md-auto">
                                     ผลรวม
                                     <hr size=2>
-                                    <form method="post" action="@Url.Action("saveDiscount", "Quotation")" enctype="multipart/form-data">
+                                    <form method="post" id="frmDiscount" action="@Url.Action("saveDiscount", "Quotation")" enctype="multipart/form-data">
                                         <input type="hidden" name="QuotationId" value="@Model.QuotationId" />
                                         <div class="form-group row">
                                             <label for="SubTotal" class="col-sm-5 col-form-label">ยอดก่อนลด</label>
@@ -1354,7 +1384,7 @@ optEmployee = (List<TblEmployee>
                                                     {
                                                         if (optPermission.IsEdit)
                                                         {
-                                                            <button type="submit" class="btn btn-primary">บันทึก/ส่วนลด</button>
+                                                            <button type="submit" class="btn btn-primary btnDiscount">บันทึก/ส่วนลด</button>
                                                         }
                                                         <a href="@Url.Action("Detail", "Quotation")" class="btn btn-default">ยกเลิก</a>
                                                     }
