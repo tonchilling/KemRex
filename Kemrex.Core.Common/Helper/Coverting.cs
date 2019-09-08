@@ -23,7 +23,12 @@ namespace Kemrex.Core.Common.Helper
         static string[] mS = { "Jan", "Feb", "Mar", "Apr", "May", "June", "July", "Aug", "Sept", "Oct", "Nov", "Dec" };
 
 
-        public static string ToDDMMYYYY(DateTime dt)
+        public static string[] GetShortMonth()
+        {
+            return mS;
+        }
+
+            public static string ToDDMMYYYY(DateTime dt)
         {
             string result = "";
 
