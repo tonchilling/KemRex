@@ -110,7 +110,27 @@ namespace Kemrex.Web.Main.Controllers
                 }
                 else
                 {
-
+                    #region Calculate first week
+                    for (int i = firstDt.DayOfWeek.ToInt(); i > 0; i--)
+                    {
+                        CalendarDayModel day = new CalendarDayModel()
+                        {
+                            Date = firstDt.AddDays(-i),
+                            JobsOrder = new List<TblJobOrder>(),
+                            TeamType = permission.TeamType
+                        };
+                        data.Add(day);
+                    }
+                    #endregion
+                    int offset = data.Count;
+                    for (int i = offset; i <= 42; i++)
+                    {
+                        CalendarDayModel day = new CalendarDayModel()
+                        {
+                            Date = firstDt.AddDays(i - offset)
+                        };
+                        data.Add(day);
+                    }
                 }
 
                 

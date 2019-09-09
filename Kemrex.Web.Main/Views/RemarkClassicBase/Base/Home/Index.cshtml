@@ -746,58 +746,58 @@
                                                                                                             if (md.Jobs.Count > 0)
                                                                                                             {
 
-                                                                                                            <td class="fc-event-container">
-                                                                                                                @foreach (TblSaleOrder it in md.Jobs.Take(2))
-                                                                                                                {
-                                                                                                                    var bgColor = "bg-primary";
-                                                                                                                    switch (it.StatusId)
+                                                                                                                <td class="fc-event-container">
+                                                                                                                    @foreach (TblSaleOrder it in md.Jobs.Take(2))
                                                                                                                     {
+                                                                                                                        var bgColor = "bg-primary";
+                                                                                                                        switch (it.StatusId)
+                                                                                                                        {
 
-                                                                                                                        case 2:
-                                                                                                                            bgColor = "bg-success";
-                                                                                                                            break;
-                                                                                                                        case 3:
-                                                                                                                            bgColor = "bg-success";
-                                                                                                                            break;
+                                                                                                                            case 2:
+                                                                                                                                bgColor = "bg-success";
+                                                                                                                                break;
+                                                                                                                            case 3:
+                                                                                                                                bgColor = "bg-success";
+                                                                                                                                break;
+                                                                                                                        }
+                                                                                                                        if (it.HasJob == 0)
+                                                                                                                        {
+                                                                                                                            bgColor = "bg-danger";
+                                                                                                                        }
+                                                                                                                        <a class="fc-day-grid-event fc-h-event fc-event fc-start fc-end @bgColor btnViewOrder"
+                                                                                                                           href="#" dataid="@it.SaleOrderId">
+                                                                                                                            <div class="fc-content  ">
+
+                                                                                                                                @if (@it.JobOrder != null)
+                                                                                                                                {
+                                                                                                                                    <span class="fc-title">@it.SaleOrderNo [@it.CustomerName]</span>
+                                                                                                                                }
+                                                                                                                                else
+                                                                                                                                {
+                                                                                                                                    <span class="fc-title">@it.SaleOrderNo [@it.CustomerName] </span>
+                                                                                                                                }
+
+                                                                                                                            </div>
+                                                                                                                        </a>
                                                                                                                     }
-                                                                                                                    if (it.HasJob == 0)
+
+                                                                                                                    @if (md.Jobs.Count > 2)
                                                                                                                     {
-                                                                                                                        bgColor = "bg-danger";
+                                                                                                                        <a class="  btnSelectDay "
+                                                                                                                           href="#"
+                                                                                                                           data-date="@Converting.ToYYYYMMDD(md.Date)"
+                                                                                                                           data-toggle="popover"
+                                                                                                                           data-html="true" title="ใบสั่งขาย/ใบสั่งงาน" data-trigger="focus">
+                                                                                                                            + @(md.Jobs.Count - 2) เพิ่มเติม
+                                                                                                                        </a>
                                                                                                                     }
-                                                                                                                    <a class="fc-day-grid-event fc-h-event fc-event fc-start fc-end @bgColor btnViewOrder"
-                                                                                                                       href="#" dataid="@it.SaleOrderId">
-                                                                                                                        <div class="fc-content  ">
-
-                                                                                                                            @if (@it.JobOrder != null)
-                                                                                                                            {
-                                                                                                                                <span class="fc-title">@it.SaleOrderNo [@it.CustomerName]</span>
-                                                                                                                            }
-                                                                                                                            else
-                                                                                                                            {
-                                                                                                                                <span class="fc-title">@it.SaleOrderNo [@it.CustomerName] </span>
-                                                                                                                            }
-
-                                                                                                                        </div>
-                                                                                                                    </a>
-                                                                                                                }
-
-                                                                                                                @if (md.Jobs.Count > 2)
-                                                                                                                {
-                                                                                                                    <a class="  btnSelectDay "
-                                                                                                                       href="#"
-                                                                                                                       data-date="@Converting.ToYYYYMMDD(md.Date)"
-                                                                                                                       data-toggle="popover"
-                                                                                                                       data-html="true" title="ใบสั่งขาย/ใบสั่งงาน" data-trigger="focus">
-                                                                                                                        + @(md.Jobs.Count - 2) เพิ่มเติม
-                                                                                                                    </a>
-                                                                                                                }
-                                                                                                            </td>
+                                                                                                                </td>
 
 
                                                                                                             }
                                                                                                             else
                                                                                                             {
-                                                                                                            <td></td>
+                                                                                                                <td></td>
                                                                                                             }
                                                                                                         }
                                                                                                         else if (md.TeamType == TeamType.Operation)
@@ -805,60 +805,71 @@
                                                                                                             if (md.JobsOrder.Count > 0)
                                                                                                             {
 
-                                                                                                            <td class="fc-event-container">
-                                                                                                                @foreach (TblJobOrder it in md.JobsOrder.Take(2))
-                                                                                                                {
-                                                                                                                    var bgColor = "bg-primary";
-                                                                                                                    switch (it.StatusId)
+                                                                                                                <td class="fc-event-container">
+                                                                                                                    @foreach (TblJobOrder it in md.JobsOrder.Take(2))
                                                                                                                     {
+                                                                                                                        var bgColor = "bg-primary";
+                                                                                                                        switch (it.StatusId)
+                                                                                                                        {
 
-                                                                                                                        case 2:
-                                                                                                                            bgColor = "bg-success";
-                                                                                                                            break;
-                                                                                                                        case 3:
-                                                                                                                            bgColor = "bg-success";
-                                                                                                                            break;
+                                                                                                                            case 2:
+                                                                                                                                bgColor = "bg-success";
+                                                                                                                                break;
+                                                                                                                            case 3:
+                                                                                                                                bgColor = "bg-success";
+                                                                                                                                break;
+                                                                                                                        }
+                                                                                                                        //if (it.HasJob == 0)
+                                                                                                                        //{
+                                                                                                                        //    bgColor = "bg-danger";
+                                                                                                                        //}
+                                                                                                                        <a class="fc-day-grid-event fc-h-event fc-event fc-start fc-end @bgColor btnViewOrder"
+                                                                                                                           href="#" dataid="@it.SaleOrderId">
+                                                                                                                            <div class="fc-content  ">
+
+                                                                                                                                @if (@it.JobOrderNo != null)
+                                                                                                                                {
+                                                                                                                                    <span class="fc-title">@it.JobOrderNo [@it.CustomerName]</span>
+                                                                                                                                }
+                                                                                                                                else
+                                                                                                                                {
+                                                                                                                                    <span class="fc-title">@it.JobOrderNo [@it.CustomerName] </span>
+                                                                                                                                }
+
+                                                                                                                            </div>
+                                                                                                                        </a>
                                                                                                                     }
-                                                                                                                    //if (it.HasJob == 0)
-                                                                                                                    //{
-                                                                                                                    //    bgColor = "bg-danger";
-                                                                                                                    //}
-                                                                                                                    <a class="fc-day-grid-event fc-h-event fc-event fc-start fc-end @bgColor btnViewOrder"
-                                                                                                                       href="#" dataid="@it.SaleOrderId">
-                                                                                                                        <div class="fc-content  ">
 
-                                                                                                                            @if (@it.JobOrderNo != null)
-                                                                                                                            {
-                                                                                                                                <span class="fc-title">@it.JobOrderNo [@it.CustomerName]</span>
-                                                                                                                            }
-                                                                                                                            else
-                                                                                                                            {
-                                                                                                                                <span class="fc-title">@it.JobOrderNo [@it.CustomerName] </span>
-                                                                                                                            }
-
-                                                                                                                        </div>
-                                                                                                                    </a>
-                                                                                                                }
-
-                                                                                                                @if (md.JobsOrder.Count > 2)
-                                                                                                                {
-                                                                                                                    <a class="  btnSelectDay "
-                                                                                                                       href="#"
-                                                                                                                       data-date="@Converting.ToYYYYMMDD(md.Date)"
-                                                                                                                       data-toggle="popover"
-                                                                                                                       data-html="true" title="ใบสั่งขาย/ใบสั่งงาน" data-trigger="focus">
-                                                                                                                        + @(md.JobsOrder.Count - 2) เพิ่มเติม
-                                                                                                                    </a>
-                                                                                                                }
-                                                                                                            </td>
+                                                                                                                    @if (md.JobsOrder.Count > 2)
+                                                                                                                    {
+                                                                                                                        <a class="  btnSelectDay "
+                                                                                                                           href="#"
+                                                                                                                           data-date="@Converting.ToYYYYMMDD(md.Date)"
+                                                                                                                           data-toggle="popover"
+                                                                                                                           data-html="true" title="ใบสั่งขาย/ใบสั่งงาน" data-trigger="focus">
+                                                                                                                            + @(md.JobsOrder.Count - 2) เพิ่มเติม
+                                                                                                                        </a>
+                                                                                                                    }
+                                                                                                                </td>
 
 
                                                                                                             }
                                                                                                             else
                                                                                                             {
-                                                                                                            <td></td>
+                                                                                                                <td></td>
                                                                                                             }
 
+                                                                                                        }
+                                                                                                        else
+                                                                                                        {
+                                                                                                            <td class="fc-event-container">
+                                                                                                                <a 
+                                                                                                                    href="#"
+                                                                                                                    data-date="@Converting.ToYYYYMMDD(md.Date)"
+                                                                                                                    data-toggle="popover"
+                                                                                                                    data-html="true" data-trigger="focus">
+                                                                                                                </a>
+                                                                                                            </td>
                                                                                                         }
                                                                                                     }
                                                                                                 }
