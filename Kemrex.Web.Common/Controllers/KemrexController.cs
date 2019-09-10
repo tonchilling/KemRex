@@ -54,14 +54,14 @@ namespace Kemrex.Web.Common.Controllers
             AccountPermission permission = new AccountPermission();
 
             
-             checkteamSale = uow.Modules.TeamSale.CheckTeamSale(UserId.Value);
-             checkteamOperation = uow.Modules.TeamOperation.CheckTeamOperation(UserId.Value);
+             checkteamSale = uow.Modules.TeamSale.CheckTeamSale(UserId.HasValue?UserId.Value:0);
+             checkteamOperation = uow.Modules.TeamOperation.CheckTeamOperation(UserId.HasValue ? UserId.Value : 0);
 
-            if (UserId.Value == 1 || checkteamSale != null) //admin or sale
+            if ((UserId.HasValue ? UserId.Value : 0) == 1 || checkteamSale != null) //admin or sale
             {
-                permission = GetPermissionSale(CurrentUser.AccountId, UserId.HasValue ? UserId.Value : 0);
+                permission = GetPermissionSale(CurrentUser.AccountId, UserId.HasValue ? UserId.HasValue ? UserId.Value : 0 : 0);
                 permission.TeamType = TeamType.Sale;
-                permission.TeamId = (UserId.Value == 1) ? 0: checkteamSale.TeamId;
+                permission.TeamId = ((UserId.HasValue ? UserId.Value : 0) == 1) ? 0: checkteamSale.TeamId;
             }
             else if (checkteamOperation != null) //operation
             {
@@ -75,7 +75,7 @@ namespace Kemrex.Web.Common.Controllers
 
             }
 
-            if (UserId.Value == 1)
+            if ((UserId.HasValue ? UserId.Value : 0) == 1)
             {
                 permission.TeamType = TeamType.Admin;
             }
