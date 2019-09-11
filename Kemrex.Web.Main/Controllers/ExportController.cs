@@ -524,17 +524,20 @@ namespace Kemrex.Web.Main.Controllers
                 html = html.Replace("@@Remark@@", quo.QuotationRemark);
                 decimal SubTotalNet = 0;
                 decimal DiscountNet = 0;
+                decimal DiscountCash = 0;
                 SubTotalNet = quo.SubTotalNet.HasValue ? quo.SubTotalNet.Value : 0;
                 DiscountNet = quo.DiscountNet.HasValue ? quo.DiscountNet.Value != 0 ? quo.DiscountNet.Value : 0 : 0;
+                DiscountCash = quo.DiscountCash != 0 ? quo.DiscountCash : 0;
 
                 decimal SummaryNet = 0;
                 SummaryNet = SubTotalNet - DiscountNet;
                 decimal SummaryVat = (SummaryNet * 7) / 100;
-                decimal SummaryTot = SummaryNet + SummaryVat;
+                decimal SummaryTot = SummaryNet + SummaryVat - DiscountCash;
                 html = html.Replace("@@SubTotalNet@@", SubTotalNet.ToString("###,###,##0.00"));
                 html = html.Replace("@@DiscountNet@@", DiscountNet.ToString("###,###,##0.00"));
                 html = html.Replace("@@SummaryNet@@", SummaryNet.ToString("###,###,##0.00"));
                 html = html.Replace("@@SummaryVat@@", SummaryVat.ToString("###,###,##0.00"));
+                html = html.Replace("@@DiscountCash@@", DiscountCash.ToString("###,###,##0.00"));
                 html = html.Replace("@@SummaryTot@@", SummaryTot.ToString("###,###,##0.00"));
                 //string textFinalAmount = ThaiBahtText(invoice.SaleOrder.SummaryTot.HasValue ? invoice.SaleOrder.SummaryTot.Value.ToString():"");
                 string textFinalAmount = ThaiBahtText(SummaryTot.ToString());
@@ -1118,17 +1121,20 @@ namespace Kemrex.Web.Main.Controllers
                 html = html.Replace("@@Remark@@", remarkx);
                 decimal SubTotalNet = 0;
                 decimal DiscountNet = 0;
+                decimal DiscountCash = 0;
                 SubTotalNet = so.SubTotalNet.HasValue ? so.SubTotalNet.Value : 0;
                 DiscountNet = so.DiscountNet.HasValue ? so.DiscountNet.Value != 0 ? so.DiscountNet.Value : 0 : 0;
+                DiscountCash = so.DiscountCash.HasValue ? so.DiscountCash.Value != 0 ? so.DiscountCash.Value : 0 : 0;
 
                 decimal SummaryNet = 0;
                 SummaryNet = SubTotalNet - DiscountNet;
                 decimal SummaryVat = (SummaryNet * 7) / 100;
-                decimal SummaryTot = SummaryNet + SummaryVat;
+                decimal SummaryTot = SummaryNet + SummaryVat - DiscountCash;
                 html = html.Replace("@@SubTotalNet@@", SubTotalNet.ToString("###,###,##0.00"));
                 html = html.Replace("@@DiscountNet@@", DiscountNet.ToString("###,###,##0.00"));
                 html = html.Replace("@@SummaryNet@@", SummaryNet.ToString("###,###,##0.00"));
                 html = html.Replace("@@SummaryVat@@", SummaryVat.ToString("###,###,##0.00"));
+                html = html.Replace("@@DiscountCash@@", DiscountCash.ToString("###,###,##0.00"));
                 html = html.Replace("@@SummaryTot@@", SummaryTot.ToString("###,###,##0.00"));
                 //string textFinalAmount = ThaiBahtText(invoice.SaleOrder.SummaryTot.HasValue ? invoice.SaleOrder.SummaryTot.Value.ToString():"");
                 string textFinalAmount = ThaiBahtText(SummaryTot.ToString());
@@ -1485,25 +1491,40 @@ namespace Kemrex.Web.Main.Controllers
                 html = html.Replace("@@SaleName@@", invoice.SaleOrder.SaleName);
                 decimal SubTotalNet = 0;
                 decimal DiscountNet = 0;
+                decimal DiscountCash = 0;
                 decimal Deposit = invoice.DepositAmount;
                 switch (invoice.SaleOrder.ConditionId)
                 {
                     case 1:
+                    case 2: 
                         SubTotalNet = invoice.SaleOrder.SubTotalNet.HasValue ? invoice.SaleOrder.SubTotalNet.Value : 0;
                         DiscountNet = invoice.SaleOrder.DiscountNet.HasValue ? invoice.SaleOrder.DiscountNet.Value != 0 ? invoice.SaleOrder.DiscountNet.Value : 0 : 0;
+                        DiscountCash = invoice.SaleOrder.DiscountCash.HasValue ? invoice.SaleOrder.DiscountCash.Value != 0 ? invoice.SaleOrder.DiscountCash.Value : 0 : 0;
                         break;
-                    //case 2: 
+                    
                     case 3:
                         SubTotalNet = invoice.InvoiceAmount.HasValue ? invoice.InvoiceAmount.Value : 0;
-                        if (invoice.InvoiceTerm == 1) DiscountNet = invoice.SaleOrder.DiscountNet.HasValue ? invoice.SaleOrder.DiscountNet.Value != 0 ? invoice.SaleOrder.DiscountNet.Value : 0 : 0;
+                        if (invoice.InvoiceTerm == 2)
+                        {
+                            DiscountNet = invoice.SaleOrder.DiscountNet.HasValue ? invoice.SaleOrder.DiscountNet.Value != 0 ? invoice.SaleOrder.DiscountNet.Value : 0 : 0;
+                            DiscountCash = invoice.SaleOrder.DiscountCash.HasValue ? invoice.SaleOrder.DiscountCash.Value != 0 ? invoice.SaleOrder.DiscountCash.Value : 0 : 0;
+                        }
                         break;
                     case 4:
                         SubTotalNet = invoice.InvoiceAmount.HasValue ? invoice.InvoiceAmount.Value : 0;
-                        if (invoice.InvoiceTerm == 1) DiscountNet = invoice.SaleOrder.DiscountNet.HasValue ? invoice.SaleOrder.DiscountNet.Value != 0 ? invoice.SaleOrder.DiscountNet.Value : 0 : 0;
+                        if (invoice.InvoiceTerm == 2)
+                        {
+                            DiscountNet = invoice.SaleOrder.DiscountNet.HasValue ? invoice.SaleOrder.DiscountNet.Value != 0 ? invoice.SaleOrder.DiscountNet.Value : 0 : 0;
+                            DiscountCash = invoice.SaleOrder.DiscountCash.HasValue ? invoice.SaleOrder.DiscountCash.Value != 0 ? invoice.SaleOrder.DiscountCash.Value : 0 : 0;
+                        }
                         break;
                     case 5:
                         SubTotalNet = invoice.InvoiceAmount.HasValue ? invoice.InvoiceAmount.Value : 0;
-                        if (invoice.InvoiceTerm == 1) DiscountNet = invoice.SaleOrder.DiscountNet.HasValue ? invoice.SaleOrder.DiscountNet.Value != 0 ? invoice.SaleOrder.DiscountNet.Value : 0 : 0;
+                        if (invoice.InvoiceTerm == 2)
+                        {
+                            DiscountNet = invoice.SaleOrder.DiscountNet.HasValue ? invoice.SaleOrder.DiscountNet.Value != 0 ? invoice.SaleOrder.DiscountNet.Value : 0 : 0;
+                            DiscountCash = invoice.SaleOrder.DiscountCash.HasValue ? invoice.SaleOrder.DiscountCash.Value != 0 ? invoice.SaleOrder.DiscountCash.Value : 0 : 0;
+                        }
                         break;
 
                     default: tagItem += "<td></td>"; break;
@@ -1511,12 +1532,13 @@ namespace Kemrex.Web.Main.Controllers
                 decimal SummaryNet = 0;
                 SummaryNet = SubTotalNet - DiscountNet - Deposit;
                 decimal SummaryVat = (SummaryNet * 7) / 100;
-                decimal SummaryTot = SummaryNet + SummaryVat;
+                decimal SummaryTot = SummaryNet + SummaryVat - DiscountCash;
                 html = html.Replace("@@SubTotalNet@@", SubTotalNet.ToString("###,###,##0.00"));
                 html = html.Replace("@@DiscountNet@@", DiscountNet.ToString("###,###,##0.00"));
                 html = html.Replace("@@Deposit@@", Deposit.ToString("###,###,##0.00"));
                 html = html.Replace("@@SummaryNet@@", SummaryNet.ToString("###,###,##0.00"));
                 html = html.Replace("@@SummaryVat@@", SummaryVat.ToString("###,###,##0.00"));
+                html = html.Replace("@@DiscountCash@@", DiscountCash.ToString("###,###,##0.00"));
                 html = html.Replace("@@SummaryTot@@", SummaryTot.ToString("###,###,##0.00"));
                 //string textFinalAmount = ThaiBahtText(invoice.SaleOrder.SummaryTot.HasValue ? invoice.SaleOrder.SummaryTot.Value.ToString():"");
                 string textFinalAmount = ThaiBahtText(SummaryTot.ToString());
