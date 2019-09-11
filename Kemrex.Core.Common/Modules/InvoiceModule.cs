@@ -124,6 +124,11 @@ namespace Kemrex.Core.Common.Modules
         {
             return db.TblInvoice.Where(x => x.InvoiceId == id).Count() > 0 ? true : false;
         }
+        public int CountTerm(int id = 0)
+        {
+            var data = db.TblInvoice.Where(x => x.SaleOrderId == id);
+            return data.Count();
+        }
 
         public void Set(TblInvoice ob)
         {
@@ -146,6 +151,7 @@ namespace Kemrex.Core.Common.Modules
             paramList.Add(new SqlParameter("@InvoiceRemark", dto.InvoiceRemark));
             paramList.Add(new SqlParameter("@InvoiceTerm", dto.InvoiceTerm));
             paramList.Add(new SqlParameter("@InvoiceAmount", dto.InvoiceAmount));
+            paramList.Add(new SqlParameter("@ConditionId", dto.ConditionId));
             paramList.Add(new SqlParameter("@User", dto.CreatedBy));
             
             try
