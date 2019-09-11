@@ -448,7 +448,7 @@
                                                     <label for="InvoiceAmount" class="col-sm-4 col-form-label">ยอดเรียกเก็บ</label>
                                                     <div class="input-group col-sm-6">
                                                         <span class="input-group-addon">
-                                                            <i class="icon wb-payment" aria-hidden="true"></i>
+                                                            <i class="icon wb-payment  icon-2-5x text-danger" aria-hidden="true"></i>
                                                         </span>
                                                         @{
                                                             var checkInvoice = false;
@@ -519,7 +519,7 @@
                                                     <label for="CreateDate" class="col-sm-5 col-form-label">วันที่ออกเอกสาร</label>
                                                     <div class="input-group col-sm-6">
                                                         <span class="input-group-addon">
-                                                            <i class="icon wb-calendar" aria-hidden="true"></i>
+                                                            <i class="icon wb-calendar  icon-2-5x text-success" aria-hidden="true"></i>
                                                         </span>
                                                         <input type="text" class="form-control" name="InvoiceDate" value="@Model.InvoiceDate.ToString("dd/MM/yyyy")" readonly />
                                                     </div>
@@ -528,7 +528,7 @@
                                                     <label for="DueDate" class="col-sm-5 col-form-label">วันที่ครบกำหนด</label>
                                                     <div class="input-group col-sm-6 date" data-provide="@(checkInvoice ? "datepicker" : "")" data-date-format="dd/mm/yyyy">
                                                         <span class="input-group-addon">
-                                                            <i class="icon wb-calendar" aria-hidden="true"></i>
+                                                            <i class="icon wb-calendar  icon-2-5x text-success" aria-hidden="true"></i>
                                                         </span>
                                                         <input type="text" class="form-control" name="DueDate" id="DueDate" value="@Model.DueDate.ToString("dd/MM/yyyy")" @(checkInvoice ? "" : "readonly") />
                                                     </div>
@@ -630,7 +630,10 @@
                                 <div class="form-group">
                                     <label for="SaleOrderStartDate" class="form-control-label">จากวันที่</label>
                                     <div class="input-group date" data-provide="datepicker" data-date-format="dd/mm/yyyy">
-                                        <input id="SaleOrderStartDate" type="text" class="form-control" placeholder="dd/MM/yyyy ค.ศ." name="SaleOrderStartDate" />
+                                        <input id="SaleOrderStartDate" type="text" class="form-control"
+                                               placeholder="dd/MM/yyyy ค.ศ."
+                                               name="SaleOrderStartDate"
+                                               value="@DateTime.Now.ToString("dd/MM/yyyy")"/>
                                         <span class="input-group-addon">
                                             <i class="icon wb-calendar icon-2-5x text-success" style="padding-left:2px" aria-hidden="true"></i>
                                         </span>
@@ -642,7 +645,10 @@
                                 <div class="form-group">
                                     <label for="SaleOrderEndDate" class="form-control-label">ถึงวันที่</label>
                                     <div class="input-group date" data-provide="datepicker" data-date-format="dd/mm/yyyy">
-                                        <input id="SaleOrderEndDate" type="text" class="form-control" placeholder="dd/MM/yyyy ค.ศ." name="SaleOrderEndDate" />
+                                        <input id="SaleOrderEndDate" type="text" class="form-control" 
+                                               placeholder="dd/MM/yyyy ค.ศ." 
+                                               name="SaleOrderEndDate"
+                                               value="@DateTime.Now.ToString("dd/MM/yyyy")"/>
                                         <span class="input-group-addon">
                                             <i class="icon wb-calendar icon-2-5x text-success" style="padding-left:2px" aria-hidden="true"></i>
                                         </span>

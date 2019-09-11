@@ -113,7 +113,7 @@ namespace Kemrex.Web.Main.Controllers
                 obj.TransferId = Convert.ToInt32(TransferId);
                 obj.UpdatedDate = DateTime.Now;
             }
-
+          
             obj.TransferType = "O";
             if (Request.Form["TransferDate"].ToString() != "")
             {
@@ -122,6 +122,7 @@ namespace Kemrex.Web.Main.Controllers
                 obj.TransferDate = dd.ParseDate(DateFormat.ddMMyyyy, culInfo: _cultureTHInfo);
             }
 
+            obj.RefTransfer = null;
          //   obj.EmpId = "1";
 
 

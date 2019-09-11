@@ -21,7 +21,7 @@ namespace Kemrex.Web.Main.Controllers
             }
             return ViewDetail(ob, qtid, msg, msgType);
         }
-
+    
         [ValidateAntiForgeryToken]
         [HttpPost, ActionName("Detail")]
         public ActionResult SetDetail()

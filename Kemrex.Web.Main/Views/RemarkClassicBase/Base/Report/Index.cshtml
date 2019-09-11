@@ -1,12 +1,565 @@
 ﻿@using Kemrex.Core.Database.Models
 @using Kemrex.Web.Common.Controllers
 @using Kemrex.Web.Common.Models
+
 @{
     ViewBag.Title = "Index";
     KemrexController kemrex = ((KemrexController)this.ViewContext.Controller);
     Layout = kemrex.PathViewShared("_lyDefault");
     WidgetAlertModel Alert = (WidgetAlertModel)ViewBag.Alert;
+
+
+    SysAccount sysAccount = (SysAccount
+)ViewData["userAccount"];
+
+    List<int>
+optYearAll = (List<int>
+)ViewData["optYearAll"];
+
+    TransactionStatus tranStatus = kemrex.GetTransactionStatus();
+
 }
 
 <h2>Index</h2>
 
+@section Scripts {
+    <script type="text/javascript">
+
+        var chartData;
+
+
+
+     var   BarChartOption = {
+            title: {
+                x: 'center',
+                text: 'รายงานยอดขายประจำปี',
+                subtext: '2019',
+                link: ''
+            },
+            tooltip: {
+                trigger: 'item'
+            },
+            toolbox: {
+                show: true,
+                feature: {
+                    dataView: { show: true, readOnly: false },
+                    restore: { show: true },
+                    saveAsImage: { show: true }
+                }
+            },
+            calculable: true,
+            grid: {
+                borderWidth: 0,
+                y: 80,
+                y2: 60
+            },
+            xAxis: [
+                {
+                    type: 'category',
+                    show: false,
+                    data: ['Line', 'Bar', 'Scatter', 'K', 'Pie', 'Radar', 'Chord', 'Force', 'Map', 'Gauge', 'Funnel']
+                }
+            ],
+            yAxis: [
+                {
+                    type: 'value',
+                    show: false
+                }
+            ],
+            series: [
+                {
+                    name: 'ECharts例子个数统计',
+                    type: 'bar',
+                    itemStyle: {
+                        normal: {
+                            color: function (params) {
+                                // build a color map as your need.
+                                var colorList = [
+                                    '#C1232B', '#B5C334', '#FCCE10', '#E87C25', '#27727B',
+                                    '#FE8463', '#9BCA63', '#FAD860', '#F3A43B', '#60C0DD',
+                                    '#D7504B', '#C6E579', '#F4E001', '#F0805A', '#26C0C0'
+                                ];
+                                return colorList[params.dataIndex]
+                            },
+                            label: {
+                                show: true,
+                                position: 'top',
+                                formatter: '{b}\n{c}'
+                            }
+                        }
+                    },
+                    data: [12, 21, 10, 4, 12, 5, 6, 5, 25, 23, 7],
+                    markPoint: {
+                        tooltip: {
+                            trigger: 'item',
+                            backgroundColor: 'rgba(0,0,0,0)',
+                            formatter: function (params) {
+                                return '<img src="'
+                                    + params.data.symbol.replace('image://', '')
+                                    + '"/>';
+                            }
+                        },
+                        data: [
+                            { xAxis: 0, y: 350, name: 'Line', symbolSize: 20, symbol: 'image://../asset/ico/折线图.png' },
+                            { xAxis: 1, y: 350, name: 'Bar', symbolSize: 20, symbol: 'image://../asset/ico/柱状图.png' },
+                            { xAxis: 2, y: 350, name: 'Scatter', symbolSize: 20, symbol: 'image://../asset/ico/散点图.png' },
+                            { xAxis: 3, y: 350, name: 'K', symbolSize: 20, symbol: 'image://../asset/ico/K线图.png' },
+                            { xAxis: 4, y: 350, name: 'Pie', symbolSize: 20, symbol: 'image://../asset/ico/饼状图.png' },
+                            { xAxis: 5, y: 350, name: 'Radar', symbolSize: 20, symbol: 'image://../asset/ico/雷达图.png' },
+                            { xAxis: 6, y: 350, name: 'Chord', symbolSize: 20, symbol: 'image://../asset/ico/和弦图.png' },
+                            { xAxis: 7, y: 350, name: 'Force', symbolSize: 20, symbol: 'image://../asset/ico/力导向图.png' },
+                            { xAxis: 8, y: 350, name: 'Map', symbolSize: 20, symbol: 'image://../asset/ico/地图.png' },
+                            { xAxis: 9, y: 350, name: 'Gauge', symbolSize: 20, symbol: 'image://../asset/ico/仪表盘.png' },
+                            { xAxis: 10, y: 350, name: 'Funnel', symbolSize: 20, symbol: 'image://../asset/ico/漏斗图.png' },
+                        ]
+                    }
+                }
+            ]
+        };
+
+
+        $(document).ready(function () {
+            LoadData();
+
+        });
+
+
+
+
+        $('#btnSearch').click(function () {
+            LoadData();
+
+            return false;
+        });
+
+        function LoadData() {
+
+
+            var reportUrl = '@Url.Action("GetReport", new { controller = "Report", area = ""})' + '?Year=' + $('#selYear').val()
+            waitingDialog.show('Waiting for loading', { dialogSize: 'md', progressType: 'primary' });
+            $.get(reportUrl, { searchYear: $('#selYear').val()},function (data, status) {
+                chartData = ChartType[4].Option;
+
+                if (data != null) {
+                    chartData.legend.data = ["Sale Order", "Quotation"];
+                    chartData.xAxis[0].data = data.xAixData;
+                    chartData.series[0].data = data.yAixData;
+                    chartData.series[0].name = chartData.legend.data[0];
+                    chartData.series[1].data = data.yAixData2;
+                    chartData.series[1].name = chartData.legend.data[1];
+                }
+                LoadChart(chartData, document.getElementById('divChart1'))
+
+                window.setTimeout(function () {
+                    waitingDialog.hide();
+                }, 1000);
+
+            });
+
+        }
+
+        function LoadChart(Option, divChart) {
+            var chartLoad = echarts.init(divChart);
+            var option = Option;
+
+
+            window.onresize = chartLoad.resize;
+
+
+
+
+
+            setTimeout(function () {
+                chartLoad.setOption(option, true);
+                // chartLoad.on("click", ChartCallBack);
+
+
+            }, 1000);
+        }
+
+    </script>
+
+    <style type="text/css">
+        .dashboard .card, .dashboard .panel {
+            height: calc(100% - 30px);
+        }
+
+        #SaleOrderModal {
+        }
+
+        ul.tabs {
+            margin: 0px;
+            padding: 0px;
+            list-style: none;
+        }
+
+            ul.tabs li {
+                background: none;
+                color: #222;
+                display: inline-block;
+                padding: 10px 15px;
+                cursor: pointer;
+                background: #ededed;
+            }
+
+                ul.tabs li.current {
+                    background: #ffffff;
+                    color: #222;
+                }
+
+        .tab-content {
+            display: none;
+            background: #ffffff;
+            padding: 15px;
+        }
+
+            .tab-content.current {
+                display: inherit;
+            }
+
+
+        .modal-lg, .modal-xl {
+            max-width: 800px;
+        }
+
+        .tfooter {
+            background-color: #e6f2ff;
+            font-size: large;
+            font-weight: bold;
+            color: #000000;
+        }
+
+        .tsummary {
+            background-color: #b3d6ff;
+            text-align: right;
+        }
+
+        .list-group-item {
+            border: 1px solid #eee;
+        }
+
+        .fa-2x {
+            font-size: 2rem;
+        }
+
+        .btnViewOrder {
+            cursor: pointer;
+            color: #ffffff;
+        }
+
+            .btnViewOrder:hover {
+                font-weight: 200;
+            }
+
+        .list-group-item:hover, .list-group-item:focus {
+            background-color: #00ff21;
+        }
+
+        .popover {
+            min-width: 300px;
+        }
+
+        .btnSelectDay {
+            font-weight: bold
+        }
+
+        .fc-event {
+            border-radius: 2px;
+            background-color: #3e8ef7;
+            border-color: transparent;
+        }
+
+        .selectItem:hover {
+            cursor: pointer;
+            background-color: #77ddeb;
+        }
+
+        .bg-onprocess {
+            background-color: #3e8ef7;
+            color: #ffffff;
+        }
+
+        .bg-onclose {
+            background-color: #51eb5e;
+            color: #ffffff;
+        }
+
+        .bg-onwaiting {
+            background-color: #dc3545;
+        }
+
+        .card {
+            border-radius: 4px;
+            box-shadow: 0 1px 2px rgba(0,0,0,.05), 0 0 0 1px rgba(63,63,68,.1);
+            background-color: #fff;
+            margin-bottom: 30px;
+        }
+
+            .card .content {
+                padding: 15px 15px 10px;
+            }
+
+        card-stats .numbers {
+            font-size: 2em;
+            text-align: right;
+        }
+
+        .numbers {
+            font-size: 2em;
+            text-align: right;
+        }
+
+        .icon-big i {
+            font-weight: 700;
+            line-height: 59px;
+        }
+
+        .card-stats .icon-big {
+            font-size: 3em;
+            min-height: 64px;
+        }
+
+        fa-3x {
+            font-size: 3em;
+        }
+
+        .footer .stats {
+            font-size: 1.5em;
+        }
+
+        .popover-body {
+            padding: 20px 4px;
+        }
+
+        .list-group {
+            margin-bottom: 4px;
+        }
+    </style>
+}
+<form method="post" id="frmMain" enctype="multipart/form-data">
+
+    <div class="page">
+        <div class="page-header">
+            <h1 class="page-title">รายงาน</h1>
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="@Url.Action("Index", new { controller = "Home", area = "" })" })">หน้าแรก</a></li>
+
+            </ol>
+        </div>
+        <div class="page-content container-fluid">
+            <div class="row">
+                <div class="col-lg-3 col-sm-12">
+                    <div class="card card-stats bg-blue-300">
+                        <div class="content">
+                            <div class="row">
+                                <div class="col-sm-5">
+                                    <div class="icon-big text-center">
+                                        <i class=" icon-1x glyphicon glyphicon-folder-open text-primary"></i>
+                                    </div>
+                                </div>
+                                <div class="col-sm-7">
+                                    <div>
+                                        <p class="numbers">ใบเสนอราคา</p>
+
+
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="footer">
+                                <hr>
+                                <div class="row stats">
+                                    <div class="col-sm-6">ร่าง : @tranStatus.QuoState1</div>
+                                    <div class="col-sm-6">ส่งแล้ว : @tranStatus.QuoState2</div>
+                                    <div class="col-sm-6">ตอบรับ : @tranStatus.QuoState3</div>
+                                    <div class="col-sm-6">ยกเลิก :  @tranStatus.QuoState4</div>
+
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="col-lg-3 col-sm-12">
+                    <div class="card card-stats bg-warning">
+                        <div class="content">
+                            <div class="row">
+                                <div class="col-sm-5">
+                                    <div class="icon-big text-center icon-warning">
+                                        <i class="fa  icon-1x  fa-bar-chart text-danger"></i>
+                                    </div>
+                                </div>
+                                <div class="col-sm-7">
+                                    <div>
+                                        <p class="numbers">ใบสั่งขาย</p>
+
+
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="footer">
+                                <hr>
+                                <div class="stats">
+                                    <div class="row">
+                                        <div class="col-sm-6">เปิด :  @tranStatus.SOState1</div>
+                                        <div class="col-sm-6">ปิด : @tranStatus.SOState2</div>
+                                        <div class="col-sm-6">ยกเลิก : @tranStatus.SOState3</div>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="col-lg-3 col-sm-12">
+                    <div class="card card-stats bg-brown-200">
+                        <div class="content">
+                            <div class="row">
+                                <div class="col-sm-5">
+                                    <div class="icon-big text-center icon-warning">
+                                        <i class="fa  icon-1x  fa-bar-chart text-light"></i>
+                                    </div>
+                                </div>
+                                <div class="col-sm-7">
+                                    <div>
+                                        <p class="numbers">ใบแจ้งหนี้</p>
+
+
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="footer">
+                                <hr><div class="stats">
+                                    <div class="row">
+                                        <div class="col-sm-6">ร่าง : @tranStatus.InvState1</div>
+                                        <div class="col-sm-6">ส่งแล้ว : @tranStatus.InvState2</div>
+                                        <div class="col-sm-6">จ่ายแล้ว :@tranStatus.InvState3</div>
+                                        <div class="col-sm-6">ยกเลิก : @tranStatus.InvState4</div>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="col-lg-3 col-sm-12">
+                    <div class="card card-stats bg-success">
+                        <div class="content">
+                            <div class="row">
+                                <div class="col-sm-5">
+                                    <div class="icon-big text-center icon-warning">
+                                        <i class="fa  icon-1x  fa-bar-chart text-light"></i>
+                                    </div>
+                                </div>
+                                <div class="col-sm-7">
+                                    <div>
+                                        <p class="numbers">ใบสั่งงาน</p>
+
+
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="footer">
+                                <hr><div class="stats">
+                                    <div class="row">
+                                        <div class="col-sm-6">ดำเนินการ : @tranStatus.JobOrderState1</div>
+                                        <div class="col-sm-6">เสร็จสิ้น : @tranStatus.JobOrderState2</div>
+
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12">
+
+                    <div class="panel">
+                        <input type="hidden" id="QuotationId" name="QuotationId" />
+                        <div class="panel-heading">
+                            <h3 class="panel-title">รายงาน&nbsp;</h3> <div class="form-group">
+
+
+                            </div>
+
+                        </div>
+                        <!-- /.box-header -->
+                        <div class="panel-body">
+                            <div class="row">
+                                <div class="col-lg-2 col-md-6 col-sm-12 ">
+                                    <div class="form-group">
+                                        <label for="Qty" class="form-control-label">ประจำปี</label>
+                                        <select class="form-control" id="selYear" data-live-search="true"
+                                                name="selYear">
+                                            <option value="">กรุณาเลือก</option>
+                                            @foreach (var it in optYearAll)
+                                            {
+                                                <option value="@it" @(it == DateTime.Now.Year ? " selected=\" selected\"" : "")>@it</option>
+                                            }
+                                        </select>
+
+                                    </div>
+
+                                </div>
+                                <div class="col-lg-2 col-md-6 col-sm-12" style="padding-top:42px">
+                                    <button type="submit" id="btnSearch" class="btn btn-primary form-control">ค้นหา</button>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="divChart1" id="divChart1" style="height:600px">
+
+
+                                    </div>
+                                </div>
+                            </div>
+                            <!--  <div class="row">
+                                <div class="col-12">
+                                    <div class="table-responsive divDetail">
+                                        <table class="table table-bordered table-hover">
+                                            <thead>
+                                                <tr align="center">
+                                                    <th>หมายเลข</th>
+                                                    <th>ลูกค้า</th>
+                                                    <th>ยอดเงิน</th>
+                                                    <th>วันที่</th>
+                                                    <th>ใบเสนอราคาอ้างอิง</th>
+                                                    <th>สถานะ</th>
+                                                    <th>เครื่องมือ</th>
+
+                                                </tr>
+                                            </thead>
+
+                                        </table>
+
+                                    </div>
+                                </div>
+                            </div>
+                            -->
+                        </div>
+                        <!-- /.box-body -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="~/themes/RemarkClassicBase/js/echarts.min.js"></script>
+    <script src="~/themes/RemarkClassicBase/js/ChartOptions.js?version=1.231"></script>
+    <script type="text/javascript">
+
+
+
+    </script>
+
+</form>
