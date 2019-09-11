@@ -137,6 +137,7 @@ namespace Kemrex.Web.Main.Controllers
                     ob.UpdatedDate = CurrentDate;
                     ob.InvoiceDate = CurrentDate;
                     ob.ConditionId = ob.SaleOrder.ConditionId;
+                    ob.InvoiceTerm = uow.Modules.Invoice.CountTerm(ob.SaleOrderId) + 1;
                     //ob.DueDate = CurrentDate.AddMonths(1);
                     switch (ob.SaleOrder.ConditionId)
                     {
@@ -160,6 +161,7 @@ namespace Kemrex.Web.Main.Controllers
                     ob.InvoiceAmount = 0;
                     if (Request.Form["InvoiceAmount"] != "")
                         ob.InvoiceAmount = decimal.Parse(Request.Form["InvoiceAmount"].ToString());
+                    ob.InvoiceTerm = Request.Form["InvoiceTerm"].ParseInt();
                 }
 
                 try
@@ -167,7 +169,7 @@ namespace Kemrex.Web.Main.Controllers
 
                     ob.SaleOrderId = sid;
                     ob.StatusId = Request.Form["StatusId"].ParseInt();
-                    ob.InvoiceTerm = Request.Form["InvoiceTerm"].ParseInt();
+                    
                     ob.InvoiceRemark = Request.Form["InvoiceRemark"];
                     
                     //string hddIsDeposit = Request.Form["hddIsDeposit"].ToString();
