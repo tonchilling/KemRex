@@ -778,7 +778,7 @@ optEmployee = (List<TblEmployee>
                 function (isConfirm) {
                     if (isConfirm) {
 
-                        $('#hdApprove').val(3);
+                        $('#hdApprove').val(2);
                         $('#frmMain').attr('action', '@Url.Action("Detail", "Quotation")');
                         $('#frmMain').submit();
 
@@ -935,12 +935,19 @@ optEmployee = (List<TblEmployee>
                                                     <label for="PriceValidity" class="col-sm-5 col-form-label">สถานะเอกสาร</label>
                                                     <div class="col-sm-6">
                                                         <select name="StatusId" id="StatusId" class="form-control">
-                                                            <option class="text-muted" value="1" @(Model.StatusId == 1 ? " selected=\" selected\"" : "")>ร่าง</option>
-                                                            <option class="text-warning" value="2" @(Model.StatusId == 2 ? " selected=\" selected\"" : "")>ส่งอนุมัติ</option>
-                                                            <option class="text-primary" value="3" @(Model.StatusId == 3 ? " selected=\" selected\"" : "")>ส่งลูกค้า</option>
-                                                            <option class="text-success" value="4" @(Model.StatusId == 4 ? " selected=\" selected\"" : "")>ตอบรับ</option>
-                                                            <option class="text-dark" value="5" @(Model.StatusId == 5 ? " selected=\" selected\"" : "")>ยกเลิก</option>
-                                                        </select>
+                                                            @if (Model.StatusId <= 1)
+                                                            {
+                                                                <option class="text-muted" value="1" @(Model.StatusId == 1 ? " selected=\" selected\"" : "")>ร่าง</option>
+                                                            }
+                                                            @if (Model.StatusId >=2)
+                                                            {
+                                                                <option class="text-warning" value="2" @(Model.StatusId == 2 ? " selected=\" selected\"" : "")>ส่งอนุมัติ</option>
+                                                          
+                                                                    <option class="text-primary" value="3" @(Model.StatusId == 3 ? " selected=\" selected\"" : "")>ส่งลูกค้า</option>
+                                                                    <option class="text-success" value="4" @(Model.StatusId == 4 ? " selected=\" selected\"" : "")>ตอบรับ</option>
+                                                                    <option class="text-dark" value="5" @(Model.StatusId == 5 ? " selected=\" selected\"" : "")>ยกเลิก</option>
+                                                                }
+                                                            </select>
                                                     </div>
                                                 </div>
                                                 <div class="form-group">
@@ -1135,7 +1142,7 @@ optEmployee = (List<TblEmployee>
                                                         <a href="#" class="btn btn-default btnCancel ">ยกเลิก</a>
                                                     }
 
-                                                    @if (Model.StatusId > 0 && Model.StatusId < 4 && optPermission.IsManager)
+                                                    @if (Model.StatusId > 0 && Model.StatusId <= 1 && optPermission.IsManager)
                                                     {
                                                         <button type="submit" id="btnConfirm" class="btn btn-success btnConfirm">
                                                             อนุมัติ

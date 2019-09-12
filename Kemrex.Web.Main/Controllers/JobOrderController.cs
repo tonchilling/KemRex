@@ -96,6 +96,69 @@ namespace Kemrex.Web.Main.Controllers
             return Json(ob);
         }
 
+
+        // This action handles the form POST and the upload
+        [HttpPost]
+        public ActionResult UploadFile()
+        {
+            // Verify that the user selected a file
+            string sid = Request.Form["soId"];
+            string jobId = Request.Form["jobId"];
+            string FilePath = "";
+            try
+            {
+                if (Request.Files.Count > 0 && Request.Files["FileAttachment"] != null && Request.Files["FileAttachment"].ContentLength > 0)
+                {
+
+                    TblSaleOrderAttachment sa = uow.Modules.SaleOrderAttachment.Get(0);
+
+                    HttpPostedFileBase uploadedFile = Request.Files["FileAttachment"];
+                    FilePath = string.Format("files/so/{0}", sid);
+                    if (!Directory.Exists(Server.MapPath("~/files"))) { Directory.CreateDirectory(Server.MapPath("~/files")); }
+                    if (!Directory.Exists(Server.MapPath("~/files/so"))) { Directory.CreateDirectory(Server.MapPath("~/files/so")); }
+                    if (!Directory.Exists(Server.MapPath("~/" + FilePath))) { Directory.CreateDirectory(Server.MapPath("~/" + FilePath)); }
+                    FilePath += "/" + Path.GetFileName(uploadedFile.FileName);
+                    sa.AttachmentPath = FilePath;
+                    sa.SaleOrderId = int.Parse(sid);
+                    sa.AttachmentRemark = Path.GetExtension(uploadedFile.FileName);
+                    sa.AttachmentOrder = uow.Modules.SaleOrderAttachment.GetLastOrder(int.Parse(sid)) + 1;
+                    uploadedFile.SaveAs(Server.MapPath("~/" + FilePath));
+
+                    uow.Modules.SaleOrderAttachment.Set(sa);
+                    uow.SaveChanges();
+                }
+                else
+                {
+                    string msg = "ไม่พบไฟล์แนบ";
+                    return RedirectToAction("Detail", MVCController, new { id = jobId, tab = "Attachment", fi = FilePath, msg, msgType = AlertMsgType.Danger });
+                }
+            }
+            catch (Exception ex)
+            {
+                string msg = ex.GetMessage(true);
+                return RedirectToAction("Detail", MVCController, new { id = jobId, tab = "Attachment", fi = FilePath, msg, msgType = AlertMsgType.Danger });
+            }
+            // redirect back to the index action to show the form once again
+            return RedirectToAction("Detail", MVCController, new { id = jobId, tab = "Attachment", msg = "", msgType = AlertMsgType.Success });
+        }
+        [HttpPost]
+        public ActionResult DeleteFile()
+        {
+            string sid = Request.Form["soId"];
+            string atid = Request.Form["atId"];
+            string atname = Request.Form["atName"];
+            string jobId = Request.Form["jobId"];
+
+            // Delete phisical file
+            if (!string.IsNullOrWhiteSpace(atname) && IOFile.Exists(Server.MapPath("~/" + atname)))
+            { IOFile.Delete(Server.MapPath("~/" + atname)); }
+            // Delete database
+            uow.Modules.SaleOrderAttachment.Delete(int.Parse(atid));
+            uow.SaveChanges();
+
+            return RedirectToAction("Detail", MVCController, new { id = jobId, tab = "Attachment", msg = "", msgType = AlertMsgType.Success });
+        }
+
         public ActionResult Detail(int? id, string msg, AlertMsgType? msgType)
         {
             System.Threading.Thread.CurrentThread.CurrentCulture = new System.Globalization.CultureInfo("en-US"); ;

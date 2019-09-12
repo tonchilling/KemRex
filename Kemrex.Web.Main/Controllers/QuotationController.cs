@@ -244,9 +244,9 @@ namespace Kemrex.Web.Main.Controllers
             }
             ob.StatusId = Request.Form["StatusId"].ParseInt();
 
-            if (approveStatus == 3)
+            if (approveStatus == 2)
             {
-               // ob.StatusId = 3;
+                ob.StatusId = 2;
                 ob.ApprovedBy = Convert.ToInt32(CurrentUID);
             }
             ob.QuotationRemark = Request.Form["QuotationRemark"]; ;
@@ -335,7 +335,10 @@ namespace Kemrex.Web.Main.Controllers
                     if (msgType.HasValue) { alert.Type = msgType.Value; }
                     ViewBag.Alert = alert;
                 }
+
              
+             
+                AccountPermission  permission = GetPermissionSale(CurrentUser.AccountId, ob.CreatedBy.HasValue ? ob.CreatedBy.Value : 0);
 
 
                 ViewData["optQtDetail"] = uow.Modules.QuotationDetail.Gets(ob.QuotationId);
@@ -346,7 +349,7 @@ namespace Kemrex.Web.Main.Controllers
                 ViewData["optEmployee"] = uow.Modules.Employee.Gets();
                 ViewData["userAccount"] = CurrentUser;
                 ViewData["optWareHouse"] = uow.Modules.WareHouse.Gets();
-                ViewData["optPermission"] = GetPermission(ob.CreatedBy);
+                ViewData["optPermission"] = permission;
                 return View(ob);
             }
             catch (Exception ex)

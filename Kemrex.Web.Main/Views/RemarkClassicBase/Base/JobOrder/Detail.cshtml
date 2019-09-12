@@ -97,6 +97,11 @@ optEmployee = (List<TblEmployee>
                 $('.tab-content').removeClass('current');
                 $("#tab-3").addClass('current');
                 $("li[data-tab='tab-3']").addClass('current');
+                } else if (getUrlVars()["tab"] == "Attachment") {
+                    $('ul.tabs li').removeClass('current');
+                    $('.tab-content').removeClass('current');
+                    $("#tab-6").addClass('current');
+                    $("li[data-tab='tab-6']").addClass('current');
                 }
 
 
@@ -136,6 +141,69 @@ optEmployee = (List<TblEmployee>
         });
 
 
+
+
+     $('.btnDeleteFile').click(function () {
+
+         $('#soId').val($(this).closest("tr").attr("soId"));
+         $('#atId').val($(this).closest("tr").attr("atId"));
+         $('#atName').val($(this).closest("tr").attr("atName"));
+         $('#jobId').val($(this).closest("tr").attr("jobId"));
+        swal({
+                    title: "Delete",
+                    text: "Do you want to delete file?",
+                    type: "success",
+                    showCancelButton: true,
+                    closeOnConfirm: false,
+                    showLoaderOnConfirm: true
+                },
+                    function (isConfirm) {
+                        if (isConfirm) {
+                        
+      $('#frmmain').attr('action', '@Url.Action("DeleteFile", "JobOrder")');
+                            $('#frmmain').submit();
+
+                        }
+          });
+
+     
+      return false;
+     
+        });
+
+
+        $('.btnAddFile').click(function () {
+
+
+            
+            if (document.getElementById("FileAttachment").files.length == 0) {
+                $('.lbUploadFile').addClass("text-danger");
+                return false;
+            }
+
+               swal({
+                    title: "Upload File",
+                    text: "Do you want to upload file?",
+                    type: "success",
+                    showCancelButton: true,
+                    closeOnConfirm: false,
+                    showLoaderOnConfirm: true
+                },
+                    function (isConfirm) {
+                        if (isConfirm) {
+                         $('#soId').val($(this).closest("tr").attr("soId"));
+      $('#atId').val($(this).closest("tr").attr("atId"));
+      $('#atName').val($(this).closest("tr").attr("atName"));
+      $('#jobId').val($(this).closest("tr").attr("jobId"));
+      $('#frmmain').attr('action', '@Url.Action("UploadFile", "JobOrder")');
+                            $('#frmmain').submit();
+
+                        }
+          });
+    
+            return false;
+     
+        });
 
 
 
@@ -244,15 +312,34 @@ optEmployee = (List<TblEmployee>
 
         $('#btnAddProduct').click(function () {
 
+            chkValidate = true;
 
+            if ($("#selProduct").prop('selectedIndex') == "") {
+                $("#selProduct").addClass("has-error");
+                chkValidate = false;
+            } else {
+                $("#selProduct").removeClass("has-error");
+            }
             $('#frmmain').attr('action', '@Url.Action("AddProduct", "JobOrder")');
+
+            return chkValidate;
         });
 
 
         $('#btnAddProperty').click(function () {
+            chkValidate = true;
 
+            if ($("#selProductP").prop('selectedIndex') == "") {
+
+                $("#selProductP").addClass("has-error");
+                chkValidate = false;
+            }  else {
+                $("#selProductP").removeClass("has-error");
+            }
 
             $('#frmmain').attr('action', '@Url.Action("AddProperty", "JobOrder")');
+
+            return chkValidate;
         });
 
 
@@ -571,7 +658,7 @@ optEmployee = (List<TblEmployee>
 
 
 <body data-spy="scroll" data-target="#myTap" data-offset="300">
-    <form role="form" method="post" id="frmmain">
+    <form role="form" method="post" id="frmmain" enctype="multipart/form-data">
         <input type="hidden" id="hdApprove" name="hdApprove" />
         <input type="hidden" id="StatusId" name="StatusId" value="@Model.StatusId" />
         <input type="hidden" id="CreatedBy" name="CreatedBy" value="@Model.CreatedBy" />
@@ -657,16 +744,7 @@ optEmployee = (List<TblEmployee>
                                 <div class="row">
                                     <div class="col-12">
                                         <div class="form-group">
-                                            @if (Model.StatusId == 2 && optPermission.IsManager && optPermission.IsEdit)
-                                            {
-                                                <button type="submit" id="btnSave" class="btn btn-primary">บันทึก</button>
-                                            }
-
-                                            @if (Model.SaleOrderId > 0 && Model.StatusId == 2 && optPermission.IsManager && optPermission.IsEdit)
-                                            {
-                                                <button type="submit" id="btnCloseJob" class="btn btn-success">ปิดงาน</button>
-                                            }
-                                            <a href="" class="btn btn-default">ยกเลิก</a>
+                                       
 
                                             <a href="@Url.Action("PDFQualityCheck", new { controller = "export", area = "", id = Model.JobOrderId  })"
                                                class="btn btn-warning" style="float:right;margin-left:10px;">
@@ -754,11 +832,11 @@ optEmployee = (List<TblEmployee>
                                                 <div class="form-group">
                                                     <label for="EndDate" class="form-control-label">กำหนดเสร็จ</label>
                                                     @*<div class="input-group col-sm-6">
-                                                        <span class="input-group-addon">
-                                                            <i class="icon wb-calendar" aria-hidden="true"></i>
-                                                        </span>
-                                                        <input type="date" class="form-control" name="JobOrderCompleteDate" value="" />
-                                                    </div>*@
+                                            <span class="input-group-addon">
+                                                <i class="icon wb-calendar" aria-hidden="true"></i>
+                                            </span>
+                                            <input type="date" class="form-control" name="JobOrderCompleteDate" value="" />
+                                        </div>*@
                                                     <div class="input-group col-sm-6 date" data-provide="datepicker" data-date-format="dd/mm/yyyy">
                                                         <input id="EndDate" type="text" class="form-control" placeholder="dd/MM/yyyy ค.ศ." name="EndDate"
                                                                value="@(Model.EndDate == null ? null : Model.EndDate.Value.ToString("dd/MM/yyyy"))" required />
@@ -1533,19 +1611,20 @@ optEmployee = (List<TblEmployee>
                                                             <tbody>
                                                                 @foreach (var at in optAttachment)
                                                                 {
-                                                                    <tr>
+                                                                    <tr soId="@at.SaleOrderId"
+                                                                        atId="@at.Id"
+                                                                        atName="@at.AttachmentPath"
+                                                                        jobId="@Model.JobOrderId">
 
                                                                         <td>
                                                                             <a href="@Url.Content("~/" + at.AttachmentPath)" target="_blank"> @Path.GetFileName(at.AttachmentPath)</a>
                                                                         </td>
                                                                         <td>@at.AttachmentRemark</td>
                                                                         <td>
-                                                                            <form method="post" action="@Url.Action("DeleteFile", new { controller = "SaleOrder" })"
-                                                                                  class="fnc-delete inline-block">
-                                                                                <input type="hidden" name="soId" value="@at.SaleOrderId" />
-                                                                                <input type="hidden" name="atId" value="@at.Id" />
-
-                                                                            </form>
+                                                                            @if (optPermission.IsEdit)
+                                                                            {
+                                                                                <button type="submit" class="btn btn-danger btn-xs btnDeleteFile"><i class="fa fa-trash" aria-hidden="true"></i>&nbsp;ลบ</button>
+                                                                            }
                                                                         </td>
 
                                                                     </tr>
@@ -1557,6 +1636,21 @@ optEmployee = (List<TblEmployee>
                                             </div>
                                             <hr />
 
+                                            @if (optPermission.IsEdit)
+                                            {
+                                                <div class="panel-footer">
+                                                    <div class="col-md-6 col-sm-12">
+                                                        <!-- <form method="post" action="@Url.Action("UploadFile", "JobOrderForSale")" enctype="multipart/form-data">-->
+                                                        <div class="form-group">
+                                                            <label for="FileAttachment" class="form-control-label lbUploadFile">เพิ่มเอกสาร</label>
+                                                            <input type="file" name="FileAttachment" id="FileAttachment" class="form-control-file" />
+
+                                                        </div>
+                                                        <button type="submit" class="btn btn-success btnAddFile">เพิ่ม</button>
+                                                        <!--</form>-->
+                                                    </div>
+                                                </div>
+                                            }
                                         </div>
                                     </div>
                                 </div>
@@ -1580,7 +1674,7 @@ optEmployee = (List<TblEmployee>
                                                         <label for="StartDate" class="form-control-label">วันที่ประเมิน</label>
                                                         <div class="input-group col-sm-6 date" data-provide="datepicker" data-date-format="dd/mm/yyyy">
                                                             <input id="SurveyDate" name="SurveyDate" type="text" class="form-control" placeholder="dd/MM/yyyy ค.ศ." name="SurveyDate"
-                                                                   value="@(Model.SurveyDate.HasValue ?Model.SurveyDate.Value.ToString("dd/MM/yyyy") : "" )" required />
+                                                                   value="@(Model.SurveyDate.HasValue ?Model.SurveyDate.Value.ToString("dd/MM/yyyy") : "" )" />
                                                             <span class="input-group-addon">
                                                                 <i class="icon wb-calendar icon-2-5x text-success" style="padding-left:2px" aria-hidden="true"></i>
                                                             </span>
@@ -1675,7 +1769,29 @@ optEmployee = (List<TblEmployee>
                     }
 
 
+                    <div class="panel">
+                        <div class="row panel-body">
+                            <div class="col-12">
+                                <input type="hidden" name="soId" value="@Model.SaleOrderId" />
+                                <input type="hidden" name="atId" id="atId" />
+                                <input type="hidden" name="atName" id="atName" />
+                                <input type="hidden" name="jobId" value="@Model.JobOrderId" />
+                                <div class="form-group">
+                                    @if (Model.StatusId == 2 && optPermission.IsManager && optPermission.IsEdit)
+                                    {
+                                        <button type="submit" id="btnSave" class="btn btn-primary">บันทึก</button>
+                                    }
 
+                                    @if (Model.SaleOrderId > 0 && Model.StatusId == 2 && optPermission.IsManager && optPermission.IsEdit)
+                                    {
+                                        <button type="submit" id="btnCloseJob" class="btn btn-success">ปิดงาน</button>
+                                    }
+
+                                    <a href="@Url.Action("Index", new { controller = "JobOrderForSale", area = "" })" class="btn btn-default">ยกเลิก</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
                 </div>
             </div>
@@ -1698,7 +1814,9 @@ optEmployee = (List<TblEmployee>
                                     <div class="form-group">
                                         <label for="TeamStartDate" class="form-control-label">จากวันที่</label>
                                         <div class="input-group date" data-provide="datepicker" data-date-format="dd/mm/yyyy">
-                                            <input id="TeamStartDate" type="text" class="form-control" placeholder="dd/MM/yyyy ค.ศ." name="TeamStartDate" />
+                                            <input id="TeamStartDate" type="text" class="form-control" 
+                                                   placeholder="dd/MM/yyyy ค.ศ." name="TeamStartDate"
+                                                   value="@DateTime.Now.ToString("dd/MM/yyyy")"/>
                                             <span class="input-group-addon">
                                                 <i class="icon wb-calendar icon-2-5x text-success" style="padding-left:2px" aria-hidden="true"></i>
                                             </span>
@@ -1710,7 +1828,9 @@ optEmployee = (List<TblEmployee>
                                     <div class="form-group">
                                         <label for="TeamEndDate" class="form-control-label">ถึงวันที่</label>
                                         <div class="input-group ช date" data-provide="datepicker" data-date-format="dd/mm/yyyy">
-                                            <input id="TeamEndDate" type="text" class="form-control" placeholder="dd/MM/yyyy ค.ศ." name="TeamEndDate" />
+                                            <input id="TeamEndDate" type="text" class="form-control" placeholder="dd/MM/yyyy ค.ศ."
+                                                   name="TeamEndDate"
+                                                   value="@DateTime.Now.ToString("dd/MM/yyyy")"/>
                                             <span class="input-group-addon">
                                                 <i class="icon wb-calendar icon-2-5x text-success" style="padding-left:2px" aria-hidden="true"></i>
                                             </span>
@@ -1774,7 +1894,8 @@ optEmployee = (List<TblEmployee>
                                     <div class="form-group">
                                         <label for="SaleOrderStartDate" class="form-control-label">จากวันที่</label>
                                         <div class="input-group date" data-provide="datepicker" data-date-format="dd/mm/yyyy">
-                                            <input id="SaleOrderStartDate" type="text" class="form-control" placeholder="dd/MM/yyyy ค.ศ." name="SaleOrderStartDate" />
+                                            <input id="SaleOrderStartDate" type="text" class="form-control"
+                                                   placeholder="dd/MM/yyyy ค.ศ." name="SaleOrderStartDate" value="@DateTime.Now.ToString("dd/MM/yyyy")" />
                                             <span class="input-group-addon">
                                                 <i class="icon wb-calendar icon-2-5x text-success" style="padding-left:2px" aria-hidden="true"></i>
                                             </span>
@@ -1786,7 +1907,8 @@ optEmployee = (List<TblEmployee>
                                     <div class="form-group">
                                         <label for="SaleOrderEndDate" class="form-control-label">ถึงวันที่</label>
                                         <div class="input-group ช date" data-provide="datepicker" data-date-format="dd/mm/yyyy">
-                                            <input id="SaleOrderEndDate" type="text" class="form-control" placeholder="dd/MM/yyyy ค.ศ." name="SaleOrderEndDate" />
+                                            <input id="SaleOrderEndDate" type="text" class="form-control"
+                                                   placeholder="dd/MM/yyyy ค.ศ." name="SaleOrderEndDate" value="@DateTime.Now.ToString("dd/MM/yyyy")" />
                                             <span class="input-group-addon">
                                                 <i class="icon wb-calendar icon-2-5x text-success" style="padding-left:2px" aria-hidden="true"></i>
                                             </span>
