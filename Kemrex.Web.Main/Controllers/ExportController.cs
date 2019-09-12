@@ -530,9 +530,26 @@ namespace Kemrex.Web.Main.Controllers
                 DiscountCash = quo.DiscountCash != 0 ? quo.DiscountCash : 0;
 
                 decimal SummaryNet = 0;
-                SummaryNet = SubTotalNet - DiscountNet;
+                if (SubTotalNet == 0)
+                {
+                    SummaryNet = SubTotalNet;
+                }
+                else
+                {
+                    SummaryNet = SubTotalNet - DiscountNet;
+                }
+               
                 decimal SummaryVat = (SummaryNet * 7) / 100;
-                decimal SummaryTot = SummaryNet + SummaryVat - DiscountCash;
+                decimal SummaryTot = 0;
+                if (SummaryNet == 0)
+                {
+                    SummaryTot = SummaryNet;
+                }
+                else
+                {
+                    SummaryTot = SummaryNet + SummaryVat - DiscountCash;
+                }
+                 
                 html = html.Replace("@@SubTotalNet@@", SubTotalNet.ToString("###,###,##0.00"));
                 html = html.Replace("@@DiscountNet@@", DiscountNet.ToString("###,###,##0.00"));
                 html = html.Replace("@@SummaryNet@@", SummaryNet.ToString("###,###,##0.00"));
@@ -1125,11 +1142,25 @@ namespace Kemrex.Web.Main.Controllers
                 SubTotalNet = so.SubTotalNet.HasValue ? so.SubTotalNet.Value : 0;
                 DiscountNet = so.DiscountNet.HasValue ? so.DiscountNet.Value != 0 ? so.DiscountNet.Value : 0 : 0;
                 DiscountCash = so.DiscountCash.HasValue ? so.DiscountCash.Value != 0 ? so.DiscountCash.Value : 0 : 0;
-
+                decimal SummaryTot = 0;
                 decimal SummaryNet = 0;
-                SummaryNet = SubTotalNet - DiscountNet;
+                if (SubTotalNet == 0)
+                {
+                    SummaryNet = SubTotalNet;
+                }
+                else
+                {
+                    SummaryNet = SubTotalNet - DiscountNet;
+                }
                 decimal SummaryVat = (SummaryNet * 7) / 100;
-                decimal SummaryTot = SummaryNet + SummaryVat - DiscountCash;
+                if (SummaryNet == 0)
+                {
+                    SummaryTot = SummaryNet;
+                }
+                else
+                {
+                    SummaryTot = SummaryNet + SummaryVat - DiscountCash;
+                }
                 html = html.Replace("@@SubTotalNet@@", SubTotalNet.ToString("###,###,##0.00"));
                 html = html.Replace("@@DiscountNet@@", DiscountNet.ToString("###,###,##0.00"));
                 html = html.Replace("@@SummaryNet@@", SummaryNet.ToString("###,###,##0.00"));
@@ -1530,9 +1561,25 @@ namespace Kemrex.Web.Main.Controllers
                     default: tagItem += "<td></td>"; break;
                 }
                 decimal SummaryNet = 0;
-                SummaryNet = SubTotalNet - DiscountNet - Deposit;
+                if (SubTotalNet == 0)
+                {
+                    SummaryNet = SubTotalNet;
+                }
+                else
+                {
+                    SummaryNet = SubTotalNet - DiscountNet - Deposit;
+                }
+                
                 decimal SummaryVat = (SummaryNet * 7) / 100;
-                decimal SummaryTot = SummaryNet + SummaryVat - DiscountCash;
+                decimal SummaryTot = 0;
+                if (SummaryNet == 0)
+                {
+                    SummaryTot = SummaryNet;
+                }
+                else
+                {
+                    SummaryTot = SummaryNet + SummaryVat - DiscountCash;
+                }
                 html = html.Replace("@@SubTotalNet@@", SubTotalNet.ToString("###,###,##0.00"));
                 html = html.Replace("@@DiscountNet@@", DiscountNet.ToString("###,###,##0.00"));
                 html = html.Replace("@@Deposit@@", Deposit.ToString("###,###,##0.00"));
