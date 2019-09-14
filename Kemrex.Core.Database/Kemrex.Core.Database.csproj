@@ -155,6 +155,7 @@
     <Compile Include="Extension\TblCustomerAddress.cs" />
     <Compile Include="mainContext.cs" />
     <Compile Include="Models\CalcAccountStaff.cs" />
+    <Compile Include="Models\ChartModel.cs" />
     <Compile Include="Models\EnmEmployeeStatus.cs" />
     <Compile Include="Models\EnmPaymentCondition.cs" />
     <Compile Include="Models\EnmPaymentConditionTerm.cs" />
@@ -178,6 +179,9 @@
     <Compile Include="Models\SysSite.cs" />
     <Compile Include="Models\SysState.cs" />
     <Compile Include="Models\SysSubDistrict.cs" />
+    <Compile Include="Models\SysSurveyDetailTemplate.cs" />
+    <Compile Include="Models\SysSurveyHeaderSubTemplate.cs" />
+    <Compile Include="Models\SysSurveyHeaderTemplate.cs" />
     <Compile Include="Models\TblAccountTeam.cs" />
     <Compile Include="Models\TblAccountTeamMember.cs" />
     <Compile Include="Models\TblCalLoad.cs" />
@@ -191,12 +195,15 @@
     <Compile Include="Models\TblInvoice.cs" />
     <Compile Include="Models\TblJobOrder.cs" />
     <Compile Include="Models\TblJobOrderAttachmentType.cs" />
+    <Compile Include="Models\TblJobOrderProperties.cs" />
     <Compile Include="Models\TblJobOrderDetail.cs" />
     <Compile Include="Models\TblJobOrderEquipmentType.cs" />
     <Compile Include="Models\TblJobOrderLandType.cs" />
     <Compile Include="Models\TblJobOrderObstructionType.cs" />
     <Compile Include="Models\TblJobOrderProjectType.cs" />
+    <Compile Include="Models\TblJobOrderSurveyDetail.cs" />
     <Compile Include="Models\TblJobOrderUndergroundType.cs" />
+    <Compile Include="Models\TblJobOrder_SurveyDetail.cs" />
     <Compile Include="Models\TblKpt.cs" />
     <Compile Include="Models\TblKptAttachment.cs" />
     <Compile Include="Models\TblKptDetail.cs" />
@@ -209,19 +216,26 @@
     <Compile Include="Models\TblProduct.cs" />
     <Compile Include="Models\TblProductCategory.cs" />
     <Compile Include="Models\TblProductModel.cs" />
+    <Compile Include="Models\TblProductOfWareHouse.cs" />
     <Compile Include="Models\TblProductType.cs" />
     <Compile Include="Models\TblQuotation.cs" />
     <Compile Include="Models\TblQuotationDetail.cs" />
+    <Compile Include="Models\TblQuotationDetailTemplate.cs" />
+    <Compile Include="Models\TblQuotationTemplate.cs" />
     <Compile Include="Models\TblSaleOrder.cs" />
     <Compile Include="Models\TblSaleOrderAttachment.cs" />
     <Compile Include="Models\TblSaleOrderDetail.cs" />
+    <Compile Include="Models\TblSurveyDetail.cs" />
+    <Compile Include="Models\TblSurveyHeader.cs" />
     <Compile Include="Models\TblUnit.cs" />
+    <Compile Include="Models\TblWareHouse.cs" />
     <Compile Include="Models\TeamOperation.cs" />
     <Compile Include="Models\TeamOperationDetail.cs" />
     <Compile Include="Models\TeamSale.cs" />
     <Compile Include="Models\TeamSaleDetail.cs" />
     <Compile Include="Models\TransferDetail.cs" />
     <Compile Include="Models\TransferHeader.cs" />
+    <Compile Include="Models\TransferHeaderReference.cs" />
     <Compile Include="Models\TransferStockDetail.cs" />
     <Compile Include="Models\TransferStockHeader.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -229,7 +243,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
-    <None Include="Models\TblJobOrder.zip" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>

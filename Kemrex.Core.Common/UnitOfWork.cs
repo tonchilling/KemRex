@@ -79,6 +79,8 @@ namespace Kemrex.Core.Common
             private ProductTypeModule _ProductType;
             private QuotationModule _Quotation;
             private QuotationDetailModule _QuotationDetail;
+            private QuotationTemplateModule _QuotationTemplate;
+            private QuotationDetailTemplateModule _QuotationDetailTemplate;
             private RoleModule _Role;
             private RolePermissionModule _RolePermission;
             private SaleOrderModule _SaleOrder;
@@ -120,6 +122,9 @@ namespace Kemrex.Core.Common
             public ProductTypeModule ProductType => _ProductType ?? (_ProductType = new ProductTypeModule(db));
             public QuotationModule Quotation => _Quotation ?? (_Quotation = new QuotationModule(db));
             public QuotationDetailModule QuotationDetail => _QuotationDetail ?? (_QuotationDetail = new QuotationDetailModule(db));
+
+            public QuotationTemplateModule QuotationTemplate => _QuotationTemplate ?? (_QuotationTemplate = new QuotationTemplateModule(db));
+            public QuotationDetailTemplateModule QuotationDetailTemplate => _QuotationDetailTemplate ?? (_QuotationDetailTemplate = new QuotationDetailTemplateModule(db));
             public RoleModule Role => _Role ?? (_Role = new RoleModule(db));
             public RolePermissionModule RolePermission => _RolePermission ?? (_RolePermission = new RolePermissionModule(db));
             public SaleOrderModule SaleOrder => _SaleOrder ?? (_SaleOrder = new SaleOrderModule(db));

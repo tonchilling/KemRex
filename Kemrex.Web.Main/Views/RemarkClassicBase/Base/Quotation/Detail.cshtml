@@ -764,6 +764,31 @@ optEmployee = (List<TblEmployee>
         });
 
 
+        
+
+        $(document).on("click", ".btnSaveVersion", function () {
+            var isConfirm = false;
+            swal({
+                title: "Save version",
+                text: "Do you want to keep quotation?",
+                type: "success",
+                showCancelButton: true,
+                closeOnConfirm: false,
+                showLoaderOnConfirm: true
+            },
+                function (isConfirm) {
+                    if (isConfirm) {
+
+                        $('#hdCreateVersion').val(1);
+                        $('#frmMain').attr('action', '@Url.Action("AddVersion", "Quotation")');
+                        $('#frmMain').submit();
+
+                    }
+                });
+
+            return false;
+        });
+
 
                  $(document).on("click", ".btnConfirm", function () {
             var isConfirm = false;
@@ -898,529 +923,547 @@ optEmployee = (List<TblEmployee>
                 <div id="tab-1" class="tab-content current">
 
                     <div class="card-block" id="navInfo" data-tab-page="navInfo">
-
-                        <div class="col-12">
-                            <table width="100%" style="margin:-10px 0 0 0;">
-                                <tr>
-                                    <td align="right">
-                                        <div style="text-align:right;">
-                                            <a href="@Url.Action("PDFQuotation", new { controller = "export", area = "", id = Model.QuotationId  })"
-                                               class="btn btn-xs btn-warning">
-                                                <i class="fa fa-file-pdf-o" aria-hidden="true"></i>&nbsp;PDF
-                                            </a>
-                                        </div>
-                                    </td>
-                                </tr>
-                            </table>
-                            <div class="panel">
-                                <form method="post" action="@Url.Action("Detail", "Quotation")" id="frmMain" enctype="multipart/form-data">
-                                    @Html.AntiForgeryToken()
-                                    <input type="hidden" name="QuotationId" value="@Model.QuotationId" />
-                                    <input type="hidden" id="hdApprove" name="hdApprove" />
-                                    <div class="panel-body">
-                                        <div class="row">
-                                            @*Left panel*@
-                                            <div class="col-md-6">
-
-                                                <div class="form-group">
-                                                    <label for="QuotationNo" class="col-sm-4 col-form-label">เลขที่ใบเสนอราคา</label>
-                                                    <div class="col-sm-6">
-                                                        <input type="text" class="form-control" name="QuotationNo"
-                                                               placeholder="บันทึกเพื่อสร้าง" value="@Model.QuotationNo" readonly />
-                                                    </div>
-
-                                                </div>
-                                                @*QT Status*@
-                                                <div class="form-group">
-                                                    <label for="PriceValidity" class="col-sm-5 col-form-label">สถานะเอกสาร</label>
-                                                    <div class="col-sm-6">
-                                                        <select name="StatusId" id="StatusId" class="form-control">
-                                                            @if (Model.StatusId <= 1)
-                                                            {
-                                                                <option class="text-muted" value="1" @(Model.StatusId == 1 ? " selected=\" selected\"" : "")>ร่าง</option>
-                                                            }
-                                                            @if (Model.StatusId >=2)
-                                                            {
-                                                                <option class="text-warning" value="2" @(Model.StatusId == 2 ? " selected=\" selected\"" : "")>ส่งอนุมัติ</option>
-                                                          
-                                                                    <option class="text-primary" value="3" @(Model.StatusId == 3 ? " selected=\" selected\"" : "")>ส่งลูกค้า</option>
-                                                                    <option class="text-success" value="4" @(Model.StatusId == 4 ? " selected=\" selected\"" : "")>ตอบรับ</option>
-                                                                    <option class="text-dark" value="5" @(Model.StatusId == 5 ? " selected=\" selected\"" : "")>ยกเลิก</option>
-                                                                }
-                                                            </select>
-                                                    </div>
-                                                </div>
-                                                <div class="form-group">
-                                                    <label for="QuotationNo" class="col-sm-4 col-form-label">ชื่อลูกค้า</label>
-                                                    <div class="col-sm-10">
-                                                        <div class="input-group mb-3">
-                                                            <input type="text" class="form-control" id="CustomerName" name="CustomerName"
-                                                                   placeholder="ชื่อลูกค้า" value="@Model.CustomerName" readonly />
-
-                                                            @if (Model.StatusId <= 3)
-                                                            {
-                                                                <div class="input-group-append">
-                                                                    <button class="btn btn-outline-secondary btn-primary btnCustomer" type="button"
-                                                                            id="btnCustomer">
-                                                                        ..
-                                                                    </button>
-
-                                                                </div>
-
-                                                            }
-                                                        </div>
-
-
-
-                                                        <input type="hidden" id="CustomerId" name="CustomerId" value="@Model.CustomerId" />
-                                                    </div>
-
-                                                </div>
-                                                <div class="form-group">
-
-                                                    <label for="ContractName" class="col-sm-4 col-form-label">ชื่อผู้ติดต่อ</label>
-                                                    <div class="col-sm-10">
-                                                        <div class="input-group mb-3">
-                                                            <input type="text" class="form-control" id="ContractName" name="ContractName"
-                                                                   placeholder="ชื่อ" value="@Model.ContractName" />
-
-                                                            @if (Model.StatusId <=3)
-                                                            {
-                                                                <div class="input-group-append">
-                                                                    <button class="btn btn-outline-secondary btn-info" type="button"
-                                                                            id="button-contact">
-                                                                        ...
-                                                                    </button>
-                                                                </div>
-                                                            }
-                                                        </div>
-                                                    </div>
-
-                                                    <div class="col-sm-10" style=" padding-top:10px">
-                                                        <input type="text" class="form-control" id="ContractPhone" name="ContractPhone"
-                                                               placeholder="เบอร์โทรศัพท์" value="@Model.ContractPhone" />
-                                                    </div>
-                                                    <div class="col-sm-10" style=" padding-top:10px">
-                                                        <input type="text" class="form-control" id="ContractEmail" name="ContractEmail"
-                                                               placeholder="Email" value="@Model.ContractEmail" />
-                                                    </div>
-
-                                                </div>
-
-                                                <div class="form-group">
-                                                    <label for="BillingAddress" class="col-sm-4 col-form-label">ที่อยู่ออกบิล</label>
-                                                    <div class="col-sm-10">
-                                                        <div class="input-group mb-3">
-                                                            <input type="text" class="form-control" id="BillingAddress" name="BillingAddress" value="@Model.BillingAddress" />
-                                                            @if (Model.StatusId <= 3)
-                                                            {
-                                                                <div class="input-group-append">
-                                                                    <button class="btn btn-outline-secondary btn-info" type="button"
-                                                                            id="button-BillingAddress">
-                                                                        ...
-                                                                    </button>
-                                                                </div>
-                                                            }
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="form-group">
-                                                    <label for="ShippingAddress" class="col-sm-4 col-form-label">ที่อยู่จัดส่ง</label>
-                                                    <div class="col-sm-10">
-                                                        <div class="input-group mb-3">
-                                                            <input type="text" class="form-control" id="ShippingAddress" name="ShippingAddress" value="@Model.ShippingAddress" />
-                                                            @if (Model.StatusId <= 3)
-                                                            {
-                                                                <div class="input-group-append">
-                                                                    <button class="btn btn-outline-secondary btn-info" type="button"
-                                                                            id="button-ShippingAddress">
-                                                                        ...
-                                                                    </button>
-                                                                </div>
-                                                            }
-                                                        </div>
-
-                                                    </div>
-                                                </div>
-
-                                                <div class="form-group">
-                                                    <label for="Remark" class="col-sm-4 col-form-label">หมายเหตุ</label>
-                                                    <div class="col-sm-10">
-                                                        <textarea rows="4" cols="47" class="form-control" name="QuotationRemark">@(Model ==null ? null : Model.QuotationRemark)</textarea>
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            @*Right panel*@
-
-                                            <div class="col-md-5 col-sm-8">
-                                                <div class="form-group">
-                                                    <label for="CreateDate" class="col-sm-5 col-form-label">วันที่ออกเอกสาร</label>
-                                                    <div class="input-group col-sm-6">
-
-                                                        <input type="text" class="form-control" name="CreatedDate" value="@Model.CreatedDate.Value.ToString("dd/MM/yyyy")" readonly />
-                                                        <span class="input-group-addon">
-                                                            <i class="icon wb-calendar icon-2-5x text-success" aria-hidden="true"></i>
-                                                        </span>
-                                                    </div>
-
-                                                </div>
-
-                                                <div class="form-group">
-                                                    <label for="CustomerTaxId" class="col-sm-5 col-form-label">เลขประจำตัวผู้เสียภาษี</label>
-                                                    <div class="col-sm-6">
-                                                        <input type="text" class="form-control" name="CustomerTaxId" value="@(Model.Customer ==null ?  null : Model.Customer.CustomerTaxId)" readonly />
-                                                    </div>
-                                                </div>
-                                                <div class="form-group">
-                                                    <label for="SendDate" class="col-sm-5 col-form-label">วันที่กำหนดส่ง</label>
-                                                    <div class="input-group col-sm-6 date" data-provide="datepicker" data-date-format="dd/mm/yyyy">
-
-                                                        <input id="DeliveryDate" type="text" class="form-control" placeholder="dd/MM/yyyy ค.ศ." name="DeliveryDate"
-                                                               value="@(Model.DeliveryDate ==null ? DateTime.Now.ToString("dd/MM/yyyy") : Model.DeliveryDate.Value.ToString("dd/MM/yyyy"))" />
-                                                        <span class="input-group-addon">
-                                                            <i class="icon wb-calendar icon-2-5x text-success" aria-hidden="true"></i>
-                                                        </span>
-                                                    </div>
-
-                                                </div>
-
-                                                <div class="form-group">
-                                                    <label for="PriceValidity" class="col-sm-5 col-form-label">ยืนยันราคาภายใน(วัน)</label>
-                                                    <div class="col-sm-6">
-                                                        <input type="number" class="form-control" name="QuotationValidDay" value="@Model.QuotationValidDay" />
-                                                    </div>
-                                                </div>
-                                                <div class="form-group">
-                                                    <label for="DueDate" class="col-sm-5 col-form-label">วันครบกำหนด (A)</label>
-                                                    <div class="input-group col-sm-6 date" data-provide="datepicker" data-date-format="dd/mm/yyyy">
-
-                                                        <input type="text" class="form-control" name="DueDate" value="@(Model.DueDate ==null ? DateTime.Now.ToString("dd/MM/yyyy") : Model.DueDate.Value.ToString("dd/MM/yyyy"))" readonly />
-                                                        <span class="input-group-addon">
-                                                            <i class="icon wb-calendar icon-2-5x text-success" aria-hidden="true"></i>
-                                                        </span>
-                                                    </div>
-
-                                                </div>
-
-                                                <div class="form-group">
-                                                    <label for="CreditDate" class="col-sm-5 col-form-label">จำนวนวันเครดิต</label>
-                                                    <div class="col-sm-6">
-                                                        <input type="number" class="form-control" name="QuotationCreditDay" value="@Model.QuotationCreditDay" />
-                                                    </div>
-                                                </div>
-
-                                                <div class="form-group">
-                                                    <label for="SaleName" class="col-sm-5 col-form-label">*พนักงานขาย</label>
-                                                    <div class="col-sm-6">
-                                                        <select class="form-control" id="SaleId" data-live-search="true"
-                                                                name="SaleId" required>
-                                                            <option value="-1" )></option>
-                                                            @foreach (TblEmployee it in optEmployee)
-                                                            {
-                                                                bool selected = it.EmpId == (Model.SaleId==0 ? (sysAccount.TblEmployee != null ? sysAccount.TblEmployee.EmpId : 0) : Model.SaleId);
-                                                                <option value="@it.EmpId" @(selected ? " selected=\" selected\"" : "")>@it.EmpNameTh</option>
-                                                            }
-                                                        </select>
-                                                        <input type="hidden" id="SaleName" name="SaleName" value="@Model.SaleName" />
-                                                    </div>
-                                                </div>
-
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="panel-footer">
-                                        <div class="row">
-                                            <div class="col-12">
-                                                <div class="form-group">
-                                                    @if (Model.StatusId <= 3)
-                                                    {
-                                                        if (optPermission.IsEdit)
-                                                        {
-                                                            <button type="submit" id="btnNextStep" class="btn btn-primary">@(Model.QuotationId > 0 ? "บันทึก" : "ต่อไป")</button>
-                                                        }
-                                                        <a href="#" class="btn btn-default btnCancel ">ยกเลิก</a>
-                                                    }
-
-                                                    @if (Model.StatusId > 0 && Model.StatusId <= 1 && optPermission.IsManager)
-                                                    {
-                                                        <button type="submit" id="btnConfirm" class="btn btn-success btnConfirm">
-                                                            อนุมัติ
-                                                        </button>
-                                                    }
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </form>
+                        <div class="row">
+                            <div class="col-12">
+                               
+                                <a href="@Url.Action("PDFQuotation", new { controller = "export", area = "", id = Model.QuotationId  })"
+                                   class="btn btn-warning pull-right">
+                                    <i class="fa fa-file-pdf-o" aria-hidden="true"></i>&nbsp;PDF
+                                </a>
                             </div>
                         </div>
-                    </div>
-                </div>
-                <div id="tab-2" class="tab-content">
-
-                    <div class="card-block" id="navProducts" data-tab-page="navProducts">
-                        <div class="col-12">
-                            <div class="panel">
-                                <div class="panel-heading">
-                                    <h3 class="panel-title">
-                                        รายการสินค้า&nbsp;
-                                    </h3>
+                        <div class="row" style="padding-top:10px">
+                            <div class="col-8">
+                             
+                            </div>
+                            <div class="col-4">
+                                <div class="input-group">
+                                    @if (Model.QuotationId > 0)
+                                    {
+                                        <select class="form-control" id="selVersion" data-live-search="true"
+                                                name="selVersion">
+                                            <option value="">กรุณาเลือก version</option>
+                                        </select>
+                                        <button type="submit" class="btn btn-success btnLoadVersion pull-right" style="margin-right:5px;">Load</button>
+                                        <button type="submit" class="btn btn-primary btnSaveVersion pull-right">Save Version</button>
+                                    }
+                                    </div>
                                 </div>
-                                <div class="panel-body">
-                                    <form method="post" action="@Url.Action("AddProduct", "Quotation")" id="frmProduct" enctype="multipart/form-data">
-                                        <div class="row">
-                                            <div class="col-12">
+                            </div>
+                                <div class="row">
+                                    <div class="col-12">
 
+                                        <div class="panel">
+                                            <form method="post" action="@Url.Action("Detail", "Quotation")" id="frmMain" enctype="multipart/form-data">
+                                                @Html.AntiForgeryToken()
                                                 <input type="hidden" name="QuotationId" value="@Model.QuotationId" />
-                                                <input type="hidden" name="SelQuotationProductId" id="SelQuotationProductId" />  <div class="row">
-    <div class="col-2 col-md-3">
-        <div class=" form-group">
-            <label for="PileId" class="form-control-label">รหัสสินค้า</label>
-            <div class="input-group">
-                <select class="form-control" id="selProduct" data-live-search="true"
-                        name="selProduct">
-                    <option value="">กรุณาเลือก</option>
+                                                <input type="hidden" id="hdApprove" name="hdApprove" />
+                                                <input type="hidden" id="hdCreateVersion" name="hdCreateVersion" />
+                                                <div class="panel-body">
+                                                    <div class="row">
+                                                        @*Left panel*@
+                                                        <div class="col-md-6">
 
-                    @foreach (var it in optProduct.Where(o => o.PriceNet > 0))
-                    {
-                        <option value="@it.ProductId" title="@it.PriceNet">@it.ProductCode @it.ProductName [@it.PriceNet]</option>
-                    }
+                                                            <div class="form-group">
+                                                                <label for="QuotationNo" class="col-sm-4 col-form-label">เลขที่ใบเสนอราคา</label>
+                                                                <div class="col-sm-6">
+                                                                    <input type="text" class="form-control" name="QuotationNo"
+                                                                           placeholder="บันทึกเพื่อสร้าง" value="@Model.QuotationNo" readonly />
+                                                                </div>
 
+                                                            </div>
+                                                            @*QT Status*@
+                                                            <div class="form-group">
+                                                                <label for="PriceValidity" class="col-sm-5 col-form-label">สถานะเอกสาร</label>
+                                                                <div class="col-sm-6">
+                                                                    <select name="StatusId" id="StatusId" class="form-control">
+                                                                        @if (Model.StatusId <= 1)
+                                                                        {
+                                                                            <option class="text-muted" value="1" @(Model.StatusId == 1 ? " selected=\" selected\"" : "")>ร่าง</option>
+                                                                        }
+                                                                        @if (Model.StatusId >= 2)
+                                                                        {
+                                                                            <option class="text-warning" value="2" @(Model.StatusId == 2 ? " selected=\" selected\"" : "")>ส่งอนุมัติ</option>
 
+                                                                            <option class="text-primary" value="3" @(Model.StatusId == 3 ? " selected=\" selected\"" : "")>ส่งลูกค้า</option>
+                                                                            <option class="text-success" value="4" @(Model.StatusId == 4 ? " selected=\" selected\"" : "")>ตอบรับ</option>
+                                                                            <option class="text-dark" value="5" @(Model.StatusId == 5 ? " selected=\" selected\"" : "")>ยกเลิก</option>
+                                                                        }
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <label for="QuotationNo" class="col-sm-4 col-form-label">ชื่อลูกค้า</label>
+                                                                <div class="col-sm-10">
+                                                                    <div class="input-group mb-3">
+                                                                        <input type="text" class="form-control" id="CustomerName" name="CustomerName"
+                                                                               placeholder="ชื่อลูกค้า" value="@Model.CustomerName" readonly />
 
-                </select>
-                <div class="input-group-append">
-                    <button class="btn btn-outline-secondary btn-info" type="button"
-                            id="btnProduct">
-                        ...
-                    </button>
-                </div>
-            </div>
-
-        </div>
-
-    </div>
-    <div class="col-2 col-md-2">
-        <div class="form-group">
-            <label for="Qty" class="form-control-label">คลัง</label>
-            <select class="form-control" id="selWareHose" data-live-search="true"
-                    name="selWareHose">
-                <option value="">กรุณาเลือก</option>
-
-                @foreach (var it in optWareHouse)
-                {
-                    <option value="@it.Whid">@it.Whname</option>
-                }
-
-
-
-            </select>
-
-        </div>
-
-    </div>
-    <div class="col-1 col-md-1 form-group">
-        <label for="Qty" class="form-control-label">จำนวนคงเหลือ</label>
-        <input type="number" class="form-control" id="ProductOnhandQty" name="ProductOnhandQty" readonly value="" />
-    </div>
-    <div class="col-1 col-md-1 form-group">
-        <label for="Qty" class="form-control-label">จำนวน</label>
-        <input type="number" class="form-control" id="ProductQty" name="ProductQty" value="1" />
-    </div>
-    <div class="col-1 col-md-1 form-group">
-        <label for="Price" class="form-control-label">ราคา</label>
-        <input type="text" class="form-control Number" readonly id="ProductPrice" name="ProductPrice" />
-    </div>
-    <div class="col-2 col-md-2 form-group">
-        <label for="Discount" class="form-control-label">ส่วนลด</label>
-        <div class="input-group">
-            <input type="text" class="form-control Number" id="ProductDiscount" name="ProductDiscount" />
-            <div class="input-group-append">
-                <select class="form-control selCalType" id="selCalType" name="selCalType">
-                    <option value="1">%</option>
-                    <option value="2">บาท</option>
-                </select>
-            </div>
-        </div>
-    </div>
-    <div class="col-2 col-md-2 form-group">
-        <label for="NetPrice" class="form-control-label">ราคาสุทธิ</label>
-        <input type="text" class="form-control Number" readonly id="NetPrice" name="NetPrice" />
-    </div>
-</div>
-                                                <div class="row">
-                                                    <div class="col-4 col-md-4 form-group">
-                                                        <label for="Remark" class="form-control-label">หมายเหตุ</label>
-                                                        <textarea class="form-control" id="Remark" name="Remark"></textarea>
-                                                    </div>
-                                                </div>
-                                                @if (Model.StatusId <= 3 && optPermission.IsEdit)
-                                                {
-                                                    <button type="submit" id="btnAddProduct" class="btn btn-primary">เพิ่ม</button>
-                                                }
-
-                                            </div>
-                                        </div>
-
-                                        <div class="row">
-                                            <div class="col-12">
-                                                <div class="table-responsive">
-
-                                                    <table class="table table-hover table-striped">
-                                                        <thead>
-                                                            <tr>
-                                                                <th>สินค้า</th>
-                                                                <th>คลัง</th>
-                                                                <th>จำนวน</th>
-                                                                <th>ราคา</th>
-                                                                <th>ส่วนลด</th>
-                                                                <th>รวม</th>
-                                                                <th>รวม VAT(7%)</th>
-                                                                <th>เครื่องมือ</th>
-                                                                <th>หมายเหตุ</th>
-                                                            </tr>
-                                                        </thead>
-                                                        <tbody>
-                                                            @if (optQtDetail.Count() <= 0)
-                                                            {
-                                                                <tr>
-                                                                    <td colspan="7">ไม่พบข้อมูล</td>
-                                                                </tr>
-                                                            }
-                                                            @foreach (var ob in optQtDetail)
-                                                            {
-                                                                string calType = (ob.CalType == 1 ? string.Format("({0}%)", ob.Discount.ToString("#,#0.0")) : "(บาท)");
-                                                                <tr data="@ob.Id" ProductId="@ob.ProductId" Whid="@ob.WHId">
-
-                                                                    <td>@ob.Product.ProductCode @ob.Product.ProductName</td>
-                                                                    <td>@ob.WareHouse.Whname</td>
-                                                                    <td>@ob.Quantity</td>
-                                                                    <td>@ob.PriceNet.ToString("#,#0.00")</td>
-                                                                    <td>@ob.DiscountNet.ToString("#,#0.00") @calType</td>
-                                                                    <td>@ob.TotalNet.Value.ToString("#,#0.00")</td>
-                                                                    <td>@ob.TotalTot.Value.ToString("#,#0.00")</td>
-                                                                    <td>
-                                                                        <input type="hidden" class="Discount" name="Discount" value="@ob.Discount" />
-
-                                                                       
-                                                                        <input type="hidden" name="Id" value="@ob.Id" />
-                                                                        <input type="hidden" class="CalType" name="CalType" value="@ob.CalType" />
-                                                                        @* @Html.AntiForgeryToken()*@
                                                                         @if (Model.StatusId <= 3)
                                                                         {
-                                                                            <button type="submit" class="btn btn-primary btn-xs btnEditProduct" id="btnEditProduct"><i class="fa fa-pencil" aria-hidden="true"></i>&nbsp;แก้ไข</button>
+                                                                            <div class="input-group-append">
+                                                                                <button class="btn btn-outline-secondary btn-primary btnCustomer" type="button"
+                                                                                        id="btnCustomer">
+                                                                                    ..
+                                                                                </button>
 
+                                                                            </div>
 
-                                                                            <span type="submit" name="btnDelete" class="btn btn-danger btn-xs btnDelete"><i class="fa fa-trash" aria-hidden="true"></i>&nbsp;ลบ</span>
                                                                         }
+                                                                    </div>
 
-                                                                    </td>
-                                                                    <td>@ob.Remark</td>
-                                                                </tr>
-                                                            }
-                                                        </tbody>
-                                                    </table>
 
+
+                                                                    <input type="hidden" id="CustomerId" name="CustomerId" value="@Model.CustomerId" />
+                                                                </div>
+
+                                                            </div>
+                                                            <div class="form-group">
+
+                                                                <label for="ContractName" class="col-sm-4 col-form-label">ชื่อผู้ติดต่อ</label>
+                                                                <div class="col-sm-10">
+                                                                    <div class="input-group mb-3">
+                                                                        <input type="text" class="form-control" id="ContractName" name="ContractName"
+                                                                               placeholder="ชื่อ" value="@Model.ContractName" />
+
+                                                                        @if (Model.StatusId <= 3)
+                                                                        {
+                                                                            <div class="input-group-append">
+                                                                                <button class="btn btn-outline-secondary btn-info" type="button"
+                                                                                        id="button-contact">
+                                                                                    ...
+                                                                                </button>
+                                                                            </div>
+                                                                        }
+                                                                    </div>
+                                                                </div>
+
+                                                                <div class="col-sm-10" style=" padding-top:10px">
+                                                                    <input type="text" class="form-control" id="ContractPhone" name="ContractPhone"
+                                                                           placeholder="เบอร์โทรศัพท์" value="@Model.ContractPhone" />
+                                                                </div>
+                                                                <div class="col-sm-10" style=" padding-top:10px">
+                                                                    <input type="text" class="form-control" id="ContractEmail" name="ContractEmail"
+                                                                           placeholder="Email" value="@Model.ContractEmail" />
+                                                                </div>
+
+                                                            </div>
+
+                                                            <div class="form-group">
+                                                                <label for="BillingAddress" class="col-sm-4 col-form-label">ที่อยู่ออกบิล</label>
+                                                                <div class="col-sm-10">
+                                                                    <div class="input-group mb-3">
+                                                                        <input type="text" class="form-control" id="BillingAddress" name="BillingAddress" value="@Model.BillingAddress" />
+                                                                        @if (Model.StatusId <= 3)
+                                                                        {
+                                                                            <div class="input-group-append">
+                                                                                <button class="btn btn-outline-secondary btn-info" type="button"
+                                                                                        id="button-BillingAddress">
+                                                                                    ...
+                                                                                </button>
+                                                                            </div>
+                                                                        }
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <label for="ShippingAddress" class="col-sm-4 col-form-label">ที่อยู่จัดส่ง</label>
+                                                                <div class="col-sm-10">
+                                                                    <div class="input-group mb-3">
+                                                                        <input type="text" class="form-control" id="ShippingAddress" name="ShippingAddress" value="@Model.ShippingAddress" />
+                                                                        @if (Model.StatusId <= 3)
+                                                                        {
+                                                                            <div class="input-group-append">
+                                                                                <button class="btn btn-outline-secondary btn-info" type="button"
+                                                                                        id="button-ShippingAddress">
+                                                                                    ...
+                                                                                </button>
+                                                                            </div>
+                                                                        }
+                                                                    </div>
+
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="form-group">
+                                                                <label for="Remark" class="col-sm-4 col-form-label">หมายเหตุ</label>
+                                                                <div class="col-sm-10">
+                                                                    <textarea rows="4" cols="47" class="form-control" name="QuotationRemark">@(Model ==null ? null : Model.QuotationRemark)</textarea>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+                                                        @*Right panel*@
+
+                                                        <div class="col-md-5 col-sm-8">
+                                                            <div class="form-group">
+                                                                <label for="CreateDate" class="col-sm-5 col-form-label">วันที่ออกเอกสาร</label>
+                                                                <div class="input-group col-sm-6">
+
+                                                                    <input type="text" class="form-control" name="CreatedDate" value="@Model.CreatedDate.Value.ToString("dd/MM/yyyy")" readonly />
+                                                                    <span class="input-group-addon">
+                                                                        <i class="icon wb-calendar icon-2-5x text-success" aria-hidden="true"></i>
+                                                                    </span>
+                                                                </div>
+
+                                                            </div>
+
+                                                            <div class="form-group">
+                                                                <label for="CustomerTaxId" class="col-sm-5 col-form-label">เลขประจำตัวผู้เสียภาษี</label>
+                                                                <div class="col-sm-6">
+                                                                    <input type="text" class="form-control" name="CustomerTaxId" value="@(Model.Customer ==null ?  null : Model.Customer.CustomerTaxId)" readonly />
+                                                                </div>
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <label for="SendDate" class="col-sm-5 col-form-label">วันที่กำหนดส่ง</label>
+                                                                <div class="input-group col-sm-6 date" data-provide="datepicker" data-date-format="dd/mm/yyyy">
+
+                                                                    <input id="DeliveryDate" type="text" class="form-control" placeholder="dd/MM/yyyy ค.ศ." name="DeliveryDate"
+                                                                           value="@(Model.DeliveryDate ==null ? DateTime.Now.ToString("dd/MM/yyyy") : Model.DeliveryDate.Value.ToString("dd/MM/yyyy"))" />
+                                                                    <span class="input-group-addon">
+                                                                        <i class="icon wb-calendar icon-2-5x text-success" aria-hidden="true"></i>
+                                                                    </span>
+                                                                </div>
+
+                                                            </div>
+
+                                                            <div class="form-group">
+                                                                <label for="PriceValidity" class="col-sm-5 col-form-label">ยืนยันราคาภายใน(วัน)</label>
+                                                                <div class="col-sm-6">
+                                                                    <input type="number" class="form-control" name="QuotationValidDay" value="@Model.QuotationValidDay" />
+                                                                </div>
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <label for="DueDate" class="col-sm-5 col-form-label">วันครบกำหนด (A)</label>
+                                                                <div class="input-group col-sm-6 date" data-provide="datepicker" data-date-format="dd/mm/yyyy">
+
+                                                                    <input type="text" class="form-control" name="DueDate" value="@(Model.DueDate ==null ? DateTime.Now.ToString("dd/MM/yyyy") : Model.DueDate.Value.ToString("dd/MM/yyyy"))" readonly />
+                                                                    <span class="input-group-addon">
+                                                                        <i class="icon wb-calendar icon-2-5x text-success" aria-hidden="true"></i>
+                                                                    </span>
+                                                                </div>
+
+                                                            </div>
+
+                                                            <div class="form-group">
+                                                                <label for="CreditDate" class="col-sm-5 col-form-label">จำนวนวันเครดิต</label>
+                                                                <div class="col-sm-6">
+                                                                    <input type="number" class="form-control" name="QuotationCreditDay" value="@Model.QuotationCreditDay" />
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="form-group">
+                                                                <label for="SaleName" class="col-sm-5 col-form-label">*พนักงานขาย</label>
+                                                                <div class="col-sm-6">
+                                                                    <select class="form-control" id="SaleId" data-live-search="true"
+                                                                            name="SaleId" required>
+                                                                        <option value="-1" )></option>
+                                                                        @foreach (TblEmployee it in optEmployee)
+                                                                        {
+                                                                            bool selected = it.EmpId == (Model.SaleId == 0 ? (sysAccount.TblEmployee != null ? sysAccount.TblEmployee.EmpId : 0) : Model.SaleId);
+                                                                            <option value="@it.EmpId" @(selected ? " selected=\" selected\"" : "")>@it.EmpNameTh</option>
+                                                                        }
+                                                                    </select>
+                                                                    <input type="hidden" id="SaleName" name="SaleName" value="@Model.SaleName" />
+                                                                </div>
+                                                            </div>
+
+                                                        </div>
+                                                    </div>
                                                 </div>
-                                            </div>
-                                        </div>
-                                    </form>
-                                </div>
-                                <div class="panel-footer">
-                                
-                                </div>
-                            </div>
-                            <div class="panel">
+                                                <div class="panel-footer">
+                                                    <div class="row">
+                                                        <div class="col-12">
+                                                            <div class="form-group">
+                                                                @if (Model.StatusId <= 3)
+                                                                {
+                                                                    if (optPermission.IsEdit)
+                                                                    {
+                                                                        <button type="submit" id="btnNextStep" class="btn btn-primary">@(Model.QuotationId > 0 ? "บันทึก" : "ต่อไป")</button>
+                                                                    }
+                                                                    <a href="#" class="btn btn-default btnCancel ">ยกเลิก</a>
+                                                                }
 
-                                <div class="col-md-auto">
-                                    ผลรวม
-                                    <hr size=2>
-                                    <form method="post" id="frmDiscount" action="@Url.Action("saveDiscount", "Quotation")" enctype="multipart/form-data">
-                                        <input type="hidden" name="QuotationId" value="@Model.QuotationId" />
-                                        <div class="form-group row">
-                                            <label for="SubTotal" class="col-sm-5 col-form-label">ยอดก่อนลด</label>
-                                            <div class="col-sm-6">
-                                                <input type="text" class="form-control" id="SubTotal" name="SubTotalNet"
-                                                       style="text-align: right"
-                                                       value="@(Model.SubTotalNet.HasValue?Model.SubTotalNet.Value.ToString("#,#0.00"):"0")" readonly />
-                                            </div>
-                                        </div>
-                                        <div class="form-group row">
-                                            <label for="Discount" class="col-sm-5 col-form-label">ส่วนลดในรายการ</label>
-                                            <div class="col-sm-6">
-                                                <input type="text" class="form-control" id="Discount"
-                                                       style="text-align: right"
-                                                       value="@(Model.DiscountNet.HasValue?Model.DiscountNet.Value.ToString("#,#0.00"):"0")" readonly />
-                                            </div>
-                                        </div>
-                                        <div class="form-group row">
-                                            <label for="TotalDiscount" class="col-sm-5 col-form-label">ยอดหลังหักส่วนลด</label>
-                                            <div class="col-sm-6">
-                                                <input type="text" class="form-control" id="TotalDiscount" style="text-align: right" value="@(Model.SummaryNet.HasValue?Model.SummaryNet.Value.ToString("#,#0.00"):"0")" readonly />
-                                            </div>
-                                        </div>
-                                        <div class="form-group row">
-                                            <label for="Vat" class="col-sm-5 col-form-label">อัตราภาษี(7%)</label>
-                                            <div class="col-sm-6">
-                                                <input type="text" class="form-control" id="Vat"
-                                                       style="text-align: right"
-                                                       value="@(Model.SummaryVat.HasValue?Model.SummaryVat.Value.ToString("#,#0.00"):"0")" readonly />
-                                            </div>
-                                        </div>
-                                        <div class="form-group row">
-                                            <label for="Discount" class="col-sm-5 col-form-label">ส่วนลดเงินสด</label>
-                                            <div class="col-sm-6">
-                                                <input type="text" class="form-control" id="DiscountCash" name="DiscountCash"
-                                                       style="text-align: right"
-                                                       value="@(Model.DiscountCash!=null?Model.DiscountCash.ToString("#,#0.00"):"0")" onChange="calDiscount()" />
-                                            </div>
-                                        </div>
-                                        <div class="form-group row">
-                                            <label for="Total" class="col-sm-5 col-form-label">จำนวนทั้งสิ้น</label>
-                                            <div class="col-sm-6">
-                                                <input type="text" class="form-control" id="SummaryTot"
-                                                       style="text-align: right"
-                                                       value="@(Model.SummaryTot.HasValue?Model.SummaryTot.Value.ToString("#,#0.00"):"0")" readonly />
-                                            </div>
-                                        </div>
-                                        <div class="row">
-                                            <div class="col-12">
-                                                <div class="form-group">
-                                                    @if (Model.StatusId <= 3)
-                                                    {
-                                                        if (optPermission.IsEdit)
-                                                        {
-                                                            <button type="submit" class="btn btn-primary btnDiscount">บันทึก/ส่วนลด</button>
-                                                        }
-                                                        <a href="@Url.Action("Detail", "Quotation")" class="btn btn-default">ยกเลิก</a>
-                                                    }
+                                                                @if (Model.StatusId > 0 && Model.StatusId <= 1 && optPermission.IsManager)
+                                                                {
+                                                                    <button type="submit" id="btnConfirm" class="btn btn-success btnConfirm">
+                                                                        อนุมัติ
+                                                                    </button>
+                                                                }
+                                                            </div>
+                                                        </div>
+                                                    </div>
                                                 </div>
-                                            </div>
+                                            </form>
                                         </div>
-                                    </form>
+                                    </div>
                                 </div>
                             </div>
                         </div>
+                        <div id="tab-2" class="tab-content">
+
+                            <div class="card-block" id="navProducts" data-tab-page="navProducts">
+                                <div class="col-12">
+                                    <div class="panel">
+                                        <div class="panel-heading">
+                                            <h3 class="panel-title">
+                                                รายการสินค้า&nbsp;
+                                            </h3>
+                                        </div>
+                                        <div class="panel-body">
+                                            <form method="post" action="@Url.Action("AddProduct", "Quotation")" id="frmProduct" enctype="multipart/form-data">
+                                                <div class="row">
+                                                    <div class="col-12">
+
+                                                        <input type="hidden" name="QuotationId" value="@Model.QuotationId" />
+                                                        <input type="hidden" name="SelQuotationProductId" id="SelQuotationProductId" />  <div class="row">
+                                                            <div class="col-2 col-md-3">
+                                                                <div class=" form-group">
+                                                                    <label for="PileId" class="form-control-label">รหัสสินค้า</label>
+                                                                    <div class="input-group">
+                                                                        <select class="form-control" id="selProduct" data-live-search="true"
+                                                                                name="selProduct">
+                                                                            <option value="">กรุณาเลือก</option>
+
+                                                                            @foreach (var it in optProduct.Where(o => o.PriceNet > 0))
+                                                                            {
+                                                                                <option value="@it.ProductId" title="@it.PriceNet">@it.ProductCode @it.ProductName [@it.PriceNet]</option>
+                                                                            }
+
+
+
+                                                                        </select>
+                                                                        <div class="input-group-append">
+                                                                            <button class="btn btn-outline-secondary btn-info" type="button"
+                                                                                    id="btnProduct">
+                                                                                ...
+                                                                            </button>
+                                                                        </div>
+                                                                    </div>
+
+                                                                </div>
+
+                                                            </div>
+                                                            <div class="col-2 col-md-2">
+                                                                <div class="form-group">
+                                                                    <label for="Qty" class="form-control-label">คลัง</label>
+                                                                    <select class="form-control" id="selWareHose" data-live-search="true"
+                                                                            name="selWareHose">
+                                                                        <option value="">กรุณาเลือก</option>
+
+                                                                        @foreach (var it in optWareHouse)
+                                                                        {
+                                                                            <option value="@it.Whid">@it.Whname</option>
+                                                                        }
+
+
+
+                                                                    </select>
+
+                                                                </div>
+
+                                                            </div>
+                                                            <div class="col-1 col-md-1 form-group">
+                                                                <label for="Qty" class="form-control-label">จำนวนคงเหลือ</label>
+                                                                <input type="number" class="form-control" id="ProductOnhandQty" name="ProductOnhandQty" readonly value="" />
+                                                            </div>
+                                                            <div class="col-1 col-md-1 form-group">
+                                                                <label for="Qty" class="form-control-label">จำนวน</label>
+                                                                <input type="number" class="form-control" id="ProductQty" name="ProductQty" value="1" />
+                                                            </div>
+                                                            <div class="col-1 col-md-1 form-group">
+                                                                <label for="Price" class="form-control-label">ราคา</label>
+                                                                <input type="text" class="form-control Number" readonly id="ProductPrice" name="ProductPrice" />
+                                                            </div>
+                                                            <div class="col-2 col-md-2 form-group">
+                                                                <label for="Discount" class="form-control-label">ส่วนลด</label>
+                                                                <div class="input-group">
+                                                                    <input type="text" class="form-control Number" id="ProductDiscount" name="ProductDiscount" />
+                                                                    <div class="input-group-append">
+                                                                        <select class="form-control selCalType" id="selCalType" name="selCalType">
+                                                                            <option value="1">%</option>
+                                                                            <option value="2">บาท</option>
+                                                                        </select>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-2 col-md-2 form-group">
+                                                                <label for="NetPrice" class="form-control-label">ราคาสุทธิ</label>
+                                                                <input type="text" class="form-control Number" readonly id="NetPrice" name="NetPrice" />
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="col-4 col-md-4 form-group">
+                                                                <label for="Remark" class="form-control-label">หมายเหตุ</label>
+                                                                <textarea class="form-control" id="Remark" name="Remark"></textarea>
+                                                            </div>
+                                                        </div>
+                                                        @if (Model.StatusId <= 3 && optPermission.IsEdit)
+                                                        {
+                                                            <button type="submit" id="btnAddProduct" class="btn btn-primary">เพิ่ม</button>
+                                                        }
+
+                                                    </div>
+                                                </div>
+
+                                                <div class="row">
+                                                    <div class="col-12">
+                                                        <div class="table-responsive">
+
+                                                            <table class="table table-hover table-striped">
+                                                                <thead>
+                                                                    <tr>
+                                                                        <th>สินค้า</th>
+                                                                        <th>คลัง</th>
+                                                                        <th>จำนวน</th>
+                                                                        <th>ราคา</th>
+                                                                        <th>ส่วนลด</th>
+                                                                        <th>รวม</th>
+                                                                        <th>รวม VAT(7%)</th>
+                                                                        <th>เครื่องมือ</th>
+                                                                        <th>หมายเหตุ</th>
+                                                                    </tr>
+                                                                </thead>
+                                                                <tbody>
+                                                                    @if (optQtDetail.Count() <= 0)
+                                                                    {
+                                                                        <tr>
+                                                                            <td colspan="7">ไม่พบข้อมูล</td>
+                                                                        </tr>
+                                                                    }
+                                                                    @foreach (var ob in optQtDetail)
+                                                                    {
+                                                                        string calType = (ob.CalType == 1 ? string.Format("({0}%)", ob.Discount.ToString("#,#0.0")) : "(บาท)");
+                                                                        <tr data="@ob.Id" ProductId="@ob.ProductId" Whid="@ob.WHId">
+
+                                                                            <td>@ob.Product.ProductCode @ob.Product.ProductName</td>
+                                                                            <td>@ob.WareHouse.Whname</td>
+                                                                            <td>@ob.Quantity</td>
+                                                                            <td>@ob.PriceNet.ToString("#,#0.00")</td>
+                                                                            <td>@ob.DiscountNet.ToString("#,#0.00") @calType</td>
+                                                                            <td>@ob.TotalNet.Value.ToString("#,#0.00")</td>
+                                                                            <td>@ob.TotalTot.Value.ToString("#,#0.00")</td>
+                                                                            <td>
+                                                                                <input type="hidden" class="Discount" name="Discount" value="@ob.Discount" />
+
+
+                                                                                <input type="hidden" name="Id" value="@ob.Id" />
+                                                                                <input type="hidden" class="CalType" name="CalType" value="@ob.CalType" />
+                                                                                @* @Html.AntiForgeryToken()*@
+                                                                                @if (Model.StatusId <= 3)
+                                                                                {
+                                                                                    <button type="submit" class="btn btn-primary btn-xs btnEditProduct" id="btnEditProduct"><i class="fa fa-pencil" aria-hidden="true"></i>&nbsp;แก้ไข</button>
+
+
+                                                                                    <span type="submit" name="btnDelete" class="btn btn-danger btn-xs btnDelete"><i class="fa fa-trash" aria-hidden="true"></i>&nbsp;ลบ</span>
+                                                                                }
+
+                                                                            </td>
+                                                                            <td>@ob.Remark</td>
+                                                                        </tr>
+                                                                    }
+                                                                </tbody>
+                                                            </table>
+
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </form>
+                                        </div>
+                                        <div class="panel-footer">
+
+                                        </div>
+                                    </div>
+                                    <div class="panel">
+
+                                        <div class="col-md-auto">
+                                            ผลรวม
+                                            <hr size=2>
+                                            <form method="post" id="frmDiscount" action="@Url.Action("saveDiscount", "Quotation")" enctype="multipart/form-data">
+                                                <input type="hidden" name="QuotationId" value="@Model.QuotationId" />
+                                                <div class="form-group row">
+                                                    <label for="SubTotal" class="col-sm-5 col-form-label">ยอดก่อนลด</label>
+                                                    <div class="col-sm-6">
+                                                        <input type="text" class="form-control" id="SubTotal" name="SubTotalNet"
+                                                               style="text-align: right"
+                                                               value="@(Model.SubTotalNet.HasValue?Model.SubTotalNet.Value.ToString("#,#0.00"):"0")" readonly />
+                                                    </div>
+                                                </div>
+                                                <div class="form-group row">
+                                                    <label for="Discount" class="col-sm-5 col-form-label">ส่วนลดในรายการ</label>
+                                                    <div class="col-sm-6">
+                                                        <input type="text" class="form-control" id="Discount"
+                                                               style="text-align: right"
+                                                               value="@(Model.DiscountNet.HasValue?Model.DiscountNet.Value.ToString("#,#0.00"):"0")" readonly />
+                                                    </div>
+                                                </div>
+                                                <div class="form-group row">
+                                                    <label for="TotalDiscount" class="col-sm-5 col-form-label">ยอดหลังหักส่วนลด</label>
+                                                    <div class="col-sm-6">
+                                                        <input type="text" class="form-control" id="TotalDiscount" style="text-align: right" value="@(Model.SummaryNet.HasValue?Model.SummaryNet.Value.ToString("#,#0.00"):"0")" readonly />
+                                                    </div>
+                                                </div>
+                                                <div class="form-group row">
+                                                    <label for="Vat" class="col-sm-5 col-form-label">อัตราภาษี(7%)</label>
+                                                    <div class="col-sm-6">
+                                                        <input type="text" class="form-control" id="Vat"
+                                                               style="text-align: right"
+                                                               value="@(Model.SummaryVat.HasValue?Model.SummaryVat.Value.ToString("#,#0.00"):"0")" readonly />
+                                                    </div>
+                                                </div>
+                                                <div class="form-group row">
+                                                    <label for="Discount" class="col-sm-5 col-form-label">ส่วนลดเงินสด</label>
+                                                    <div class="col-sm-6">
+                                                        <input type="text" class="form-control" id="DiscountCash" name="DiscountCash"
+                                                               style="text-align: right"
+                                                               value="@(Model.DiscountCash!=null?Model.DiscountCash.ToString("#,#0.00"):"0")" onChange="calDiscount()" />
+                                                    </div>
+                                                </div>
+                                                <div class="form-group row">
+                                                    <label for="Total" class="col-sm-5 col-form-label">จำนวนทั้งสิ้น</label>
+                                                    <div class="col-sm-6">
+                                                        <input type="text" class="form-control" id="SummaryTot"
+                                                               style="text-align: right"
+                                                               value="@(Model.SummaryTot.HasValue?Model.SummaryTot.Value.ToString("#,#0.00"):"0")" readonly />
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-12">
+                                                        <div class="form-group">
+                                                            @if (Model.StatusId <= 3)
+                                                            {
+                                                                if (optPermission.IsEdit)
+                                                                {
+                                                                    <button type="submit" class="btn btn-primary btnDiscount">บันทึก/ส่วนลด</button>
+                                                                }
+                                                                <a href="@Url.Action("Detail", "Quotation")" class="btn btn-default">ยกเลิก</a>
+                                                            }
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+
+
+
+
+
+                        @*Panel Address*@
+                        <div class="card-block" data-tab-page="navAddress">
+
+                        </div>
+                        @*End Panel Address*@
+
+                        @*panel Add Product*@
+
+
+                        @*End panel Add product*@
                     </div>
-                </div>
-
-
-
-
-
-
-                @*Panel Address*@
-                <div class="card-block" data-tab-page="navAddress">
-
-                </div>
-                @*End Panel Address*@
-
-                @*panel Add Product*@
-
-
-                @*End panel Add product*@
-            </div>
         </div>
     </div>
 
