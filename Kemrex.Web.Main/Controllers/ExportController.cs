@@ -391,17 +391,21 @@ namespace Kemrex.Web.Main.Controllers
                     int line = 0;
                     tagItem += Header;
                     tagItem += Body;
+                    decimal priceNet = 0;
+                    TblProductOfWareHouse pow = new TblProductOfWareHouse();
                     foreach (var d in quo.TblQuotationDetail.ToList())
                     {
 
                         num++;
                         line++;
+                        pow = uow.Modules.ProductOfWareHouse.Get(d.ProductId, d.WHId.HasValue ? d.WHId.Value : 0);
+                        if (pow != null) priceNet = pow.PriceNet.HasValue ? pow.PriceNet.Value : 0;
                         tagBody += "<tr>";
                         tagBody += "<td align='left' style='border-right:1px;'> " + d.Product.ProductCode + "</td>";
                         tagBody += "<td align='left' style='border-right:1px;' >" + d.Product.ProductName + "</td>";
                         tagBody += "<td align='right' style='border-right:1px;' >" + (d.Quantity != 0 ? d.Quantity.ToString("###,###") : "") + "</td>";
                         tagBody += "<td align='center' style='border-right:1px;' >" + d.Product.Unit.UnitName + "</td>";
-                        tagBody += "<td align='right' style='border-right:1px;' >" + (d.Product.PriceNet != 0 ? d.Product.PriceNet.ToString("###,###,###.00") : "") + "</td>";
+                        tagBody += "<td align='right' style='border-right:1px;' >" + priceNet.ToString("###,###,###.00") + "</td>";
                         tagBody += "<td align='right' style='border-right:1px;' >" + (d.DiscountNet != 0 ? d.DiscountNet.ToString("###,###,###.00") : "") + "</td>";
                         tagBody += "<td align='right' >" + (d.TotalNet.HasValue ? d.TotalNet.Value.ToString("###,###,###.00") : "") + "</td>";
                         tagBody += "</tr>";
@@ -1008,17 +1012,21 @@ namespace Kemrex.Web.Main.Controllers
                 int line = 0;
                 tagItem += Header;
                 tagItem += Body;
+                decimal priceNet = 0;
+                TblProductOfWareHouse pow = new TblProductOfWareHouse();
                 foreach (var d in so.TblSaleOrderDetail.ToList())
                 {
 
                     num++;
                     line++;
+                    pow = uow.Modules.ProductOfWareHouse.Get(d.ProductId, d.WHId.HasValue ? d.WHId.Value : 0);
+                    if (pow != null) priceNet = pow.PriceNet.HasValue ? pow.PriceNet.Value : 0;
                     tagBody += "<tr>";
                     tagBody += "<td align='left' style='border-right:1px;'> " + d.Product.ProductCode + "</td>";
                     tagBody += "<td align='left' style='border-right:1px;' >" + d.Product.ProductName + "</td>";
                     tagBody += "<td align='right' style='border-right:1px;' >" + (d.Quantity != 0 ? d.Quantity.ToString("###,###") : "") + "</td>";
                     tagBody += "<td align='center' style='border-right:1px;' >" + d.Product.Unit.UnitName + "</td>";
-                    tagBody += "<td align='right' style='border-right:1px;' >" + (d.Product.PriceNet != 0 ? d.Product.PriceNet.ToString("###,###,###.00") : "") + "</td>";
+                    tagBody += "<td align='right' style='border-right:1px;' >" + priceNet.ToString("###,###,###.00") + "</td>";
                     tagBody += "<td align='right' style='border-right:1px;' >" + (d.DiscountNet != 0 ? d.DiscountNet.ToString("###,###,###.00") : "") + "</td>";
                     tagBody += "<td align='right' >" + (d.TotalNet.HasValue ? d.TotalNet.Value.ToString("###,###,###.00") : "") + "</td>";
                     tagBody += "</tr>";
@@ -1397,17 +1405,21 @@ namespace Kemrex.Web.Main.Controllers
                 int line = 0;
                 tagItem += Header;
                 tagItem += Body;
+                decimal priceNet = 0;
+                TblProductOfWareHouse pow = new TblProductOfWareHouse();
                 foreach (var d in invoice.SaleOrder.TblSaleOrderDetail.ToList())
                 {
                     
                     num++;
                     line++;
+                    pow = uow.Modules.ProductOfWareHouse.Get(d.ProductId, d.WHId.HasValue ? d.WHId.Value : 0);
+                    if (pow != null) priceNet = pow.PriceNet.HasValue ? pow.PriceNet.Value : 0;
                     tagBody += "<tr>";
                     tagBody += "<td align='left' style='border-right:1px;'> " + d.Product.ProductCode + "</td>";
                     tagBody += "<td align='left' style='border-right:1px;' >" + d.Product.ProductName + "</td>";
                     tagBody += "<td align='right' style='border-right:1px;' >" + (d.Quantity != 0 ? d.Quantity.ToString("###,###") : "") + "</td>";
                     tagBody += "<td align='center' style='border-right:1px;' >" + d.Product.Unit.UnitName + "</td>";
-                    tagBody += "<td align='right' style='border-right:1px;' >" + (d.Product.PriceNet != 0 ? d.Product.PriceNet.ToString("###,###,###.00") : "") + "</td>";
+                    tagBody += "<td align='right' style='border-right:1px;' >" + priceNet.ToString("###,###,###.00") + "</td>";
                     tagBody += "<td align='right' style='border-right:1px;' >" + (d.DiscountNet != 0 ? d.DiscountNet.ToString("###,###,###.00") : "") + "</td>";
                     tagBody += "<td align='right' >" + (d.TotalNet.HasValue ? d.TotalNet.Value.ToString("###,###,###.00") : "") + "</td>";
                     tagBody += "</tr>";
