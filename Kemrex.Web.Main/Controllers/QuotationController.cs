@@ -190,21 +190,27 @@ namespace Kemrex.Web.Main.Controllers
 
 
                 uow.Modules.Quotation.Set(ob);
-                uow.SaveChanges();
-/*
-                if (ob.TblQuotationDetail != null && ob.TblQuotationDetail.Count > 0)
-                {
-                    foreach (TblQuotationDetail detail in ob.TblQuotationDetail)
-                    {
+              
 
-                        detail.QuotationId = ob.QuotationId;
-                        detail.Id = 0;
-                    }
-                }
 
-                uow.Modules.QuotationDetail.Set(ob.TblQuotationDetail.ToList());
+                objOrg.StatusId = 9;
+                uow.Modules.Quotation.Set(objOrg);
                 uow.SaveChanges();
-*/
+
+                /*
+                                if (ob.TblQuotationDetail != null && ob.TblQuotationDetail.Count > 0)
+                                {
+                                    foreach (TblQuotationDetail detail in ob.TblQuotationDetail)
+                                    {
+
+                                        detail.QuotationId = ob.QuotationId;
+                                        detail.Id = 0;
+                                    }
+                                }
+
+                                uow.Modules.QuotationDetail.Set(ob.TblQuotationDetail.ToList());
+                                uow.SaveChanges();
+                */
 
 
                 return RedirectToAction("Detail", MVCController, new { id = ob.QuotationId, msg = "บันทึกข้อมูลเรียบร้อยแล้ว", msgType = AlertMsgType.Success });
@@ -216,8 +222,38 @@ namespace Kemrex.Web.Main.Controllers
             }
         }
 
-      
-        [HttpPost, ActionName("Detail")]
+        
+
+             [HttpPost, ActionName("AddVersion")]
+        public ActionResult AddVersion()
+        {
+            TblQuotation ob = null;
+            TblQuotationTemplate obTemplate = null;
+            try
+            {
+                int QuotationId = Request.Form["QuotationId"].ParseInt();
+                int TempQuotationId = Request.Form["TempQuotationId"].ParseInt();
+                ob = uow.Modules.Quotation.Get(QuotationId);
+                if (ob.QuotationId >= 0)
+                {
+                    obTemplate = new TblQuotationTemplate();
+                    obTemplate.QuotationId = QuotationId;
+                    obTemplate.TempQuotationId = TempQuotationId;
+                    uow.Modules.QuotationTemplate.SetVersion(obTemplate);
+
+
+                
+                }
+                return RedirectToAction("Detail", MVCController, new { id = ob.QuotationId, msg = "บันทึกข้อมูลเวอร์ชั่นใหม่เรียบร้อยแล้ว", msgType = AlertMsgType.Success });
+            }
+            catch (Exception ex)
+            {
+                string msg = ex.GetMessage(true);
+                return ViewDetail(ob, msg, AlertMsgType.Danger);
+            }
+
+        }
+          [HttpPost, ActionName("Detail")]
         public ActionResult SetDetail()
         {
             bool updateOrgId = false;

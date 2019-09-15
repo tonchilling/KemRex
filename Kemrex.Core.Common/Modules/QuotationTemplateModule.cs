@@ -7,16 +7,24 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Kemrex.Core.Common.Helper;
+using System.Data.SqlClient;
+using System.Data;
+using Kemrex.Core.Common.Helper;
 
 
 namespace Kemrex.Core.Common.Modules
 {
-    public class QuotationModule : IModule<TblQuotation, int>
+    public class QuotationTemplateModule : IModule<TblQuotationTemplate, int>
     {
+        private WebDB webdb;
         private readonly mainContext db;
-        public QuotationModule(mainContext context)
+        public QuotationTemplateModule(mainContext context)
         {
+            System.Threading.Thread.CurrentThread.CurrentCulture = new System.Globalization.CultureInfo("en-US"); ;
+            System.Threading.Thread.CurrentThread.CurrentUICulture = new System.Globalization.CultureInfo("en-US"); ;
             db = context;
+            webdb = new WebDB();
         }
 
         public int Count(int groupId = 0, string src = "")
@@ -30,32 +38,32 @@ namespace Kemrex.Core.Common.Modules
                 .Where(q => q.QuotationNo == no)
                 .Select(q => q.QuotationId).First();
         }
-        public TblQuotation Get(int id)
+        public TblQuotationTemplate Get(int id)
         {
-            return db.TblQuotation
+            return db.TblQuotationTemplate
                 .Where(x => x.QuotationId == id)
-                .FirstOrDefault() ?? new TblQuotation()
+                .FirstOrDefault() ?? new TblQuotationTemplate()
                 {
                     CreatedDate = DateTime.Now
                 };
         }
 
-        public TblQuotation GetDetail(int id)
+        public TblQuotationTemplate GetDetail(int id)
         {
-            return db.TblQuotation.Include(detail => detail.TblQuotationDetail)
+            return db.TblQuotationTemplate.Include(detail => detail.TblQuotationDetailTemplate)
                 .Where(x => x.QuotationId == id)
-                .FirstOrDefault() ?? new TblQuotation()
+                .FirstOrDefault() ?? new TblQuotationTemplate()
                 {
                     CreatedDate = DateTime.Now
                 };
         }
 
 
-        public TblQuotation Get(string quotationNo)
+        public TblQuotationTemplate Get(string quotationNo)
         {
-            return db.TblQuotation
+            return db.TblQuotationTemplate
                 .Where(x => x.QuotationNo == quotationNo)
-                .FirstOrDefault() ?? new TblQuotation()
+                .FirstOrDefault() ?? new TblQuotationTemplate()
                 {
                     CreatedDate = DateTime.Now
                 };
@@ -68,7 +76,7 @@ namespace Kemrex.Core.Common.Modules
             return (from q in db.TblQuotation select q.QuotationNo).Max();
         }
 
-        public List<TblQuotation> Gets(int page = 1, int size = 0, string src = "")
+        public List<TblQuotationTemplate> Gets(int page = 1, int size = 0, string src = "")
         {
             /* var data = db.TblQuotation.Include(c => c.Status)
                          .Include(c=>c.Customer)
@@ -77,7 +85,7 @@ namespace Kemrex.Core.Common.Modules
 
             var data = (from q in db.TblQuotation.Include(c => c.Customer)
                          .OrderByDescending(c => c.QuotationId)
-                        select new TblQuotation
+                        select new TblQuotationTemplate
                         {
                             QuotationId = q.QuotationId,
                             QuotationNo = q.QuotationNo,
@@ -109,9 +117,7 @@ namespace Kemrex.Core.Common.Modules
                             StatusId = q.StatusId,
                             RefQuotationId = q.RefQuotationId,
                             OrgQuotationId = q.OrgQuotationId,
-                            TblOrgQuotation = (from qq in db.TblQuotation.Where(qq => qq.QuotationId == q.OrgQuotationId) select qq).FirstOrDefault(),
-                            TblRefQuotation = (from qq in db.TblQuotation.Where(qq => qq.QuotationId == q.RefQuotationId) select qq).FirstOrDefault(),
-                            TblOtherQuotation = (from qq in db.TblQuotation.Where(qq => qq.OrgQuotationId == q.OrgQuotationId) select qq).ToList()
+                          
 
                         })
 
@@ -123,11 +129,12 @@ namespace Kemrex.Core.Common.Modules
             return data.ToList();
         }
 
-        public List<TblQuotation> GetQuatationNotSale()
+        public List<TblQuotationTemplate> GetQuatationNotSale()
         {
             var quatations = (from q in db.TblSaleOrder select q.QuotationNo).ToList();
             var data = (from q in db.TblQuotation.Where(o => !quatations.Contains(o.QuotationNo)).Include(c => c.Status)
-                        .Include(c => c.Customer) select new TblQuotation {
+                        .Include(c => c.Customer) select new TblQuotationTemplate
+                        {
                             QuotationId = q.QuotationId,
                             QuotationNo = q.QuotationNo,
                             QuotationDate = q.QuotationDate,
@@ -184,10 +191,10 @@ namespace Kemrex.Core.Common.Modules
             return result.OrderByDescending(o => o.QuotationDate).ToList();
         }
 
-        public List<TblQuotation> GetList(long userId)
+        public List<TblQuotationTemplate> GetList(long userId)
         {
             var data = (from order in db.TblQuotation.Where(o=>(o.CreatedBy== userId || userId==0) && o.StatusId != 9)
-                        select new TblQuotation
+                        select new TblQuotationTemplate
                         {
                          QuotationId = order.QuotationId,
                             QuotationNo = order.QuotationNo,
@@ -241,32 +248,70 @@ namespace Kemrex.Core.Common.Modules
         }
 
 
-        public void Delete(TblQuotation ob)
+        public void Delete(TblQuotationTemplate ob)
         {
             if (IsExist(ob.QuotationId))
-            { db.TblQuotation.Remove(ob); }
+            { db.TblQuotationTemplate.Remove(ob); }
         }
 
         public bool IsExist(int id)
         { return db.TblQuotation.Where(x => x.QuotationId == id).Count() > 0 ? true : false; }
 
-        TblQuotation IModule<TblQuotation, int>.Get(int id)
+        TblQuotationTemplate IModule<TblQuotationTemplate, int>.Get(int id)
         {
             throw new NotImplementedException();
         }
 
-        bool IModule<TblQuotation, int>.IsExist(int id)
+        bool IModule<TblQuotationTemplate, int>.IsExist(int id)
         {
             throw new NotImplementedException();
         }
 
-        public void Set(TblQuotation ob)
+        public void Set(TblQuotationTemplate ob)
         {
             if (ob.QuotationId <= 0)
-            { db.TblQuotation.Add(ob); }
+            { db.TblQuotationTemplate.Add(ob); }
             else { db.Entry(ob).State = EntityState.Modified; }
         }
 
-       
+
+        public void SetVersion(TblQuotationTemplate ob)
+        {
+            string sql = "sp_TblQuotation_Version_Add";
+            List<SqlParameter> paramList = new List<SqlParameter>();
+            List<TblSaleOrder> list = new List<TblSaleOrder>();
+            TblSaleOrder dto = null;
+            SqlDataReader reader = null;
+            SqlCommand sqlCommand = null;
+            int result = 0;
+
+            try
+            {
+                webdb.OpenConnection();
+                paramList.Add(new SqlParameter("@QuotationId", ob.QuotationId));
+                paramList.Add(new SqlParameter("@TempQuotationId", ob.TempQuotationId));
+                //connect.Open();
+                sqlCommand = new SqlCommand();
+                sqlCommand.CommandText = sql;
+                sqlCommand.CommandType = CommandType.StoredProcedure;
+                sqlCommand.Connection = webdb.Connection;
+                sqlCommand.Parameters.AddRange(paramList.ToArray());
+
+                result = sqlCommand.ExecuteNonQuery();
+            
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.ToString());
+            }
+            finally
+            {
+                if (webdb.Connection.State == ConnectionState.Open)
+                {
+                    webdb.CloseConnection();
+                }
+            }
+
+        }
     }
 }

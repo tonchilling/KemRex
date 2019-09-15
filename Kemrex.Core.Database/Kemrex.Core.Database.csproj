@@ -195,12 +195,12 @@
     <Compile Include="Models\TblInvoice.cs" />
     <Compile Include="Models\TblJobOrder.cs" />
     <Compile Include="Models\TblJobOrderAttachmentType.cs" />
+    <Compile Include="Models\TblJobOrderProperties.cs" />
     <Compile Include="Models\TblJobOrderDetail.cs" />
     <Compile Include="Models\TblJobOrderEquipmentType.cs" />
     <Compile Include="Models\TblJobOrderLandType.cs" />
     <Compile Include="Models\TblJobOrderObstructionType.cs" />
     <Compile Include="Models\TblJobOrderProjectType.cs" />
-    <Compile Include="Models\TblJobOrderProperties.cs" />
     <Compile Include="Models\TblJobOrderSurveyDetail.cs" />
     <Compile Include="Models\TblJobOrderUndergroundType.cs" />
     <Compile Include="Models\TblJobOrder_SurveyDetail.cs" />
@@ -220,6 +220,8 @@
     <Compile Include="Models\TblProductType.cs" />
     <Compile Include="Models\TblQuotation.cs" />
     <Compile Include="Models\TblQuotationDetail.cs" />
+    <Compile Include="Models\TblQuotationDetailTemplate.cs" />
+    <Compile Include="Models\TblQuotationTemplate.cs" />
     <Compile Include="Models\TblSaleOrder.cs" />
     <Compile Include="Models\TblSaleOrderAttachment.cs" />
     <Compile Include="Models\TblSaleOrderDetail.cs" />
@@ -241,7 +243,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
-    <None Include="Models\TblJobOrder.zip" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>

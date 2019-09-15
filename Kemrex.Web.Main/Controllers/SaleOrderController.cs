@@ -554,6 +554,7 @@ namespace Kemrex.Web.Main.Controllers
                 ob.SaleId = 1;
                 ob.StatusId = 1;
                 ob.ConditionId = 1;
+               
                 uow.Modules.SaleOrder.Set(ob);
                 uow.SaveChanges();
 
@@ -597,6 +598,7 @@ namespace Kemrex.Web.Main.Controllers
                 so.SummaryNet = qt.SummaryNet;
                 so.SummaryTot = qt.SummaryTot;
                 so.SummaryVat = qt.SummaryVat;
+                so.SaleOrderRemark = qt.QuotationRemark;
 
                 uow.Modules.SaleOrder.Set(so);
                 // uow.SaveChanges();
@@ -621,6 +623,7 @@ namespace Kemrex.Web.Main.Controllers
                         sod.TotalNet = dt.TotalNet;
                         sod.TotalTot = dt.TotalTot;
                         sod.TotalVat = dt.TotalVat;
+                        sod.Remark = dt.Remark;
                         uow.Modules.SaleOrderDetail.Set(sod);
                     });
 

@@ -36,7 +36,14 @@ namespace Kemrex.Core.Database.Models
         public string Address { get; set; }
         public string Solution { get; set; }
         public int? StatusId { get; set; }
-
+      
+        public string ProjectReason { get; set; }
+       
+        public string LandTypeReason { get; set; }
+       
+        public string UnderGroundTypeReason { get; set; }
+       
+        public string AttachmentTypeReason { get; set; }
         public DateTime? SurveyDate { get; set; }
         public int? SurveyEmployee { get; set; }
         [NotMapped]

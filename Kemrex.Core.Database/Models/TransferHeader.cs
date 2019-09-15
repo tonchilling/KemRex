@@ -15,8 +15,8 @@ namespace Kemrex.Core.Database.Models
         
         public string TransferTime { get; set; }
         public int JobOrderId { get; set; }
-       
 
+       
         public int RefTransferId { get; set; }
         public string  ReceiveTo { get; set; }
         public string Reason { get; set; }

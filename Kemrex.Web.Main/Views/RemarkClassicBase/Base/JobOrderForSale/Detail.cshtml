@@ -912,11 +912,19 @@
                                                 </div>
                                             }
                                         <input type="hidden" id="hddProject" name="hddProject" />
+                                        <div class="row">
+                                            <div class="col-md-5">
+                                                <div class="form-group">
+                                                    
+                                                    <textarea rows="4" cols="47" class="form-control" name="ProjectReason">@Model.ProjectReason</textarea>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-
+                      
                     </div>
 
                     <div id="tab-3" class="tab-content">
@@ -970,6 +978,14 @@
                                                             <label><input data-toggle="toggle" data-onstyle="success" type="checkbox" @(selected ? "Checked" : "") class="selEquipmentType" value="@obj.CategoryId">@obj.CategoryName</label>
                                                         </div>
                                                     }
+                                                    <div class="row">
+                                                        <div class="col-md-12">
+                                                            <div class="form-group">
+
+                                                                <textarea rows="4" cols="47" class="form-control" name="ProjectReason">@Model.ProjectReason</textarea>
+                                                            </div>
+                                                        </div>
+                                                    </div>
                                                     <input type="hidden" id="hddEquipmentType" name="hddEquipmentType" />
                                                 </div>
                                             </div>
@@ -986,6 +1002,15 @@
                                                             <label><input data-toggle="toggle" data-onstyle="success" type="checkbox" @(selected ? "Checked" : "") class="selLandType" value="@obj.CategoryId">@obj.CategoryName</label>
                                                         </div>
                                                     }
+
+                                                    <div class="row">
+                                                        <div class="col-md-12">
+                                                            <div class="form-group">
+                                                               
+                                                                <textarea rows="4" cols="47" class="form-control" name="LandTypeReason">@Model.LandTypeReason</textarea>
+                                                            </div>
+                                                        </div>
+                                                    </div>
                                                     <input type="hidden" id="hddLandType" name="hddLandType" />
                                                 </div>
                                             </div>
@@ -1002,6 +1027,16 @@
                                                             <label><input data-toggle="toggle" data-onstyle="success" type="checkbox" @(selected ? "Checked" : "") class="selUndergroundType" value="@obj.CategoryId">@obj.CategoryName</label>
                                                         </div>
                                                     }
+
+
+                                                    <div class="row">
+                                                        <div class="col-md-12">
+                                                            <div class="form-group">
+                                                              
+                                                                <textarea rows="4" cols="47" class="form-control" name="UnderGroundTypeReason">@Model.UnderGroundTypeReason</textarea>
+                                                            </div>
+                                                        </div>
+                                                    </div>
                                                     <input type="hidden" id="hddUndergroundType" name="hddUndergroundType" />
                                                 </div>
                                             </div>
@@ -1051,6 +1086,14 @@
                                                             <label><input data-toggle="toggle" data-onstyle="success" type="checkbox" @(selected ? "Checked" : "") class="selAttachmentType" value="@obj.CategoryId">@obj.CategoryName</label>
                                                         </div>
                                                     }
+                                                    <div class="row">
+                                                        <div class="col-md-12">
+                                                            <div class="form-group">
+                                                              
+                                                                <textarea rows="4" cols="47" class="form-control" name="AttachmentTypeReason">@Model.AttachmentTypeReason</textarea>
+                                                            </div>
+                                                        </div>
+                                                    </div>
                                                     <input type="hidden" name="hddAttachmentType" id="hddAttachmentType" />
                                                 </div>
                                             </div>

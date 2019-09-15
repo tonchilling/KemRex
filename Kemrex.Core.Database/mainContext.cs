@@ -107,6 +107,10 @@ namespace Kemrex.Core.Database
         public virtual DbSet<TransferHeaderReference> TransferHeaderReference { get; set; }
         public virtual DbSet<TblProductOfWareHouse> TblProductOfWareHouse { get; set; }
 
+        public virtual DbSet<TblQuotationDetailTemplate> TblQuotationDetailTemplate { get; set; }
+        public virtual DbSet<TblQuotationTemplate> TblQuotationTemplate { get; set; }
+
+
         // Unable to generate entity type for table 'dbo.Product_Temp'. Please see the warning messages.
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -1434,10 +1438,10 @@ namespace Kemrex.Core.Database
 
 
 
-                
 
-             
-                    
+
+
+
 
 
                 entity.HasOne(d => d.Product)
@@ -1579,7 +1583,7 @@ namespace Kemrex.Core.Database
                     .HasConstraintName("FK_TblSaleOrderDetail_Product");
 
 
-            
+
 
                 entity.HasOne(d => d.SaleOrder)
                     .WithMany(p => p.TblSaleOrderDetail)
@@ -1923,7 +1927,98 @@ namespace Kemrex.Core.Database
             {
                 entity.HasKey(e => new { e.TransferId, e.RefTransferId });
 
-             
+
+            });
+
+
+            modelBuilder.Entity<TblQuotationDetailTemplate>(entity =>
+            {
+                entity.ToTable("TblQuotationDetail_Template");
+
+                entity.Property(e => e.Discount).HasColumnType("decimal(12, 2)");
+
+                entity.Property(e => e.DiscountNet).HasColumnType("decimal(12, 2)");
+
+                entity.Property(e => e.DiscountTot).HasColumnType("decimal(12, 2)");
+
+                entity.Property(e => e.DiscountVat).HasColumnType("decimal(12, 2)");
+
+                entity.Property(e => e.PriceNet).HasColumnType("decimal(12, 2)");
+
+                entity.Property(e => e.PriceTot).HasColumnType("decimal(12, 2)");
+
+                entity.Property(e => e.PriceVat).HasColumnType("decimal(12, 2)");
+
+                entity.Property(e => e.TotalNet).HasColumnType("decimal(18, 2)");
+
+                entity.Property(e => e.TotalTot).HasColumnType("decimal(18, 2)");
+
+                entity.Property(e => e.TotalVat).HasColumnType("decimal(18, 2)");
+
+                entity.Property(e => e.Whid).HasColumnName("WHId");
+            });
+
+            modelBuilder.Entity<TblQuotationTemplate>(entity =>
+            {
+                entity.HasKey(e => e.QuotationId);
+
+                entity.ToTable("TblQuotation_Template");
+
+                entity.Property(e => e.QuotationId).ValueGeneratedNever();
+
+                entity.Property(e => e.ContractEmail).HasMaxLength(500);
+
+                entity.Property(e => e.ContractName).HasMaxLength(500);
+
+                entity.Property(e => e.ContractPhone).HasMaxLength(500);
+
+                entity.Property(e => e.CreatedDate).HasColumnType("datetime");
+
+                entity.Property(e => e.CustomerName).HasMaxLength(500);
+
+                entity.Property(e => e.DeletedDate).HasColumnType("datetime");
+
+                entity.Property(e => e.DeliveryDate).HasColumnType("datetime");
+
+                entity.Property(e => e.DiscountCash).HasColumnType("decimal(12, 2)");
+
+                entity.Property(e => e.DiscountNet).HasColumnType("decimal(18, 2)");
+
+                entity.Property(e => e.DiscountTot).HasColumnType("decimal(18, 2)");
+
+                entity.Property(e => e.DiscountVat).HasColumnType("decimal(18, 2)");
+
+                entity.Property(e => e.DueDate).HasColumnType("datetime");
+
+                entity.Property(e => e.OperationEndDate).HasColumnType("datetime");
+
+                entity.Property(e => e.OperationStartDate).HasColumnType("datetime");
+
+                entity.Property(e => e.QuotationDate).HasColumnType("datetime");
+
+                entity.Property(e => e.QuotationNo)
+                    .IsRequired()
+                    .HasMaxLength(20);
+
+                entity.Property(e => e.SaleName)
+                    .IsRequired()
+                    .HasMaxLength(500);
+
+                entity.Property(e => e.SubTotalNet).HasColumnType("decimal(18, 2)");
+
+                entity.Property(e => e.SubTotalTot).HasColumnType("decimal(18, 2)");
+
+                entity.Property(e => e.SubTotalVat).HasColumnType("decimal(18, 2)");
+
+                entity.Property(e => e.SummaryNet).HasColumnType("decimal(18, 2)");
+
+                entity.Property(e => e.SummaryTot).HasColumnType("decimal(18, 2)");
+
+                entity.Property(e => e.SummaryVat).HasColumnType("decimal(18, 2)");
+
+                entity.Property(e => e.TempQuotationId).ValueGeneratedOnAdd();
+
+                entity.Property(e => e.UpdatedDate).HasColumnType("datetime");
             });
 
         }
