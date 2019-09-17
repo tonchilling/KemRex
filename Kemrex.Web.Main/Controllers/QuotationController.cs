@@ -240,9 +240,9 @@ namespace Kemrex.Web.Main.Controllers
                     obTemplate.QuotationId = QuotationId;
                     obTemplate.TempQuotationId = TempQuotationId;
                     uow.Modules.QuotationTemplate.SetVersion(obTemplate);
+                    uow.SaveChanges();
 
 
-                
                 }
                 return RedirectToAction("Detail", MVCController, new { id = ob.QuotationId, msg = "บันทึกข้อมูลเวอร์ชั่นใหม่เรียบร้อยแล้ว", msgType = AlertMsgType.Success });
             }
@@ -253,7 +253,40 @@ namespace Kemrex.Web.Main.Controllers
             }
 
         }
-          [HttpPost, ActionName("Detail")]
+
+
+        [HttpPost, ActionName("ReplaceTemplate")]
+        public ActionResult ReplaceTemplate()
+        {
+            TblQuotation ob = null;
+            TblQuotationTemplate obTemplate = null;
+            try
+            {
+                int QuotationId = Request.Form["QuotationId"].ParseInt();
+                int TempQuotationId = Request.Form["TempQuotationId"].ParseInt();
+                ob = uow.Modules.Quotation.Get(QuotationId);
+                if (ob.QuotationId >= 0)
+                {
+                    obTemplate = new TblQuotationTemplate();
+                    obTemplate.QuotationId = QuotationId;
+                    obTemplate.TempQuotationId = TempQuotationId;
+                    uow.Modules.QuotationTemplate.ReplaceVersion(obTemplate);
+                    uow.SaveChanges();
+
+
+                }
+                return RedirectToAction("Detail", MVCController, new { id = ob.QuotationId, msg = "บันทึกข้อมูลใหม่เรียบร้อยแล้ว", msgType = AlertMsgType.Success });
+            }
+            catch (Exception ex)
+            {
+                string msg = ex.GetMessage(true);
+                return ViewDetail(ob, msg, AlertMsgType.Danger);
+            }
+
+        }
+
+
+        [HttpPost, ActionName("Detail")]
         public ActionResult SetDetail()
         {
             bool updateOrgId = false;
@@ -386,6 +419,7 @@ namespace Kemrex.Web.Main.Controllers
                 ViewData["userAccount"] = CurrentUser;
                 ViewData["optWareHouse"] = uow.Modules.WareHouse.Gets();
                 ViewData["optPermission"] = permission;
+                ViewData["opQuotationTemplate"] = uow.Modules.QuotationTemplate.GetList(ob.QuotationId);
                 return View(ob);
             }
             catch (Exception ex)
@@ -447,7 +481,8 @@ namespace Kemrex.Web.Main.Controllers
                 ob.WHId = WHId;
                 ob.ProductId = pid;
                 ob.Quantity = qty;
-                ob.CalType= Request.Form["selCalType"].ParseInt(); 
+                ob.CalType= Request.Form["selCalType"].ParseInt();
+                ob.PriceUnit = price;
                 ob.PriceNet = price * qty;
                 ob.PriceVat = uow.Modules.System.GetVatFromNet(price * qty);
                 // ob.PriceVat = (price * qty * vat) - (price * qty);

@@ -62,6 +62,7 @@ namespace Kemrex.Core.Common.Modules
          ProductId =qd.ProductId,
        Quantity =qd.Quantity,
        WHId =qd.WHId,
+       PriceUnit=qd.PriceUnit,
        PriceNet =qd.PriceNet,
        PriceVat = qd.PriceVat,
         PriceTot= qd.PriceTot,

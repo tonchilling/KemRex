@@ -204,6 +204,7 @@ namespace Kemrex.Web.Main.Controllers
                             sod.SaleOrderId = id;
                             sod.ProductId = dt.ProductId;
                             sod.Quantity = dt.Quantity;
+                            sod.PriceUnit = dt.PriceUnit;
                             sod.PriceNet = dt.PriceNet;
                             sod.PriceVat = dt.PriceVat;
                             sod.PriceTot = dt.PriceTot;
@@ -614,6 +615,7 @@ namespace Kemrex.Web.Main.Controllers
                         sod.ProductId = dt.ProductId;
                         sod.WHId = dt.WHId;
                         sod.Quantity = dt.Quantity;
+                        sod.PriceUnit = dt.PriceUnit;
                         sod.PriceNet = dt.PriceNet;
                         sod.PriceVat = dt.PriceVat;
                         sod.PriceTot = dt.PriceTot;

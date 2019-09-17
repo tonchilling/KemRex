@@ -11,6 +11,7 @@ namespace Kemrex.Core.Database.Models
         public int ProductId { get; set; }
         public int Quantity { get; set; }
         public int? WHId { get; set; }
+        public decimal PriceUnit { get; set; }
         public decimal PriceNet { get; set; }
         public decimal PriceVat { get; set; }
         public decimal PriceTot { get; set; }
