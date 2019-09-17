@@ -1960,11 +1960,11 @@ namespace Kemrex.Core.Database
 
             modelBuilder.Entity<TblQuotationTemplate>(entity =>
             {
-                entity.HasKey(e => e.QuotationId);
+                entity.HasKey(e => e.TempQuotationId);
 
                 entity.ToTable("TblQuotation_Template");
 
-                entity.Property(e => e.QuotationId).ValueGeneratedNever();
+               // entity.Property(e => e.QuotationId).ValueGeneratedNever();
 
                 entity.Property(e => e.ContractEmail).HasMaxLength(500);
 

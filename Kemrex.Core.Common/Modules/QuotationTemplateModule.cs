@@ -178,12 +178,16 @@ namespace Kemrex.Core.Common.Modules
         public List<TblQuotationDisplay> GetList(int id)
         {
             List<TblQuotationDisplay> result = new List<TblQuotationDisplay>();
-            var data = (from q in db.TblQuotation.Where(o=>o.OrgQuotationId== id)
+            var data = (from q in db.TblQuotationTemplate.Where(o=>o.OrgQuotationId== id)
                         select q);
 
-            foreach (TblQuotation qu in data)
+            foreach (TblQuotationTemplate qu in data)
             {
-                result.Add(new TblQuotationDisplay { QuotationNo=qu.QuotationNo,QuotationId=qu.QuotationId,QuotationDate=qu.QuotationDate});
+                result.Add(new TblQuotationDisplay { QuotationNo=qu.QuotationNo,
+                                                     QuotationId =qu.QuotationId,
+                                                      QuotationDate =qu.QuotationDate,
+                                                      OrgQuotationNo=qu.OrgQuotationNo,
+                                                      TempQuotationId=qu.TempQuotationId});
             }
             
 
@@ -299,6 +303,45 @@ namespace Kemrex.Core.Common.Modules
 
                 result = sqlCommand.ExecuteNonQuery();
             
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.ToString());
+            }
+            finally
+            {
+                if (webdb.Connection.State == ConnectionState.Open)
+                {
+                    webdb.CloseConnection();
+                }
+            }
+
+        }
+
+        public void ReplaceVersion(TblQuotationTemplate ob)
+        {
+            string sql = "sp_TblQuotation_Version_ReplaceTemplate";
+            List<SqlParameter> paramList = new List<SqlParameter>();
+            List<TblSaleOrder> list = new List<TblSaleOrder>();
+            TblSaleOrder dto = null;
+            SqlDataReader reader = null;
+            SqlCommand sqlCommand = null;
+            int result = 0;
+
+            try
+            {
+                webdb.OpenConnection();
+                paramList.Add(new SqlParameter("@QuotationId", ob.QuotationId));
+                paramList.Add(new SqlParameter("@TempQuotationId", ob.TempQuotationId));
+                //connect.Open();
+                sqlCommand = new SqlCommand();
+                sqlCommand.CommandText = sql;
+                sqlCommand.CommandType = CommandType.StoredProcedure;
+                sqlCommand.Connection = webdb.Connection;
+                sqlCommand.Parameters.AddRange(paramList.ToArray());
+
+                result = sqlCommand.ExecuteNonQuery();
+
             }
             catch (Exception ex)
             {

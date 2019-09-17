@@ -73,8 +73,10 @@ namespace Kemrex.Core.Database.Models
 
     public partial class TblQuotationDisplay
     {
+        public int TempQuotationId { get; set; }
         public int QuotationId { get; set; }
         public string QuotationNo { get; set; }
         public DateTime QuotationDate { get; set; }
+        public string OrgQuotationNo { get; set; }
     }
 }
