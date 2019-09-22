@@ -106,7 +106,38 @@ namespace Kemrex.Core.Common.Modules
 
             return remain;
         }
+        public decimal GetRemain(int SaleOrderId, int exceptTerm)
+        {
+            var data = (from i in db.TblInvoice
+                    .Where(i => i.SaleOrderId == SaleOrderId && i.InvoiceTerm != exceptTerm)
+                        select new TblInvoice
+                        {
+                            InvoiceId = i.InvoiceId,
+                            InvoiceNo = i.InvoiceNo,
+                            SaleOrderId = i.SaleOrderId,
+                            InvoiceAmount = i.InvoiceAmount,
+                            SaleOrder = null
+                        });
+            decimal remain = 0;
+            foreach (var x in data.ToList())
+            {
+                remain += x.InvoiceAmount.HasValue ? x.InvoiceAmount.Value : 0;
+            }
 
+
+            return remain;
+        }
+        public List<TblInvoice> GetHistoryInvoiceAmount(int SaleOrderId)
+        {
+            var data = (from i in db.TblInvoice.Where(o => o.SaleOrderId == SaleOrderId)
+                        select new TblInvoice
+                        {
+                            InvoiceTerm = i.InvoiceTerm,
+                            InvoiceAmount = i.InvoiceAmount,
+                            StatusId = i.StatusId
+                        }).OrderBy(c => c.InvoiceTerm);
+            return data.ToList();
+        }
         public string GetLastId(string pre)
         {
             return (from q in db.TblInvoice

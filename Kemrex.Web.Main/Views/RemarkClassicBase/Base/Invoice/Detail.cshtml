@@ -18,7 +18,12 @@
       )ViewData["optPayment"];
     AccountPermission optPermission = (AccountPermission
      )ViewData["optPermission"];
-    //decimal optRemain = (decimal)ViewData["optRemain"];
+    List<TblInvoice> optHistoryAmt = (List<TblInvoice>
+      )ViewData["optHistoryAmt"];
+    decimal optRemain = (decimal)ViewData["optRemain"];
+    decimal optInvoiceRemain = (decimal)ViewData["optInvoiceRemain"];
+    decimal TotalInvoice = (Model.SaleOrder != null ? (Model.SaleOrder.SummaryNet.HasValue?Model.SaleOrder.SummaryNet.Value:decimal.Zero) : decimal.Zero);
+    decimal RemainAmt = TotalInvoice - optRemain;
     bool canedit = false;
     bool changestatus = false;
     if (Model.StatusId != 3 && Model.SaleOrderId > 0)
@@ -277,6 +282,17 @@
             return chkValidate;
 
         }
+        $("#InvoiceAmount").keyup(function () {
+            //InvoiceRemain
+            var InvAmt = $("#InvoiceAmount").val();
+            var InvRemain = @TotalInvoice - @optInvoiceRemain - InvAmt;
+            $("#InvoiceRemain").text(" (ยังไม่ได้เรียกเก็บ " + InvRemain.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,') + ")");
+        });
+        function calremain() {
+
+
+
+        }
 
     </script>
 }
@@ -441,11 +457,11 @@
                                                             //var total = (Model.SaleOrder != null ? Model.SaleOrder.SummaryTot - Model.SaleOrder.DiscountCash : decimal.Zero);
                                                             var total = (Model.SaleOrder != null ? Model.SaleOrder.SummaryNet : decimal.Zero);
                                                         }
-                                                        <input type="text" class="form-control text-right border-0" value="@total" readonly />
+                                                        <input type="text" class="form-control text-right border-0" value="@total" id="SummaryNet" name="SummaryNet" readonly />
                                                     </div>
                                                 </div>
                                                 <div class="form-group">
-                                                    <label for="InvoiceAmount" class="col-sm-4 col-form-label">ยอดเรียกเก็บ</label>
+                                                    <label for="InvoiceAmount" class="col-sm-2 col-form-label">ยอดเรียกเก็บ</label><label for="InvoiceAmount" id="InvoiceRemain" name="InvoiceRemain" class="col-sm-4 col-form-label"> (ยังไม่ได้เรียกเก็บ @RemainAmt)</label>
                                                     <div class="input-group col-sm-6">
                                                         <span class="input-group-addon">
                                                             <i class="icon wb-payment  icon-2-5x text-danger" aria-hidden="true"></i>
@@ -463,6 +479,7 @@
                                                         }
 
                                                         <input type="text" class="form-control text-right" name="InvoiceAmount" id="InvoiceAmount" value="@Model.InvoiceAmount" @(checkInvoice ? "" : "readonly") />
+
                                                     </div>
                                                 </div>
                                                 @*<div class="form-group">
@@ -578,7 +595,7 @@
                                                             }
                                                         }
                                                         <input type="text" class="form-control border-0" value="@con" readonly />*@
-                                                        <select name="ConditionId" id="ConditionId" class="form-control"  @(canedit ? "" : "disabled")>
+                                                        <select name="ConditionId" id="ConditionId" class="form-control" @(canedit ? "" : "disabled")>
                                                             @foreach (EnmPaymentCondition it in optPayment)
                                                             {
                                                                 bool selected = it.ConditionId == Model.ConditionId;
@@ -587,7 +604,56 @@
                                                         </select>
                                                     </div>
                                                 </div>
-                                                
+                                                <div class="form-group">
+                                                    <label class="col-sm-5 col-form-label">ประวัติรายงวด</label>
+                                                    <div class="input-group col-sm-6">
+                                                        <table class="table table-borderless table-hover">
+                                                            <thead>
+                                                                <tr align="center">
+                                                                    <th align="center">งวดที่</th>
+                                                                    <th align="center">ยอดเรียกเก็บ</th>
+                                                                    <th align="center">สถานะ</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                            @if (optHistoryAmt.Count() <= 0)
+                                                            {
+                                                                <tr>
+                                                                    <td colspan="3">ยังไม่มีการเรียกเก็บ</td>
+                                                                </tr>
+                                                            }
+                                                            @foreach (var iv in optHistoryAmt)
+                                                            {
+
+                                                                <tr >
+                                                                    <td align="center">@iv.InvoiceTerm</td>
+                                                                    <td align="center">@iv.InvoiceAmount</td>
+                                                                    <td align="center">
+                                                                        @{ if (iv.StatusId == 1)
+                                                                            {
+                                                                                @("ร่าง");
+                                                                            }
+                                                                            else if (iv.StatusId == 2)
+                                                                            {
+                                                                                @("ส่งแล้ว");
+                                                                            }
+                                                                            else if (iv.StatusId == 3)
+                                                                            {
+                                                                                @("จ่ายแล้ว");
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                @("ยกเลิก");
+                                                                            }
+                                                                        }
+                                                                    </td>
+                                                                </tr>
+                                                            }
+                                                        </tbody>
+                                                        </table>
+                                                    </div>
+                                                </div>
+
                                             </div>
                                         </div>
                                     </div>
