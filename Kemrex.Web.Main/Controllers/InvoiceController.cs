@@ -128,6 +128,9 @@ namespace Kemrex.Web.Main.Controllers
                 if (Request.Form["SaleOrderId"] != "")
                     ob.SaleOrderId = int.Parse(Request.Form["SaleOrderId"].ToString());
                 ob.SaleOrder = uow.Modules.SaleOrder.Get(ob.SaleOrderId);
+                decimal remain = 0;
+                decimal SumInvoiceAmt = 0;
+                
                 if (ob.InvoiceId <= 0)
                 {
                     ob.InvoiceNo = genInvoiceId("DEK");
@@ -139,12 +142,18 @@ namespace Kemrex.Web.Main.Controllers
                     ob.ConditionId = ob.SaleOrder.ConditionId;
                     ob.InvoiceTerm = uow.Modules.Invoice.CountTerm(ob.SaleOrderId) + 1;
                     //ob.DueDate = CurrentDate.AddMonths(1);
+                    SumInvoiceAmt = uow.Modules.Invoice.GetRemain(ob.SaleOrderId);
+                    remain = (ob.SaleOrder.SummaryNet.HasValue ? ob.SaleOrder.SummaryNet.Value : 0) - SumInvoiceAmt;
                     switch (ob.SaleOrder.ConditionId)
                     {
                         case 1:     //จ่าย 100% หลังติดตั้งงาน
-                        case 2: ob.InvoiceAmount = ob.SaleOrder.SummaryNet; //มัดจำ 100 % ก่อนติดตั้งงาน
+                        case 2:  //มัดจำ 100 % ก่อนติดตั้งงาน
+                            if (ob.SaleOrder.SummaryNet >= remain) ob.InvoiceAmount = remain;
+                            else ob.InvoiceAmount = ob.SaleOrder.SummaryNet;
                             break;
                         case 3: ob.InvoiceAmount = ob.SaleOrder.SummaryNet/2; //2 งวด 50 / 50
+                            if (ob.SaleOrder.SummaryNet/2 >= remain) ob.InvoiceAmount = remain;
+                            else ob.InvoiceAmount = ob.SaleOrder.SummaryNet/2;
                             break;
                         case 4: //3 งวด
                         case 5: ob.InvoiceAmount = 0; //4 งวด
@@ -161,7 +170,12 @@ namespace Kemrex.Web.Main.Controllers
                     ob.InvoiceAmount = 0;
                     if (Request.Form["InvoiceAmount"] != "")
                         ob.InvoiceAmount = decimal.Parse(Request.Form["InvoiceAmount"].ToString());
+                    
                     ob.InvoiceTerm = Request.Form["InvoiceTerm"].ParseInt();
+                    SumInvoiceAmt = uow.Modules.Invoice.GetRemain(ob.SaleOrderId, ob.InvoiceTerm);
+                    decimal amt = ob.InvoiceAmount.HasValue ? ob.InvoiceAmount.Value : decimal.Zero;
+                    remain = (ob.SaleOrder.SummaryNet.HasValue ? ob.SaleOrder.SummaryNet.Value : 0) - SumInvoiceAmt;
+                    if(amt - remain > 0) return ViewDetail(ob, "ยอดเรียกเก็บต้อง น้อยกว่าหรือเท่ากับ ยอดที่ยังไม่ได้เรียกเก็บ", AlertMsgType.Danger);
                 }
 
                 try
@@ -282,7 +296,9 @@ namespace Kemrex.Web.Main.Controllers
                 ViewData["optQuotation"] = uow.Modules.Quotation.Gets();
                 ViewData["optPayment"] = uow.Modules.PaymentCondition.Gets();
                 ViewData["optRemain"] = uow.Modules.Invoice.GetRemain(ob.SaleOrderId);
+                ViewData["optInvoiceRemain"] = uow.Modules.Invoice.GetRemain(ob.SaleOrderId, ob.InvoiceTerm);
                 ViewData["optPermission"] = permission;
+                ViewData["optHistoryAmt"] = uow.Modules.Invoice.GetHistoryInvoiceAmount(ob.SaleOrderId);
 
                 return View(ob);
             }
