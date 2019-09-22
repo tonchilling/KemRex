@@ -38,6 +38,11 @@ optEmployee = (List<TblEmployee>
     List<TblWareHouse>
    optWareHouse = (List<TblWareHouse>
        )ViewData["optWareHouse"];
+
+    List<TblQuotationDisplay>
+ opQuotationTemplate = (List<TblQuotationDisplay>
+     )ViewData["opQuotationTemplate"];
+
     
 
 }
@@ -123,6 +128,37 @@ optEmployee = (List<TblEmployee>
 
             });
 
+            $('.btnGetVersion').click(function () {
+
+                if ($("#selVersion").val() == "") {
+                    $("#selVersion").addClass("has-error");
+                    chkValidate = false;
+                } else {
+                    $("#selVersion").removeClass("has-error");
+
+                    $('#TempQuotationId').val($('#selVersion').val());
+                    swal({
+                        title: "GET",
+                        text: "Do you want to replace quotation?",
+                        type: "warning",
+                        showCancelButton: true,
+                        closeOnConfirm: false,
+                        showLoaderOnConfirm: true
+                    },
+                        function (isConfirm) {
+                            if (isConfirm) {
+                                $('#frmMain').attr('action', '@Url.Action("ReplaceTemplate", new { controller = "Quotation" })');
+                                $('#frmMain').submit();
+
+                            }
+                        });
+                }
+              
+
+                return false;
+
+            });
+            
 
 
 
@@ -768,8 +804,12 @@ optEmployee = (List<TblEmployee>
 
         $(document).on("click", ".btnSaveVersion", function () {
             var isConfirm = false;
+
+            $('#hdCreateVersion').val(1);
+            $('#TempQuotationId').val($('#selVersion').val());
+            var titleText = $('#selVersion').val() != "" ? "Update version" : "Save new version";
             swal({
-                title: "Save version",
+                title: titleText,
                 text: "Do you want to keep quotation?",
                 type: "success",
                 showCancelButton: true,
@@ -779,10 +819,11 @@ optEmployee = (List<TblEmployee>
                 function (isConfirm) {
                     if (isConfirm) {
 
-                        $('#hdCreateVersion').val(1);
+                      
+                        
                         $('#frmMain').attr('action', '@Url.Action("AddVersion", "Quotation")');
                         $('#frmMain').submit();
-
+                      
                     }
                 });
 
@@ -803,7 +844,9 @@ optEmployee = (List<TblEmployee>
                 function (isConfirm) {
                     if (isConfirm) {
 
-                        $('#hdApprove').val(2);
+                        $('#hdCreateVersion').val(1);
+                        $('#TempQuotationId').val($('#selVersion').val());
+                        $('#hdApprove').val(3);
                         $('#frmMain').attr('action', '@Url.Action("Detail", "Quotation")');
                         $('#frmMain').submit();
 
@@ -938,16 +981,22 @@ optEmployee = (List<TblEmployee>
                             </div>
                             <div class="col-4">
                                 <div class="input-group">
-                                    @if (Model.QuotationId > 0)
+                                    @if (Model.StatusId > 0 && Model.StatusId <= 3)
+
                                     {
                                         <select class="form-control" id="selVersion" data-live-search="true"
                                                 name="selVersion">
                                             <option value="">กรุณาเลือก version</option>
+
+                                            @foreach (var it in opQuotationTemplate)
+                                            {
+                                                <option value="@it.TempQuotationId">@it.QuotationNo</option>
+                                            }
                                         </select>
-                                        <button type="submit" class="btn btn-success btnLoadVersion pull-right" style="margin-right:5px;">Load</button>
-                                        <button type="submit" class="btn btn-primary btnSaveVersion pull-right">Save Version</button>
+                                        <button type="submit" class="btn btn-success btnGetVersion pull-right" style="margin-right:5px;">GET</button>
+                                        <!--  <button type="submit" class="btn btn-primary btnSaveVersion pull-right">Keep Version</button>-->
                                     }
-                                    </div>
+                                </div>
                                 </div>
                             </div>
                                 <div class="row">
@@ -957,6 +1006,7 @@ optEmployee = (List<TblEmployee>
                                             <form method="post" action="@Url.Action("Detail", "Quotation")" id="frmMain" enctype="multipart/form-data">
                                                 @Html.AntiForgeryToken()
                                                 <input type="hidden" name="QuotationId" value="@Model.QuotationId" />
+                                                <input type="hidden" name="TempQuotationId"  id="TempQuotationId" />
                                                 <input type="hidden" id="hdApprove" name="hdApprove" />
                                                 <input type="hidden" id="hdCreateVersion" name="hdCreateVersion" />
                                                 <div class="panel-body">
@@ -977,14 +1027,15 @@ optEmployee = (List<TblEmployee>
                                                                 <label for="PriceValidity" class="col-sm-5 col-form-label">สถานะเอกสาร</label>
                                                                 <div class="col-sm-6">
                                                                     <select name="StatusId" id="StatusId" class="form-control">
-                                                                        @if (Model.StatusId <= 1)
+                                                                        @if (Model.StatusId <= 2)
                                                                         {
                                                                             <option class="text-muted" value="1" @(Model.StatusId == 1 ? " selected=\" selected\"" : "")>ร่าง</option>
-                                                                        }
-                                                                        @if (Model.StatusId >= 2)
-                                                                        {
                                                                             <option class="text-warning" value="2" @(Model.StatusId == 2 ? " selected=\" selected\"" : "")>ส่งอนุมัติ</option>
+                                                                        }
 
+
+                                                                        @if (Model.StatusId >=3)
+                                                                        {
                                                                             <option class="text-primary" value="3" @(Model.StatusId == 3 ? " selected=\" selected\"" : "")>ส่งลูกค้า</option>
                                                                             <option class="text-success" value="4" @(Model.StatusId == 4 ? " selected=\" selected\"" : "")>ตอบรับ</option>
                                                                             <option class="text-dark" value="5" @(Model.StatusId == 5 ? " selected=\" selected\"" : "")>ยกเลิก</option>
@@ -1184,7 +1235,7 @@ optEmployee = (List<TblEmployee>
                                                                     <a href="#" class="btn btn-default btnCancel ">ยกเลิก</a>
                                                                 }
 
-                                                                @if (Model.StatusId > 0 && Model.StatusId <= 1 && optPermission.IsManager)
+                                                                @if (Model.StatusId > 0 && Model.StatusId <= 3 && optPermission.IsManager)
                                                                 {
                                                                     <button type="submit" id="btnConfirm" class="btn btn-success btnConfirm">
                                                                         อนุมัติ
@@ -1227,7 +1278,7 @@ optEmployee = (List<TblEmployee>
 
                                                                             @foreach (var it in optProduct.Where(o => o.PriceNet > 0))
                                                                             {
-                                                                                <option value="@it.ProductId" title="@it.PriceNet">@it.ProductCode @it.ProductName [@it.PriceNet]</option>
+                                                                                <option value="@it.ProductId" title="@it.PriceNet">@it.ProductCode @it.ProductName </option>
                                                                             }
 
 
@@ -1339,7 +1390,7 @@ optEmployee = (List<TblEmployee>
                                                                             <td>@ob.Product.ProductCode @ob.Product.ProductName</td>
                                                                             <td>@ob.WareHouse.Whname</td>
                                                                             <td>@ob.Quantity</td>
-                                                                            <td>@ob.PriceNet.ToString("#,#0.00")</td>
+                                                                            <td>@ob.PriceUnit.ToString("#,#0.00")</td>
                                                                             <td>@ob.DiscountNet.ToString("#,#0.00") @calType</td>
                                                                             <td>@ob.TotalNet.Value.ToString("#,#0.00")</td>
                                                                             <td>@ob.TotalTot.Value.ToString("#,#0.00")</td>

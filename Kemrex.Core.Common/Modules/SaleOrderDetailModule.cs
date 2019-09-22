@@ -89,5 +89,7 @@ namespace Kemrex.Core.Common.Modules
             { db.TblSaleOrderDetail.Add(ob); }
             else { db.Entry(ob).State = EntityState.Modified; }
         }
+
+       
     }
 }

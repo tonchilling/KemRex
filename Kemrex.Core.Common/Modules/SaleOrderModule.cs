@@ -301,6 +301,48 @@ namespace Kemrex.Core.Common.Modules
             return tblSaleOrder;
         }
 
+        public bool SaleOrderStockApprove(int SaleOrderId)
+        {
+            string sql = "sp_SaleOrderStockApprove";
+            List<SqlParameter> paramList = new List<SqlParameter>();
+            List<TblSaleOrder> list = new List<TblSaleOrder>();
+            TblSaleOrder dto = null;
+            SqlDataReader reader = null;
+            SqlCommand sqlCommand = null;
+            bool success = true;
+
+            try
+            {
+                webdb.OpenConnection();
+                paramList.Add(new SqlParameter("@SaleOrderId", SaleOrderId));
+                sqlCommand = new SqlCommand();
+                sqlCommand.CommandText = sql;
+                sqlCommand.CommandType = CommandType.StoredProcedure;
+                sqlCommand.Connection = webdb.Connection;
+                sqlCommand.Parameters.AddRange(paramList.ToArray());
+
+                sqlCommand.ExecuteNonQuery();
+
+
+            }
+            catch (Exception ex)
+            {
+                success = false;
+                throw new Exception(ex.ToString());
+            }
+            finally
+            {
+                if (webdb.Connection.State == ConnectionState.Open)
+                {
+                    webdb.CloseConnection();
+                }
+            }
+
+
+            return success;
+
+
+        }
 
         public List<TblSaleOrder> GetSaleOrderInInvoice(DateTime? fromDate,DateTime? toDate)
         {

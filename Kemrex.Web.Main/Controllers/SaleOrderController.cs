@@ -222,8 +222,13 @@ namespace Kemrex.Web.Main.Controllers
                     uow.SaveChanges();
                 }
 
+                if (ob.StatusId == 2)
+                {
+                    uow.Modules.SaleOrder.SaleOrderStockApprove(ob.SaleOrderId);
+                }
 
-                return RedirectToAction("Detail", MVCController, new { id = ob.SaleOrderId, msg = "บันทึกข้อมูลเรียบร้อยแล้ว", msgType = AlertMsgType.Success });
+
+                    return RedirectToAction("Detail", MVCController, new { id = ob.SaleOrderId, msg = "บันทึกข้อมูลเรียบร้อยแล้ว", msgType = AlertMsgType.Success });
             }
             catch (Exception ex)
             {

@@ -35,7 +35,7 @@ namespace Kemrex.Core.Common.Helper
             try
             {
                 if (dt != null)
-                    result = string.Format("{0}/{1}/{2}", dt.Day, dt.Month, dt.Year);
+                    result = string.Format("{0}/{1}/{2}", dt.Day.ToString("##00"), dt.Month.ToString("##00"), dt.Year);
             }
             catch
             { }

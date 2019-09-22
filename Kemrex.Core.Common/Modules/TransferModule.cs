@@ -303,6 +303,107 @@ namespace Kemrex.Core.Common.Modules
                         });
             return data.ToList();
         }
+        public List<TransferHeader> GetTransferOutNotInList(string TransferType,DateTime? fromDate,DateTime? toDate)
+        {
+
+           /* var data = (from d in db.TransferHeader.Where(o => o.TransferType == TransferType)
+                        select new TransferHeader
+                        {
+                            TransferId = d.TransferId,
+                            TransferNo = d.TransferNo,
+                            TransferType = d.TransferType,
+                            TransferDate = d.TransferDate,
+                            StrTransferDate = "",
+                            TransferTime = d.TransferTime,
+                            JobOrderId = d.JobOrderId,
+                            ReceiveTo = d.ReceiveTo,
+                            Reason = d.Reason,
+                            CarType = d.CarType,
+                            Company = d.Company,
+                            CarNo = d.CarNo,
+                            CarBrand = d.CarBrand,
+                            SendToDepartment = d.SendToDepartment,
+                            Remark = d.Remark,
+                            EmpId = d.EmpId,
+                            BillNo = d.BillNo,
+                            TransferStatus = d.TransferStatus,
+                            StrTransferStatus = Converting.TransferStatus(d.TransferStatus.ToString()),
+                            Note1 = d.Note1,
+                            CreatedDate = d.CreatedDate,
+                            UpdatedDate = d.UpdatedDate
+                        });
+            return data.ToList();*/
+
+            string sql = "sp_GetTransferOutNotIn";
+            List<SqlParameter> paramList = new List<SqlParameter>();
+            List<TransferHeader> list = new List<TransferHeader>();
+            TransferHeader dto = null;
+            SqlDataReader reader = null;
+            SqlCommand sqlCommand = null;
+
+
+            try
+            {
+                webdb.OpenConnection();
+                paramList.Add(new SqlParameter("@TransferType", TransferType));
+               paramList.Add(new SqlParameter("@FromDate", fromDate.HasValue ? string.Format("{0}{1}{2}", fromDate.Value.Year, fromDate.Value.Month.ToString("##00"), fromDate.Value.Day.ToString("##00")) : ""));
+                paramList.Add(new SqlParameter("@ToDate", toDate.HasValue ? string.Format("{0}{1}{2}", toDate.Value.Year, toDate.Value.Month.ToString("##00"), toDate.Value.Day.ToString("##00")) : ""));
+                //connect.Open();
+                sqlCommand = new SqlCommand();
+                sqlCommand.CommandText = sql;
+                sqlCommand.CommandType = CommandType.StoredProcedure;
+                sqlCommand.Connection = webdb.Connection;
+                sqlCommand.Parameters.AddRange(paramList.ToArray());
+
+                reader = sqlCommand.ExecuteReader();
+                while (reader.Read())
+                {
+                    dto = new TransferHeader();
+                    dto.TransferId = Converting.ToInt(reader["TransferId"].ToString());
+                             dto.TransferNo = reader["TransferNo"].ToString();
+                             dto.TransferType = reader["TransferType"].ToString();
+                             dto.TransferDate = Converting.StringToDate(reader["TransferDate"].ToString(),"dd/MM/yyyy");
+                             dto.StrTransferDate = reader["TransferDate"].ToString();
+                             dto.TransferTime = reader["TransferTime"].ToString();
+                             dto.JobOrderId = Converting.ToInt(reader["JobOrderId"].ToString());
+                             dto.ReceiveTo = reader["ReceiveTo"].ToString();
+                             dto.Reason = reader["Reason"].ToString();
+                             dto.CarType = Converting.ToInt(reader["CarType"].ToString());
+                             dto.Company = reader["Company"].ToString();
+                             dto.CarNo = reader["CarNo"].ToString();
+                             dto.CarBrand = reader["CarBrand"].ToString();
+                             dto.SendToDepartment = Converting.ToInt(reader["SendToDepartment"].ToString());
+                             dto.Remark = reader["Remark"].ToString();
+                             dto.EmpId = reader["EmpId"].ToString();
+                             dto.BillNo = reader["BillNo"].ToString();
+                             dto.TransferStatus = Converting.ToInt(reader["TransferStatus"].ToString());
+                             dto.StrTransferStatus = Converting.TransferStatus(reader["TransferStatus"].ToString());
+                             dto.Note1 = reader["Note1"].ToString();
+                             dto.CreatedDate = Converting.StringToDate(reader["CreatedDate"].ToString(), "dd/MM/yyyy");
+                    dto.UpdatedDate = Converting.StringToDate(reader["UpdatedDate"].ToString(), "dd/MM/yyyy");
+
+                  
+                    list.Add(dto);
+
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.ToString());
+            }
+            finally
+            {
+                if (webdb.Connection.State == ConnectionState.Open)
+                {
+                    webdb.CloseConnection();
+                }
+            }
+
+
+
+            return list;
+
+        }
 
         public List<TransferHeader> Gets(int page = 1, int size = 0, string src = "",string TransferType="")
         {
@@ -348,12 +449,20 @@ namespace Kemrex.Core.Common.Modules
             return db.TransferHeader.Where(x => x.TransferId == id).Count() > 0 ? true : false;
         }
 
-        public void Set(TransferHeader ob)
+        public void SetOut(TransferHeader ob)
         {
-            TrasferInHeaderAdd(ob);
+            TrasferOutHeaderAdd(ob);
          /*   if (ob.TransferId == 0)
             { db.TransferHeader.Add(ob); }
             else { db.Entry(ob).State = EntityState.Modified; }*/
+        }
+
+        public void SetIn(TransferHeader ob)
+        {
+            TrasferIntHeaderAdd(ob);
+            /*   if (ob.TransferId == 0)
+               { db.TransferHeader.Add(ob); }
+               else { db.Entry(ob).State = EntityState.Modified; }*/
         }
 
         public TransferDetail GetDetail(int id = 0)
@@ -603,7 +712,7 @@ namespace Kemrex.Core.Common.Modules
         }
 
 
-        public bool TrasferInHeaderAdd(TransferHeader header)
+        public bool TrasferIntHeaderAdd(TransferHeader header)
         {
             bool result = false;
             string sql = "sp_TransferInHeader_Add";
@@ -669,8 +778,22 @@ namespace Kemrex.Core.Common.Modules
                 paramList.Add(new SqlParameter("@CreatedBy", header.CreatedBy));
                 paramList.Add(new SqlParameter("@UpdatedBy", header.UpdatedBy));
                 webdb.ExcecuteWitTranNonQuery(sql, paramList);
+                header.TransferId = Convert.ToInt32(pvNewId.Value.ToString());
+                if (header.RefTransferIds != "")
+                {
+                    sql = "sp_TransferHeaderReference_Add";
+                    string[] refTransferId = header.RefTransferIds.Split(',');
+
+                    foreach (string refId in refTransferId)
+                    {
+                        paramList = new List<SqlParameter>();
+                        paramList.Add(new SqlParameter("@TransferId", header.TransferId));
+                        paramList.Add(new SqlParameter("@RefTransferId", refId));
+                        webdb.ExcecuteWitTranNonQuery(sql, paramList);
+                    }
+                }
                // header.TransferId = Convert.ToInt32(webdb.ExcecuteNonScalar(sql, paramList));
-              header.TransferId = Convert.ToInt32(pvNewId.Value.ToString());
+            
             }
             catch (Exception ex)
             {
@@ -683,7 +806,85 @@ namespace Kemrex.Core.Common.Modules
             return result;
         }
 
+        public bool TrasferOutHeaderAdd(TransferHeader header)
+        {
+            bool result = false;
+            string sql = "sp_TransferOutHeader_Add";
 
+
+            List<SqlParameter> paramList = new List<SqlParameter>();
+
+
+
+            try
+            {
+
+                /*    [TransferId]
+         ,[TransferNo]
+         ,[TransferType]
+         ,[TransferDate]
+         ,[TransferTime]
+         ,[JobOrderId]
+         ,[RefTransferId]
+         ,[ReceiveTo]
+         ,[Reason]
+         ,[CarType]
+         ,[Company]
+         ,[CarNo]
+         ,[CarBrand]
+         ,[SendToDepartment]
+         ,[Remark]
+         ,[EmpId]
+         ,[BillNo]
+         ,[TransferStatus]
+         ,[Note1]
+         ,[CreatedDate]
+         ,[CreatedBy]
+         ,[UpdatedDate]
+         ,[UpdatedBy]
+         ,[ApprovedBy]*/
+
+                paramList = new List<SqlParameter>();
+                SqlParameter pvNewId = new SqlParameter("@TransferId", SqlDbType.NVarChar, 20);
+                pvNewId.Value = header.TransferId;
+                pvNewId.Direction = ParameterDirection.InputOutput;
+
+
+                paramList.Add(pvNewId);
+                paramList.Add(new SqlParameter("@TransferNo", header.TransferNo));
+                paramList.Add(new SqlParameter("@TransferType", header.TransferType));
+                paramList.Add(new SqlParameter("@TransferDate", header.TransferDate));
+                paramList.Add(new SqlParameter("@TransferTime", header.TransferTime));
+                paramList.Add(new SqlParameter("@JobOrderId", header.JobOrderId));
+                paramList.Add(new SqlParameter("@RefTransferId", header.RefTransferId));
+                paramList.Add(new SqlParameter("@ReceiveTo", header.ReceiveTo));
+                paramList.Add(new SqlParameter("@Reason", header.Reason));
+                paramList.Add(new SqlParameter("@CarType", header.CarType));
+                paramList.Add(new SqlParameter("@Company", header.Company));
+                paramList.Add(new SqlParameter("@CarNo", header.CarNo));
+                paramList.Add(new SqlParameter("@CarBrand", header.CarBrand));
+                paramList.Add(new SqlParameter("@SendToDepartment", header.SendToDepartment));
+                paramList.Add(new SqlParameter("@Remark", header.Remark));
+                paramList.Add(new SqlParameter("@EmpId", header.EmpId));
+                paramList.Add(new SqlParameter("@BillNo", header.BillNo));
+                paramList.Add(new SqlParameter("@TransferStatus", header.TransferStatus));
+                paramList.Add(new SqlParameter("@Note1", header.Note1));
+                paramList.Add(new SqlParameter("@CreatedBy", header.CreatedBy));
+                paramList.Add(new SqlParameter("@UpdatedBy", header.UpdatedBy));
+                webdb.ExcecuteWitTranNonQuery(sql, paramList);
+                // header.TransferId = Convert.ToInt32(webdb.ExcecuteNonScalar(sql, paramList));
+                header.TransferId = Convert.ToInt32(pvNewId.Value.ToString());
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("TrasferInApprove.Approve::" + ex.ToString());
+            }
+            finally
+            { }
+
+
+            return result;
+        }
         public void UpdateDetail(TransferDetail ob)
         {
             db.Entry(ob).State = EntityState.Modified;

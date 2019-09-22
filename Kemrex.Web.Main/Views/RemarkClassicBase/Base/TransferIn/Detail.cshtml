@@ -510,14 +510,14 @@
             return false;
         });
 
-
+        var transferRef = '';
         function LoadTransferout(objTransferList) {
 
               var urlLoadProduct = '@Url.Action("GetProductFromTransfer", "TransferIn")';
             var html = '';
             html += "<tbody>";
 
-            var transferRef = '';
+          
 
             for (var key in objSelectHeaderAll) {
                 var item = objSelectHeaderAll[key];
@@ -668,31 +668,7 @@
 
             var url ='@Url.Action("AddProduct", "TransferIn")';
 
-         /*   $('.tblProduct > tbody > tr').each(function () {
-
-                objProductTemp = objSelectDetailAll.filter(o => o.TransferId == $(this).attr('TransferId')
-                    && o.ProductId == $(this).attr('ProductId'));
-
-                if (objProductTemp != null && objProductTemp.length > 0) {
-                    objProductTemp[0].RequestQty = $(this).find('.RequestQty').val();
-                }
-
-            });
-
-
-            $.ajax({
-                type: "post",
-                url: url,
-                data: {
-                    Header: objSelectHeaderAll,
-                    Detail: objse
-                }
-                , success: function (obj) {
-
-
-                }
-            });
-            */
+      
             var isConfirm = false;
             swal({
                 title: "Add Product",
@@ -760,6 +736,40 @@
                     if (isConfirm) {
 
                         if (ValidationAll()) {
+                             $('#frmmain').attr('action', '@Url.Action("SetDetail", "TransferIn")');
+                        $('#frmmain').submit();
+
+                        }
+                       
+
+                    }
+                });
+
+            return false;
+
+          
+        });
+
+
+
+          $("#btnPull").click(function () {
+
+
+              var isConfirm = false;
+            swal({
+                title: "Importing",
+                text: "Do you want to import?",
+                type: "info",
+                showCancelButton: true,
+                closeOnConfirm: false,
+                showLoaderOnConfirm: true
+            },
+                function (isConfirm) {
+                    if (isConfirm) {
+
+                        if (ValidationAll()) {
+                            $('#RefTransferIds').val(transferRef);
+
                              $('#frmmain').attr('action', '@Url.Action("SetDetail", "TransferIn")');
                         $('#frmmain').submit();
 
@@ -887,11 +897,11 @@
                                         </div>
                                     </div>
 
-                                    <div class="col-md-6">
-                                        <input type="hidden" id="RefTransferId" name="RefTransferId" value="@Model.RefTransferId" />
-                               :
-                                          
-                                        @if (Model.TransferId > 0)
+                                    <div class="col-md-8 ">
+                                        <input type="hidden" id="RefTransferIds" name="RefTransferIds" value="@Model.RefTransferId" />
+                                        :
+
+                                        @if (Model.TransferId >= 0)
                                         {
 
 
@@ -899,18 +909,22 @@
                                                 <div class="divTranferOut">
                                                     <table class="table table-bordered table-hover">
                                                         <thead>
-                                                            @if (canEdit)
+                                                            @if (canEdit && Model.TransferId<=0)
                                                             {
-                                                                <tr>
-                                                                    <th colspan="2">
-                                                                        
-                                                                            <div class="input-group-append">
-                                                                                <button class="btn btn-outline-secondary btn-primary"
-                                                                                        type="button"
-                                                                                        id="btnRefTransfer">
-                                                                                    ใบนำวัสดุออก
-                                                                                </button>
-                                                                            </div>
+                                                                <tr style="text-align:right">
+                                                                    <th colspan="2" align="right">
+
+                                                                        <div class="">
+                                                                            <button class="btn btn-outline-secondary btn-primary "
+                                                                                    type="button"
+                                                                                    id="btnRefTransfer">
+                                                                                ค้าหาใบนำวัสดุออก
+                                                                            </button>
+                                                                            <button class="btn btn-outline-secondary btn-warning btnPull" type="button"
+                                                                                    id="btnPull">
+                                                                                ดึงข้อมูล
+                                                                            </button>
+                                                                        </div>
                                                                        
 
 
@@ -918,31 +932,32 @@
 
                                                                 </tr>
                                                             }
-                                                                <tr>
-                                                                    <th>เลขที่ใบนำออก</th>
-                                                                    @if (canEdit)
-                                                                    {
-                                                                        <th>ลบ</th>
-                                                                    }
-                                                                </tr>
-                                                            </thead>
+                                                            <tr class="bg-primary text-center">
+                                                                <th class="text-white">เลขที่ใบนำออก</th>
+                                                                @if (canEdit)
+                                                                {
+                                                                    <th class="text-white">ลบ</th>
+                                                                }
+                                                            </tr>
+                                                        </thead>
                                                         <tbody>
                                                             @if (Model.RefTransfer != null && Model.RefTransfer.TransferRefHeader != null
-                                            && Model.RefTransfer.TransferRefHeader.Count > 0)
+&& Model.RefTransfer.TransferRefHeader.Count > 0)
                                                             {
                                                                 foreach (var ob in Model.RefTransfer.TransferRefHeader)
                                                                 {
-                                                            <tr title="@ob.RefTransferId">
-                                                                <td>@ob.RefTransferNo</td>
-                                                                @if (canEdit)
-                                                                {
-                                                                    <td>
+                                                                    <tr title="@ob.RefTransferId">
+                                                                        <td>@ob.RefTransferNo</td>
+                                                                       
+                                                                        <td>
+                                                                            @if (canEdit && Model.TransferId <= 0)
+                                                                            {
 
-                                                                        <button class="btn btn-danger btn-xs btnTransferDelete"><i class="fa fa-trash" aria-hidden="true"></i>&nbsp;ลบ</button>
-                                                                        
-                                                                    </td>
-                                                                }
-                                                                </tr>
+                                                                                <button class="btn btn-danger btn-xs btnTransferDelete"><i class="fa fa-trash" aria-hidden="true"></i>&nbsp;ลบ</button>
+                                                                            }
+                                                                            </td>
+                                                                      
+                                                                    </tr>
                                                                 }
                                                             }
 
@@ -955,541 +970,537 @@
 
                                             </div>
                                         }
-                                        </div>
-                                    </div>
-
-
-
-
-                                </div>
-                                <div class="row" style="padding-top:10px;">
-                                    <div class="col-md-12">
-                                        <div class="form-group">
-                                            @if (canEdit)
-                                            {
-                                                if (Model.TransferStatus == null || Model.TransferStatus == 0)
-                                                {
-                                                    <button type="submit" id="btnNextStep" class="btn btn-primary">@(Model.TransferId > 0 ? "บันทึก" : "ต่อไป")</button>
-
-                                                }
-                                                if (Model.TransferId > 0)
-                                                {
-                                                    <button type="submit" id="btnApprove" class="btn btn-success">อนุมัติ</button>
-                                                }
-                                            }
-                                            <a href="@Url.Action("Index", new { controller = "TransferIn", area = "" })" class="btn btn-default">ยกเลิก</a>
-                                        </div>
                                     </div>
                                 </div>
+
+
+
+
                             </div>
 
                         </div>
+
                     </div>
                 </div>
+                <div class="row">
+                    <div class="col-12">
+                        <div data-tabs="myTabPage">
 
-                <div data-tabs="myTabPage">
+                            <ul class="tabs">
+                                <li class="tab-link current" data-tab="tab-1">ข้อมูลพื้นฐาน</li>
+                                @if (Model.TransferId > 0)
+                                {
+                                    <li class="tab-link" data-tab="tab-2">รายการสินค้า</li>
+                                }
+                            </ul>
 
-                    <ul class="tabs">
-                        <li class="tab-link current" data-tab="tab-1">ข้อมูลพื้นฐาน</li>
-                        @if (Model.TransferId > 0)
-                        {
-                            <li class="tab-link" data-tab="tab-2">รายการสินค้า</li>
-                        }
-                        </ul>
+                            <div id="tab-1" class="tab-content current">
 
-                    <div id="tab-1" class="tab-content current">
+                                <div class="card-block" id="navInfo" data-tab-page="navInfo">
 
-                        <div class="card-block" id="navInfo" data-tab-page="navInfo">
+                                    <div class="col-12">
+                                        <table width="100%" style="margin:-10px 0 0 0;">
+                                            <tr>
+                                                <td align="right">
+                                                    <div style="text-align:right;">
+                                                        <a href="@Url.Action("PDFTransferIn", new { controller = "export", area = "", id = Model.TransferId })"
+                                                           class="btn btn-xs btn-warning">
+                                                            <i class="fa fa-file-pdf-o" aria-hidden="true"></i>&nbsp;PDF
+                                                        </a>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                        <div class="panel">
 
-                            <div class="col-12">
-                                <table width="100%" style="margin:-10px 0 0 0;">
-                                    <tr>
-                                        <td align="right">
-                                            <div style="text-align:right;">
-                                                <a href="@Url.Action("PDFTransferIn", new { controller = "export", area = "", id = Model.TransferId })"
-                                                   class="btn btn-xs btn-warning">
-                                                    <i class="fa fa-file-pdf-o" aria-hidden="true"></i>&nbsp;PDF
-                                                </a>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                </table>
-                                <div class="panel">
-
-                                    @Html.AntiForgeryToken()
-                                    <input type="hidden" id="TransferId" name="TransferId" value="@Model.TransferId" />
-                                    <input type="hidden" id="TransferStatus" name="TransferStatus" value="@Model.TransferStatus" />
-                                    <div class="panel-body">
-                                        <div class="row">
-                                            @*Left panel*@
-                                            <div class="col-md-6">
+                                            @Html.AntiForgeryToken()
+                                            <input type="hidden" id="TransferId" name="TransferId" value="@Model.TransferId" />
+                                            <input type="hidden" id="TransferStatus" name="TransferStatus" value="@Model.TransferStatus" />
+                                            <div class="panel-body">
+                                                <div class="row">
+                                                    @*Left panel*@
+                                                    <div class="col-md-6">
 
 
 
-                                                <div class="form-group row">
-                                                    <label class="col-md-3 form-control-label">วันที่  :</label>
-                                                    <div class="col-md-9">
-                                                        <div class="example datepair-wrap" data-plugin="datepair">
-                                                            <div class="input-daterange-wrap">
-                                                                <div class="input-daterange">
-                                                                    <div class="input-group">
+                                                        <div class="form-group row">
+                                                            <label class="col-md-3 form-control-label">วันที่  :</label>
+                                                            <div class="col-md-9">
+                                                                <div class="example datepair-wrap" data-plugin="datepair">
+                                                                    <div class="input-daterange-wrap">
+                                                                        <div class="input-daterange">
+                                                                            <div class="input-group">
 
-                                                                        <input type="text"
-                                                                               class="form-control datepair-date datepair-start"
-                                                                               id="TransferDate" autocomplete="off"
-                                                                               name="TransferDate" @(canEdit ? "" : "readonly")
-                                                                               value="@Converting.ToDDMMYYYY(Model.TransferDate)"
-                                                                               data-plugin="datepicker">
-                                                                        <span class="input-group-addon">
-                                                                            <i class="icon wb-calendar icon-2-5x text-success" style="padding-left:2px" aria-hidden="true"></i>
-                                                                        </span>
+                                                                                <input type="text"
+                                                                                       class="form-control datepair-date datepair-start"
+                                                                                       id="TransferDate" autocomplete="off"
+                                                                                       name="TransferDate" @(canEdit ? "" : "readonly")
+                                                                                       value="@(Model.TransferDate ==null ? Converting.ToDDMMYYYY(DateTime.Now) :Converting.ToDDMMYYYY(Model.TransferDate)) "
+                                                                                       data-plugin="datepicker">
+                                                                                <span class="input-group-addon">
+                                                                                    <i class="icon wb-calendar icon-2-5x text-success" style="padding-left:2px" aria-hidden="true"></i>
+                                                                                </span>
+                                                                            </div>
+                                                                            <div class="input-group">
+
+                                                                                <input type="text" id="TransferTime"
+                                                                                       name="TransferTime" class="form-control datepair-time datepair-start"
+                                                                                       value="@Model.TransferTime" autocomplete="off" @(canEdit ? "" : "readonly")
+                                                                                       data-plugin="timepicker" />
+                                                                                <span class="input-group-addon">
+                                                                                    <i class="icon wb-time icon-2-5x text-success" style="padding-left:2px" aria-hidden="true"></i>
+                                                                                </span>
+                                                                            </div>
+                                                                        </div>
                                                                     </div>
-                                                                    <div class="input-group">
 
-                                                                        <input type="text" id="TransferTime"
-                                                                               name="TransferTime" class="form-control datepair-time datepair-start"
-                                                                               value="@Model.TransferTime" autocomplete="off" @(canEdit ? "" : "readonly")
-                                                                               data-plugin="timepicker" />
-                                                                        <span class="input-group-addon">
-                                                                            <i class="icon wb-time icon-2-5x text-success" style="padding-left:2px" aria-hidden="true"></i>
-                                                                        </span>
-                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group row">
+                                                            <label class="col-md-3 form-control-label">อนุญาติให้  : </label>
+                                                            <div class="col-md-9">
+
+                                                                <select class="form-control" id="EmpId" data-live-search="true"
+                                                                        name="EmpId" required>
+                                                                    <option value="-1" )>กรุณาเลือก</option>
+                                                                    @foreach (TblEmployee it in optEmployee)
+                                                                    {
+                                                                        bool selectEmp = it.EmpId == (Model.EmpId == null ? (sysAccount.TblEmployee != null ? sysAccount.TblEmployee.EmpId : 0) : Model.EmpId.AsInt());
+                                                                        <option value="@it.EmpId" @(selectEmp ? " selected=\" selected\"" : "")>@it.EmpNameTh</option>
+                                                                    }
+                                                                </select>
+
+
+
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group row">
+                                                            <label class="col-md-3 form-control-label">บริษัท/ห้างร้าน :</label>
+                                                            <div class="col-md-9">
+                                                                <input type="text" class="form-control"
+                                                                       value="@(Model.Company!=null ? Model.Company:(Model.RefTransfer!=null ? Model.RefTransfer.Company:"") ) " @(canEdit ? "" : "readonly")
+                                                                       id="Company" name="Company" placeholder="Kemrex">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    @*Right panel*@
+
+                                                    <div class="col-md-5 col-sm-8">
+
+
+
+
+
+                                                        <div class="form-group row">
+                                                            <label class="col-md-3 form-control-label">ไปยัง  : </label>
+                                                            <div class="col-md-9">
+                                                                <input type="text" class="form-control" @(canEdit ? "" : "readonly")
+                                                                       value="@(Model.ReceiveTo!=null ? Model.ReceiveTo:(Model.RefTransfer!=null ? Model.RefTransfer.ReceiveTo:"") ) "
+                                                                       id="ReceiveTo" name="ReceiveTo" placeholder="กรุณากรอกข้อมูล">
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group row">
+                                                            <label class="col-md-3 form-control-label">เพื่อ  : </label>
+                                                            <div class="col-md-9">
+                                                                <input type="text" class="form-control"
+                                                                       value="@(Model.Reason!=null ? Model.Reason:(Model.RefTransfer!=null ? Model.RefTransfer.Reason:"") ) " @(canEdit ? "" : "readonly")
+                                                                       id="Reason" name="Reason" placeholder="ติดตั้งฐานราก Kemrex ปรับระดับ">
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group row">
+                                                            <label class="col-md-3 form-control-label">โดยรถประเภท  : </label>
+                                                            <div class="col-md-9">
+                                                                <div class="radio-custom radio-primary">
+                                                                    <ul>
+                                                                        @{
+                                                                            bool selected = false;
+
+
+                                                                            if (Model.CarType == 0 || Model.CarType == null)
+                                                                            {
+                                                                                selected = (Model.RefTransfer != null && Model.RefTransfer.CarType == 1 ? true : false);
+                                                                            }
+                                                                            else
+                                                                            {
+
+                                                                                if (Model.CarType == 1)
+                                                                                {
+                                                                                    selected = true;
+                                                                                }
+                                                                                else
+                                                                                {
+                                                                                    selected = false;
+                                                                                }
+                                                                            }
+
+
+
+                                                                            <li>
+                                                                                <input type="radio" id="inputRadiosChecked" value="1" class="CarType" name="inputRadios" @(selected ? "Checked" : "") />
+                                                                                <label class="col-md-3" for="inputRadiosChecked">รถกระบะ</label>
+                                                                            </li>
+                                                                            if (Model.CarType == 0 || Model.CarType == null)
+                                                                            {
+                                                                                selected = (Model.RefTransfer != null && Model.RefTransfer.CarType == 2 ? true : false);
+                                                                            }
+                                                                            else
+                                                                            {
+
+                                                                                if (Model.CarType == 2)
+                                                                                {
+                                                                                    selected = true;
+                                                                                }
+                                                                                else
+                                                                                {
+                                                                                    selected = false;
+                                                                                }
+                                                                            }
+
+
+                                                                            <li>
+                                                                                <input type="radio" id="inputRadiosChecked" value="2" class="CarType" name="inputRadios" @(selected ? "Checked" : "") />
+                                                                                <label class="col-md-3" for="inputRadiosChecked">รถบรรทุก</label>
+                                                                                <input type="text" class="col-md-3" name=" " placeholder=" "> ล้อ
+                                                                            </li>
+                                                                            if (Model.CarType == 0 || Model.CarType == null)
+                                                                            {
+                                                                                selected = (Model.RefTransfer != null && Model.RefTransfer.CarType == 3 ? true : false);
+                                                                            }
+                                                                            else
+                                                                            {
+
+                                                                                if (Model.CarType == 3)
+                                                                                {
+                                                                                    selected = true;
+                                                                                }
+                                                                                else
+                                                                                {
+                                                                                    selected = false;
+                                                                                }
+                                                                            }
+
+                                                                            <li>
+                                                                                <input type="radio" id="inputRadiosChecked" value="3" class="CarType" name="inputRadios" @(selected ? "Checked" : "") />
+                                                                                <label class="col-md-6" for="inputRadiosChecked">รถเทรลเลอร์</label>
+                                                                            </li>
+                                                                        }
+                                                                    </ul>
                                                                 </div>
                                                             </div>
 
+                                                            <input type="hidden" id="CarType" name="CarType" value="@(Model.CarType!=0 ? Model.CarType:(Model.RefTransfer!=null ? Model.RefTransfer.CarType:0) )  " />
                                                         </div>
-                                                    </div>
-                                                </div>
-                                                <div class="form-group row">
-                                                    <label class="col-md-3 form-control-label">อนุญาติให้  : </label>
-                                                    <div class="col-md-9">
 
-                                                        <select class="form-control" id="EmpId" data-live-search="true"
-                                                                name="EmpId" required>
-                                                            <option value="-1" )>กรุณาเลือก</option>
-                                                            @foreach (TblEmployee it in optEmployee)
-                                                            {
-                                                                bool selectEmp = it.EmpId == (Model.EmpId == null ? (sysAccount.TblEmployee != null ? sysAccount.TblEmployee.EmpId: 0) : Model.EmpId.AsInt());
-                                                                <option value="@it.EmpId" @(selectEmp ? " selected=\" selected\"" : "")>@it.EmpNameTh</option>
-                                                            }
-                                                        </select>
-                                                      
+                                                        <div class="form-group row">
+                                                            <label class="col-md-3 form-control-label">ทะเบียนเลขที่  : </label>
+                                                            <div class="col-md-9">
+                                                                <input type="text" class="form-control" value="@(Model.CarNo=="" ? Model.CarNo:(Model.RefTransfer!=null ? Model.RefTransfer.CarNo:"") ) " id="CarNo" name="CarNo" @(canEdit ? "" : "readonly") placeholder="กรุณากรอกทะเบียนรถ">
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="form-group row">
+                                                            <label class="col-md-3 form-control-label">ยี่ห้อ  : </label>
+                                                            <div class="col-md-9">
+                                                                <input type="text" class="form-control" id="CarBrand" value="@(Model.CarBrand!=null ? Model.CarBrand:(Model.RefTransfer!=null ? Model.RefTransfer.CarBrand:"") )" name="CarBrand" @(canEdit ? "" : "readonly") placeholder="กรุณากรอกยี่ห้อ">
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="form-group row">
+                                                            <label class="col-md-3 form-control-label">ส่วนงานที่นำวัสดุ/สิ่งของ เข้า โรงงาน  : </label>
+                                                            <div class="col-md-9">
+                                                                <div class="radio-custom radio-primary">
+                                                                    <ul>
+                                                                        @{
+                                                                            selected = false;
+
+                                                                            if (Model.SendToDepartment == 0)
+                                                                            {
+                                                                                selected = (Model.RefTransfer != null && Model.RefTransfer.SendToDepartment == 1 ? true : false);
+                                                                            }
+                                                                            else
+                                                                            {
+
+                                                                                if (Model.SendToDepartment == 2)
+                                                                                {
+                                                                                    selected = true;
+                                                                                }
+                                                                                else
+                                                                                {
+                                                                                    selected = false;
+                                                                                }
+                                                                            }
 
 
-                                                    </div>
-                                                </div>
-                                                <div class="form-group row">
-                                                    <label class="col-md-3 form-control-label">บริษัท/ห้างร้าน :</label>
-                                                    <div class="col-md-9">
-                                                        <input type="text" class="form-control"
-                                                               value="@(Model.Company!=null ? Model.Company:(Model.RefTransfer!=null ? Model.RefTransfer.Company:"") ) " @(canEdit ? "" : "readonly")
-                                                               id="Company" name="Company" placeholder="Kemrex">
+                                                                            <li>
+                                                                                <input type="radio" id="inputRadiosChecked2" value="1" class="SendToDepartment" name="inputRadios2" @(selected ? "Checked" : "") />
+                                                                                <label class="col-md-3" for="inputRadiosChecked2">Office</label>
+                                                                            </li>
+
+                                                                            if (Model.SendToDepartment == 0)
+                                                                            {
+                                                                                selected = (Model.RefTransfer != null && Model.RefTransfer.SendToDepartment == 2 ? true : false);
+                                                                            }
+                                                                            else
+                                                                            {
+
+                                                                                if (Model.SendToDepartment == 2)
+                                                                                {
+                                                                                    selected = true;
+                                                                                }
+                                                                                else
+                                                                                {
+                                                                                    selected = false;
+                                                                                }
+                                                                            }
+
+
+
+
+                                                                            <li>
+                                                                                <input type="radio" id="inputRadiosChecked2" value="2" class="SendToDepartment" name="inputRadios2" @(selected ? "Checked" : "") />
+                                                                                <label class="col-md-3" for="inputRadiosChecked2">Engineer</label>
+
+                                                                            </li>
+
+
+                                                                            if (Model.SendToDepartment == 0)
+                                                                            {
+                                                                                selected = (Model.RefTransfer != null && Model.RefTransfer.SendToDepartment == 3 ? true : false);
+                                                                            }
+                                                                            else
+                                                                            {
+
+                                                                                if (Model.SendToDepartment == 3)
+                                                                                {
+                                                                                    selected = true;
+                                                                                }
+                                                                                else
+                                                                                {
+                                                                                    selected = false;
+                                                                                }
+                                                                            }
+
+
+                                                                            <li>
+                                                                                <input type="radio" id="inputRadiosChecked2" value="3" class="SendToDepartment" name="inputRadios2" @(selected ? "Checked" : "") />
+                                                                                <label class="col-md-6" for="inputRadiosChecked2">Factory</label>
+                                                                            </li>
+
+
+                                                                            if (Model.SendToDepartment == 0)
+                                                                            {
+                                                                                selected = (Model.RefTransfer != null && Model.RefTransfer.SendToDepartment == 4 ? true : false);
+                                                                            }
+                                                                            else
+                                                                            {
+
+                                                                                if (Model.SendToDepartment == 4)
+                                                                                {
+                                                                                    selected = true;
+                                                                                }
+                                                                                else
+                                                                                {
+                                                                                    selected = false;
+                                                                                }
+                                                                            }
+
+
+
+                                                                            <li>
+                                                                                <input type="radio" id="inputRadiosChecked2" value="4" class="SendToDepartment" name="inputRadios2" @(selected ? "Checked" : "") />
+                                                                                <label class="col-md-6" for="inputRadiosChecked2">Warehouse</label>
+                                                                            </li>
+
+                                                                            if (Model.SendToDepartment == 0)
+                                                                            {
+                                                                                selected = (Model.RefTransfer != null && Model.RefTransfer.SendToDepartment == 5 ? true : false);
+                                                                            }
+                                                                            else
+                                                                            {
+
+                                                                                if (Model.SendToDepartment == 5)
+                                                                                {
+                                                                                    selected = true;
+                                                                                }
+                                                                                else
+                                                                                {
+                                                                                    selected = false;
+                                                                                }
+                                                                            }
+
+                                                                            <li>
+                                                                                <input type="radio" id="inputRadiosChecked2" value="5" class="SendToDepartment" name="inputRadios2" @(selected ? "Checked" : "") />
+                                                                                <label class="col-md-6" for="inputRadiosChecked2">Other</label>
+                                                                                <textarea class="form-control" id="Remark" name="Remark" value="@Model.Remark" rows="3"></textarea>
+                                                                            </li>
+                                                                        }
+                                                                    </ul>
+
+                                                                    <input type="hidden" id="SendToDepartment" name="SendToDepartment" value="@(Model.SendToDepartment!=null ? Model.SendToDepartment: (Model.RefTransfer!=null ? Model.RefTransfer.SendToDepartment:0) )" @(canEdit ? "" : "readonly") />
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
                                                     </div>
                                                 </div>
                                             </div>
 
-                                            @*Right panel*@
 
-                                            <div class="col-md-5 col-sm-8">
-
-
-
-
-
-                                                <div class="form-group row">
-                                                    <label class="col-md-3 form-control-label">ไปยัง  : </label>
-                                                    <div class="col-md-9">
-                                                        <input type="text" class="form-control" @(canEdit ? "" : "readonly")
-                                                               value="@(Model.ReceiveTo!=null ? Model.ReceiveTo:(Model.RefTransfer!=null ? Model.RefTransfer.ReceiveTo:"") ) "
-                                                               id="ReceiveTo" name="ReceiveTo" placeholder="กรุณากรอกข้อมูล">
-                                                    </div>
-                                                </div>
-                                                <div class="form-group row">
-                                                    <label class="col-md-3 form-control-label">เพื่อ  : </label>
-                                                    <div class="col-md-9">
-                                                        <input type="text" class="form-control"
-                                                               value="@(Model.Reason!=null ? Model.Reason:(Model.RefTransfer!=null ? Model.RefTransfer.Reason:"") ) " @(canEdit ? "" : "readonly")
-                                                               id="Reason" name="Reason" placeholder="ติดตั้งฐานราก Kemrex ปรับระดับ">
-                                                    </div>
-                                                </div>
-                                                <div class="form-group row">
-                                                    <label class="col-md-3 form-control-label">โดยรถประเภท  : </label>
-                                                    <div class="col-md-9">
-                                                        <div class="radio-custom radio-primary">
-                                                            <ul>
-                                                                @{
-                                                                    bool selected = false;
-
-
-                                                                    if (Model.CarType == 0 || Model.CarType==null)
-                                                                    {
-                                                                        selected = (Model.RefTransfer != null && Model.RefTransfer.CarType == 1 ? true : false);
-                                                                    }
-                                                                    else {
-
-                                                                        if (Model.CarType == 1)
-                                                                        {
-                                                                            selected = true;
-                                                                        }
-                                                                        else
-                                                                        {
-                                                                            selected = false;
-                                                                        }
-                                                                    }
-
-
-
-                                                                    <li>
-                                                                        <input type="radio" id="inputRadiosChecked" value="1" class="CarType" name="inputRadios" @(selected ? "Checked" : "") />
-                                                                        <label class="col-md-3" for="inputRadiosChecked">รถกระบะ</label>
-                                                                    </li>
-                                                                    if (Model.CarType == 0 || Model.CarType == null)
-                                                                    {
-                                                                        selected = (Model.RefTransfer != null && Model.RefTransfer.CarType == 2 ? true : false);
-                                                                    }
-                                                                    else
-                                                                    {
-
-                                                                        if (Model.CarType == 2)
-                                                                        {
-                                                                            selected = true;
-                                                                        }
-                                                                        else
-                                                                        {
-                                                                            selected = false;
-                                                                        }
-                                                                    }
-
-
-                                                                    <li>
-                                                                        <input type="radio" id="inputRadiosChecked" value="2" class="CarType" name="inputRadios" @(selected ? "Checked" : "") />
-                                                                        <label class="col-md-3" for="inputRadiosChecked">รถบรรทุก</label>
-                                                                        <input type="text" class="col-md-3" name=" " placeholder=" ">ล้อ
-                                                                    </li>
-                                                                    if (Model.CarType == 0 || Model.CarType == null)
-                                                                    {
-                                                                        selected = (Model.RefTransfer != null && Model.RefTransfer.CarType == 3 ? true : false);
-                                                                    }
-                                                                    else
-                                                                    {
-
-                                                                        if (Model.CarType == 3)
-                                                                        {
-                                                                            selected = true;
-                                                                        }
-                                                                        else
-                                                                        {
-                                                                            selected = false;
-                                                                        }
-                                                                    }
-
-                                                                    <li>
-                                                                        <input type="radio" id="inputRadiosChecked" value="3" class="CarType" name="inputRadios" @(selected ? "Checked" : "") />
-                                                                        <label class="col-md-6" for="inputRadiosChecked">รถเทรลเลอร์</label>
-                                                                    </li>
-                                                                }
-                                                            </ul>
-                                                        </div>
-                                                    </div>
-
-                                                    <input type="hidden" id="CarType" name="CarType" value="@(Model.CarType!=0 ? Model.CarType:(Model.RefTransfer!=null ? Model.RefTransfer.CarType:0) )  " />
-                                                </div>
-
-                                                <div class="form-group row">
-                                                    <label class="col-md-3 form-control-label">ทะเบียนเลขที่  : </label>
-                                                    <div class="col-md-9">
-                                                        <input type="text" class="form-control" value="@(Model.CarNo=="" ? Model.CarNo:(Model.RefTransfer!=null ? Model.RefTransfer.CarNo:"") ) " id="CarNo" name="CarNo" @(canEdit ? "" : "readonly") placeholder="กรุณากรอกทะเบียนรถ">
-                                                    </div>
-                                                </div>
-
-                                                <div class="form-group row">
-                                                    <label class="col-md-3 form-control-label">ยี่ห้อ  : </label>
-                                                    <div class="col-md-9">
-                                                        <input type="text" class="form-control" id="CarBrand" value="@(Model.CarBrand!=null ? Model.CarBrand:(Model.RefTransfer!=null ? Model.RefTransfer.CarBrand:"") )" name="CarBrand" @(canEdit ? "" : "readonly") placeholder="กรุณากรอกยี่ห้อ">
-                                                    </div>
-                                                </div>
-
-                                                <div class="form-group row">
-                                                    <label class="col-md-3 form-control-label">ส่วนงานที่นำวัสดุ/สิ่งของ เข้า โรงงาน  : </label>
-                                                    <div class="col-md-9">
-                                                        <div class="radio-custom radio-primary">
-                                                            <ul>
-                                                                @{
-                                                                    selected = false;
-
-                                                                    if (Model.SendToDepartment == 0)
-                                                                    {
-                                                                        selected = (Model.RefTransfer != null && Model.RefTransfer.SendToDepartment == 1 ? true : false);
-                                                                    }
-                                                                    else
-                                                                    {
-
-                                                                        if (Model.SendToDepartment == 2)
-                                                                        {
-                                                                            selected = true;
-                                                                        }
-                                                                        else
-                                                                        {
-                                                                            selected = false;
-                                                                        }
-                                                                    }
-                                                                  
-
-                                                                    <li>
-                                                                        <input type="radio" id="inputRadiosChecked2" value="1" class="SendToDepartment" name="inputRadios2" @(selected ? "Checked" : "") />
-                                                                        <label class="col-md-3" for="inputRadiosChecked2">Office</label>
-                                                                    </li>
-
-                                                                    if (Model.SendToDepartment == 0)
-                                                                    {
-                                                                        selected = (Model.RefTransfer != null && Model.RefTransfer.SendToDepartment == 2 ? true : false);
-                                                                    }
-                                                                    else
-                                                                    {
-
-                                                                        if (Model.SendToDepartment == 2)
-                                                                        {
-                                                                            selected = true;
-                                                                        }
-                                                                        else
-                                                                        {
-                                                                            selected = false;
-                                                                        }
-                                                                    }
-
-
-                                                                   
-
-                                                                    <li>
-                                                                        <input type="radio" id="inputRadiosChecked2" value="2" class="SendToDepartment" name="inputRadios2" @(selected ? "Checked" : "") />
-                                                                        <label class="col-md-3" for="inputRadiosChecked2">Engineer</label>
-
-                                                                    </li>
-
-
-                                                                    if (Model.SendToDepartment == 0)
-                                                                    {
-                                                                        selected = (Model.RefTransfer != null && Model.RefTransfer.SendToDepartment == 3 ? true : false);
-                                                                    }
-                                                                    else
-                                                                    {
-
-                                                                        if (Model.SendToDepartment ==3)
-                                                                        {
-                                                                            selected = true;
-                                                                        }
-                                                                        else
-                                                                        {
-                                                                            selected = false;
-                                                                        }
-                                                                    }
-
-                                                                    
-                                                                    <li>
-                                                                        <input type="radio" id="inputRadiosChecked2" value="3" class="SendToDepartment" name="inputRadios2" @(selected ? "Checked" : "") />
-                                                                        <label class="col-md-6" for="inputRadiosChecked2">Factory</label>
-                                                                    </li>
-
-
-                                                                    if (Model.SendToDepartment == 0)
-                                                                    {
-                                                                        selected = (Model.RefTransfer != null && Model.RefTransfer.SendToDepartment == 4 ? true : false);
-                                                                    }
-                                                                    else
-                                                                    {
-
-                                                                        if (Model.SendToDepartment == 4)
-                                                                        {
-                                                                            selected = true;
-                                                                        }
-                                                                        else
-                                                                        {
-                                                                            selected = false;
-                                                                        }
-                                                                    }
-
-
-                                                                    
-                                                                    <li>
-                                                                        <input type="radio" id="inputRadiosChecked2" value="4" class="SendToDepartment" name="inputRadios2" @(selected ? "Checked" : "") />
-                                                                        <label class="col-md-6" for="inputRadiosChecked2">Warehouse</label>
-                                                                    </li>
-
-                                                                    if (Model.SendToDepartment == 0)
-                                                                    {
-                                                                        selected = (Model.RefTransfer != null && Model.RefTransfer.SendToDepartment == 5 ? true : false);
-                                                                    }
-                                                                    else
-                                                                    {
-
-                                                                        if (Model.SendToDepartment == 5)
-                                                                        {
-                                                                            selected = true;
-                                                                        }
-                                                                        else
-                                                                        {
-                                                                            selected = false;
-                                                                        }
-                                                                    }
-
-                                                                    <li>
-                                                                        <input type="radio" id="inputRadiosChecked2" value="5" class="SendToDepartment" name="inputRadios2" @(selected ? "Checked" : "") />
-                                                                        <label class="col-md-6" for="inputRadiosChecked2">Other</label>
-                                                                        <textarea class="form-control" id="Remark" name="Remark" value="@Model.Remark" rows="3"></textarea>
-                                                                    </li>
-                                                                }
-                                                            </ul>
-
-                                                            <input type="hidden" id="SendToDepartment" name="SendToDepartment" value="@(Model.SendToDepartment!=null ? Model.SendToDepartment: (Model.RefTransfer!=null ? Model.RefTransfer.SendToDepartment:0) )" @(canEdit ? "" : "readonly") />
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                            </div>
                                         </div>
                                     </div>
-
-
                                 </div>
                             </div>
-                        </div>
-                    </div>
-                    <div id="tab-2" class="tab-content">
+                            <div id="tab-2" class="tab-content">
 
-                        <div class="card-block" id="navProducts" data-tab-page="navProducts">
-                            <div class="col-12">
-                                <div class="panel">
-                                    <div class="panel-heading">
-                                        <h3 class="panel-title">
-                                            รายการสินค้า   @if (canEdit)
+                                <div class="card-block" id="navProducts" data-tab-page="navProducts">
+                                    <div class="col-12">
+                                        <div class="panel">
+                                            <div class="panel-heading">
+                                                <h3 class="panel-title">
+                                                    รายการสินค้า   @if (canEdit)
+                                                    {
+                                                        <button type="submit" id="btnAddProduct" class="btn btn-primary pull-right">บันทึกรายการเบิก</button>
+                                                    }
+                                                </h3>
+                                            </div>
+                                            <div class="panel-body">
+                                                <div class="row">
+                                                    <div class="col-12">
+                                                        <div class="table-responsive">
+                                                            <table class="table table-hover table-striped tblProduct">
+                                                                <thead>
+                                                                    <tr>
+                                                                        <th>ลำดับที่</th>
+                                                                        <th>ใบนำออก</th>
+                                                                        <th>สินค้า</th>
+                                                                        <th>จำนวนที่นำออก</th>
+                                                                        <th>จำนวนที่เบิกเข้า</th>
+
+
+                                                                    </tr>
+                                                                </thead>
+                                                                <tbody>
+
+                                                                    @if (Model.RefTransfer == null)
+                                                                    {
+                                                                        <tr>
+                                                                            <td colspan="7">ไม่พบข้อมูล</td>
+                                                                        </tr>
+                                                                    }
+                                                                    @{int row = 1;
+
+                                                                        if (Model.TransferDetail != null
+                                                                            && Model.TransferDetail.Count > 0)
+                                                                        {
+                                                                            foreach (var ob in Model.TransferDetail)
+                                                                            {
+                                                                                <tr>
+                                                                                    <td width="5%">@row</td>
+                                                                                    <td width="10%">@ob.RefTransferNo</td>
+                                                                                    <td width="50%">@ob.Product.ProductCode @ob.Product.ProductName</td>
+
+                                                                                    <td width="15%">
+                                                                                        <input type="hidden" name="currentQty" class="currentQty" value="@ob.CurrentQty" />
+                                                                                        @ob.CurrentQty
+                                                                                    </td>
+                                                                                    <td width="20%">
+                                                                                        <input type="hidden" name="ProductIds" class="ProductIds" value="@ob.Product.ProductId" />
+                                                                                        <input type="hidden" name="TransferIds" class="TransferIds" value="@ob.RefTransferId" />
+                                                                                        <input type="text" name="RequestQtys" class="form-control RequestQtys"
+                                                                                               value="@ob.RequestQty" @(canEdit ? "" : "readonly")
+                                                                                               placeholder="">
+                                                                                    </td>
+
+
+                                                                                </tr>
+                                                                                row++;
+                                                                            }
+                                                                        }
+                                                                        else if (Model.RefTransfer != null && Model.RefTransfer.TransferDetail.Count > 0)
+                                                                        {
+
+                                                                            foreach (var ob in Model.RefTransfer.TransferDetail)
+                                                                            {
+                                                                                <tr>
+                                                                                    <td>@row</td>
+                                                                                    <td width="10%">@ob.TransferNo</td>
+                                                                                    <td width="50%">@ob.ProductCode @ob.ProductName</td>
+
+                                                                                    <td width="30%">
+                                                                                        <input type="hidden" name="currentQty" class="currentQty" value="@ob.CurrentQty" />
+                                                                                        @ob.CurrentQty
+                                                                                    </td>
+                                                                                    <td>
+                                                                                        <input type="hidden" name="ProductIds" class="ProductIds" value="@ob.ProductId" />
+                                                                                        <input type="text" name="RequestQtys" class="form-control RequestQtys"
+                                                                                               value="@ob.RequestQty" @(canEdit ? "" : "readonly")
+                                                                                               placeholder="">
+                                                                                    </td>
+
+
+                                                                                </tr>
+                                                                                row++;
+                                                                            }
+
+
+                                                                        }
+
+                                                                    }
+                                                                </tbody>
+                                                            </table>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="panel-footer">
+                                                <div class="row">
+                                                    <div class="col-12">
+
+
+
+
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row" style="padding-top:10px;">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        @if (canEdit && Model.TransferId > 0)
+                                        {
+                                            if (Model.TransferStatus == null || Model.TransferStatus == 0)
                                             {
-                                                <button type="submit" id="btnAddProduct" class="btn btn-primary pull-right">บันทึกรายการเบิก</button>
+                                                <button type="submit" id="btnNextStep" class="btn btn-primary">@(Model.TransferId > 0 ? "บันทึก" : "ต่อไป")</button>
+
                                             }
-                                        </h3>
-                                    </div>
-                                    <div class="panel-body">
-                                        <div class="row">
-                                            <div class="col-12">
-                                                <div class="table-responsive">
-                                                    <table class="table table-hover table-striped tblProduct">
-                                                        <thead>
-                                                            <tr>
-                                                                <th>ลำดับที่</th>
-                                                                <th>ใบนำออก</th>
-                                                                <th>สินค้า</th>
-                                                                <th>จำนวนที่นำออก</th>
-                                                                <th>จำนวนที่เบิกเข้า</th>
-
-
-                                                            </tr>
-                                                        </thead>
-                                                        <tbody>
-
-                                                            @if (Model.RefTransfer == null)
-                                                            {
-                                                                <tr>
-                                                                    <td colspan="7">ไม่พบข้อมูล</td>
-                                                                </tr>
-                                                            }
-                                                            @{int row = 1;
-
-                                                                if ( Model.TransferDetail != null
-                                                                    && Model.TransferDetail.Count > 0)
-                                                                {
-                                                                    foreach (var ob in Model.TransferDetail)
-                                                                    {
-                                                                <tr>
-                                                                    <td  width="5%">@row</td>
-                                                                    <td width="10%">@ob.RefTransferNo</td>
-                                                                    <td width="50%">@ob.Product.ProductCode @ob.Product.ProductName</td>
-
-                                                                    <td width="15%">
-                                                                        <input type="hidden" name="currentQty" class="currentQty" value="@ob.CurrentQty" />
-                                                                        @ob.CurrentQty
-                                                                    </td>
-                                                                    <td width="20%">
-                                                                        <input type="hidden" name="ProductIds" class="ProductIds" value="@ob.Product.ProductId" />
-                                                                       <input type="hidden" name="TransferIds" class="TransferIds" value="@ob.RefTransferId" />
-                                                                        <input type="text" name="RequestQtys" class="form-control RequestQtys"
-                                                                               value="@ob.RequestQty" @(canEdit ? "" : "readonly")
-                                                                               placeholder="">
-                                                                    </td>
-
-
-                                                                </tr>
-                                                                        row++;
-                                                                    }
-                                                                }
-                                                                else if (Model.RefTransfer!=null && Model.RefTransfer.TransferDetail.Count > 0)
-                                                                {
-
-                                                                    foreach (var ob in Model.RefTransfer.TransferDetail)
-                                                                    {
-                                                                <tr>
-                                                                    <td>@row</td>
-                                                                    <td width="10%">@ob.TransferNo</td>
-                                                                    <td width="50%">@ob.ProductCode @ob.ProductName</td>
-
-                                                                    <td width="30%">
-                                                                        <input type="hidden" name="currentQty" class="currentQty" value="@ob.CurrentQty" />
-                                                                        @ob.CurrentQty
-                                                                    </td>
-                                                                    <td>
-                                                                        <input type="hidden" name="ProductIds" class="ProductIds" value="@ob.ProductId" />
-                                                                        <input type="text" name="RequestQtys" class="form-control RequestQtys"
-                                                                               value="@ob.RequestQty" @(canEdit ? "" : "readonly")
-                                                                               placeholder="">
-                                                                    </td>
-
-
-                                                                </tr>
-                                                                        row++;
-                                                                    }
-
-
-                                                                }
-
-                                                            }
-                                                        </tbody>
-                                                    </table>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="panel-footer">
-                                        <div class="row">
-                                            <div class="col-12">
-                                              
-
-
-                                             
-                                            </div>
-                                        </div>
+                                            if (Model.TransferId > 0)
+                                            {
+                                                <button type="submit" id="btnApprove" class="btn btn-success">อนุมัติ</button>
+                                            }
+                                        }
+                                        <a href="@Url.Action("Index", new { controller = "TransferIn", area = "" })" class="btn btn-default">ยกเลิก</a>
                                     </div>
                                 </div>
-
                             </div>
                         </div>
                     </div>
+                </div>
+            </div>
+          
+                </div>
 
-    </form>
-
-
-
-
-    @*Panel Address*@
-    <div class="card-block" data-tab-page="navAddress">
-
-    </div>
-    @*End Panel Address*@
-
-    @*panel Add Product*@
+</form>
 
 
-    @*End panel Add product*@
-    </div>
-    </div>
-    </div>
+
+
 
     <!-- Address Modal -->
     <div class="modal fade" id="JobOrderModal" tabindex="-1" role="dialog" aria-labelledby="ค้นหาใบสั่งงาน" aria-hidden="true">
@@ -1510,7 +1521,9 @@
                             <div class="form-group">
                                 <label for="JobStartDate" class="form-control-label">จากวันที่</label>
                                 <div class="input-group date" data-provide="datepicker" data-date-format="dd/mm/yyyy">
-                                    <input id="JobStartDate" type="text" class="form-control" placeholder="dd/MM/yyyy ค.ศ." name="JobStartDate" />
+                                    <input id="JobStartDate" type="text" class="form-control"
+                                           value="@Converting.ToDDMMYYYY(DateTime.Now)"
+                                           placeholder="dd/MM/yyyy ค.ศ." name="JobStartDate" />
                                     <span class="input-group-addon">
                                         <i class="icon wb-calendar icon-2-5x text-success" style="padding-left:2px" aria-hidden="true"></i>
                                     </span>
@@ -1522,7 +1535,9 @@
                             <div class="form-group">
                                 <label for="JobEndDate" class="form-control-label">ถึงวันที่</label>
                                 <div class="input-group date" data-provide="datepicker" data-date-format="dd/mm/yyyy">
-                                    <input id="JobEndDate" type="text" class="form-control" placeholder="dd/MM/yyyy ค.ศ." name="JobEndDate" />
+                                    <input id="JobEndDate" type="text" 
+                                            value="@Converting.ToDDMMYYYY(DateTime.Now)"
+                                           class="form-control" placeholder="dd/MM/yyyy ค.ศ." name="JobEndDate" />
                                     <span class="input-group-addon">
                                         <i class="icon wb-calendar icon-2-5x text-success" style="padding-left:2px" aria-hidden="true"></i>
                                     </span>

@@ -24,8 +24,8 @@ namespace Kemrex.Web.Main.Controllers
             int year, int month, string src = "")
         {
             List<CalendarDayModel> data = new List<CalendarDayModel>();
-            List<TblSaleOrder> lstAll = new List<TblSaleOrder>();
             List<TblSaleOrder> lst = new List<TblSaleOrder>();
+            List<TblJobOrder> joblst = new List<TblJobOrder>();
             try
             {
                 if (!string.IsNullOrWhiteSpace(msg))
@@ -34,86 +34,106 @@ namespace Kemrex.Web.Main.Controllers
                     if (msgType.HasValue) { alert.Type = msgType.Value; }
                     ViewBag.Alert = alert;
                 }
+                AccountPermission permission = GetPermission(CurrentUID);
+                ViewData["optPermission"] = permission;
                 DateTime firstDt = new DateTime(year, month, 1);
                 ViewBag.FocusDate = firstDt;
-                int total = uow.Modules.SaleOrder.Count(month, src);
-
-                //lst = uow.Modules.SaleOrder.Gets(1, -1, month, src);
-                lstAll = uow.Modules.SaleOrder.Gets(1, -1, month, src);
-                if (CurrentUID == 1) //admin
+                if (permission.TeamType == TeamType.Admin || permission.TeamType == TeamType.Sale)   //administrator of sale
                 {
-                    lst = lstAll;
+                    int total = uow.Modules.SaleOrder.Count(month, src);
+                    lst = uow.Modules.SaleOrder.GetAll(1, -1, month, src, (permission.IsAdminTeam || permission.IsManager) ? 0 : CurrentUID);
+                    #region Calculate first week
+                    for (int i = firstDt.DayOfWeek.ToInt(); i > 0; i--)
+                    {
+                        CalendarDayModel day = new CalendarDayModel()
+                        {
+                            Date = firstDt.AddDays(-i),
+                            Jobs = new List<TblSaleOrder>(),
+                            TeamType = permission.TeamType
+                        };
+                        data.Add(day);
+                    }
+                    #endregion
+                    int offset = data.Count;
+                    for (int i = offset; i <= 42; i++)
+                    {
+                        CalendarDayModel day = new CalendarDayModel()
+                        {
+                            Date = firstDt.AddDays(i - offset),
+                            Jobs = new List<TblSaleOrder>(),
+                            TeamType = permission.TeamType
+                        };
+                        if (day.Date.Month == month)
+                        {
+                            var dayJobs = lst.Where(x =>
+                                x.SaleOrderDate.HasValue
+                                && x.SaleOrderDate.Value.Date == day.Date.Date);
+                            day.Jobs = dayJobs.Count() > 0 ? dayJobs.ToList() : new List<TblSaleOrder>();
+                        }
+                        data.Add(day);
+                    }
+                }
+                else if (permission.TeamType == TeamType.Operation)  ///operation
+                {
+                    joblst = uow.Modules.JobOrder.GetAll(1, -1, month, src, (permission.IsAdminTeam) ? 0 : permission.TeamId);
+                    #region Calculate first week
+                    for (int i = firstDt.DayOfWeek.ToInt(); i > 0; i--)
+                    {
+                        CalendarDayModel day = new CalendarDayModel()
+                        {
+                            Date = firstDt.AddDays(-i),
+                            JobsOrder = new List<TblJobOrder>(),
+                            TeamType = permission.TeamType
+                        };
+                        data.Add(day);
+                    }
+                    #endregion
+                    int offset = data.Count;
+                    for (int i = offset; i <= 42; i++)
+                    {
+                        CalendarDayModel day = new CalendarDayModel()
+                        {
+                            Date = firstDt.AddDays(i - offset),
+                            JobsOrder = new List<TblJobOrder>(),
+                            TeamType = permission.TeamType
+                        };
+                        if (day.Date.Month == month)
+                        {
+                            var dayJobs = joblst.Where(x =>
+                                x.StartDate.HasValue
+                                && x.StartDate.Value.Date == day.Date.Date
+                                );
+                            day.JobsOrder = dayJobs.Count() > 0 ? dayJobs.ToList() : new List<TblJobOrder>();
+                        }
+                        data.Add(day);
+                    }
                 }
                 else
                 {
-                    Team userTeam = uow.Modules.TeamSale.CheckTeamSale(CurrentUID);
-                    Team jobTeam = new Team();
-                    if (userTeam != null)
+                    #region Calculate first week
+                    for (int i = firstDt.DayOfWeek.ToInt(); i > 0; i--)
                     {
-                        foreach (var x in lstAll)
+                        CalendarDayModel day = new CalendarDayModel()
                         {
-                            jobTeam = uow.Modules.TeamSale.CheckTeamSale(x.CreatedBy.HasValue?x.CreatedBy.Value:0);
-                            if (jobTeam == null) continue;
-                            if (userTeam.TeamId == jobTeam.TeamId)
-                            {
-                                if(CurrentUID == jobTeam.AccountId || CurrentUID == jobTeam.ManagerId)
-                                lst.Add(x);
+                            Date = firstDt.AddDays(-i),
+                            JobsOrder = new List<TblJobOrder>(),
+                            TeamType = permission.TeamType
+                        };
+                        data.Add(day);
+                    }
+                    #endregion
+                    int offset = data.Count;
+                    for (int i = offset; i <= 42; i++)
+                    {
+                        CalendarDayModel day = new CalendarDayModel()
+                        {
+                            Date = firstDt.AddDays(i - offset)
+                        };
+                        data.Add(day);
+                    }
+                }
 
-                            }
-                        }
-                    }
-                    else
-                    {
-                        lst = null;
-                    }
 
-                    /* Team checkteam = uow.Modules.TeamOperation.CheckTeamOperation(CurrentUID);
-                    if (checkteam != null)
-                    {
-                        if (checkteam.TeamId == 1)
-                        {
-                            lst = lstAll;
-                        }
-                        else if (checkteam.TeamId > 1)
-                        {
-                            lst = (from a in lstAll
-                                   where a.TeamId == checkteam.TeamId
-                                   select a).ToList();
-                        }
-                    }
-                    else
-                    {
-                        lst = null;
-                    }*/
-                }
-                #region Calculate first week
-                for (int i = firstDt.DayOfWeek.ToInt(); i > 0; i--)
-                {
-                    CalendarDayModel day = new CalendarDayModel()
-                    {
-                        Date = firstDt.AddDays(-i),
-                        Jobs = new List<TblSaleOrder>()
-                    };
-                    data.Add(day);
-                }
-                #endregion
-                int offset = data.Count;
-                for (int i = offset; i <= 42; i++)
-                {
-                    CalendarDayModel day = new CalendarDayModel()
-                    {
-                        Date = firstDt.AddDays(i - offset),
-                        Jobs = new List<TblSaleOrder>()
-                    };
-                    if (day.Date.Month == month)
-                    {
-                        var dayJobs = lst.Where(x =>
-                            x.SaleOrderDate.HasValue
-                            && x.SaleOrderDate.Value.Date == day.Date.Date);
-                        day.Jobs = dayJobs.Count() > 0 ? dayJobs.ToList() : new List<TblSaleOrder>();
-                    }
-                    data.Add(day);
-                }
             }
             catch (Exception ex)
             {
