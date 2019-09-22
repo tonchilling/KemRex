@@ -142,9 +142,9 @@ namespace Kemrex.Web.Main.Controllers
                     switch (ob.SaleOrder.ConditionId)
                     {
                         case 1:     //จ่าย 100% หลังติดตั้งงาน
-                        case 2: ob.InvoiceAmount = ob.SaleOrder.SummaryNet; //มัดจำ 100 % ก่อนติดตั้งงาน
+                        case 2: ob.InvoiceAmount = ob.SaleOrder.SummaryTot; //มัดจำ 100 % ก่อนติดตั้งงาน
                             break;
-                        case 3: ob.InvoiceAmount = ob.SaleOrder.SummaryNet/2; //2 งวด 50 / 50
+                        case 3: ob.InvoiceAmount = ob.SaleOrder.SummaryTot / 2; //2 งวด 50 / 50
                             break;
                         case 4: //3 งวด
                         case 5: ob.InvoiceAmount = 0; //4 งวด

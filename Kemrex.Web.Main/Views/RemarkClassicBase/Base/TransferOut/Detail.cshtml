@@ -427,7 +427,31 @@
 
         $("#btnAddProduct").click(function () {
 
-               $('#frmmain').attr('action', '@Url.Action("AddProduct", "TransferOut")');
+              swal({
+                    title: "Save Product",
+                    text: "Do you want to Update?",
+                    type: "warning",
+                    showCancelButton: true,
+                    closeOnConfirm: false,
+                    showLoaderOnConfirm: true
+                },
+                    function (isConfirm) {
+                        if (isConfirm) {
+                             $('#frmmain').attr('action', '@Url.Action("AddProduct", "TransferOut")');
+                            $('#frmmain').submit();
+
+                        }
+                   });
+
+
+
+            
+              
+         
+          
+            return false;
+
+           
 
             //tblProduct
 
@@ -436,15 +460,104 @@
 
         $("#btnApprove").click(function () {
 
-               $('#frmmain').attr('action', '@Url.Action("Approve", "TransferOut")');
+             swal({
+                    title: "Approve",
+                    text: "Do you want to Approve?",
+                    type: "success",
+                    showCancelButton: true,
+                    closeOnConfirm: false,
+                    showLoaderOnConfirm: true
+                },
+                    function (isConfirm) {
+                        if (isConfirm) {
+                            $('#frmmain').attr('action', '@Url.Action("Approve", "TransferOut")');
+                            $('#frmmain').submit();
+
+                        }
+                   });
+
+
+
+            
+              
+         
+          
+            return false;
+
+
+             
 
             //tblProduct
 
         });
         $("#btnNextStep").click(function () {
 
-            return ValidationAll();
+
+            if (ValidationAll()) {
+                swal({
+                    title: "Save",
+                    text: "Do you want to Save?",
+                    type: "success",
+                    showCancelButton: true,
+                    closeOnConfirm: false,
+                    showLoaderOnConfirm: true
+                },
+                    function (isConfirm) {
+                        if (isConfirm) {
+                           
+                            $('#frmmain').submit();
+
+                        }
+                    });
+
+
+
+
+            }
+         
+          
+            return false;
+
+
+
+  
         });
+
+
+        $("#btnPull").click(function () {
+
+
+            if (ValidationAll()) {
+                swal({
+                    title: "Importing",
+                    text: "Do you want to import?",
+                    type: "success",
+                    showCancelButton: true,
+                    closeOnConfirm: false,
+                    showLoaderOnConfirm: true
+                },
+                    function (isConfirm) {
+                        if (isConfirm) {
+                            
+                            $('#TransferStatus').val(0);
+                            $('#frmmain').submit();
+
+                        }
+                    });
+
+
+
+
+            }
+
+
+            return false;
+
+
+
+
+        });
+
 
 
 
@@ -566,7 +679,7 @@
                                                 <input type="hidden" id="JobOrderId" name="JobOrderId" value="@Model.JobOrderId" />
                                                 <input type="text" class="form-control" id="JobOrderNo" name="JobOrderNo" value="@(Model.JobOrder!=null ? Model.JobOrder.JobOrderNo:"")" required readonly />
 
-                                                @if (canEdit)
+                                                @if (canEdit && Model.TransferId <=0)
                                                 {
                                                     <div class="input-group-append">
                                                         <button class="btn btn-outline-secondary btn-primary"
@@ -577,6 +690,10 @@
                                                             ...
                                                         </button>
                                                     </div>
+                                                    <button class="btn btn-outline-secondary btn-warning btnPull" type="button"
+                                                            id="btnPull">
+                                                        ดึงข้อมูล
+                                                    </button>
                                                 }
                                             </div>
                                         </div>
@@ -586,27 +703,7 @@
 
 
                                 </div>
-                                <div class="row" style="padding-top:10px;">
-                                    <div class="col-md-12">
-                                        <div class="form-group">
-                                            @if (canEdit)
-                                            {
-                                                if (Model.TransferStatus == null || Model.TransferStatus == 0)
-                                                {
-                                                    if (optPermission.IsEdit)
-                                                    {
-                                                        <button type="submit" id="btnNextStep" class="btn btn-primary">@(Model.TransferId > 0 ? "บันทึก" : "ต่อไป")</button>
-                                                    }
-                                                }
-                                                if (Model.JobOrderId > 0 && optPermission.IsEdit)
-                                                {
-                                                    <button type="submit" id="btnApprove" class="btn btn-success">อนุมัติ</button>
-                                                }
-                                            }
-                                            <a href="@Url.Action("Index", new { controller = "TransferIn", area = "" })" class="btn btn-default">ยกเลิก</a>
-                                        </div>
-                                    </div>
-                                </div>
+                              
                             </div>
 
                         </div>
@@ -664,7 +761,7 @@
                                                                                class="form-control datepair-date datepair-start"
                                                                                id="TransferDate" autocomplete="off"
                                                                                name="TransferDate" @(canEdit ? "" : "readonly")
-                                                                               value="@Converting.ToDDMMYYYY(Model.TransferDate)"
+                                                                               value="@(Model.TransferDate ==null ? Converting.ToDDMMYYYY(DateTime.Now) :Converting.ToDDMMYYYY(Model.TransferDate)) "
                                                                                data-plugin="datepicker">
                                                                         <span class="input-group-addon">
                                                                             <i class="icon wb-calendar icon-2-5x text-success" style="padding-left:2px" aria-hidden="true"></i>
@@ -937,7 +1034,7 @@
                                                                             <td>
                                                                                 <input type="hidden" name="ProductIds" class="ProductIds" value="@ob.Product.ProductId" />
                                                                                 <input type="text" name="RequestQtys" class="form-control RequestQtys"
-                                                                                       value="@ob.RequestQty"  @(canEdit ? "": "readonly")
+                                                                                       value="@ob.RequestQty" @(canEdit ? "" : "readonly")
                                                                                        placeholder="">
                                                                             </td>
 
@@ -964,7 +1061,7 @@
                                                                             <td>
                                                                                 <input type="hidden" name="ProductIds" class="ProductIds" value="@ob.Product.ProductId" />
                                                                                 <input type="text" name="RequestQtys" class="form-control RequestQtys"
-                                                                                       value="" @(canEdit ? "": "readonly")
+                                                                                       value="" @(canEdit ? "" : "readonly")
                                                                                        placeholder="">
                                                                             </td>
 
@@ -985,7 +1082,7 @@
                                             <div class="col-12">
                                                 @if (canEdit)
                                                 {
-                                                <button type="submit" id="btnAddProduct" class="btn btn-primary pull-right">บันทึกรายการเบิก</button>
+                                                    <button type="submit" id="btnAddProduct" class="btn btn-primary pull-right">บันทึกรายการเบิก</button>
                                                 }
                                             </div>
                                         </div>
@@ -996,7 +1093,30 @@
                         </div>
                     </div>
 
-    </form>
+                    <div class="row" style="padding-top:10px;">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                @if (canEdit)
+                                {
+                                    if (Model.TransferId > 0)
+                                    {
+                                        if (optPermission.IsEdit)
+                                        {
+                                            <button type="submit" id="btnNextStep" class="btn btn-primary">@(Model.TransferId > 0 ? "บันทึก" : "ต่อไป")</button>
+                                        }
+                                    }
+                                    if (Model.TransferId > 0 && optPermission.IsEdit)
+                                    {
+                                        <button type="submit" id="btnApprove" class="btn btn-success">อนุมัติ</button>
+                                    }
+                                }
+                                <a href="@Url.Action("Index", new { controller = "TransferOut", area = "" })" class="btn btn-default">ยกเลิก</a>
+                            </div>
+                        </div>
+                    </div>
+                    </div>
+
+</form>
 
 
 
@@ -1034,7 +1154,9 @@
                             <div class="form-group">
                                 <label for="JobStartDate" class="form-control-label">จากวันที่</label>
                                 <div class="input-group date" data-provide="datepicker" data-date-format="dd/mm/yyyy">
-                                    <input id="JobStartDate" type="text" class="form-control" placeholder="dd/MM/yyyy ค.ศ." name="JobStartDate" />
+                                    <input id="JobStartDate" type="text"
+                                           value="@Converting.ToDDMMYYYY(DateTime.Now)"
+                                           class="form-control" placeholder="dd/MM/yyyy ค.ศ." name="JobStartDate" />
                                     <span class="input-group-addon">
                                         <i class="icon wb-calendar icon-2-5x text-success" style="padding-left:2px" aria-hidden="true"></i>
                                     </span>
@@ -1046,7 +1168,9 @@
                             <div class="form-group">
                                 <label for="JobEndDate" class="form-control-label">ถึงวันที่</label>
                                 <div class="input-group date" data-provide="datepicker" data-date-format="dd/mm/yyyy">
-                                    <input id="JobEndDate" type="text" class="form-control" placeholder="dd/MM/yyyy ค.ศ." name="JobEndDate" />
+                                    <input id="JobEndDate" type="text" 
+                                             value="@Converting.ToDDMMYYYY(DateTime.Now)"
+                                           class="form-control" placeholder="dd/MM/yyyy ค.ศ." name="JobEndDate" />
                                     <span class="input-group-addon">
                                         <i class="icon wb-calendar icon-2-5x text-success" style="padding-left:2px" aria-hidden="true"></i>
                                     </span>

@@ -291,9 +291,11 @@ namespace Kemrex.Web.Main.Controllers
         {
             bool updateOrgId = false;
             TblQuotation cloneObj = new TblQuotation();
-            int id = Request.Form["QuotationId"].ParseInt();
+            int QuotationId = Request.Form["QuotationId"].ParseInt();
             int approveStatus = Request.Form["hdApprove"] != null ? Request.Form["hdApprove"].ParseInt():0;
-            TblQuotation ob = uow.Modules.Quotation.Get(id);
+         
+            int TempQuotationId = Request.Form["TempQuotationId"].ParseInt();
+            TblQuotation ob = uow.Modules.Quotation.Get(QuotationId);
             if (ob.QuotationId <= 0)
             {
                 updateOrgId = true;
@@ -313,9 +315,9 @@ namespace Kemrex.Web.Main.Controllers
             }
             ob.StatusId = Request.Form["StatusId"].ParseInt();
 
-            if (approveStatus == 2)
+            if (approveStatus == 3)
             {
-                ob.StatusId = 2;
+                ob.StatusId = 3;
                 ob.ApprovedBy = Convert.ToInt32(CurrentUID);
             }
             ob.QuotationRemark = Request.Form["QuotationRemark"]; ;
@@ -362,6 +364,21 @@ namespace Kemrex.Web.Main.Controllers
                     ob.OrgQuotationId = ob.QuotationId;
                     uow.Modules.Quotation.Set(ob);
                 }
+
+
+              //  ob = uow.Modules.Quotation.Get(QuotationId);
+                if (approveStatus == 3)
+                {
+
+                    TblQuotationTemplate obTemplate = new TblQuotationTemplate();
+                    obTemplate.QuotationId = QuotationId;
+                    obTemplate.TempQuotationId = TempQuotationId;
+                    uow.Modules.QuotationTemplate.SetVersion(obTemplate);
+                    uow.SaveChanges();
+                }
+
+                
+
                 uow.SaveChanges();
                 return RedirectToAction("Detail", MVCController, new { id = ob.QuotationId, msg = "บันทึกข้อมูลเรียบร้อยแล้ว", msgType = AlertMsgType.Success });
             }

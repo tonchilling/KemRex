@@ -89,6 +89,7 @@ namespace Kemrex.Web.Main.Controllers
 
 
             string TransferId = this.Request.Form["TransferId"];
+          string  refTransferId = Request.Form["RefTransferIds"] != null ? Request.Form["RefTransferIds"].ToString() : "";
 
             /*  string StartHH = this.Request.Form["StartHH"];
               string StartMM = this.Request.Form["StartMM"];
@@ -107,6 +108,7 @@ namespace Kemrex.Web.Main.Controllers
             {
                 obj.TransferNo = getId("I");
                 obj.CreatedDate = DateTime.Now;
+                obj.RefTransferIds = refTransferId;
             }
             else
             {
@@ -138,7 +140,7 @@ namespace Kemrex.Web.Main.Controllers
             try
             {
 
-                uow.Modules.Transfer.TrasferInHeaderAdd(obj);
+                uow.Modules.Transfer.SetIn(obj);
               //  uow.SaveChanges();
 
 
@@ -355,12 +357,18 @@ namespace Kemrex.Web.Main.Controllers
         [HttpGet]
         public JsonResult GetTransferOutByDate(string startDate, string toDate)
         {
+            DateTime? StDate = null;
+            DateTime? ToDate = null;
+            //  List<TransferHeader> result = uow.Modules.Transfer.Gets("O",startDate, toDate,"1");
 
-            List<TransferHeader> result = uow.Modules.Transfer.Gets("O",startDate, toDate,"1");
-            //saleOrder.Customer = uow.Modules.Customer.GetByCondition(saleOrder.CustomerId.Value);
-            //  saleOrder.Sale = uow.Modules.Employee.GetByCondition(saleOrder.SaleId.Value);
+            if (startDate != "")
+            {
+                StDate = DateTime.ParseExact(startDate, "dd/MM/yyyy", new System.Globalization.CultureInfo("en-US"));
+                ToDate = DateTime.ParseExact(toDate, "dd/MM/yyyy", new System.Globalization.CultureInfo("en-US"));
 
-            // TblCustomer objCustomer = uow.Modules.Customer.Get(Convert.ToInt32(ob.CustomerId));
+
+            }
+            List<TransferHeader> result=   uow.Modules.Transfer.GetTransferOutNotInList("O", StDate, ToDate);
 
 
 

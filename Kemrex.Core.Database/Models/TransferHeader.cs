@@ -18,6 +18,8 @@ namespace Kemrex.Core.Database.Models
 
        
         public int RefTransferId { get; set; }
+        [NotMapped]
+        public string RefTransferIds { get; set; }
         public string  ReceiveTo { get; set; }
         public string Reason { get; set; }
         public int CarType { get; set; }

@@ -716,16 +716,17 @@
 
                                     </div>
                                     <div class="panel-body">
-                                        <div class="row">
-                                            <div class="col-sm-4">
-                                                <div class="form-group">
-                                                    <label for="TeamName" class="form-control-label">ทีมติดตั้ง</label>
-                                                    <div class="input-group ">
-                                                        <input type="text" id="TeamName" disabled class="form-control" name="TeamName"
-                                                               value="@(Model.TeamId!=null?TeamOperationList.Find(o=>o.TeamId==Model.TeamId).TeamName:"")" />
+                                        @if (Model.Status == "5")
+                                        {
+                                            <div class="row">
+                                                <div class="col-sm-4">
+                                                    <div class="form-group">
+                                                        <label for="TeamName" class="form-control-label">ทีมติดตั้ง</label>
+                                                        <div class="input-group ">
+                                                            <input type="text" id="TeamName" disabled class="form-control" name="TeamName"
+                                                                   value="@(Model.TeamId!=null?TeamOperationList.Find(o=>o.TeamId==Model.TeamId).TeamName:"")" />
 
-                                                        @if (Model.Status == null || Model.Status == "0")
-                                                        {
+
                                                             <div class="input-group-append">
                                                                 <button class="btn btn-outline-secondary btn-primary invisible" type="button"
                                                                         data-toggle="modal"
@@ -734,159 +735,160 @@
                                                                     ...
                                                                 </button>
                                                             </div>
-                                                        }
-                                                        <input type="hidden" id="TeamId" name="TeamId" value="@Model.TeamId" />
+                                                           
+                                                            <input type="hidden" id="TeamId" name="TeamId" value="@Model.TeamId" />
+                                                        </div>
                                                     </div>
+
                                                 </div>
 
                                             </div>
-
-                                        </div>
-                                        <div class="row">
-                                            <div class="col-md-6">
-                                                <div class="form-group">
-                                                    <label for="StartDate" class="form-control-label">วันที่ติดตั้ง</label>
-                                                    <div class="input-group col-sm-6 date" data-provide="datepicker" data-date-format="dd/mm/yyyy">
-                                                        <input id="StartDate" type="text" class="form-control" placeholder="dd/MM/yyyy ค.ศ." name="StartDate"
-                                                               value="@(Model.StartDate == null ? DateTime.Now.ToString("dd/MM/yyyy") : Model.StartDate.Value.ToString("dd/MM/yyyy"))" required />
-                                                        <span class="input-group-addon">
-                                                            <i class="icon wb-calendar icon-2-5x text-success" style="padding-left:2px" aria-hidden="true"></i>
-                                                        </span>
+                                        }
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <div class="form-group">
+                                                        <label for="StartDate" class="form-control-label">วันที่ติดตั้ง</label>
+                                                        <div class="input-group col-sm-6 date" data-provide="datepicker" data-date-format="dd/mm/yyyy">
+                                                            <input id="StartDate" type="text" class="form-control" placeholder="dd/MM/yyyy ค.ศ." name="StartDate"
+                                                                   value="@(Model.StartDate == null ? DateTime.Now.ToString("dd/MM/yyyy") : Model.StartDate.Value.ToString("dd/MM/yyyy"))" required />
+                                                            <span class="input-group-addon">
+                                                                <i class="icon wb-calendar icon-2-5x text-success" style="padding-left:2px" aria-hidden="true"></i>
+                                                            </span>
+                                                        </div>
                                                     </div>
                                                 </div>
-                                            </div>
-                                            <div class="col-md-6 col-sm-8">
-                                                <div class="form-group">
-                                                    <label for="EndDate" class="form-control-label">กำหนดเสร็จ</label>
-                                                    @*<div class="input-group col-sm-6">
-                                            <span class="input-group-addon">
-                                                <i class="icon wb-calendar" aria-hidden="true"></i>
-                                            </span>
-                                            <input type="date" class="form-control" name="JobOrderCompleteDate" value="" />
-                                        </div>*@
-                                                    <div class="input-group col-sm-6 date" data-provide="datepicker" data-date-format="dd/mm/yyyy">
-                                                        <input id="EndDate" type="text" class="form-control" placeholder="dd/MM/yyyy ค.ศ." name="EndDate"
-                                                               value="@(Model.EndDate == null ? DateTime.Now.ToString("dd/MM/yyyy") : Model.EndDate.Value.ToString("dd/MM/yyyy"))" required />
-                                                        <span class="input-group-addon" style="padding-left:2px">
-                                                            <i class="icon wb-calendar icon-2-5x text-success" aria-hidden="true"></i>
-                                                        </span>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <div class="row">
-                                            <div class="col-md-5">
-                                                <div class="form-group">
-                                                    <label for="" class="form-control-label">เวลาปฏิบัติหน้างาน</label>
-                                                    <div class="input-group">
-                                                        <div class="input-group col-sm-10">
-
-                                                            <select class="form-control" id="StartHH" data-live-search="true" style="padding-right:5px;"
-                                                                    name="StartHH" required>
-                                                                @for (var i = 0; i <= 24; i++)
-                                                                {
-                                                                    bool selected = i == (Model.StartWorkingTime != null ? Model.StartWorkingTime.Split(':')[0].AsInt() : -1);
-                                                                    <option value="@i" @(selected ? " selected=\" selected\"" : "")>@i.ToString("##00")</option>
-                                                                }
-                                                            </select>
-
-                                                            &nbsp;
-                                                            <select class="form-control" id="StartMM" data-live-search="true"
-                                                                    name="StartMM" required>
-                                                                @for (var i = 0; i <= 59; i++)
-                                                                {
-                                                                    bool selected = i == (Model.StartWorkingTime != null ? Model.StartWorkingTime.Split(':')[1].AsInt() : -1);
-                                                                    <option value="@i" @(selected ? " selected=\" selected\"" : "")>@i.ToString("##00")</option>
-                                                                }
-                                                            </select>
+                                                <div class="col-md-6 col-sm-8">
+                                                    <div class="form-group">
+                                                        <label for="EndDate" class="form-control-label">กำหนดเสร็จ</label>
+                                                        @*<div class="input-group col-sm-6">
+                            <span class="input-group-addon">
+                                <i class="icon wb-calendar" aria-hidden="true"></i>
+                            </span>
+                            <input type="date" class="form-control" name="JobOrderCompleteDate" value="" />
+                        </div>*@
+                                                        <div class="input-group col-sm-6 date" data-provide="datepicker" data-date-format="dd/mm/yyyy">
+                                                            <input id="EndDate" type="text" class="form-control" placeholder="dd/MM/yyyy ค.ศ." name="EndDate"
+                                                                   value="@(Model.EndDate == null ? DateTime.Now.ToString("dd/MM/yyyy") : Model.EndDate.Value.ToString("dd/MM/yyyy"))" required />
                                                             <span class="input-group-addon" style="padding-left:2px">
-                                                                <i class="icon wb-time icon-2-5x text-success" aria-hidden="true"></i>
+                                                                <i class="icon wb-calendar icon-2-5x text-success" aria-hidden="true"></i>
                                                             </span>
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div class="col-md-5 col-sm-8">
-                                                <div class="form-group">
-                                                    <label for="" class="form-control-label">ถึง</label>
-                                                    <div class="input-group">
-                                                        <div class="input-group col-sm-10">
 
-                                                            <select class="form-control" id="EndHH" data-live-search="true" style="padding:5px;"
-                                                                    name="EndHH" required>
-                                                                @for (var i = 0; i <= 24; i++)
-                                                                {
-                                                                    bool selected = i == (Model.EndWorkingTime != null ? Model.EndWorkingTime.Split(':')[0].AsInt() : -1);
-                                                                    <option value="@i" @(selected ? " selected=\" selected\"" : "")>@i.ToString("##00")</option>
-                                                                }
-                                                            </select>
-                                                            &nbsp;
+                                            <div class="row">
+                                                <div class="col-md-5">
+                                                    <div class="form-group">
+                                                        <label for="" class="form-control-label">เวลาปฏิบัติหน้างาน</label>
+                                                        <div class="input-group">
+                                                            <div class="input-group col-sm-10">
 
-                                                            <select class="form-control" id="EndMM" data-live-search="true" style="padding:5px;"
-                                                                    name="EndMM" required>
-                                                                @for (var i = 0; i <= 59; i++)
-                                                                {
-                                                                    bool selected = i == (Model.EndWorkingTime != null ? Model.EndWorkingTime.Split(':')[1].AsInt() : -1);
-                                                                    <option value="@i" @(selected ? " selected=\" selected\"" : "")>@i.ToString("##00")</option>
-                                                                }
-                                                            </select>
-                                                            <span class="input-group-addon" style="padding-left:2px">
-                                                                <i class="icon wb-time icon-2-5x text-success" aria-hidden="true"></i>
-                                                            </span>
+                                                                <select class="form-control" id="StartHH" data-live-search="true" style="padding-right:5px;"
+                                                                        name="StartHH" required>
+                                                                    @for (var i = 0; i <= 24; i++)
+                                                                    {
+                                                                        bool selected = i == (Model.StartWorkingTime != null ? Model.StartWorkingTime.Split(':')[0].AsInt() : -1);
+                                                                        <option value="@i" @(selected ? " selected=\" selected\"" : "")>@i.ToString("##00")</option>
+                                                                    }
+                                                                </select>
 
+                                                                &nbsp;
+                                                                <select class="form-control" id="StartMM" data-live-search="true"
+                                                                        name="StartMM" required>
+                                                                    @for (var i = 0; i <= 59; i++)
+                                                                    {
+                                                                        bool selected = i == (Model.StartWorkingTime != null ? Model.StartWorkingTime.Split(':')[1].AsInt() : -1);
+                                                                        <option value="@i" @(selected ? " selected=\" selected\"" : "")>@i.ToString("##00")</option>
+                                                                    }
+                                                                </select>
+                                                                <span class="input-group-addon" style="padding-left:2px">
+                                                                    <i class="icon wb-time icon-2-5x text-success" aria-hidden="true"></i>
+                                                                </span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-5 col-sm-8">
+                                                    <div class="form-group">
+                                                        <label for="" class="form-control-label">ถึง</label>
+                                                        <div class="input-group">
+                                                            <div class="input-group col-sm-10">
+
+                                                                <select class="form-control" id="EndHH" data-live-search="true" style="padding:5px;"
+                                                                        name="EndHH" required>
+                                                                    @for (var i = 0; i <= 24; i++)
+                                                                    {
+                                                                        bool selected = i == (Model.EndWorkingTime != null ? Model.EndWorkingTime.Split(':')[0].AsInt() : -1);
+                                                                        <option value="@i" @(selected ? " selected=\" selected\"" : "")>@i.ToString("##00")</option>
+                                                                    }
+                                                                </select>
+                                                                &nbsp;
+
+                                                                <select class="form-control" id="EndMM" data-live-search="true" style="padding:5px;"
+                                                                        name="EndMM" required>
+                                                                    @for (var i = 0; i <= 59; i++)
+                                                                    {
+                                                                        bool selected = i == (Model.EndWorkingTime != null ? Model.EndWorkingTime.Split(':')[1].AsInt() : -1);
+                                                                        <option value="@i" @(selected ? " selected=\" selected\"" : "")>@i.ToString("##00")</option>
+                                                                    }
+                                                                </select>
+                                                                <span class="input-group-addon" style="padding-left:2px">
+                                                                    <i class="icon wb-time icon-2-5x text-success" aria-hidden="true"></i>
+                                                                </span>
+
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                        <div class="row">
-                                            <div class="col-md-5">
-                                                <div class="form-group">
-                                                    <label for="" class="form-control-label">ชื่อโครงการ</label>
-                                                    <input type="text" id="ProjectName" class="form-control" name="ProjectName" value="@Model.ProjectName" />
+                                            <div class="row">
+                                                <div class="col-md-5">
+                                                    <div class="form-group">
+                                                        <label for="" class="form-control-label">ชื่อโครงการ</label>
+                                                        <input type="text" id="ProjectName" class="form-control" name="ProjectName" value="@Model.ProjectName" />
+                                                    </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                        <div class="row">
-                                            <div class="col-md-5">
-                                                <div class="form-group">
-                                                    <label for="" class="form-control-label">ชื่อฝ่ายขาย</label>
-                                                    <input type="text" id="SaleName" class="form-control" name="SaleName" value="@(Model.SaleOrder!=null?Model.SaleOrder.Sale.EmpNameTh:"")" readonly />
+                                            <div class="row">
+                                                <div class="col-md-5">
+                                                    <div class="form-group">
+                                                        <label for="" class="form-control-label">ชื่อฝ่ายขาย</label>
+                                                        <input type="text" id="SaleName" class="form-control" name="SaleName" value="@(Model.SaleOrder!=null?Model.SaleOrder.Sale.EmpNameTh:"")" readonly />
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-2 col-sm-8">
+                                                    <div class="form-group">
+                                                        <label for="" class="form-control-label">โทรศัพท์</label>
+                                                        <input type="tel" id="SaleMobile" class="form-control" name="SaleMobile" value="@(Model.SaleOrder!=null?Model.SaleOrder.Sale.EmpMobile:"")" readonly />
+                                                    </div>
                                                 </div>
                                             </div>
-                                            <div class="col-md-2 col-sm-8">
-                                                <div class="form-group">
-                                                    <label for="" class="form-control-label">โทรศัพท์</label>
-                                                    <input type="tel" id="SaleMobile" class="form-control" name="SaleMobile" value="@(Model.SaleOrder!=null?Model.SaleOrder.Sale.EmpMobile:"")" readonly />
+                                            <div class="row">
+                                                <div class="col-md-5">
+                                                    <div class="form-group">
+                                                        <label for="" class="form-control-label">ชื่อลูกค้า</label>
+                                                        <input type="text" id="CustomerName" class="form-control" name="CustomerName" readonly value="@(Model.CustomerName != null ? Model.CustomerName : (customerDetail != null ? customerDetail.CustomerName : ""))" />
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-2 col-sm-8">
+                                                    <div class="form-group">
+                                                        <label for="" class="form-control-label">โทรศัพท์</label>
+                                                        <input type="tel" id="CustomerPhone" class="form-control" name="CustomerPhone" readonly value="@(Model.CustomerPhone!=null ? Model.CustomerPhone: (customerDetail!=null? customerDetail.CustomerPhone:"")) " />
+                                                    </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                        <div class="row">
-                                            <div class="col-md-5">
-                                                <div class="form-group">
-                                                    <label for="" class="form-control-label">ชื่อลูกค้า</label>
-                                                    <input type="text" id="CustomerName" class="form-control" name="CustomerName" readonly value="@(Model.CustomerName != null ? Model.CustomerName : (customerDetail != null ? customerDetail.CustomerName : ""))" />
+                                            <div class="row">
+                                                <div class="col-md-5">
+                                                    <div class="form-group">
+                                                        <label for="CustomerEmail" class="form-control-label">Email</label>
+                                                        <input type="text" id="CustomerEmail" class="form-control" name="CustomerEmail" readonly value="@(Model.CustomerEmail!=null ? Model.CustomerEmail: (customerDetail!=null? customerDetail.CustomerEmail:""))" />
+                                                    </div>
                                                 </div>
                                             </div>
-                                            <div class="col-md-2 col-sm-8">
-                                                <div class="form-group">
-                                                    <label for="" class="form-control-label">โทรศัพท์</label>
-                                                    <input type="tel" id="CustomerPhone" class="form-control" name="CustomerPhone" readonly value="@(Model.CustomerPhone!=null ? Model.CustomerPhone: (customerDetail!=null? customerDetail.CustomerPhone:"")) " />
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="row">
-                                            <div class="col-md-5">
-                                                <div class="form-group">
-                                                    <label for="CustomerEmail" class="form-control-label">Email</label>
-                                                    <input type="text" id="CustomerEmail" class="form-control" name="CustomerEmail" readonly value="@(Model.CustomerEmail!=null ? Model.CustomerEmail: (customerDetail!=null? customerDetail.CustomerEmail:""))" />
-                                                </div>
-                                            </div>
-                                        </div>
 
 
-                                    </div>
+                                        </div>
                                 </div>
                             </div>
                         </div>

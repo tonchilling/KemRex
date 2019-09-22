@@ -119,7 +119,7 @@ namespace Kemrex.Web.Main.Controllers
             {
                 var dd = Request.Form["TransferDate"];
 
-                obj.TransferDate = dd.ParseDate(DateFormat.ddMMyyyy, culInfo: _cultureTHInfo);
+                obj.TransferDate = dd.Trim().ParseDate(DateFormat.ddMMyyyy, culInfo: _cultureTHInfo);
             }
 
             obj.RefTransfer = null;
@@ -139,7 +139,7 @@ namespace Kemrex.Web.Main.Controllers
             try
             {
 
-                uow.Modules.Transfer.Set(obj);
+                uow.Modules.Transfer.SetOut(obj);
                 uow.SaveChanges();
 
 
