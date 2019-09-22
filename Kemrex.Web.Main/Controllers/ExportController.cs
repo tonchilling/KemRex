@@ -363,27 +363,29 @@ namespace Kemrex.Web.Main.Controllers
         }
         public FileResult PDFQuotation(int id)
         {
-            TblQuotation quo = uow.Modules.Quotation.Get(id);
-            quo.TblQuotationDetail = uow.Modules.QuotationDetail.Gets(id);
-            foreach (var pr in quo.TblQuotationDetail.ToList())
-            {
-                pr.Product = uow.Modules.Product.Get(pr.ProductId);
-                pr.Product.Unit = uow.Modules.Unit.Get(pr.Product.UnitId);
-            }
-            int cusid = quo.CustomerId.HasValue ? quo.CustomerId.Value : 0;
-            int GroupID = uow.Modules.Customer.GetByCondition(cusid).GroupId.HasValue ? uow.Modules.Customer.GetByCondition(cusid).GroupId.Value : 0;
-            string SaleTel = uow.Modules.Employee.GetByCondition(quo.SaleId).EmpMobile;
-            TblEmployee emp = uow.Modules.Employee.GetByCondition(quo.SaleId);
-            emp.Prefix = uow.Modules.Enum.PrefixGet(emp.PrefixId.HasValue ? emp.PrefixId.Value : 0);
-            //string TitleSale = emp.Prefix.PrefixNameTh;
-            string TitleSale = emp.Prefix.PrefixNameTh;
-
-            String html = string.Empty;
-            html = System.IO.File.ReadAllText(HttpContext.Server.MapPath("~/html/" + "QuotationHTML.html"));
-            string Header = System.IO.File.ReadAllText(HttpContext.Server.MapPath("~/html/" + "QuotationHeader.html"));
-            string Body = System.IO.File.ReadAllText(HttpContext.Server.MapPath("~/html/" + "QuotationBody.html"));
             using (MemoryStream stream = new System.IO.MemoryStream())
+            {
+                if (id <= 0) return File(stream.ToArray(), "application/pdf", "Quotation_" + ".pdf");
+                TblQuotation quo = uow.Modules.Quotation.Get(id);
+                quo.TblQuotationDetail = uow.Modules.QuotationDetail.Gets(id);
+                foreach (var pr in quo.TblQuotationDetail.ToList())
                 {
+                    pr.Product = uow.Modules.Product.Get(pr.ProductId);
+                    pr.Product.Unit = uow.Modules.Unit.Get(pr.Product.UnitId);
+                }
+                int cusid = quo.CustomerId.HasValue ? quo.CustomerId.Value : 0;
+                int GroupID = uow.Modules.Customer.GetByCondition(cusid).GroupId.HasValue ? uow.Modules.Customer.GetByCondition(cusid).GroupId.Value : 0;
+                string SaleTel = uow.Modules.Employee.GetByCondition(quo.SaleId).EmpMobile;
+                TblEmployee emp = uow.Modules.Employee.GetByCondition(quo.SaleId);
+                emp.Prefix = uow.Modules.Enum.PrefixGet(emp.PrefixId.HasValue ? emp.PrefixId.Value : 0);
+                //string TitleSale = emp.Prefix.PrefixNameTh;
+                string TitleSale = emp.Prefix.PrefixNameTh;
+
+                String html = string.Empty;
+                html = System.IO.File.ReadAllText(HttpContext.Server.MapPath("~/html/" + "QuotationHTML.html"));
+                string Header = System.IO.File.ReadAllText(HttpContext.Server.MapPath("~/html/" + "QuotationHeader.html"));
+                string Body = System.IO.File.ReadAllText(HttpContext.Server.MapPath("~/html/" + "QuotationBody.html"));
+            
 
                     string tagItem = "";
                     string tagBody = "";
@@ -391,21 +393,18 @@ namespace Kemrex.Web.Main.Controllers
                     int line = 0;
                     tagItem += Header;
                     tagItem += Body;
-                    decimal priceNet = 0;
                     TblProductOfWareHouse pow = new TblProductOfWareHouse();
                     foreach (var d in quo.TblQuotationDetail.ToList())
                     {
 
                         num++;
                         line++;
-                        pow = uow.Modules.ProductOfWareHouse.Get(d.ProductId, d.WHId.HasValue ? d.WHId.Value : 0);
-                        if (pow != null) priceNet = pow.PriceNet.HasValue ? pow.PriceNet.Value : 0;
                         tagBody += "<tr>";
                         tagBody += "<td align='left' style='border-right:1px;'> " + d.Product.ProductCode + "</td>";
                         tagBody += "<td align='left' style='border-right:1px;' >" + d.Product.ProductName + "</td>";
                         tagBody += "<td align='right' style='border-right:1px;' >" + (d.Quantity != 0 ? d.Quantity.ToString("###,###") : "") + "</td>";
                         tagBody += "<td align='center' style='border-right:1px;' >" + d.Product.Unit.UnitName + "</td>";
-                        tagBody += "<td align='right' style='border-right:1px;' >" + priceNet.ToString("###,###,###.00") + "</td>";
+                        tagBody += "<td align='right' style='border-right:1px;' >" + d.PriceUnit.ToString("###,###,###.00") + "</td>";
                         tagBody += "<td align='right' style='border-right:1px;' >" + (d.DiscountNet != 0 ? d.DiscountNet.ToString("###,###,###.00") : "") + "</td>";
                         tagBody += "<td align='right' >" + (d.TotalNet.HasValue ? d.TotalNet.Value.ToString("###,###,###.00") : "") + "</td>";
                         tagBody += "</tr>";
@@ -980,31 +979,33 @@ namespace Kemrex.Web.Main.Controllers
         }
         public FileResult PDFSaleOrder(int id)
         {
-            TblSaleOrder so = uow.Modules.SaleOrder.Get(id);
-            so.TblSaleOrderDetail = uow.Modules.SaleOrderDetail.Gets(id);
-            so.Customer = uow.Modules.Customer.Get(so.CustomerId.HasValue ? so.CustomerId.Value : -1);
-            foreach (var pr in so.TblSaleOrderDetail.ToList())
-            {
-                pr.Product = uow.Modules.Product.Get(pr.ProductId);
-                pr.Product.Unit = uow.Modules.Unit.Get(pr.Product.UnitId);
-            }
-            EnmPaymentCondition epc = new EnmPaymentCondition();
-            TblQuotation qo = uow.Modules.Quotation.Get(so.QuotationNo);
-            epc = uow.Modules.PaymentCondition.Get(so.ConditionId.Value);
-            int saleID = so.SaleId.HasValue ? so.SaleId.Value : 0;
-            string SaleTel = uow.Modules.Employee.GetByCondition(saleID).EmpMobile;
-            int DepartmentID = uow.Modules.Employee.GetByCondition(saleID).DepartmentId.HasValue ? uow.Modules.Employee.GetByCondition(saleID).DepartmentId.Value : 0;
-            string Department = uow.Modules.Department.Get(DepartmentID).DepartmentName;
-            TblEmployee emp = uow.Modules.Employee.GetByCondition(saleID);
-            emp.Prefix = uow.Modules.Enum.PrefixGet(emp.PrefixId.HasValue ? emp.PrefixId.Value : 0);
-            string TitleSale = emp.Prefix.PrefixNameTh;
-
-            String html = string.Empty;
-            html = System.IO.File.ReadAllText(HttpContext.Server.MapPath("~/html/" + "SaleOrderHTML.html"));
-            string Header = System.IO.File.ReadAllText(HttpContext.Server.MapPath("~/html/" + "SaleOrderHeader.html"));
-            string Body = System.IO.File.ReadAllText(HttpContext.Server.MapPath("~/html/" + "SaleOrderBody.html"));
             using (MemoryStream stream = new System.IO.MemoryStream())
             {
+                if (id <= 0) return File(stream.ToArray(), "application/pdf", "SaleOrder_" + ".pdf");
+                TblSaleOrder so = uow.Modules.SaleOrder.Get(id);
+                so.TblSaleOrderDetail = uow.Modules.SaleOrderDetail.Gets(id);
+                so.Customer = uow.Modules.Customer.Get(so.CustomerId.HasValue ? so.CustomerId.Value : -1);
+                foreach (var pr in so.TblSaleOrderDetail.ToList())
+                {
+                    pr.Product = uow.Modules.Product.Get(pr.ProductId);
+                    pr.Product.Unit = uow.Modules.Unit.Get(pr.Product.UnitId);
+                }
+                EnmPaymentCondition epc = new EnmPaymentCondition();
+                TblQuotation qo = uow.Modules.Quotation.Get(so.QuotationNo);
+                epc = uow.Modules.PaymentCondition.Get(so.ConditionId.Value);
+                int saleID = so.SaleId.HasValue ? so.SaleId.Value : 0;
+                string SaleTel = uow.Modules.Employee.GetByCondition(saleID).EmpMobile;
+                int DepartmentID = uow.Modules.Employee.GetByCondition(saleID).DepartmentId.HasValue ? uow.Modules.Employee.GetByCondition(saleID).DepartmentId.Value : 0;
+                string Department = uow.Modules.Department.Get(DepartmentID).DepartmentName;
+                TblEmployee emp = uow.Modules.Employee.GetByCondition(saleID);
+                emp.Prefix = uow.Modules.Enum.PrefixGet(emp.PrefixId.HasValue ? emp.PrefixId.Value : 0);
+                string TitleSale = emp.Prefix.PrefixNameTh;
+
+                String html = string.Empty;
+                html = System.IO.File.ReadAllText(HttpContext.Server.MapPath("~/html/" + "SaleOrderHTML.html"));
+                string Header = System.IO.File.ReadAllText(HttpContext.Server.MapPath("~/html/" + "SaleOrderHeader.html"));
+                string Body = System.IO.File.ReadAllText(HttpContext.Server.MapPath("~/html/" + "SaleOrderBody.html"));
+            
 
                 string tagItem = "";
                 string tagBody = "";
@@ -1012,21 +1013,18 @@ namespace Kemrex.Web.Main.Controllers
                 int line = 0;
                 tagItem += Header;
                 tagItem += Body;
-                decimal priceNet = 0;
                 TblProductOfWareHouse pow = new TblProductOfWareHouse();
                 foreach (var d in so.TblSaleOrderDetail.ToList())
                 {
 
                     num++;
                     line++;
-                    pow = uow.Modules.ProductOfWareHouse.Get(d.ProductId, d.WHId.HasValue ? d.WHId.Value : 0);
-                    if (pow != null) priceNet = pow.PriceNet.HasValue ? pow.PriceNet.Value : 0;
                     tagBody += "<tr>";
                     tagBody += "<td align='left' style='border-right:1px;'> " + d.Product.ProductCode + "</td>";
                     tagBody += "<td align='left' style='border-right:1px;' >" + d.Product.ProductName + "</td>";
                     tagBody += "<td align='right' style='border-right:1px;' >" + (d.Quantity != 0 ? d.Quantity.ToString("###,###") : "") + "</td>";
                     tagBody += "<td align='center' style='border-right:1px;' >" + d.Product.Unit.UnitName + "</td>";
-                    tagBody += "<td align='right' style='border-right:1px;' >" + priceNet.ToString("###,###,###.00") + "</td>";
+                    tagBody += "<td align='right' style='border-right:1px;' >" + d.PriceUnit.ToString("###,###,###.00") + "</td>";
                     tagBody += "<td align='right' style='border-right:1px;' >" + (d.DiscountNet != 0 ? d.DiscountNet.ToString("###,###,###.00") : "") + "</td>";
                     tagBody += "<td align='right' >" + (d.TotalNet.HasValue ? d.TotalNet.Value.ToString("###,###,###.00") : "") + "</td>";
                     tagBody += "</tr>";
@@ -1378,26 +1376,28 @@ namespace Kemrex.Web.Main.Controllers
         }
         public FileResult PDFInvoice(int id)
         {
-            TblInvoice invoice = new TblInvoice();
-            invoice = uow.Modules.Invoice.Get(id);
-            invoice.SaleOrder = uow.Modules.SaleOrder.Get(invoice.SaleOrderId);
-            invoice.SaleOrder.Customer = uow.Modules.Customer.Get(invoice.SaleOrder.CustomerId.HasValue ? invoice.SaleOrder.CustomerId.Value : -1);
-            invoice.SaleOrder.TblSaleOrderDetail = uow.Modules.SaleOrderDetail.Gets(invoice.SaleOrderId);
-            foreach (var pr in invoice.SaleOrder.TblSaleOrderDetail.ToList())
-            {
-                pr.Product = uow.Modules.Product.Get(pr.ProductId);
-                pr.Product.Unit = uow.Modules.Unit.Get(pr.Product.UnitId);
-            }
-            EnmPaymentCondition epc = new EnmPaymentCondition();
-            epc = uow.Modules.PaymentCondition.Get(invoice.SaleOrder.ConditionId.Value);
-            invoice.SaleOrder.JobOrder = uow.Modules.SaleOrder.GetJobOrder(invoice.SaleOrderId);
-
-            String html = string.Empty;
-            html = System.IO.File.ReadAllText(HttpContext.Server.MapPath("~/html/" + "InvoiceHTML.html"));
-            string Header = System.IO.File.ReadAllText(HttpContext.Server.MapPath("~/html/" + "InvoiceHeader.html"));
-            string Body = System.IO.File.ReadAllText(HttpContext.Server.MapPath("~/html/" + "InvoiceBody.html"));
             using (MemoryStream stream = new System.IO.MemoryStream())
             {
+                if (id <= 0) return File(stream.ToArray(), "application/pdf", "Invoice_" + ".pdf");
+                TblInvoice invoice = new TblInvoice();
+                invoice = uow.Modules.Invoice.Get(id);
+                invoice.SaleOrder = uow.Modules.SaleOrder.Get(invoice.SaleOrderId);
+                invoice.SaleOrder.Customer = uow.Modules.Customer.Get(invoice.SaleOrder.CustomerId.HasValue ? invoice.SaleOrder.CustomerId.Value : -1);
+                invoice.SaleOrder.TblSaleOrderDetail = uow.Modules.SaleOrderDetail.Gets(invoice.SaleOrderId);
+                foreach (var pr in invoice.SaleOrder.TblSaleOrderDetail.ToList())
+                {
+                    pr.Product = uow.Modules.Product.Get(pr.ProductId);
+                    pr.Product.Unit = uow.Modules.Unit.Get(pr.Product.UnitId);
+                }
+                EnmPaymentCondition epc = new EnmPaymentCondition();
+                epc = uow.Modules.PaymentCondition.Get(invoice.SaleOrder.ConditionId.Value);
+                invoice.SaleOrder.JobOrder = uow.Modules.SaleOrder.GetJobOrder(invoice.SaleOrderId);
+
+                String html = string.Empty;
+                html = System.IO.File.ReadAllText(HttpContext.Server.MapPath("~/html/" + "InvoiceHTML.html"));
+                string Header = System.IO.File.ReadAllText(HttpContext.Server.MapPath("~/html/" + "InvoiceHeader.html"));
+                string Body = System.IO.File.ReadAllText(HttpContext.Server.MapPath("~/html/" + "InvoiceBody.html"));
+
 
                 string tagItem = "";
                 string tagBody = "";
@@ -1405,21 +1405,17 @@ namespace Kemrex.Web.Main.Controllers
                 int line = 0;
                 tagItem += Header;
                 tagItem += Body;
-                decimal priceNet = 0;
-                TblProductOfWareHouse pow = new TblProductOfWareHouse();
                 foreach (var d in invoice.SaleOrder.TblSaleOrderDetail.ToList())
                 {
                     
                     num++;
                     line++;
-                    pow = uow.Modules.ProductOfWareHouse.Get(d.ProductId, d.WHId.HasValue ? d.WHId.Value : 0);
-                    if (pow != null) priceNet = pow.PriceNet.HasValue ? pow.PriceNet.Value : 0;
                     tagBody += "<tr>";
                     tagBody += "<td align='left' style='border-right:1px;'> " + d.Product.ProductCode + "</td>";
                     tagBody += "<td align='left' style='border-right:1px;' >" + d.Product.ProductName + "</td>";
                     tagBody += "<td align='right' style='border-right:1px;' >" + (d.Quantity != 0 ? d.Quantity.ToString("###,###") : "") + "</td>";
                     tagBody += "<td align='center' style='border-right:1px;' >" + d.Product.Unit.UnitName + "</td>";
-                    tagBody += "<td align='right' style='border-right:1px;' >" + priceNet.ToString("###,###,###.00") + "</td>";
+                    tagBody += "<td align='right' style='border-right:1px;' >" + d.PriceUnit.ToString("###,###,###.00") + "</td>";
                     tagBody += "<td align='right' style='border-right:1px;' >" + (d.DiscountNet != 0 ? d.DiscountNet.ToString("###,###,###.00") : "") + "</td>";
                     tagBody += "<td align='right' >" + (d.TotalNet.HasValue ? d.TotalNet.Value.ToString("###,###,###.00") : "") + "</td>";
                     tagBody += "</tr>";
