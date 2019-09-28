@@ -856,7 +856,15 @@ optEmployee = (List<TblEmployee>
             return false;
         });
 
+        
 
+        $("#StatusId").change(function () {
+            if ($(this).val() == "4") {
+                $(".btnConfirm").addClass("invisible");
+            } else {
+                $(".btnConfirm").removeClass("invisible");
+            }
+        });
 
         $("#selWareHose").change(function () {
 
@@ -1037,8 +1045,11 @@ optEmployee = (List<TblEmployee>
                                                                         @if (Model.StatusId >=3)
                                                                         {
                                                                             <option class="text-primary" value="3" @(Model.StatusId == 3 ? " selected=\" selected\"" : "")>ส่งลูกค้า</option>
+                                                                            if(Model.ApprovedBy>0)
+                                                                            {
                                                                             <option class="text-success" value="4" @(Model.StatusId == 4 ? " selected=\" selected\"" : "")>ตอบรับ</option>
                                                                             <option class="text-dark" value="5" @(Model.StatusId == 5 ? " selected=\" selected\"" : "")>ยกเลิก</option>
+                                                                            }
                                                                         }
                                                                     </select>
                                                                 </div>
@@ -1235,7 +1246,7 @@ optEmployee = (List<TblEmployee>
                                                                     <a href="#" class="btn btn-default btnCancel ">ยกเลิก</a>
                                                                 }
 
-                                                                @if (Model.StatusId > 0 && Model.StatusId <= 3 && optPermission.IsManager)
+                                                                @if (Model.StatusId > 0 && Model.StatusId <= 3 && optPermission.IsManager )
                                                                 {
                                                                     <button type="submit" id="btnConfirm" class="btn btn-success btnConfirm">
                                                                         อนุมัติ

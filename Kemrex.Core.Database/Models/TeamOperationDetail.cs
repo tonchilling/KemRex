@@ -13,7 +13,7 @@ namespace Kemrex.Core.Database.Models
         public DateTime CreatedDate { get; set; }
         public long UpdatedBy { get; set; }
         public DateTime UpdatedDate { get; set; }
-
+        public string Approve { get; set; }
         public virtual SysAccount Account { get; set; }
         public virtual TeamOperation Team { get; set; }
     }

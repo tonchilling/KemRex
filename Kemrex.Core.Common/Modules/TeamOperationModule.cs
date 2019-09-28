@@ -44,6 +44,7 @@ namespace Kemrex.Core.Common.Modules
                 .Where(x => x.TeamId == id)
                 .Include(x => x.Manager)
                 .Include(x => x.TeamOperationDetail)
+                 .ThenInclude(x => x.Account)
                 .FirstOrDefault() ?? new TeamOperation();
 
 
@@ -56,8 +57,32 @@ namespace Kemrex.Core.Common.Modules
                 CreatedDate = team.CreatedDate,
                 UpdatedBy = team.UpdatedBy,
                 UpdatedDate = team.UpdatedDate,
+                Approve=team.Approve,
                 Account = db.SysAccount.Where(o=>o.AccountId==team.AccountId).FirstOrDefault()
     }).ToList();
+
+
+
+            return teamOperation;
+
+
+
+        }
+
+
+        public TeamOperation GetSingle(int id)
+        {
+
+            TeamOperation teamOperation = db.TeamOperation
+
+                .Where(x => x.TeamId == id)
+                .Include(x => x.Manager)
+                .Include(x => x.TeamOperationDetail)
+                 .ThenInclude(x => x.Account)
+                .FirstOrDefault() ?? new TeamOperation();
+
+
+            
 
 
 

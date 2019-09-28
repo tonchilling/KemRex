@@ -117,7 +117,7 @@ namespace Kemrex.Core.Database
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            if (!optionsBuilder.IsConfigured)
+            if (!optionsBuilder.IsConfigured) 
             { optionsBuilder.UseSqlServer(constr); }
         }
 
@@ -2022,7 +2022,58 @@ namespace Kemrex.Core.Database
 
                 entity.Property(e => e.UpdatedDate).HasColumnType("datetime");
             });
-            
+
+
+            modelBuilder.Entity<TblPayment>(entity =>
+            {
+                entity.HasKey(e => e.PaymentId)
+                    .HasName("PK_Payment");
+
+                entity.Property(e => e.BankPayFrom).HasMaxLength(200);
+
+                entity.Property(e => e.BankPayFromBranch).HasMaxLength(200);
+
+                entity.Property(e => e.CreatedDate).HasColumnType("datetime");
+
+                entity.Property(e => e.CustomerName).HasMaxLength(500);
+
+                entity.Property(e => e.InvoiceNo).HasMaxLength(50);
+
+                entity.Property(e => e.PaySlipPath).HasMaxLength(300);
+
+                entity.Property(e => e.PaymentAmount).HasColumnType("decimal(12, 2)");
+
+                entity.Property(e => e.PaymentDate).HasColumnType("datetime");
+
+                entity.Property(e => e.PaymentNo)
+                    .IsRequired()
+                    .HasMaxLength(50);
+
+                entity.Property(e => e.UpdatedDate).HasColumnType("datetime");
+            });
+
+
+            modelBuilder.Entity<TblBankAccount>(entity =>
+            {
+                entity.HasKey(e => e.AcctId)
+                    .HasName("PK_TblBankAccount_1");
+
+                entity.Property(e => e.AcctName).HasMaxLength(200);
+
+                entity.Property(e => e.AcctNo)
+                    .IsRequired()
+                    .HasMaxLength(20);
+
+                entity.Property(e => e.Bank).HasMaxLength(200);
+
+                entity.Property(e => e.Branch).HasMaxLength(200);
+
+                entity.Property(e => e.CreateDate).HasColumnType("datetime");
+
+                entity.Property(e => e.Type).HasMaxLength(20);
+
+                entity.Property(e => e.UpdateDate).HasColumnType("datetime");
+            });
 
         }
     }

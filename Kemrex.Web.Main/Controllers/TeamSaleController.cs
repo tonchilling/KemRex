@@ -43,6 +43,11 @@ namespace Kemrex.Web.Main.Controllers
                     Total = total
                 };
                 ViewBag.Pagination = Pagination;
+
+                AccountPermission permission = new AccountPermission();
+                permission = GetPermissionSale(CurrentUser.AccountId, CurrentUser.AccountId);
+                ViewData["userAccount"] = CurrentUser;
+                ViewData["optPermission"] = permission;
                 lst = uow.Modules.TeamSale.Gets(Pagination.Page, Pagination.Size);
             }
             catch (Exception ex)
@@ -58,7 +63,7 @@ namespace Kemrex.Web.Main.Controllers
         }
 
         [Authorized]
-        [ValidateAntiForgeryToken]
+
         [HttpPost, ActionName(KemrexPath.ACTION_DETAIL)]
         public ActionResult SetDetail()
         {
@@ -68,6 +73,7 @@ namespace Kemrex.Web.Main.Controllers
                 { "msgType", AlertMsgType.Danger }
             };
             int teamId = Request.Form["teamId"].ParseInt();
+            string teamSaleIds = Request.Form["hdApprove"];
             TeamSale ob = uow.Modules.TeamSale.Get(teamId);
             bool isInsert = ob.TeamId <= 0;
             if (ob.TeamId <= 0)
@@ -76,6 +82,7 @@ namespace Kemrex.Web.Main.Controllers
                 ob.CreatedDate = CurrentDate;
             }
             ob.TeamName = Request.Form["teamName"];
+            
             ob.ManagerId = Request.Form["managerId"].ParseInt();
             ob.UpdatedBy = CurrentUID;
             ob.UpdatedDate = CurrentDate;
@@ -87,6 +94,23 @@ namespace Kemrex.Web.Main.Controllers
                 uow.Modules.TeamSale.Set(ob);
                 uow.SaveChanges();
 
+                List<TeamSaleDetail> obTeamDetail = uow.Modules.TeamSaleDetail.Gets(teamId);
+
+
+                if (obTeamDetail != null && obTeamDetail.Count > 0)
+                {
+                    foreach (string accountId in teamSaleIds.Split(','))
+                    {
+                        TeamSaleDetail detail = obTeamDetail.Find(o=>o.AccountId== accountId.ParseLong());
+                        detail.Approve = "1";
+
+                        uow.Modules.TeamSaleDetail.Set(detail);
+                    }
+
+                    uow.SaveChanges();
+
+
+                }
                 rs["msg"] = "บันทึกข้อมูลเรียบร้อยแล้ว";
                 rs["msgType"] = AlertMsgType.Success;
 
@@ -101,7 +125,7 @@ namespace Kemrex.Web.Main.Controllers
         }
 
         [Authorized]
-        [ValidateAntiForgeryToken]
+     
         [HttpPost, ActionName(KemrexPath.ACTION_DETAIL + KemrexPath.ACTION_SET)]
         public ActionResult SetDetailData()
         {
@@ -220,6 +244,10 @@ namespace Kemrex.Web.Main.Controllers
                     ViewBag.Alert = alert;
                 }
                 ViewData["optSale"] = uow.Modules.TeamSale.GetNotMembers();
+                AccountPermission permission = new AccountPermission();
+                permission = GetPermissionSale(CurrentUser.AccountId, CurrentUser.AccountId);
+                ViewData["userAccount"] = CurrentUser;
+                ViewData["optPermission"] = permission;
                 return View("Detail", ob);
             }
             catch (Exception ex)

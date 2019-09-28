@@ -9,6 +9,8 @@
     Layout = kemrex.PathViewShared("_lyDefault");
     WidgetAlertModel Alert = (WidgetAlertModel)ViewBag.Alert;
     WidgetPaginationModel Pagination = (WidgetPaginationModel)ViewBag.Pagination;
+    AccountPermission optPermission = (AccountPermission)ViewData["optPermission"];
+    
 }
 
 @section Scripts {
@@ -27,15 +29,11 @@
     <div class="page-header">
         <h1 class="page-title">ทีมขาย</h1>
         <div class="page-header-actions">
-            <a href="@kemrex.UrlAction(PathHelper.SaleTeamDetail)" class="btn btn-sm btn-primary btn-round">
-                <span class="text hidden-sm-down">เพิ่มข้อมูล</span>
-                <i class="icon wb-plus" aria-hidden="true"></i>
-            </a>
+           
         </div>
         <ol class="breadcrumb">
             <li class="breadcrumb-item"><a href="@kemrex.UrlAction(PathHelper.Home)">หน้าแรก</a></li>
-            <li class="breadcrumb-item"><a href="javascript:void(0)">ตั้งค่าพื้นฐาน</a></li>
-            <li class="breadcrumb-item"><a href="javascript:void(0)">ข้อมูลพนักงาน</a></li>
+            <li class="breadcrumb-item"><a href="javascript:void(0)">ฝ่ายขาย</a></li>
             <li class="breadcrumb-item active">ทีมขาย</li>
         </ol>
     </div>
@@ -51,7 +49,16 @@
                         <div class="row">
                             <div class="col-12 col-sm-6 form-inline">
                                 @Html.Partial(kemrex.PathViewShared("_wgPaginationSize"), Pagination)
-                            </div>
+
+                                @if (optPermission.IsAdminTeam || optPermission.IsManager)
+                                {
+                                    <a href="@kemrex.UrlAction(PathHelper.SaleTeamDetail)" class="btn btn-sm btn-primary">
+                                        <i class="icon wb-plus" aria-hidden="true"></i>
+                                        <span class="text hidden-sm-down">เพิ่มข้อมูล</span>
+
+                                    </a>
+                                }
+                                </div>
                             <div class="col-12 col-sm-6">
                                 <div class="pull-right">
                                     @Html.Partial(kemrex.PathViewShared("_wgPagination"), Pagination)
@@ -65,10 +72,10 @@
                                 <div class="table-responsive">
                                     <table class="table table-bordered table-hover">
                                         <thead>
-                                            <tr>
-                                                <th>ชื่อทีม</th>
-                                                <th>หัวหน้าทีม</th>
-                                                <th>เครื่องมือ</th>
+                                            <tr class="table-primary">
+                                                <th class="text-center">ชื่อทีม</th>
+                                                <th class="text-center">หัวหน้าทีม</th>
+                                                <th class="text-center">เครื่องมือ</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -84,15 +91,31 @@
                                                     <td>@ob.TeamName</td>
                                                     <td>@ob.Manager.AccountName</td>
                                                     <td>
-                                                        <a href="@(kemrex.UrlAction<int>(PathHelper.SaleTeamDetail, ob.TeamId))"
-                                                           class="btn btn-xs btn-primary">
-                                                            <i class="fa fa-pencil" aria-hidden="true"></i>&nbsp;แก้ไข
-                                                        </a>
-                                                        <form method="post" action="@kemrex.UrlAction(PathHelper.SaleTeamDelete)"
-                                                              class="fnc-delete inline-block">
+                                                        @if (optPermission.IsAdminTeam || optPermission.IsManager)
+                                                        {
+                                                            <a href="@(kemrex.UrlAction<int>(PathHelper.SaleTeamDetail, ob.TeamId))"
+                                                               class="btn btn-xs btn-primary">
+
+                                                                <i class="fa fa-pencil" aria-hidden="true"></i>&nbsp;แก้ไข
+                                                            </a>
+                                                        }
+                                                        else
+                                                        {
+
+                                                    <a href="@(kemrex.UrlAction<int>(PathHelper.SaleTeamDetail, ob.TeamId))"
+                                                       class="btn btn-xs btn-success">
+
+                                                        <i class="glyphicon glyphicon-zoom-in" aria-hidden="true"></i>&nbsp;เรียกดู
+                                                    </a>
+                                                }<form method="post" action="@kemrex.UrlAction(PathHelper.SaleTeamDelete)"
+                                                       class="fnc-delete inline-block">
                                                             <input type="hidden" name="TeamId" value="@ob.TeamId" />
                                                             @Html.AntiForgeryToken()
-                                                            <button type="submit" class="btn btn-danger btn-xs"><i class="fa fa-trash" aria-hidden="true"></i>&nbsp;ลบ</button>
+
+                                                            @if (optPermission.IsAdminTeam || optPermission.IsManager)
+                                                            {
+                                                                <button type="submit" class="btn btn-danger btn-xs"><i class="fa fa-trash" aria-hidden="true"></i>&nbsp;ลบ</button>
+                                                            }
                                                         </form>
                                                     </td>
                                                 </tr>
