@@ -23,7 +23,7 @@
 }
 
 @section Styles {
-    <link rel="stylesheet" href="~/themes/@kemrex.GetCurrentTheme()/libs/fullcalendar/fullcalendar.min.css" />
+    <link rel="stylesheet" href="~/themes/@kemrex.GetCurrentTheme()/libs/fullcalendar/fullcalendar.min.css?v=8" />
     <link rel="stylesheet" href="~/themes/@kemrex.GetCurrentTheme()/css/calendar.min.css" />
     <style type="text/css">
         .dashboard .card, .dashboard .panel {
@@ -134,7 +134,7 @@
             background-color: #dc3545;
         }
 
-        .card {
+        /*  .card {
             border-radius: 4px;
             box-shadow: 0 1px 2px rgba(0,0,0,.05), 0 0 0 1px rgba(63,63,68,.1);
             background-color: #fff;
@@ -147,6 +147,7 @@
             font-size: 2em;
             text-align: right;
         }
+          */
 
         .numbers {
             font-size: 2em;
@@ -424,7 +425,7 @@
         </div>
     </div>
 
-    <div class="page-content container-fluid">
+    <div class="page-content container-fluid animsition">
         <div class="row">
             <div class="col-lg-3 col-sm-12">
                 <div class="card card-stats bg-blue-300">
@@ -669,7 +670,7 @@
                                                                         }
                                                                         @for (int week = 1; week <= 6; week++)
                                                                         {
-                                                                            <div class="fc-row fc-week fc-widget-content fc-rigid" style="min-height: 86px;">
+                                                                            <div class="fc-row fc-week fc-widget-content fc-rigid" >
                                                                                 <div class="fc-bg">
                                                                                     <table class="">
                                                                                         <tbody>

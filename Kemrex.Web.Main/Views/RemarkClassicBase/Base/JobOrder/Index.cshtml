@@ -39,6 +39,7 @@
               html += '<tr class="table-primary" >';
               html += '<th>เลขที่ใบสั่งงาน</th>';
               html += '<th>ชื่องาน</th>';
+              html += '<th>ทีมติดตั้ง</th>';
               html += '<th>ลูกค้า</th>';
              html += '<th>วันที่</th>';
               html += '<th>สถานะ</th>';
@@ -67,6 +68,7 @@
                                 html += '<tr>';
                                 html += '<td>' + item.JobOrderNo + '</td>';
                                 html += '<td>' + item.JobName + '</td>';
+                                html += '<td>' + (item.Team != null ? item.Team.TeamName:"") + '</td>';
                                 html += '<td>' + item.CustomerName + '</td>';
                                 html += '<td>' + item.StartDateToString + '</td>';
                                 html += '<td>' + item.Status + '</td>';

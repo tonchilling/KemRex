@@ -71,6 +71,17 @@ namespace Kemrex.Core.Common.Modules
             return data.ToList();
         }
 
+
+        public List<TeamSaleDetail> Gets( int teamId = 0)
+        {
+            var data = db.TeamSaleDetail.Where(x => x.TeamId == teamId)
+                .AsQueryable();
+
+
+            return data.ToList();
+        }
+
+
         public bool IsExist(int id)
         { return db.TeamSaleDetail.Where(x => x.Id == id).Count() > 0 ? true : false; }
 

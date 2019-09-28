@@ -190,7 +190,7 @@ namespace Kemrex.Web.Main.Controllers
                     so.SummaryNet = qt.SummaryNet;
                     so.SummaryTot = qt.SummaryTot;
                     so.SummaryVat = qt.SummaryVat;
-
+                    so.SaleOrderCreditDay = qt.QuotationCreditDay;
                     uow.Modules.SaleOrder.Set(so);
                     // uow.SaveChanges();
 
@@ -519,7 +519,7 @@ namespace Kemrex.Web.Main.Controllers
 
                 ob.CustomerId = quotation.CustomerId;
                 ob.CustomerName = quotation.CustomerName;
-
+                ob.SaleOrderCreditDay = quotation.QuotationCreditDay;
                 ob.ContractName = quotation.ContractName;
                 ob.BillingAddress = quotation.BillingAddress;
 
