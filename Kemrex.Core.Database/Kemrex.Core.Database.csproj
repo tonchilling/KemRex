@@ -184,6 +184,7 @@
     <Compile Include="Models\SysSurveyHeaderTemplate.cs" />
     <Compile Include="Models\TblAccountTeam.cs" />
     <Compile Include="Models\TblAccountTeamMember.cs" />
+    <Compile Include="Models\TblBankAccount.cs" />
     <Compile Include="Models\TblCalLoad.cs" />
     <Compile Include="Models\TblCustomer.cs" />
     <Compile Include="Models\TblCustomerAddress.cs" />
@@ -210,6 +211,7 @@
     <Compile Include="Models\TblKptStation.cs" />
     <Compile Include="Models\TblKptStationAttachment.cs" />
     <Compile Include="Models\TblKptStationDetail.cs" />
+    <Compile Include="Models\TblPayment.cs" />
     <Compile Include="Models\TblPile.cs" />
     <Compile Include="Models\TblPileSeries.cs" />
     <Compile Include="Models\TblPosition.cs" />
