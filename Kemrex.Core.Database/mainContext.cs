@@ -109,6 +109,8 @@ namespace Kemrex.Core.Database
 
         public virtual DbSet<TblQuotationDetailTemplate> TblQuotationDetailTemplate { get; set; }
         public virtual DbSet<TblQuotationTemplate> TblQuotationTemplate { get; set; }
+        public virtual DbSet<TblPayment> TblPayment { get; set; }
+        public virtual DbSet<TblBankAccount> TblBankAccount { get; set; }
 
 
         // Unable to generate entity type for table 'dbo.Product_Temp'. Please see the warning messages.
@@ -2020,6 +2022,7 @@ namespace Kemrex.Core.Database
 
                 entity.Property(e => e.UpdatedDate).HasColumnType("datetime");
             });
+            
 
         }
     }

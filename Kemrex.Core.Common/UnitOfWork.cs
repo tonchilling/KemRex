@@ -100,6 +100,8 @@ namespace Kemrex.Core.Common
             private TransferStockModule _TransferStock;
             private SurveyModule _SurveyModule;
             private WareHouseModule _WareHouse;
+            private PaymentModule _Payment;
+            private BankAccountModule _BankAccount;
 
             public AccountModule Account => _Account ?? (_Account = new AccountModule(db));
             public CustomerAddressModule CustomerAddress => _CustomerAddress ?? (_CustomerAddress = new CustomerAddressModule(db));
@@ -147,7 +149,8 @@ namespace Kemrex.Core.Common
 
             public SurveyModule Survey => _SurveyModule ?? (_SurveyModule = new SurveyModule(db));
             public WareHouseModule WareHouse => _WareHouse ?? (_WareHouse = new WareHouseModule(db));
-
+            public PaymentModule Payment => _Payment ?? (_Payment = new PaymentModule(db));
+            public BankAccountModule BankAccount => _BankAccount ?? (_BankAccount = new BankAccountModule(db));
 
         }
         #endregion
