@@ -1,0 +1,748 @@
+﻿@using Kemrex.Core.Database.Models
+@using Kemrex.Web.Common.Controllers
+@using Kemrex.Web.Common.Models
+
+@model TblInvoice
+@{
+    ViewBag.Title = "Index";
+    KemrexController kemrex = ((KemrexController)this.ViewContext.Controller);
+    Layout = kemrex.PathViewShared("_lyDefault");
+    WidgetAlertModel Alert = (WidgetAlertModel)ViewBag.Alert;
+
+    List<TblQuotation>
+    optQuotation = (List<TblQuotation>
+    )ViewData["optQuotation"];
+
+    List<TblSaleOrder> optSaleOrder = (List<TblSaleOrder>)ViewData["optSaleOrder"];
+    List<EnmPaymentCondition> optPayment = (List<EnmPaymentCondition>
+      )ViewData["optPayment"];
+    AccountPermission optPermission = (AccountPermission
+     )ViewData["optPermission"];
+    List<TblInvoice> optHistoryAmt = (List<TblInvoice>
+      )ViewData["optHistoryAmt"];
+    decimal optRemain = (decimal)ViewData["optRemain"];
+    decimal optInvoiceRemain = (decimal)ViewData["optInvoiceRemain"];
+    decimal TotalInvoice = (Model.SaleOrder != null ? (Model.SaleOrder.SummaryNet.HasValue ? Model.SaleOrder.SummaryNet.Value : decimal.Zero) : decimal.Zero);
+    decimal RemainAmt = TotalInvoice - optRemain;
+    bool canedit = false;
+    bool changestatus = false;
+    if (Model.StatusId != 3 && Model.SaleOrderId > 0)
+    {
+        if (optPermission.IsEdit)
+        {
+            changestatus = true;
+        }
+    }
+    if (Model.StatusId == 1 || Model.StatusId == null)
+    {
+        canedit = true;
+    }
+}
+@section Styles {
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.8.0/css/bootstrap-datepicker.min.css" rel="stylesheet" type="text/css" />
+
+
+
+}
+@section Scripts {
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.8.0/js/bootstrap-datepicker.min.js"></script>
+    <script type="text/javascript">
+
+        var _contact = [];
+
+        $(document).ready(function () {
+
+            window.setTimeout(function () {
+                $(".alert").fadeTo(1000, 0).slideUp(1000, function () {
+                    $(this).remove();
+                });
+            }, 5000);
+
+            $(SaleMenu).slideToggle();
+
+           /* var tab = TabPages.init('myTabPage');
+
+
+            var myTabElement = new TabPages('myTabPage');
+            myTabElement.initTabs();
+            myTabElement.selectTab('navInfo');
+
+            if (getUrlVars()["tab"] == "Product") {
+                myTabElement.selectTab('navProducts');
+            }
+            calDiscount();
+            */
+        });
+
+        function getUrlVars() {
+            var vars = [], hash;
+            var hashes = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');
+            for (var i = 0; i < hashes.length; i++) {
+                hash = hashes[i].split('=');
+                vars.push(hash[0]);
+                vars[hash[0]] = hash[1];
+            }
+            return vars;
+        }
+         $('.btnSearchSaleOrder').click(function () {
+
+
+            $('.divSaleOrder').empty();
+            var html = '';
+            html += '<table class="table table-hover">';
+            html += '<thead> ';
+            html += '<tr>';
+            html += '<th>กรุณาเลือก</th>';
+            html += '<th>เลขใบเสนอราคา</th>';
+            html += '<th>เลขใบสั่งขาย</th>';
+            html += '<th>ชื่อลูกค้า</th>';
+            html += '<th>วันที่สั่งขาย</th>';
+            html += '<th>Sale</th>';
+            html += '</tr>';
+            html += '</thead>';
+            html += '<tbody>';
+
+
+
+            var url = '@Url.Action("GetSaleOrderForInvoice", "SaleOrder")';
+                   $.ajax({
+                type: "get",
+                url: url,
+                       data: { startDate: $("#SaleOrderStartDate").val(), toDate: $("#SaleOrderEndDate").val(), statusId: "2" },
+                       success: function (obj) {
+                           $.each(obj, function (index, item) {
+
+                               html += '<tr data=' + item.SaleOrderId + ' customerid=' + item.CustomerId + '>';
+                               html += '<td><button type="button" class="btn btn-primary btnSellectSaleOrder">เลิอก</button></td>';
+                               html += '<td>' + item.QuotationNo + '</td>';
+                               html += '<td>' + item.SaleOrderNo + '</td>';
+                               html += '<td>' + item.CustomerName + '</td>';
+                               html += '<td>' + item.StrSaleOrderDate + '</td>';
+                               html += '<td>' + item.SaleName + '</td>';
+                               html += '</tr>';
+                           });
+
+                           html += '</tbody>';
+                           html += '</table>';
+                           html += ' </div>';
+
+
+                           $('.divSaleOrder').append(html);
+                           $('.divSaleOrder table').DataTable();
+                       },
+                       error: function (jqXHR, textStatus, errorThrown) {
+                           alert(errorThrown);
+                           //or you can put jqXHR.responseText somewhere as complete response. Its html.
+                       }
+                   });
+
+
+
+
+        });
+         $(document).on("click", ".btnSellectSaleOrder", function () {
+             $('#SaleOrderId').val($(this).closest('tr').attr('data'));
+
+
+             $('#selSaleOrder').val($(this).closest('tr').attr('data'));
+
+
+                  var url = '@Url.Action("GetSaleOrderById", "SaleOrder")';
+            $.ajax({
+                type: "get",
+                contentType: 'application/json; charset=utf-8',
+                url: url,
+                data: { id: $(this).closest('tr').attr('data') },
+                success: function (obj) {
+
+                    $('#SaleOrderId').val(obj.SaleOrderId);
+                    $('#selSaleOrder').val(obj.QuotationNo + " / " + obj.SaleOrderNo);
+                    //$('#CustomerEmail').val(obj.Customer.CustomerEmail);
+                    //$('#SaleName').val(obj.Sale.EmpNameTh);
+                    //$('#SalePhone').val(obj.Sale.EmpMobile);
+                   // $('#SaleEmail').val(obj.Sale.CustomerEmail);
+
+                    $('#SaleOrderModal').modal('hide');
+                }
+            });
+
+
+        });
+        $(document).on("click", "#btnSO2INV", function () {
+
+
+            var isConfirm = true;
+            if ($('#selSaleOrder').val()=="") {
+                isConfirm = false;
+            }
+
+            if ($("#selSaleOrder").val() == "") {
+                $("#selSaleOrder").addClass("has-error");
+                chkValidate = false;
+            } else {
+                $("#selSaleOrder").removeClass("has-error");
+            }
+
+
+            if (isConfirm) {
+
+                swal({
+                    title: "Import",
+                    text: "Do you want to import?",
+                    type: "info",
+                    showCancelButton: true,
+                    closeOnConfirm: false,
+                    showLoaderOnConfirm: true
+                },
+                    function (isConfirm) {
+                        if (isConfirm) {
+                            //$('#frmMain').attr('action', '@Url.Action("Detail", "Invoice")');
+                            $('#frmMain').submit();
+
+                        }
+                    });
+            }
+
+            return false;
+
+        });
+        $("#btnSubmit").click(function () {
+
+            KeepData();
+            var isConfirm = AddInvoiceValidation();
+
+
+            if (isConfirm) {
+                swal({
+                    title: "SAVE",
+                    text: "Do you want to save product?",
+                    type: "info",
+                    showCancelButton: true,
+                    closeOnConfirm: false,
+                    showLoaderOnConfirm: true
+                },
+                    function (isConfirm) {
+                        if (isConfirm) {
+                            $('#frmMain').submit();
+
+                        }
+                    });
+            }
+            return false;
+
+
+            /*  selProduct
+              ProductQty
+              ProductPrice
+              ProductDiscount
+              */
+        });
+        function KeepData() {
+
+            var selected = 0;
+
+            //$("#selIsDeposit:checked").each(function () {
+
+            //    selected = 1;
+            //});
+            //$("#hddIsDeposit").val(selected);
+
+
+        }
+        function AddInvoiceValidation() {
+
+            /* selProduct
+             ProductQty
+             ProductPrice
+             ProductDiscount*/
+
+            var chkValidate = true;
+
+
+            if ($("#selSaleOrder").val() == "") {
+                $("#selSaleOrder").addClass("has-error");
+                chkValidate = false;
+            } else {
+                $("#selSaleOrder").removeClass("has-error");
+            }
+
+            var value = $('select#StatusId option:selected').val();
+            var invAmt = parseFloat($("#InvoiceAmount").val()).toFixed(2);
+            if (value != 1) {
+                if (invAmt > 0) {
+                    $("#InvoiceAmount").removeClass("has-error");
+
+                } else {
+                    $("#InvoiceAmount").addClass("has-error");
+                    chkValidate = false;
+                }
+
+            }
+
+            return chkValidate;
+
+        }
+        $("#InvoiceAmount").keyup(function () {
+            //InvoiceRemain
+            var InvAmt = $("#InvoiceAmount").val();
+            var InvRemain = @TotalInvoice - @optInvoiceRemain - InvAmt;
+            $("#InvoiceRemain").text(" (ยังไม่ได้เรียกเก็บ " + InvRemain.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,') + ")");
+        });
+        function calremain() {
+
+
+
+        }
+
+    </script>
+}
+
+<body data-spy="scroll" data-target="#myTap" data-offset="300">
+
+    <div class="page">
+        <div class="page-header">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="@Url.Action("Index", new { controller = "Payment", area = "" })" })">ย้อนกลับ</a></li>
+            </ol>
+        </div>
+        <div class="page-content container-fluid">
+            @if (ViewBag.Alert != null)
+            {
+                <div class="row">
+                    <div class="col-12">
+                        @Html.Partial(kemrex.PathViewShared("_wgAlert"), Alert)
+                    </div>
+                </div>
+            }
+            <div class="row">
+                <div class="col-12">
+                    <div class="panel">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">
+                                @(Model.InvoiceId > 0 ? "แก้ไข" : "เพิ่ม")เอกสาร
+                                <span class="panel-desc">รายการชำระเงิน</span>
+                            </h3>
+                            <table width="100%" style="margin: -50px 30px 0 0; float:right;">
+                                <tr>
+                                    <td align="right">
+                                        <div style="text-align:right;">
+                                            @{
+                                                int condi = 0;
+                                                if (Model.InvoiceId > 0)
+                                                {
+                                                    if (Model.SaleOrder.ConditionId.HasValue)
+                                                    {
+                                                        condi = Model.SaleOrder.ConditionId.Value;
+                                                    }
+                                                }
+                                                @*if (Model.SaleOrder.ConditionId == 3 || Model.SaleOrder.ConditionId == 4 || Model.SaleOrder.ConditionId == 5)
+                                                {
+                                                    if (Model.InvoiceTerm == 1)
+                                                    {
+                                                        <a href="@Url.Action("PDFDepositInvoice", new { controller = "export", area = "", id = Model.InvoiceId  })"
+                                                           class="btn btn-xs btn-warning">
+                                                            <i class="fa fa-file-pdf-o" aria-hidden="true"></i>&nbsp;PDF
+                                                        </a>
+
+                                                    }
+                                                    else
+                                                    {
+                                                        <a href="@Url.Action("PDFInvoice", new { controller = "export", area = "", id = Model.InvoiceId })"
+                                                           class="btn btn-xs btn-warning">
+                                                            <i class="fa fa-file-pdf-o" aria-hidden="true"></i>&nbsp;PDF
+                                                        </a>
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    <a href="@Url.Action("PDFInvoice", new { controller = "export", area = "", id = Model.InvoiceId })"
+                                                       class="btn btn-xs btn-warning">
+                                                        <i class="fa fa-file-pdf-o" aria-hidden="true"></i>&nbsp;PDF
+                                                    </a>
+                                                }*@
+                                                
+                                            }
+
+
+                                        </div>
+                                    </td>
+                                </tr>
+                            </table>
+                            <div style="clear:both;"></div>
+
+                        </div>
+
+                        <div class="panel">
+                            <form method="post" id="frmMain" name="frmMain" action="@Url.Action("Detail", "Invoice")" enctype="multipart/form-data">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="PaymentId" value="@Model.InvoiceId" />
+                                <div class="panel-body">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label for="InvNo" class="col-sm-4 col-form-label">เลขที่ใบแจ้งหนี้</label>
+                                                <div class="col-sm-7">
+                                                    <input type="text" placeholder="บันทึกเพื่อสร้าง" class="form-control" value="@Model.InvoiceNo" readonly />
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="QuotationNo" class="col-sm-6 col-form-label">เลขที่ใบเสนอราคา / ใบสั่งขาย</label>
+                                                <div class="col-sm-7">
+                                                    <div class="input-group">
+                                                        @*<select class="form-control" id="selSaleOrder" data-live-search="true" readonly
+                                                                    name="selSaleOrder" >
+                                                                <option value="-1" )>กรุณาเลือก</option>
+                                                                @foreach (TblSaleOrder so in optSaleOrder)
+                                                                {
+                                                                    bool selected = so.SaleOrderId == Model.SaleOrderId;
+                                                                    <option value="@so.SaleOrderId" @(selected ? " selected=\" selected\"" : "" )>@so.QuotationNo / @so.SaleOrderNo</option>
+                                                                }
+                                                            </select>*@
+
+                                                        @{
+                                                            var sq = "";
+
+                                                            if (Model.SaleOrder != null)
+
+                                                            {
+                                                                if (Model.SaleOrder.SaleOrderNo != null)
+                                                                {
+                                                                    sq = Model.SaleOrder.QuotationNo + " / " + Model.SaleOrder.SaleOrderNo;
+                                                                }
+                                                            }
+                                                        }
+
+                                                        <input type="text" placeholder="" class="form-control" id="selSaleOrder" name="selSaleOrder" value="@sq" readonly />
+                                                        <input type="hidden" id="SaleOrderId" name="SaleOrderId" value="@Model.SaleOrder.SaleOrderId" />
+                                                        <div class="input-group-append">
+                                                            <button class="btn btn-outline-secondary btn-primary" type="button"
+                                                                    data-toggle="modal"
+                                                                    data-target="#SaleOrderModal"
+                                                                    id="button-quotation"
+                                                                    @(canedit ? "" : "disabled")>
+                                                                ...
+                                                            </button>
+                                                            <div class="input-group-append">
+                                                                <button class="btn btn-outline-secondary btn-warning" type="button"
+                                                                        id="btnSO2INV"
+                                                                        @(canedit ? "" : "disabled")>
+                                                                    ดึงข้อมูล
+                                                                </button>
+
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label class="col-sm-4 col-form-label">ยอดจากใบสั่งขาย</label>
+                                                <div class="input-group col-sm-6">
+                                                    @{
+                                                        //var total = (Model.SaleOrder != null ? Model.SaleOrder.SummaryTot - Model.SaleOrder.DiscountCash : decimal.Zero);
+                                                        var total = (Model.SaleOrder != null ? Model.SaleOrder.SummaryNet : decimal.Zero);
+                                                    }
+                                                    <input type="text" class="form-control text-right border-0" value="@total" id="SummaryNet" name="SummaryNet" readonly />
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="InvoiceAmount" class="col-sm-2 col-form-label">ยอดเรียกเก็บ</label><label for="InvoiceAmount" id="InvoiceRemain" name="InvoiceRemain" class="col-sm-4 col-form-label"> (ยังไม่ได้เรียกเก็บ @RemainAmt)</label>
+                                                <div class="input-group col-sm-6">
+                                                    <span class="input-group-addon">
+                                                        <i class="icon wb-payment  icon-2-5x text-danger" aria-hidden="true"></i>
+                                                    </span>
+                                                    @{
+                                                        var checkInvoice = false;
+                                                        if (canedit)
+                                                        {
+                                                            if (Model.InvoiceNo != null)
+                                                            {
+                                                                checkInvoice = true;
+                                                            }
+                                                        }
+
+                                                    }
+
+                                                    <input type="text" class="form-control text-right" name="InvoiceAmount" id="InvoiceAmount" value="@Model.InvoiceAmount" @(checkInvoice ? "" : "readonly") />
+
+                                                </div>
+                                            </div>
+                                            @*<div class="form-group">
+                                                    <div class="input-group col-sm-6">
+                                                            @{
+                                                                bool selected = (Model.IsDeposit == 1 ? true : false);
+                                                            }
+                                                            <div class="checkbox col-sm-6">
+                                                                <label>
+                                                                    <input data-toggle="toggle" data-onstyle="success" id="selIsDeposit" name="selIsDeposit"
+                                                                           type="checkbox" @(selected ? "Checked" : "") class="selIsdeposit"  value="@Model.IsDeposit">เงินมัดจำ
+                                                                    </label>
+                                                                </div>
+                                                        <input type="hidden" id="hddIsDeposit" name="hddIsDeposit" />
+                                                    </div>
+                                                </div>
+                                                @{
+                                                    bool DepositReadonly = false;
+                                                    if (Model.InvoiceId > 0)
+                                                    {
+                                                        if (Model.SaleOrder.ConditionId.HasValue)
+                                                        {
+                                                            //DepositReadonly = Model.SaleOrder.ConditionId.Value == 2 ? true : false;
+                                                        }
+                                                    }
+                                                }*@
+                                            @*<div class="form-group">
+                                                    <label for="DepositAmount" class="col-sm-4 col-form-label">หักเงินมัดจำออก</label>
+                                                    <div class="input-group col-sm-6">
+                                                        <span class="input-group-addon">
+                                                            <i class="icon wb-payment" aria-hidden="true"></i>
+                                                        </span>
+                                                        <input type="text" class="form-control text-right" name="DepositAmount" id="DepositAmount"
+                                                               value="@Model.DepositAmount" @(DepositReadonly ? "readonly" : (canedit ? "" : "readonly")) />
+                                                    </div>
+                                                </div>*@
+                                            <div class="form-group">
+                                                <label for="InvoiceTerm" class="col-sm-5 col-form-label">งวดที่</label>
+                                                <div class="input-group col-sm-6">
+                                                    <input type="number" class="form-control text-right" name="InvoiceTerm" id="InvoiceTerm" value="@Model.InvoiceTerm" @(canedit ? "" : "readonly") />
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="Remark" class="col-sm-4 col-form-label">หมายเหตุ</label>
+                                                <div class="col-sm-10">
+                                                    <textarea rows="4" cols="47" class="form-control" name="InvoiceRemark" @(canedit ? "" : "readonly")>@Model.InvoiceRemark</textarea>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        @*Right panel*@
+
+                                        <div class="col-md-5 col-sm-8">
+                                            <div class="form-group">
+                                                <label for="CreateDate" class="col-sm-5 col-form-label">วันที่ออกเอกสาร</label>
+                                                <div class="input-group col-sm-6">
+                                                    <span class="input-group-addon">
+                                                        <i class="icon wb-calendar  icon-2-5x text-success" aria-hidden="true"></i>
+                                                    </span>
+                                                    <input type="text" class="form-control" name="InvoiceDate" value="@Model.InvoiceDate.ToString("dd/MM/yyyy")" readonly />
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="DueDate" class="col-sm-5 col-form-label">วันที่ครบกำหนด</label>
+                                                <div class="input-group col-sm-6 date" data-provide="@(checkInvoice ? "datepicker" : "")" data-date-format="dd/mm/yyyy">
+                                                    <span class="input-group-addon">
+                                                        <i class="icon wb-calendar  icon-2-5x text-success" aria-hidden="true"></i>
+                                                    </span>
+                                                    <input type="text" class="form-control" name="DueDate" id="DueDate" value="@Model.DueDate.ToString("dd/MM/yyyy")" @(checkInvoice ? "" : "readonly") />
+                                                </div>
+                                            </div>
+                                            @*Invoice Status*@
+                                            <div class="form-group">
+                                                <label for="PriceValidity" class="col-sm-5 col-form-label">สถานะเอกสาร</label>
+                                                <div class="col-sm-6">
+                                                    <select name="StatusId" id="StatusId" class="form-control">
+                                                        @if (Model.StatusId == 1 || Model.StatusId == null)
+                                                        {
+                                                            <option class="text-muted" value="1" @(Model.StatusId == 1 ? " selected=\" selected\"" : "" )>ร่าง</option>
+                                                        }
+                                                        @if (Model.InvoiceNo != null)
+                                                        {
+                                                            <option class="text-primary" value="2" @(Model.StatusId == 2 ? " selected=\" selected\"" : "" )>ส่งแล้ว</option>
+                                                            <option class="text-success" value="3" @(Model.StatusId == 3 ? " selected=\" selected\"" : "" )>จ่ายแล้ว</option>
+                                                            <option class="text-dark" value="4" @(Model.StatusId == 4 ? " selected=\" selected\"" : "" )>ยกเลิก</option>
+                                                        }
+
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            @*<div class="form-group">
+                                                    <label class="col-sm-5 col-form-label">ยอดที่ยังไม่ได้เรียกเก็บ</label>
+                                                    <div class="input-group col-sm-6">
+                                                        @{
+                                                            //var remain = (Model.SaleOrder != null ? Model.SaleOrder.SummaryTot - Model.SaleOrder.DiscountCash - optRemain : decimal.Zero);
+                                                            var remain = (Model.SaleOrder != null ? Model.SaleOrder.SummaryNet - optRemain : decimal.Zero);
+                                                        }
+                                                        <input type="text" class="form-control text-right border-0" id="remain" name="remain" value="@remain" readonly />
+                                                    </div>
+                                                </div>*@
+                                            <div class="form-group">
+                                                <label class="col-sm-5 col-form-label">เงื่อนไขการชำระเงิน</label>
+                                                <div class="input-group col-sm-6">
+                                                    @*@{
+                                                            string con = "";
+                                                            int conid = 0;
+                                                            if (Model.InvoiceId > 0)
+                                                            {
+                                                                if (Model.SaleOrder.ConditionId.HasValue)
+                                                                {
+                                                                    conid = Model.SaleOrder.ConditionId.Value;
+                                                                }
+                                                                con = @optPayment.Find(c => c.ConditionId == conid).ConditionName;
+                                                            }
+                                                        }
+                                                        <input type="text" class="form-control border-0" value="@con" readonly />*@
+                                                    <select name="ConditionId" id="ConditionId" class="form-control" @(canedit ? "" : "disabled")>
+                                                        @foreach (EnmPaymentCondition it in optPayment)
+                                                        {
+                                                            bool selected = it.ConditionId == Model.ConditionId;
+                                                            <option value="@it.ConditionId" @(selected ? " selected=\" selected\"" : "" )>@it.ConditionName</option>
+                                                        }
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="col-sm-5 col-form-label">ประวัติรายงวด</label>
+                                                <div class="input-group col-sm-6">
+                                                    <table class="table table-borderless table-hover">
+                                                        <thead>
+                                                            <tr align="center">
+                                                                <th align="center">งวดที่</th>
+                                                                <th align="center">ยอดเรียกเก็บ</th>
+                                                                <th align="center">สถานะ</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            @if (optHistoryAmt.Count() <= 0)
+                                                            {
+                                                                <tr>
+                                                                    <td colspan="3">ยังไม่มีการเรียกเก็บ</td>
+                                                                </tr>
+                                                            }
+                                                            @foreach (var iv in optHistoryAmt)
+                                                            {
+
+                                                                <tr>
+                                                                    <td align="center">@iv.InvoiceTerm</td>
+                                                                    <td align="center">@iv.InvoiceAmount</td>
+                                                                    <td align="center">
+                                                                        @{ if (iv.StatusId == 1)
+                                                                            {
+                                                                                @("ร่าง");
+                                                                            }
+                                                                            else if (iv.StatusId == 2)
+                                                                            {
+                                                                                @("ส่งแล้ว");
+                                                                            }
+                                                                            else if (iv.StatusId == 3)
+                                                                            {
+                                                                                @("จ่ายแล้ว");
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                @("ยกเลิก");
+                                                                            }
+                                                                        }
+                                                                    </td>
+                                                                </tr>
+                                                            }
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="panel-footer">
+                                    <div class="row">
+                                        <div class="col-12">
+                                            <div class="form-group">
+                                                @if (changestatus)
+                                                {
+                                                    <button type="submit" class="btn btn-primary" id="btnSubmit" name="btnSubmit">บันทึก</button>
+                                                }
+                                                &nbsp;<a href="@Url.Action("Index", "Invoice" )" class="btn btn-default">ยกเลิก</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="SaleOrderModal" tabindex="-1" role="dialog" aria-labelledby="ค้นหาทีม" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="AddressModalTitle"><label id="lbCustomerId" hidden></label></h5>
+                    <h2><label id="lbCustomerName">เลือก ใบสั่งขาย</label></h2>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+
+                </div>
+                <div class="modal-body">
+
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <label for="SaleOrderStartDate" class="form-control-label">จากวันที่</label>
+                                <div class="input-group date" data-provide="datepicker" data-date-format="dd/mm/yyyy">
+                                    <input id="SaleOrderStartDate" type="text" class="form-control"
+                                           placeholder="dd/MM/yyyy ค.ศ."
+                                           name="SaleOrderStartDate"
+                                           value="@DateTime.Now.ToString("dd/MM/yyyy")" />
+                                    <span class="input-group-addon">
+                                        <i class="icon wb-calendar icon-2-5x text-success" style="padding-left:2px" aria-hidden="true"></i>
+                                    </span>
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <label for="SaleOrderEndDate" class="form-control-label">ถึงวันที่</label>
+                                <div class="input-group date" data-provide="datepicker" data-date-format="dd/mm/yyyy">
+                                    <input id="SaleOrderEndDate" type="text" class="form-control"
+                                           placeholder="dd/MM/yyyy ค.ศ."
+                                           name="SaleOrderEndDate"
+                                           value="@DateTime.Now.ToString("dd/MM/yyyy")" />
+                                    <span class="input-group-addon">
+                                        <i class="icon wb-calendar icon-2-5x text-success" style="padding-left:2px" aria-hidden="true"></i>
+                                    </span>
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="col-sm-4">
+
+                            <button class="btn btn-outline-secondary btn-primary btnSearchSaleOrder" style="margin-top:34px" type="button"
+                                    id="btnSearchSaleOrder">
+                                ค้นหา
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-sm-12">
+
+                            <div class="table-responsive divSaleOrder">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>กรุณาเลือก</th>
+                                            <th>รายการ</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody></tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                    </div>
+
+
+
+                </div>
+                <div class="modal-footer">
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+</body>
