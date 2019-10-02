@@ -11,15 +11,107 @@
 }
 
 @section Scripts {
-    <script type="text/javascript">
+<script type="text/javascript">
+       var url = '@Url.Action("GetList", "Product")';
+
         $(document).ready(function () {
+
+            waitingDialog.show('Waiting for loading data', { dialogSize: 'md', progressType: 'primary' });
+            LoadTable();
             window.setTimeout(function () {
                 $(".alert").fadeTo(1000, 0).slideUp(1000, function () {
                     $(this).remove();
                 });
             }, 5000);
         });
-    </script>
+
+
+
+          function LoadTable() {
+
+            var html = '';
+            var criteria = "";
+           var urlDetail='@Url.Action("Detail", new { controller = "Product", area = ""})';
+            $(".divDetail").empty();
+            html += '<table class="table  table-striped table-hover "  >';
+            html += '<thead>';
+              html += '<tr class="table-primary" >';
+              html += ' <th>หมวดหมู่</th>';
+              html += '<th>ชื่อสินค้า</th>';
+              html += '<th>ราคา (Inc.Vat)</th>';
+              html += '<th>คงเหลือ</th>';
+              html += '<th>เครื่องมือ</th>';
+              html += '</tr>'; 
+            html += '</thead>';
+            html += '<tbody>';
+
+
+
+            $.ajax({
+                url: url,
+                type: "POST",
+               // data: JSON.stringify(criteria),
+                dataType: "json",
+                contentType: "application/json; charset=utf-8",
+                success: function (data) {
+
+
+                        if (data != null) {
+
+                            $.each(data, function (index, item) {
+                                html += '<tr>';
+                                html += '<td>' + item.Category.CategoryName + '</td>';
+                                html += '<td>' + item.ProductName + '</td>';
+                                html += '<td>' + item.PriceTot + '</td>';
+                                html += '<td>' + item.QtyStock + '</td>';
+                             
+                                html += '<td> <a href="' + urlDetail + '/' + item.ProductId + '" class="btn btn-xs  btn-primary">';
+                                html += '<i class=" fa fa-pencil" aria-hidden="true"></i>&nbsp;แก้ไข </a>&nbsp;';
+                               // html += '<a href="' + urlExport + '/' + item.JobOrderId + '" class="btn btn-xs btn-warning">';
+                                html += '</tr>';
+                            });
+                        }
+
+
+
+                    html += '</tbody>';
+                    html += ' </table>';
+
+                    $(".divDetail").append(html);
+                    var table = $(".divDetail table").DataTable(
+                        {
+                            columnDefs: [
+                              
+                            ],
+                            order: [[2, 'asc']]
+                        }
+                    );
+
+
+                    window.setTimeout(function () {
+                        waitingDialog.hide();
+                    }, 2000);
+
+                },
+                error: function (error) {
+                    alert(error);
+                    window.setTimeout(function () {
+                        waitingDialog.hide();
+                    }, 2000);
+                  //  waitingDialog.hide();
+                }
+            });
+
+
+
+
+
+
+        }
+
+        $(EngineerMenu).slideToggle();
+</script>
+
 }
 
 <div class="page">
@@ -46,20 +138,12 @@
                     <!-- /.box-header -->
                     <div class="panel-body">
                         <div class="row">
-                            <div class="col-12 col-sm-6 form-inline">
-                                @Html.Partial(kemrex.PathViewShared("_wgPaginationSize"), Pagination)
-                            </div>
-                            <div class="col-12 col-sm-6">
-                                <div class="pull-right">
-                                    @Html.Partial(kemrex.PathViewShared("_wgPagination"), Pagination)
-                                </div>
-                                <div class="clear"></div>
-                            </div>
+                           
                             <br /><br />
                         </div>
                         <div class="row">
                             <div class="col-12">
-                                <div class="table-responsive">
+                                <div class="table-responsive divDetail">
                                     <table class="table table-bordered table-hover">
                                         <thead>
                                             <tr>
@@ -71,49 +155,13 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            @if (Model.Count() <= 0)
-                                            {
-                                                <tr>
-                                                    <td colspan="5">ไม่พบข้อมูล</td>
-                                                </tr>
-                                            }
-                                            @foreach (var ob in Model)
-                                            {
-                                                <tr>
-                                                    <td>@ob.Category.CategoryName</td>
-                                                    <td>@ob.ProductName</td>
-                                                    <td>@ob.PriceTot.ToString("#,##0.00")</td>
-                                                    <td>@ob.QtyStock.ToString()</td>
-                                                    <td>
-                                                        <a href="@Url.Action("Detail", new { controller = "Product", area = "", id = ob.ProductId })"
-                                                           class="btn btn-xs btn-primary">
-                                                            <i class="fa fa-pencil" aria-hidden="true"></i>&nbsp;แก้ไข
-                                                        </a>
-                                                        <form method="post" action="@Url.Action("Delete", new { controller = "Product", area = "" })"
-                                                              class="fnc-delete inline-block">
-                                                            <input type="hidden" name="Id" value="@ob.ProductId" />
-                                                            @Html.AntiForgeryToken()
-                                                            <button type="submit" class="btn btn-danger btn-xs"><i class="fa fa-trash" aria-hidden="true"></i>&nbsp;ลบ</button>
-                                                        </form>
-                                                    </td>
-                                                </tr>
-                                            }
+                                          
                                         </tbody>
                                     </table>
                                 </div>
                             </div>
                         </div>
-                        <div class="row">
-                            <div class="col-12 col-sm-6">
-                                <span>@Pagination.CurrentDisplay</span>
-                            </div>
-                            <div class="col-12 col-sm-6">
-                                <div class="pull-right">
-                                    @Html.Partial(kemrex.PathViewShared("_wgPagination"), Pagination)
-                                </div>
-                                <div class="clear"></div>
-                            </div>
-                        </div>
+                      
                     </div>
                     <!-- /.box-body -->
                 </div>

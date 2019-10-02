@@ -14,6 +14,7 @@ namespace Kemrex.Core.Common.Constraints
         public const string CONTROLLER_HOME = "Home";
         public const string CONTROLLER_TEAM_SALE = "TeamSale";
         public const string CONTROLLER_TEAM_OPERATION = "TeamOperation";
+        public const string CONTROLLER_TEAM_Acccount = "TeamAccount";
 
         public const string ACTION_INDEX = "Index";
         public const string ACTION_DELETE = "Delete";

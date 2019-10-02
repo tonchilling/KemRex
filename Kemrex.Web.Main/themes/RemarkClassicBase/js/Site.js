@@ -317,8 +317,20 @@
         } // let loadingType = 'default';
 
 
-        var assets = (0, _Config.get)('assets');
-        $BODY.animsition({
+          var assets = (0, _Config.get)('assets');
+
+          $BODY.animsition({
+              inClass: 'overlay-slide-in-top',
+              outClass: 'overlay-slide-out-top',
+              overlay: true,
+              overlayClass: 'animsition-overlay-slide',
+              overlayParentElement: 'body'
+          })
+              .one('animsition.inStart', function () {
+                  $('body').removeClass('bg-init');
+              });
+
+     /*   $BODY.animsition({
           inClass: 'fade-in',
           outClass: 'fade-out',
           inDuration: 800,
@@ -328,7 +340,7 @@
           loadingParentElement: 'html',
           loadingInner: "\n      <div class=\"loader-content\">\n        <div class=\"loader-index\">\n          <div></div>\n          <div></div>\n          <div></div>\n          <div></div>\n          <div></div>\n          <div></div>\n        </div>\n      </div>",
           onLoadEvent: true
-        });
+        });*/
       }
     }, {
       key: "setupTour",

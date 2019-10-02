@@ -27,5 +27,8 @@ namespace Kemrex.Core.Common.Helper
         public static PathModel SaleTeamDetailDelete => new PathModel(KemrexPath.ACTION_DETAIL + KemrexPath.ACTION_DELETE, KemrexPath.CONTROLLER_TEAM_SALE);
         public static PathModel SaleTeamDelete => new PathModel(KemrexPath.ACTION_DELETE, KemrexPath.CONTROLLER_TEAM_SALE);
 
+        public static PathModel AccountTeam => new PathModel(KemrexPath.ACTION_INDEX, KemrexPath.CONTROLLER_TEAM_Acccount);
+        public static PathModel AccountTeamDetail => new PathModel(KemrexPath.ACTION_DETAIL, KemrexPath.CONTROLLER_TEAM_Acccount);
+        public static PathModel AccountTeamDetailSet => new PathModel(KemrexPath.ACTION_DETAIL + KemrexPath.ACTION_SET, KemrexPath.CONTROLLER_TEAM_Acccount);
     }
 }

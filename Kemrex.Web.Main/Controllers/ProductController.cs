@@ -54,6 +54,19 @@ namespace Kemrex.Web.Main.Controllers
             return View(lst);
         }
 
+        [HttpPost]
+        public JsonResult GetList()
+        {
+            string formateDate = "yyyy-MM-dd";
+            //  DateTime searchOrderDate = Converting.StringToDate(saleOrderDate, formateDate);
+            List<TblProduct> ob = uow.Modules.Product.GetList();
+
+
+
+            return Json(ob);
+        }
+
+
         public ActionResult Detail(int? id, string msg, AlertMsgType? msgType)
         {
             TblProduct ob = uow.Modules.Product.Get(id ?? 0);

@@ -14,15 +14,15 @@ using System.Web.Mvc;
 
 namespace Kemrex.Web.Main.Controllers
 {
-    public class TeamSaleController : KemrexController
+    public class TeamAccountController : KemrexController
     {
-        int departmentID = 8;
+        int departmentID = 2;
 
         [Authorized]
         public ActionResult Detail(int? id, string msg, AlertMsgType? msgType)
         {
             TeamSale ob = uow.Modules.TeamSale.Get(id ?? 0);
-            
+
             return ViewDetail(ob, msg, msgType);
         }
         [Authorized]
@@ -51,7 +51,7 @@ namespace Kemrex.Web.Main.Controllers
                 permission = GetPermissionSale(CurrentUser.AccountId, CurrentUser.AccountId);
                 ViewData["userAccount"] = CurrentUser;
                 ViewData["optPermission"] = permission;
-                lst = uow.Modules.TeamSale.Gets(Pagination.Page, Pagination.Size).FindAll(o=>o.DepartmentId== departmentID);
+                lst = uow.Modules.TeamSale.Gets(Pagination.Page, Pagination.Size).FindAll(o => o.DepartmentId == departmentID);
             }
             catch (Exception ex)
             {
@@ -85,7 +85,7 @@ namespace Kemrex.Web.Main.Controllers
                 ob.CreatedDate = CurrentDate;
             }
             ob.TeamName = Request.Form["teamName"];
-            
+
             ob.ManagerId = Request.Form["managerId"].ParseInt();
             ob.UpdatedBy = CurrentUID;
             ob.UpdatedDate = CurrentDate;
@@ -94,7 +94,7 @@ namespace Kemrex.Web.Main.Controllers
             {
                 if (!ob.IsValid(out string errMsg))
                 { throw new Exception(errMsg); }
-                
+
                 uow.Modules.TeamSale.Set(ob);
                 uow.SaveChanges();
 
@@ -105,7 +105,7 @@ namespace Kemrex.Web.Main.Controllers
                 {
                     foreach (string accountId in teamSaleIds.Split(','))
                     {
-                        TeamSaleDetail detail = obTeamDetail.Find(o=>o.AccountId== accountId.ParseLong());
+                        TeamSaleDetail detail = obTeamDetail.Find(o => o.AccountId == accountId.ParseLong());
                         detail.Approve = "1";
 
                         uow.Modules.TeamSaleDetail.Set(detail);
@@ -119,7 +119,7 @@ namespace Kemrex.Web.Main.Controllers
                 rs["msgType"] = AlertMsgType.Success;
 
                 if (isInsert) { rs.Add("id", ob.TeamId); }
-                return isInsert ? UrlRedirect(PathHelper.SaleTeamDetail, rs) : UrlRedirect(PathHelper.SaleTeam, rs);
+                return isInsert ? UrlRedirect(PathHelper.AccountTeamDetail, rs) : UrlRedirect(PathHelper.AccountTeam, rs);
             }
             catch (Exception ex)
             {
@@ -129,7 +129,7 @@ namespace Kemrex.Web.Main.Controllers
         }
 
         [Authorized]
-     
+
         [HttpPost, ActionName(KemrexPath.ACTION_DETAIL + KemrexPath.ACTION_SET)]
         public ActionResult SetDetailData()
         {
@@ -150,7 +150,7 @@ namespace Kemrex.Web.Main.Controllers
             ob.AccountId = Request.Form["accountId"].ParseInt();
             ob.UpdatedBy = CurrentUID;
             ob.UpdatedDate = CurrentDate;
-            
+
             try
             {
                 if (!ob.IsValid(out string errMsg))
@@ -171,7 +171,7 @@ namespace Kemrex.Web.Main.Controllers
             {
                 rs.Add("id", ob.TeamId);
             }
-            return UrlRedirect(PathHelper.SaleTeamDetail, rs);
+            return UrlRedirect(PathHelper.AccountTeamDetail, rs);
         }
 
         [HttpPost]
@@ -191,20 +191,20 @@ namespace Kemrex.Web.Main.Controllers
                 {
                     rs["msg"] = "ไม่พบข้อมูลที่ต้องการ";
                     rs["msgType"] = AlertMsgType.Warning;
-                    return UrlRedirect(PathHelper.SaleTeam, rs);
+                    return UrlRedirect(PathHelper.AccountTeam, rs);
                 }
 
                 uow.Modules.TeamSale.Delete(ob);
                 uow.SaveChanges();
                 rs["msg"] = "ลบข้อมูลเรียบร้อยแล้ว";
                 rs["msgType"] = AlertMsgType.Success;
-                return UrlRedirect(PathHelper.SaleTeam, rs);
+                return UrlRedirect(PathHelper.AccountTeam, rs);
             }
             catch (Exception ex)
             {
                 rs["msg"] = ex.GetMessage();
                 rs["msgType"] = AlertMsgType.Danger;
-                return UrlRedirect(PathHelper.SaleTeam, rs);
+                return UrlRedirect(PathHelper.AccountTeam, rs);
             }
         }
         [HttpPost]
@@ -222,16 +222,16 @@ namespace Kemrex.Web.Main.Controllers
                 int TeamId = Request.Form["TeamId"].ParseInt();
                 TeamSaleDetail ob = uow.Modules.TeamSaleDetail.Get(id);
                 if (ob == null)
-                { return RedirectToAction("Detail", "TeamSale", new { id = TeamId, msg = "ไม่พบข้อมูลที่ต้องการ", msgType = AlertMsgType.Warning }); }
+                { return RedirectToAction("Detail", "TeamAccount", new { id = TeamId, msg = "ไม่พบข้อมูลที่ต้องการ", msgType = AlertMsgType.Warning }); }
 
                 uow.Modules.TeamSaleDetail.Delete(ob);
                 uow.SaveChanges();
-                return RedirectToAction("Detail", "TeamSale", new { id = TeamId, msg = "ลบข้อมูลเรียบร้อยแล้ว", msgType = AlertMsgType.Success });
+                return RedirectToAction("Detail", "TeamAccount", new { id = TeamId, msg = "ลบข้อมูลเรียบร้อยแล้ว", msgType = AlertMsgType.Success });
             }
             catch (Exception ex)
             {
                 int TeamId = Request.Form["TeamId"].ParseInt();
-                return RedirectToAction("Detail", "TeamSale", new { id = TeamId, msg = ex.GetMessage(), msgType = AlertMsgType.Danger });
+                return RedirectToAction("Detail", "TeamAccount", new { id = TeamId, msg = ex.GetMessage(), msgType = AlertMsgType.Danger });
             }
         }
         #region Private Action
@@ -248,7 +248,7 @@ namespace Kemrex.Web.Main.Controllers
                     if (msgType.HasValue) { alert.Type = msgType.Value; }
                     ViewBag.Alert = alert;
                 }
-                ViewData["optSale"] = uow.Modules.TeamSale.GetNotMembers();
+                ViewData["optSale"] = uow.Modules.TeamSale.GetTeamAccountNotMembers();
                 AccountPermission permission = new AccountPermission();
                 permission = GetPermissionSale(CurrentUser.AccountId, CurrentUser.AccountId);
                 ViewData["userAccount"] = CurrentUser;
@@ -262,7 +262,7 @@ namespace Kemrex.Web.Main.Controllers
                     { "msg", ex.GetMessage() },
                     { "msgType", AlertMsgType.Danger }
                 };
-                return UrlRedirect(PathHelper.SaleTeam, rs);
+                return UrlRedirect(PathHelper.AccountTeam, rs);
             }
         }
         #endregion

@@ -65,14 +65,14 @@ namespace Kemrex.Web.Main.Controllers
                         {
                             ckSid = new HttpCookie("sid", ob.AccountId.ToString())
                             {
-                                Expires = DateTime.Now.AddMonths(1)
+                                Expires = DateTime.Now.AddHours(1)
                             };
                         }
                         else
                         {
                             ckSid = Request.Cookies["sid"];
                             ckSid.Value = ob.AccountId.ToString();
-                            ckSid.Expires = DateTime.Now.AddMonths(1);
+                            ckSid.Expires = DateTime.Now.AddHours(1);
                         }
                         Response.SetCookie(ckSid);
                     }

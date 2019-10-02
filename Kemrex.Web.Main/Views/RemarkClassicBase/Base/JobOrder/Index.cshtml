@@ -22,7 +22,7 @@
                     $(this).remove();
                 });
 
-             
+
             }, 5000);
         });
 
@@ -45,14 +45,12 @@
               html += '<th>สถานะ</th>';
               html += '<th>ผู้สร้าง</th>';
             html += '<th>เครื่องมือ</th>';
-            html += '</tr>';
-
             html += ' </tr>';
             html += '</thead>';
             html += '<tbody>';
 
 
-           
+
             $.ajax({
                 url: url,
                 type: "POST",
@@ -60,8 +58,8 @@
                 dataType: "json",
                 contentType: "application/json; charset=utf-8",
                 success: function (data) {
-                       
-                      
+
+
                         if (data != null) {
 
                             $.each(data, function (index, item) {
@@ -84,11 +82,11 @@
                             });
                         }
 
-           
+
 
                     html += '</tbody>';
                     html += ' </table>';
-                   
+
                     $(".divDetail").append(html);
                     var table = $(".divDetail table").DataTable(
                         {
@@ -99,11 +97,11 @@
                         }
                     );
 
-                   
+
                     window.setTimeout(function () {
                         waitingDialog.hide();
                     }, 2000);
-                  
+
                 },
                 error: function (error) {
                     alert(error);
@@ -115,10 +113,10 @@
             });
 
 
-          
-          
 
-          
+
+
+
         }
 
         $(EngineerMenu).slideToggle();
@@ -147,7 +145,7 @@
                     </div>
                     <!-- /.box-header -->
                     <div class="panel-body dataTables_wrapper">
-                      
+
                         <div class="row">
                             <div class="col-12">
                                 <div class="table-responsive divDetail">
@@ -161,13 +159,13 @@
                                                 <th>เครื่องมือ</th>
                                             </tr>
                                         </thead>
-                                       
+
                                     </table>
 
                                 </div>
                             </div>
                         </div>
-                  
+
                     </div>
                     <!-- /.box-body -->
                 </div>
