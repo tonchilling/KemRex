@@ -62,5 +62,22 @@ namespace Kemrex.Core.Common.Modules
             { db.TblBankAccount.Add(ob); }
             else { db.Entry(ob).State = EntityState.Modified; }
         }
+        public List<TblBankAccount> GetList()
+        {
+            var data = db.TblBankAccount
+                        .OrderByDescending(c => c.Type)
+                .AsQueryable();
+            
+            return data.ToList();
+        }
+        public List<TblBankAccount> GetList(int status)
+        {
+
+              var data = db.TblBankAccount.Where(x => x.Status == status)
+                       .OrderByDescending(c => c.Type)
+               .AsQueryable();
+
+            return data.ToList();
+        }
     }
 }

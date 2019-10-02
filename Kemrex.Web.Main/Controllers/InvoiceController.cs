@@ -87,6 +87,41 @@ namespace Kemrex.Web.Main.Controllers
 
             return Json(lst);
         }
+
+        [HttpGet]
+        public JsonResult GetInvoiceListByCondition(string startDate, string toDate, string statusId)
+        {
+            List<TblInvoice> lst = new List<TblInvoice>();
+            EnmPaymentCondition payCon = new EnmPaymentCondition();
+            EnmPaymentCondition payConInvoice = new EnmPaymentCondition();
+            try
+            {
+                lst = uow.Modules.Invoice.GetListByCondition(startDate, toDate, statusId);
+                foreach (var pr in lst)
+                {
+                    pr.SaleOrder = uow.Modules.SaleOrder.GetById(pr.SaleOrderId);
+                    pr.StrInvoiceDate = pr.InvoiceDate.Day.ToString("00") + "/" + pr.InvoiceDate.Month.ToString("00") + "/" + pr.InvoiceDate.Year;
+                    payCon = uow.Modules.PaymentCondition.Get(pr.SaleOrder.ConditionId.HasValue ? pr.SaleOrder.ConditionId.Value : 0);
+                    pr.SaleOrder.ConditionName = payCon.ConditionName;
+
+                    payConInvoice = uow.Modules.PaymentCondition.Get(pr.ConditionId.HasValue ? pr.ConditionId.Value : 0);
+                    pr.ConditionName = payConInvoice.ConditionName;
+                }
+
+            }
+            catch (Exception ex)
+            {
+                WidgetAlertModel Alert = new WidgetAlertModel()
+                {
+                    Type = AlertMsgType.Danger,
+                    Message = ex.GetMessage(true)
+                };
+                ViewBag.Alert = Alert;
+            }
+
+            return Json(lst, JsonRequestBehavior.AllowGet);
+
+        }
         public ActionResult Detail(int? id, string msg, AlertMsgType? msgType)
         {
             TblInvoice ob = uow.Modules.Invoice.Get(id ?? 0);

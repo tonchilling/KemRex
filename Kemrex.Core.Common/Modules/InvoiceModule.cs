@@ -16,7 +16,7 @@ namespace Kemrex.Core.Common.Modules
     public class InvoiceModule : IModule<TblInvoice, int>
     {
         private readonly mainContext db;
-        private WebDB webdb;
+        private WebDB webdb = new WebDB();
         public InvoiceModule(mainContext context)
         {
             db = context;
@@ -83,6 +83,68 @@ namespace Kemrex.Core.Common.Modules
                             ConditionId = i.ConditionId,
                             CreatedByName = (from emp in db.SysAccount.Where(acc => acc.AccountId ==i.CreatedBy) select emp.AccountName).FirstOrDefault()
                         });
+            return data.ToList();
+        }
+        public List<TblInvoice> GetListByCondition(string fromDate = "", string toDate = "", string status = "2")
+        {
+            var data = db.TblInvoice
+                        .OrderByDescending(c => c.InvoiceId)
+                .AsQueryable();
+            DateTime stDate, enDate;
+            if (fromDate != "")
+            {
+                stDate = DateTime.ParseExact(fromDate, "dd/MM/yyyy", new System.Globalization.CultureInfo("en-US"));
+                enDate = DateTime.ParseExact(toDate, "dd/MM/yyyy", new System.Globalization.CultureInfo("en-US"));
+                data = (from i in db.TblInvoice.Where(o => o.InvoiceDate >= stDate && o.InvoiceDate <= enDate && o.StatusId.ToString() == status)
+                        select new TblInvoice
+                        {
+                            InvoiceId = i.InvoiceId,
+                            InvoiceNo = i.InvoiceNo,
+                            InvoiceDate = i.InvoiceDate,
+                            StrInvoiceDate = i.InvoiceDate != null ? Converting.ToDDMMYYYY(i.InvoiceDate) : "",
+                            SaleOrderId = i.SaleOrderId,
+                            InvoiceRemark = i.InvoiceRemark,
+                            InvoiceTerm = i.InvoiceTerm,
+                            InvoiceAmount = i.InvoiceAmount,
+                            StatusId = i.StatusId,
+                            CreatedBy = i.CreatedBy,
+                            CreatedDate = i.CreatedDate,
+                            UpdatedBy = i.UpdatedBy,
+                            UpdatedDate = i.UpdatedDate,
+                            DueDate = i.DueDate,
+                            DepositAmount = i.DepositAmount,
+                            IsDeposit = i.IsDeposit,
+                            SaleOrder = null,
+                            ConditionId = i.ConditionId,
+                            CreatedByName = (from emp in db.SysAccount.Where(acc => acc.AccountId == i.CreatedBy) select emp.AccountName).FirstOrDefault()
+                        });
+            }
+            else
+            {
+                data = (from i in db.TblInvoice.Where(o => o.StatusId.ToString() == status)
+                        select new TblInvoice
+                        {
+                            InvoiceId = i.InvoiceId,
+                            InvoiceNo = i.InvoiceNo,
+                            InvoiceDate = i.InvoiceDate,
+                            StrInvoiceDate = i.InvoiceDate != null ? Converting.ToDDMMYYYY(i.InvoiceDate) : "",
+                            SaleOrderId = i.SaleOrderId,
+                            InvoiceRemark = i.InvoiceRemark,
+                            InvoiceTerm = i.InvoiceTerm,
+                            InvoiceAmount = i.InvoiceAmount,
+                            StatusId = i.StatusId,
+                            CreatedBy = i.CreatedBy,
+                            CreatedDate = i.CreatedDate,
+                            UpdatedBy = i.UpdatedBy,
+                            UpdatedDate = i.UpdatedDate,
+                            DueDate = i.DueDate,
+                            DepositAmount = i.DepositAmount,
+                            IsDeposit = i.IsDeposit,
+                            SaleOrder = null,
+                            ConditionId = i.ConditionId,
+                            CreatedByName = (from emp in db.SysAccount.Where(acc => acc.AccountId == i.CreatedBy) select emp.AccountName).FirstOrDefault()
+                        });
+            }
             return data.ToList();
         }
         public decimal GetRemain(int SaleOrderId)
