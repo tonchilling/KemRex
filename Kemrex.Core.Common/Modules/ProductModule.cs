@@ -39,15 +39,20 @@ namespace Kemrex.Core.Common.Modules
 
         public TblProduct Get(int id)
         {
-            return db.TblProduct
+
+            TblProduct tblProduct= db.TblProduct
                 .Include(x => x.Category)
                 .Include(x => x.Model)
                 .Where(x => x.ProductId == id)
                 .FirstOrDefault() ?? new TblProduct()
-                    {
-                        Category = new TblProductCategory(),
-                        Model = new TblProductModel()
-                    };
+                {
+                    Category = new TblProductCategory(),
+                    Model = new TblProductModel()
+                };
+
+            tblProduct.QtyStock = db.TblProductOfWareHouse.Where(o => o.ProductId == id).Select(x => x.QtyStock).Sum().Value;
+
+            return tblProduct;
         }
 
 
@@ -118,7 +123,7 @@ namespace Kemrex.Core.Common.Modules
                             PriceNet = i.PriceNet,
                             PriceTot = i.PriceTot,
                             PriceVat = i.PriceVat,
-                            QtyStock = i.QtyStock
+                            QtyStock = db.TblProductOfWareHouse.Where(o=>o.ProductId==i.ProductId).Select(x=>x.QtyStock).Sum().Value
 
                         });
             return data.ToList();

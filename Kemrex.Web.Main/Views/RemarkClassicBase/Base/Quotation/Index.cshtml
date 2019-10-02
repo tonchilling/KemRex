@@ -83,7 +83,7 @@
             html += '</thead>';
         
 
-
+         
 
             $.ajax({
                 url: url,
@@ -149,10 +149,15 @@
 
                     window.setTimeout(function () {
                         waitingDialog.hide();
+                      
+                        $(".modal-backdrop").remove();
+                     
                     }, 2000);
+
+                    waitingDialog.hide();
                 },
                 error: function (error) {
-                    alert(error);
+                  
                     waitingDialog.hide();
                   //  waitingDialog.hide();
                 }

@@ -66,12 +66,15 @@
 
 
     <script>Breakpoints();
+        var HomeMenu ='#2100'
         var BasicMenu = '#2200'
         var SaleMenu = '#2300'
         var EngineerMenu = '#2400'
         var StockMenu = '#2500'
         var CalendarMenu = '#2700'
         var SystemMenu = '#2900'
+        var AccountMenu = '#2700'
+        
     </script>
 </head>
 <body class="animsition dashboard">
@@ -250,11 +253,15 @@
     </footer>
     <!-- Core  -->
     <script src="~/themes/@kemrex.GetCurrentTheme()/libs/babel-external-helpers/babel-external-helpers.min.js"></script>
-    <script src="https://code.jquery.com/jquery-1.12.4.js"
-            integrity="sha256-Qw82+bXyGq6MydymqBxNPYTaUXXq7c8v3CwiYwLLNXU="
-            crossorigin="anonymous"></script>
+
+    Most common reason for such problems are
+
+    1.If you have defined the jquery library more than once.
+
+    <script type="text/javascript" src="//code.jquery.com/jquery-1.11.3.min.js"></script>
     <script src="~/libs/popper-js/popper.min.js"></script>
     <script src="~/libs/bootstrap/js/bootstrap.min.js"></script>
+
     <script src="~/themes/@kemrex.GetCurrentTheme()/libs/animsition/animsition.min.js"></script>
     <script src="~/libs/jquery-mousewheel/jquery.mousewheel.min.js"></script>
     <script src="~/themes/@kemrex.GetCurrentTheme()/libs/jquery-asscrollbar/jquery-asScrollbar.min.js"></script>
@@ -288,7 +295,7 @@
 
     <!-- Page -->
     <script src="~/themes/@kemrex.GetCurrentTheme()/js/Site.js?ver=1"></script>
-  
+
     <script type="text/javascript">
 
         (function (global, factory) {
@@ -350,7 +357,7 @@
         }
 
 
-    
+
     </script>
     @RenderSection("Scripts", false)
 </body>

@@ -8032,3 +8032,16 @@ h3.example-title {
     text-shadow: none;
     opacity: .5;
 }
+
+
+.text-primary {
+    color: #007bff !important;
+}
+.text-danger {
+    color: #dc3545 !important;
+}
+
+.card>.content {
+
+padding:8px;
+}

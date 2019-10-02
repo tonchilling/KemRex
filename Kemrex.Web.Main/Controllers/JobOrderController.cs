@@ -84,6 +84,23 @@ namespace Kemrex.Web.Main.Controllers
             return Json(saleOrderList, JsonRequestBehavior.AllowGet);
         }
 
+
+        [HttpGet]
+        public JsonResult GetJobOrderByDate(string startDate, string toDate)
+        {
+
+            List<TblJobOrder> result = uow.Modules.JobOrder.GetByDate(startDate, toDate);
+            //saleOrder.Customer = uow.Modules.Customer.GetByCondition(saleOrder.CustomerId.Value);
+            //  saleOrder.Sale = uow.Modules.Employee.GetByCondition(saleOrder.SaleId.Value);
+
+            // TblCustomer objCustomer = uow.Modules.Customer.Get(Convert.ToInt32(ob.CustomerId));
+
+
+
+            return Json(result, JsonRequestBehavior.AllowGet);
+        }
+
+
         [HttpPost]
         public JsonResult GetList()
         {
@@ -548,6 +565,51 @@ namespace Kemrex.Web.Main.Controllers
             }
             catch (Exception ex)
             { return RedirectToAction("Detail", MVCController, new { id = qid, tab = "Product", msg = ex.GetMessage(), msgType = AlertMsgType.Danger }); }
+        }
+
+
+
+        [HttpPost]
+        //[Authorized]
+        public ActionResult UpdateJobOrderDate(TblJobOrder setJobOrder)
+        {
+         
+            List<TblJobOrder> result = null;
+            System.Globalization.CultureInfo _cultureUSInfo = new System.Globalization.CultureInfo("en-US");
+            try
+            {
+
+                TblJobOrder ob = uow.Modules.JobOrder.GetHeaderByPK(setJobOrder.JobOrderId);
+                if (setJobOrder.StartDateToString!=null)
+                {
+                    var dd = setJobOrder.StartDateToString + " 00:00:00";
+
+                    ob.StartDate = dd.ParseDate(DateFormat.yyyyMMddHHmmss, culInfo: _cultureUSInfo);
+                    ob.EndDate= dd.ParseDate(DateFormat.yyyyMMddHHmmss, culInfo: _cultureUSInfo);
+                }
+
+
+
+
+                uow.Modules.JobOrder.UpdateDate(ob);
+                uow.SaveChanges();
+
+                result = uow.Modules.JobOrder.GetByDate("", "");
+                //saleOrder.Customer = uow.Modules.Customer.GetByCondition(saleOrder.CustomerId.Value);
+                //  saleOrder.Sale = uow.Modules.Employee.GetByCondition(saleOrder.SaleId.Value);
+
+                // TblCustomer objCustomer = uow.Modules.Customer.Get(Convert.ToInt32(ob.CustomerId));
+
+
+
+                return Json(result);
+
+                // return RedirectToAction("Detail", MVCController, new { id = jobOrderId, tab = "Product", msg = "ลบข้อมูลเรียบร้อยแล้ว", msgType = AlertMsgType.Success });
+            }
+            catch (Exception ex)
+            {
+                return Json(result);
+            }
         }
 
 

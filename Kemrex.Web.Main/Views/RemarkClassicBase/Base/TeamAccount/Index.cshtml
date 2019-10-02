@@ -1,0 +1,148 @@
+﻿@using Kemrex.Core.Database.Models
+@using Kemrex.Web.Common.Controllers
+@using Kemrex.Core.Common.Helper
+@using Kemrex.Web.Common.Models
+@model List<TeamSale>
+@{
+    ViewBag.Title = "Index";
+    KemrexController kemrex = ((KemrexController)this.ViewContext.Controller);
+    Layout = kemrex.PathViewShared("_lyDefault");
+    WidgetAlertModel Alert = (WidgetAlertModel)ViewBag.Alert;
+    WidgetPaginationModel Pagination = (WidgetPaginationModel)ViewBag.Pagination;
+    AccountPermission optPermission = (AccountPermission)ViewData["optPermission"];
+
+}
+
+@section Scripts {
+    <script type="text/javascript">
+        $(document).ready(function () {
+            window.setTimeout(function () {
+                $(".alert").fadeTo(1000, 0).slideUp(1000, function () {
+                    $(this).remove();
+                });
+            }, 5000);
+
+
+            $(AccountMenu).slideToggle();
+        });
+    </script>
+}
+
+<div class="page">
+    <div class="page-header">
+        <h1 class="page-title">ทีมบัญชีและการเงิน</h1>
+        <div class="page-header-actions">
+
+        </div>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="@kemrex.UrlAction(PathHelper.AccountTeam)">หน้าแรก</a></li>
+            <li class="breadcrumb-item"><a href="javascript:void(0)">ฝ่่ายบัญชีและการเงิน</a></li>
+            <li class="breadcrumb-item active">บัญชีและการเงิน</li>
+        </ol>
+    </div>
+    <div class="page-content container-fluid">
+        <div class="row">
+            <div class="col-12">
+                @if (ViewBag.Alert != null)
+                {
+                    @Html.Partial(kemrex.PathViewShared("_wgAlert"), Alert)
+                }
+                <div class="panel">
+                    <div class="panel-body">
+                        <div class="row">
+                            <div class="col-12 col-sm-6 form-inline">
+                                @Html.Partial(kemrex.PathViewShared("_wgPaginationSize"), Pagination)
+
+                                @if (optPermission.IsAdminTeam || optPermission.IsManager)
+                                {
+                                    <a href="@kemrex.UrlAction(PathHelper.AccountTeamDetail)" class="btn btn-sm btn-primary">
+                                        <i class="icon wb-plus" aria-hidden="true"></i>
+                                        <span class="text hidden-sm-down">เพิ่มข้อมูล</span>
+
+                                    </a>
+                                }
+                            </div>
+                            <div class="col-12 col-sm-6">
+                                <div class="pull-right">
+                                    @Html.Partial(kemrex.PathViewShared("_wgPagination"), Pagination)
+                                </div>
+                                <div class="clear"></div>
+                            </div>
+                            <br /><br />
+                        </div>
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="table-responsive">
+                                    <table class="table table-bordered table-hover">
+                                        <thead>
+                                            <tr class="table-primary">
+                                                <th class="text-center">ชื่อทีม</th>
+                                                <th class="text-center">หัวหน้าทีม</th>
+                                                <th class="text-center">เครื่องมือ</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @if (Model.Count() <= 0)
+                                            {
+                                                <tr>
+                                                    <td colspan="3">ไม่พบข้อมูล</td>
+                                                </tr>
+                                            }
+                                            @foreach (var ob in Model)
+                                            {
+                                                <tr>
+                                                    <td>@ob.TeamName</td>
+                                                    <td>@ob.Manager.AccountName</td>
+                                                    <td>
+                                                        @if (optPermission.IsAdminTeam || optPermission.IsManager)
+                                                        {
+                                                            <a href="@(kemrex.UrlAction<int>(PathHelper.SaleTeamDetail, ob.TeamId))"
+                                                               class="btn btn-xs btn-primary">
+
+                                                                <i class="fa fa-pencil" aria-hidden="true"></i>&nbsp;แก้ไข
+                                                            </a>
+                                                        }
+                                                        else
+                                                        {
+
+                                                            <a href="@(kemrex.UrlAction<int>(PathHelper.AccountTeamDetail, ob.TeamId))"
+                                                               class="btn btn-xs btn-success">
+
+                                                                <i class="glyphicon glyphicon-zoom-in" aria-hidden="true"></i>&nbsp;เรียกดู
+                                                            </a>
+                                                        }<form method="post" action="@kemrex.UrlAction(PathHelper.SaleTeamDelete)"
+                                                               class="fnc-delete inline-block">
+                                                            <input type="hidden" name="TeamId" value="@ob.TeamId" />
+                                                            @Html.AntiForgeryToken()
+
+                                                            @if (optPermission.IsAdminTeam || optPermission.IsManager)
+                                                            {
+                                                                <button type="submit" class="btn btn-danger btn-xs"><i class="fa fa-trash" aria-hidden="true"></i>&nbsp;ลบ</button>
+                                                            }
+                                                        </form>
+                                                    </td>
+                                                </tr>
+                                            }
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-12 col-sm-6">
+                                <span>@Pagination.CurrentDisplay</span>
+                            </div>
+                            <div class="col-12 col-sm-6">
+                                <div class="pull-right">
+                                    @Html.Partial(kemrex.PathViewShared("_wgPagination"), Pagination)
+                                </div>
+                                <div class="clear"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- /.box-body -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

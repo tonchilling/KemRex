@@ -1337,7 +1337,12 @@
                                         if (optPermission.IsEdit)
                                         {
                                             <button type="submit" id="btnSave" class="btn btn-primary">บันทึก</button>
-                                            <button type="submit" id="btnApprove" class="btn btn-success">อนุมัติ</button>
+
+                                        }
+
+                                        if (optPermission.IsManager)
+                                        {
+                                        <button type="submit" id="btnApprove" class="btn btn-success">อนุมัติ</button>
                                         }
 
                                     }

@@ -66,7 +66,37 @@ namespace Kemrex.Core.Common.Modules
 
         public List<TblJobOrder> GetByDate(string fromDate,string toDate)
         {
-            List<TblJobOrder> jobOrder = (from q in db.TblJobOrder select q).ToList();
+            List<TblJobOrder> jobOrder = (from o in db.TblJobOrder.Where(x=>x.StatusId==2) select new TblJobOrder
+            {
+
+
+
+                JobOrderId = o.JobOrderId,
+                JobOrderNo = o.JobOrderNo,
+                SaleOrderId = o.SaleOrderId,
+                JobName = o.JobName,
+                StartDate = o.StartDate,
+                StartDateToString = o.StartDate != null ? Converting.ToDDMMYYYY(o.StartDate.Value) : "",
+                EndDate = o.EndDate,
+                EndDateToString = o.EndDate != null ? Converting.ToDDMMYYYY(o.EndDate.Value) : "",
+                StartWorkingTime = o.StartWorkingTime,
+                EndWorkingTime = o.EndWorkingTime,
+                CustomerId = o.CustomerId,
+                CustomerName = o.CustomerName,
+                CustomerPhone = o.CustomerPhone,
+                CustomerEmail = o.CustomerEmail,
+                ProjectName = o.ProjectName,
+                StatusId = o.StatusId.HasValue ? o.StatusId.Value : 0,
+                Status = o.StatusId.HasValue ? Converting.JobOrderStatus(o.StatusId.Value) : Converting.JobOrderStatus(0),
+              
+                SubDistrict = o.SubDistrict,
+                Team = o.Team,
+                CreatedByName = (from emp in db.SysAccount.Where(x => x.AccountId == o.CreatedBy) select emp.AccountName).FirstOrDefault(),
+                CreatedDate = o.CreatedDate,
+                CreateDateToString = o.CreatedDate.HasValue ? Converting.ToDDMMYYYY(o.CreatedDate.Value) : "",
+
+
+            }).OrderByDescending(o => o.CreatedDate).ToList();
 
             return jobOrder;
         }
@@ -413,7 +443,15 @@ namespace Kemrex.Core.Common.Modules
         public bool IsExist(int id)
         { return db.TblJobOrder.Where(x => x.JobOrderId == id).Count() > 0 ? true : false; }
 
-        public void Set(TblJobOrder ob)
+        public void UpdateDate(TblJobOrder ob)
+        {
+        
+
+
+            db.TblJobOrder.Update(ob);
+        }
+
+            public void Set(TblJobOrder ob)
         {
             if (ob.JobOrderId == 0)
             { db.TblJobOrder.Add(ob); }

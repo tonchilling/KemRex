@@ -229,7 +229,8 @@ namespace Kemrex.Core.Common.Modules
                                             Solution = jobOrder.Solution,
                                             TeamId = jobOrder.TeamId,
                                              Team = jobOrder.Team,
-                                          
+                                             StatusId= jobOrder.StatusId
+
 
                                         }).FirstOrDefault();
             tblSaleOrder.Sale = (from emp in db.TblEmployee.Where(o => o.EmpId == tblSaleOrder.SaleId)
