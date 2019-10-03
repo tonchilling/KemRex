@@ -10,11 +10,18 @@ using System.Web.Mvc;
 using System.Linq;
 using DMN.Standard.Common.Constraints;
 using Kemrex.Core.Common.Helper;
+using IOFile = System.IO.File;
+using System.Web;
+using System.IO;
+using System.Globalization;
 
 namespace Kemrex.Web.Main.Controllers
 {
     public class PaymentController : KemrexController
     {
+        public string dateText = DateTime.Now.ParseString(DateFormat.ddMMyyyy);
+        public DateTime txt2Date = "2019-02-01 00:15:00".ParseDate(DateFormat.yyyyMMddHHmmss);
+        System.Globalization.CultureInfo _cultureEngInfo = new System.Globalization.CultureInfo("en-US");
         // GET: Payment
         public ActionResult Index(int? page, int? size, string msg, AlertMsgType? msgType,
                     string src = "")
@@ -44,7 +51,7 @@ namespace Kemrex.Web.Main.Controllers
                 lst = uow.Modules.Payment.Gets(Pagination.Page, Pagination.Size, src);
                 foreach (var ls in lst.ToList())
                 {
-                    ls.AcctReceive = uow.Modules.BankAccount.Get(ls.AcctReceiveId);
+                    ls.AcctReceive = uow.Modules.BankAccount.Get(ls.AcctReceiveId.HasValue ? ls.AcctReceiveId.Value : 0);
                 }
             }
             catch (Exception ex)
@@ -62,10 +69,10 @@ namespace Kemrex.Web.Main.Controllers
 
         private string getId(string type)
         {
-            string qid = "S" + type;
-            System.Globalization.CultureInfo _cultureTHInfo = new System.Globalization.CultureInfo("en-US");
-            var dt = DateTime.Now.ToString("yyMMdd", _cultureTHInfo);
-            string Id = uow.Modules.TransferStock.GetLastId(qid + dt);
+            string qid = type;
+            
+            var dt = DateTime.Now.ToString("yyMMdd", _cultureEngInfo);
+            string Id = uow.Modules.Payment.GetLastId(qid + dt);
 
             if (Id == null)
             {
@@ -88,42 +95,84 @@ namespace Kemrex.Web.Main.Controllers
         }
 
 
-        [HttpPost, ActionName("SetDetail")]
-        public ActionResult SetDetail(TransferStockHeader obj)
+        [ValidateAntiForgeryToken]
+        [HttpPost, ActionName("Detail")]
+        public ActionResult SetDetail(TblPayment obj)
         {
-            System.Globalization.CultureInfo _cultureTHInfo = new System.Globalization.CultureInfo("en-US");
 
-            TransferStockHeader old = uow.Modules.TransferStock.GetHeader(obj.TransferStockId);
 
-            string TransferStockId = this.Request.Form["TransferStockId"];
-            if (TransferStockId == "" || TransferStockId == "0")
+            TblPayment old = uow.Modules.Payment.Get(obj.PaymentId);
+
+            //string PaymentId = this.Request.Form["PaymentId"];
+            if (obj.PaymentId < 1)
             {
-                obj.TransferNo = getId("I");
-                obj.CreateDate = DateTime.Now;
-                obj.TransferStatus = 0;
+                obj.PaymentNo = getId("P");
+                obj.CreatedDate = CurrentDate;
+                obj.UpdatedDate = CurrentDate;
+                obj.CreatedBy = CurrentUID;
+                obj.UpdatedBy = CurrentUID;
+                obj.StatusId = 1;
+                
+
             }
             else
             {
-                //obj.TransferStockId = Convert.ToInt32(TransferStockId);
-                obj.UpdateDate = DateTime.Now;
-                obj.CreateDate = old.CreateDate;
-                obj.TransferStatus = old.TransferStatus;
+                obj.UpdatedDate = CurrentDate;
+                obj.UpdatedBy = CurrentUID;
+                string StatusId = this.Request.Form["StatusId"];
+                string hdApprove = this.Request.Form["hdApprove"];
+                if(hdApprove == "3") obj.StatusId = int.Parse(hdApprove);
+                else obj.StatusId = int.Parse(StatusId);
             }
-
-            obj.TransferType = "I";
-            
-            if (Request.Form["TransferDate"].ToString() != "")
+            if (this.Request.Form["InvoiceId"].ToString() != "")
             {
-                var dd = Request.Form["TransferDate"];
+                string invoiceid = this.Request.Form["InvoiceId"];
+                obj.InvoiceId = int.Parse(invoiceid);
+                obj.InvoiceNo = this.Request.Form["InvoiceNo"];
+            }
+            
+            string CustomerName = this.Request.Form["CustomerName"];
+            obj.CustomerName = CustomerName;
+            if (Request.Form["PaymentDate"].ToString().Count() > 0)
+            {
+                var dd = Request.Form["PaymentDate"].Split(' ')[0];
+                DateTime dateEng = Convert.ToDateTime(dd, _cultureEngInfo);
+                obj.PaymentDate = dateEng;
+                obj.StrPaymentDate = dd;
+            }
+            var AcctReceiveId = Request.Form["radio_bankaccount"];
+            if (AcctReceiveId != null)
+            {
+                obj.AcctReceiveId = int.Parse(AcctReceiveId);
+            }
+            
+            obj.BankPayFrom = this.Request.Form["BankPayFrom"];
+            obj.BankPayFromBranch = this.Request.Form["BankPayFromBranch"];
+            bool clearOld = false;
+            string oldPaySlipPath = old.PaySlipPath;
+            obj.StrPaySlipPath = oldPaySlipPath;
+            obj.PaySlipPath = oldPaySlipPath;
+            if (Request.Files.Count > 0 && Request.Files["PaySlipPath"] != null && Request.Files["PaySlipPath"].ContentLength > 0)
+            {
+                HttpPostedFileBase uploadedFile = Request.Files["PaySlipPath"];
+                string FilePath = string.Format("files/payment/{0}{1}", "P" + CurrentDate.ParseString(DateFormat._yyyyMMddHHmmssfff), Path.GetExtension(uploadedFile.FileName));
+                if (!Directory.Exists(Server.MapPath("~/files"))) { Directory.CreateDirectory(Server.MapPath("~/files")); }
+                if (!Directory.Exists(Server.MapPath("~/files/payment"))) { Directory.CreateDirectory(Server.MapPath("~/files/payment")); }
+                uploadedFile.SaveAs(Server.MapPath("~/" + FilePath));
 
-                obj.TransferDate = dd.ParseDate(DateFormat.ddMMyyyy, culInfo: _cultureTHInfo);
+                obj.PaySlipPath = FilePath;
+                clearOld = true;
             }
 
-            obj.CreateBy = Convert.ToInt32(CurrentUID);
+            if (clearOld && !string.IsNullOrWhiteSpace(oldPaySlipPath) && IOFile.Exists(Server.MapPath("~/" + oldPaySlipPath)))
+            { IOFile.Delete(Server.MapPath("~/" + oldPaySlipPath)); }
+
+
             try
             {
-                uow.Modules.TransferStock.Set(obj);
-                uow.SaveChanges();
+                uow.Modules.Payment.SetPayment(obj);
+                //uow.Modules.Payment.Set(obj);
+                //uow.SaveChanges();
             }
             catch (Exception ex)
             {
@@ -131,7 +180,7 @@ namespace Kemrex.Web.Main.Controllers
                 return ViewDetail(obj, msg, AlertMsgType.Danger);
             }
 
-            return RedirectToAction("Detail", MVCController, new { id = obj.TransferStockId, msg = "บันทึกข้อมูลเรียบร้อยแล้ว", msgType = AlertMsgType.Success });
+            return RedirectToAction("Detail", MVCController, new { id = obj.PaymentId, msg = "บันทึกข้อมูลเรียบร้อยแล้ว", msgType = AlertMsgType.Success });
 
 
             //  return RedirectToAction("Detail", MVCController, new { id = 1, msg = "บันทึกข้อมูลเรียบร้อยแล้ว", msgType = AlertMsgType.Success });
@@ -139,12 +188,15 @@ namespace Kemrex.Web.Main.Controllers
 
         public ActionResult Detail(int? id, string msg, AlertMsgType? msgType)
         {
-            TransferStockHeader ob = uow.Modules.TransferStock.Get(id ?? 0);
-
+            TblPayment ob = uow.Modules.Payment.Get(id ?? 0);
+            ob.StrCreatedDate = ob.CreatedDate.Day.ToString("00") + "/" + ob.CreatedDate.Month.ToString("00") + "/" + ob.CreatedDate.Year;
+            ob.StrUpdatedDate = ob.UpdatedDate.Day.ToString("00") + "/" + ob.UpdatedDate.Month.ToString("00") + "/" + ob.UpdatedDate.Year;
+            ob.StrPaymentDate = ob.PaymentDate.HasValue ? ob.PaymentDate.Value.Day.ToString("00") + "/" + ob.PaymentDate.Value.Month.ToString("00") + "/" + ob.PaymentDate.Value.Year : "";
+            ob.StrPaySlipPath = ob.PaySlipPath;
             return ViewDetail(ob, msg, msgType);
         }
 
-        private ActionResult ViewDetail(TransferStockHeader ob, string msg, AlertMsgType? msgType)
+        private ActionResult ViewDetail(TblPayment ob, string msg, AlertMsgType? msgType)
         {
             try
             {
@@ -157,16 +209,14 @@ namespace Kemrex.Web.Main.Controllers
                     if (msgType.HasValue) { alert.Type = msgType.Value; }
                     ViewBag.Alert = alert;
                 }
+                AccountPermission permission = new AccountPermission();
+                permission = GetPermissionSale(CurrentUser.AccountId, ob.CreatedBy);
 
-
-                ViewData["optCustomer"] = uow.Modules.Customer.GetAllAddress();
-                ViewData["optCustomerAddress"] = uow.Modules.CustomerAddress.Gets();
-                ViewData["optProduct"] = uow.Modules.Product.Gets();
-                ViewData["optContact"] = uow.Modules.CustomerContact.Gets();
-                ViewData["optEmployee"] = uow.Modules.Employee.Gets();
-                ViewData["optWareHouse"] = uow.Modules.WareHouse.Gets();
+                ViewData["optBankAccount"] = uow.Modules.BankAccount.GetList(1);
                 CurrentUser.TblEmployee = uow.Modules.Employee.GetEmployeeByAccount(CurrentUID);
                 ViewData["userAccount"] = CurrentUser;
+                ViewData["optPermission"] = permission;
+                ViewData["optEmployee"] = uow.Modules.Employee.Gets();
                 return View(ob);
             }
             catch (Exception ex)
@@ -246,7 +296,9 @@ namespace Kemrex.Web.Main.Controllers
                 lst = uow.Modules.Payment.GetList();
                 foreach (var ls in lst.ToList())
                 {
-                    ls.AcctReceive = uow.Modules.BankAccount.Get(ls.AcctReceiveId);
+                    ls.AcctReceive = uow.Modules.BankAccount.Get(ls.AcctReceiveId.HasValue?ls.AcctReceiveId.Value:0);
+                    ls.StrPaymentDate = (ls.PaymentDate.HasValue? ls.PaymentDate.Value.Day.ToString("00"):"") +"/"+ (ls.PaymentDate.HasValue ? ls.PaymentDate.Value.Month.ToString("00"):"") + "/" + (ls.PaymentDate.HasValue ? ls.PaymentDate.Value.Year.ToString():"");
+                    ls.StrUpdatedDate = ls.UpdatedDate.Day.ToString("00") + "/" + ls.UpdatedDate.Month.ToString("00") + "/" + ls.UpdatedDate.Year + " " + ls.UpdatedDate.ToString("HH:mm");
                 }
             }
             catch (Exception ex)

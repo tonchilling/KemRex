@@ -38,14 +38,13 @@
             html += '<table class="table  table-striped table-hover "  >';
             html += '<thead>';
             html += '<tr class="table-primary" >';
-            html += '<th align="center">Invoice No</th>';
-            html += '<th align="center">รหัสลูกค้า</th>';
+            html += '<th align="center">เลขที่การชำระ</th>';
+            html += '<th align="center">เลขที่ใบแจ้งหนี้</th>';
             html += '<th align="center">ชื่อลูกค้า</th>';
             html += '<th align="center">ยอดเงินโอน</th>';
-            html += '<th align="center">วันที่และเวลาโอน</th>';
+            html += '<th align="center">วันที่โอน</th>';
             html += '<th align="center">สถานะ</th>';
             html += '<th align="center">วันที่แก้ไขล่าสุด</th>';
-            html += '<th align="center">วันที่สร้าง</th>';
             html += '<th align="center">เครื่องมือ</th>';
             html += ' </tr>';
             html += '</thead>';
@@ -66,23 +65,24 @@
 
                         $.each(data, function (index, item) {
                             html += '<tr>';
-                            html += '<td align="center">' + item.InvoiceNo + '</td>';
-                            html += '<td>' + item.CustomerId + '</td>';
+                            html += '<td>' + item.PaymentNo + '</td>';
+                            html += '<td>' + item.InvoiceNo + '</td>';
                             html += '<td>' + item.CustomerName + '</td>';
                             html += '<td>' + item.PaymentAmount + '</td>';
-                            html += '<td align="center">' + item.StrPaymentDateTime + '</td>';
+                            html += '<td>' + item.StrPaymentDate + '</td>';
 
-                            if (item.StatusId == 0) {
+                            if (item.StatusId == 1) {
                                 statusName = "สร้าง";
-                            } else if (item.StatusId == 1) {
-                                statusName = "รอการยืนยัน";
                             } else if (item.StatusId == 2) {
+                                statusName = "รอการอนุมัติ";
+                            } else if (item.StatusId == 3) {
                                 statusName = "จ่ายแล้ว";
-                            } 
+                            } else if (item.StatusId == 4) {
+                            statusName = "ยกเลิก";
+                        } 
 
                             html += '<td>' + statusName + '</td>';
-                            html += '<td align="center">' + item.StrUpdateDate + '</td>';
-                            html += '<td align="center">' + item.StrCreateDate + '</td>';
+                            html += '<td>' + item.StrUpdatedDate + '</td>';
                             html += '<td> <a href="' + urlDetail + '/' + item.PaymentId + '" class="btn btn-xs btn-primary">';
                             if (item.Status == 2) {
                                 html += '<i class="fa fa-eye" aria-hidden="true"></i>&nbsp;View </a>&nbsp;';
@@ -100,10 +100,10 @@
                     $(".divDetail").append(html);
                     $(".divDetail table").DataTable(
                         {
-                            columnDefs: [
-                                { type: 'date-uk', targets: 4 }
-                            ],
-                            order: [[4, 'desc']]
+                            //columnDefs: [
+                            //    { type: 'date-uk', targets: 4 }
+                            //],
+                            order: [[0, 'desc']]
                         }
                     );
                     window.setTimeout(function () {

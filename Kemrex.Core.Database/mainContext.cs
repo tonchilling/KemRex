@@ -2026,8 +2026,8 @@ namespace Kemrex.Core.Database
 
             modelBuilder.Entity<TblPayment>(entity =>
             {
-                entity.HasKey(e => e.PaymentId)
-                    .HasName("PK_Payment");
+                entity.HasKey(e => e.PaymentId);
+                    //.HasName("PK_Payment");
 
                 entity.Property(e => e.BankPayFrom).HasMaxLength(200);
 
@@ -2055,8 +2055,8 @@ namespace Kemrex.Core.Database
 
             modelBuilder.Entity<TblBankAccount>(entity =>
             {
-                entity.HasKey(e => e.AcctId)
-                    .HasName("PK_TblBankAccount_1");
+                entity.HasKey(e => e.AcctId);
+                    //.HasName("PK_TblBankAccount_1");
 
                 entity.Property(e => e.AcctName).HasMaxLength(200);
 
