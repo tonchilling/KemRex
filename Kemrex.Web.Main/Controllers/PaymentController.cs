@@ -170,6 +170,14 @@ namespace Kemrex.Web.Main.Controllers
 
             try
             {
+                int invoicestatus = uow.Modules.Invoice.GetStatus(obj.InvoiceId.HasValue?obj.InvoiceId.Value:0);
+                if (obj.StatusId == 3)
+                {
+                    if (invoicestatus == 3)
+                    {
+                        return RedirectToAction("Detail", MVCController, new { id = obj.PaymentId, msg = "มีการชำระเงินไปแล้ว กรุณาเลือกใบแจ้งหนี้อื่น", msgType = AlertMsgType.Danger });
+                    }
+                }
                 uow.Modules.Payment.SetPayment(obj);
                 //uow.Modules.Payment.Set(obj);
                 //uow.SaveChanges();
@@ -193,6 +201,7 @@ namespace Kemrex.Web.Main.Controllers
             ob.StrUpdatedDate = ob.UpdatedDate.Day.ToString("00") + "/" + ob.UpdatedDate.Month.ToString("00") + "/" + ob.UpdatedDate.Year;
             ob.StrPaymentDate = ob.PaymentDate.HasValue ? ob.PaymentDate.Value.Day.ToString("00") + "/" + ob.PaymentDate.Value.Month.ToString("00") + "/" + ob.PaymentDate.Value.Year : "";
             ob.StrPaySlipPath = ob.PaySlipPath;
+            ob.Invoice = uow.Modules.Invoice.Get(ob.InvoiceId.HasValue?ob.InvoiceId.Value:0);
             return ViewDetail(ob, msg, msgType);
         }
 

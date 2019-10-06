@@ -77,6 +77,8 @@
             html += '<th>กรุณาเลือก</th>';
             html += '<th>เลขใบแจ้งหนี้</th>';
             html += '<th>จำนวนเงิน</th>';
+            html += '<th>งวดที่</th>';
+            html += '<th>วันครบกำหนดชำระ</th>';
             html += '<th>สร้างโดย</th>';
             html += '<th>วันที่สร้าง</th>';
             html += '</tr>';
@@ -93,10 +95,12 @@
                        success: function (obj) {
                            $.each(obj, function (index, item) {
 
-                               html += '<tr data=' + item.InvoiceId + ' value=' + item.InvoiceNo + '>';
+                               html += '<tr invoiceid=' + item.InvoiceId + ' invoiceno=' + item.InvoiceNo + ' invoiceterm=' + item.InvoiceTerm + ' conditionid=' + item.ConditionId + '>';
                                html += '<td><button type="button" class="btn btn-primary btnSellectSaleOrder">เลิอก</button></td>';
                                html += '<td>' + item.InvoiceNo + '</td>';
                                html += '<td>' + item.InvoiceAmount + '</td>';
+                               html += '<td>' + item.InvoiceTerm + '</td>';
+                               html += '<td>' + item.StrDueDate + '</td>';
                                html += '<td>' + item.CreatedByName + '</td>';
                                html += '<td>' + item.StrInvoiceDate + '</td>';
                                html += '</tr>';
@@ -120,33 +124,36 @@
 
 
         });
-         $(document).on("click", ".btnSellectSaleOrder", function () {
-             $('#InvoiceId').val($(this).closest('tr').attr('data'));
-             $('#InvoiceNo').val($(this).closest('tr').attr('value'));
-
-
-                  var url = '@Url.Action("GetSaleOrderById", "SaleOrder")';
-            $.ajax({
-                type: "get",
-                contentType: 'application/json; charset=utf-8',
-                url: url,
-                data: { id: $(this).closest('tr').attr('data') },
-                success: function (obj) {
-
-                    $('#SaleOrderId').val(obj.SaleOrderId);
-                    $('#selSaleOrder').val(obj.QuotationNo + " / " + obj.SaleOrderNo);
-                    //$('#CustomerEmail').val(obj.Customer.CustomerEmail);
-                    //$('#SaleName').val(obj.Sale.EmpNameTh);
-                    //$('#SalePhone').val(obj.Sale.EmpMobile);
-                   // $('#SaleEmail').val(obj.Sale.CustomerEmail);
-
-                    $('#InvoiceModal').modal('hide');
+            var ConditionId = 0;
+            var InvoiceTerm = 0;
+            $(document).on("click", ".btnSellectSaleOrder", function () {
+             $('#InvoiceId').val($(this).closest('tr').attr('invoiceid'));
+             $('#InvoiceNo').val($(this).closest('tr').attr('invoiceno'));
+            InvoiceTerm = $(this).closest('tr').attr('invoiceterm');
+            ConditionId = $(this).closest('tr').attr('conditionId');
+                var PdfDepInvoice = '@Url.Action("PDFDepositInvoice", new { controller = "export", area = "" })';
+                var PdfInvoice = '@Url.Action("PDFInvoice", new { controller = "export", area = "" })';
+                PdfDepInvoice = PdfDepInvoice + '/' + $(this).closest('tr').attr('invoiceid');
+                PdfInvoice = PdfInvoice + '/' + $(this).closest('tr').attr('invoiceid');
+                if (ConditionId == 3 || ConditionId == 4 || ConditionId == 5) {
+                    if (InvoiceTerm == 1) {
+                        $('.btnexpinvoice').attr('href', PdfDepInvoice);
+                    }
+                    else {
+                        $('.btnexpinvoice').attr('href', PdfInvoice);
+                    }
                 }
-            });
+                else {
+                    $('.btnexpinvoice').attr('href', PdfInvoice);
+                }
+            
+            
+             $('#InvoiceModal').modal('hide');
 
 
-        });
-        
+
+               });
+
         $("#btnConfirm").click(function () {
 
             KeepData();
@@ -218,7 +225,7 @@
             } else {
                 $("#radio_bankaccount").removeClass("has-error");
             }
-        
+
 
             var value = $('select#StatusId option:selected').val();
            // var invoiceid = $("#InvoiceId").val();
@@ -334,6 +341,7 @@
 
                                                         <input type="text" placeholder="" class="form-control" id="InvoiceNo" name="InvoiceNo" value="@sq" readonly />
                                                         <input type="hidden" id="InvoiceId" name="InvoiceId" value="@Model.InvoiceId" />
+                                                        <input type="hidden" id="ConditionId" name="ConditionId" value="" />
                                                         <div class="input-group-append">
                                                             <button class="btn btn-outline-secondary btn-primary" type="button"
                                                                     data-toggle="modal"
@@ -344,6 +352,41 @@
                                                                     @(CheckStatus3 ? "" : "disabled")>
                                                                 ...
                                                             </button>
+                                                            @if (Model.InvoiceId <= 0 || Model.InvoiceId == null)
+                                                                {
+                                                                    <a class="btn btn-xs btn-warning btnexpinvoice" style="color:#FFF;padding-top:10px;" target="_blank">
+                                                                        <i class="fa fa-file-pdf-o" aria-hidden="true"></i>&nbsp;PDF
+                                                                    </a>
+                                                                }
+                                                                else
+                                                                {
+                                                                    if (Model.Invoice.ConditionId == 3 || Model.Invoice.ConditionId == 4 || Model.Invoice.ConditionId == 5)
+                                                                    {
+                                                                        if (Model.Invoice.InvoiceTerm == 1)
+                                                                        {
+                                                                            <a href="@Url.Action("PDFDepositInvoice", new { controller = "export", area = "", id = Model.InvoiceId })"
+                                                                               class="btn btn-xs btn-warning btnexpinvoice" style="color:#FFF;padding-top:10px;" target="_blank">
+                                                                                <i class="fa fa-file-pdf-o" aria-hidden="true"></i>&nbsp;PDF
+                                                                            </a>
+
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <a href="@Url.Action("PDFInvoice", new { controller = "export", area = "", id = Model.InvoiceId })"
+                                                                               class="btn btn-xs btn-warning btnexpinvoice"  style="color:#FFF;padding-top:10px;"  target="_blank">
+                                                                                <i class="fa fa-file-pdf-o" aria-hidden="true"></i>&nbsp;PDF
+                                                                            </a>
+                                                                        }
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <a href="@Url.Action("PDFInvoice", new { controller = "export", area = "", id = Model.InvoiceId })"
+                                                                            class="btn btn-xs btn-warning"   style="color:#FFF;padding-top:10px;"  target="_blank">
+                                                                            <i class="fa fa-file-pdf-o" aria-hidden="true"></i>>&nbsp;PDF
+                                                                        </a>
+                                                                        
+                                                                    }
+                                                                }
                                                         </div>
                                                     </div>
 
@@ -381,7 +424,7 @@
                                                             <li>
                                                                 @if (ac.Type.ToLower() == "transfer")
                                                                 {
-                                                                    <input type="radio" id="radio_bankaccount" value="@ac.AcctId" class="SendToDepartment" name="radio_bankaccount" @(Model.AcctReceiveId == 0 ? "Checked" : Model.AcctReceiveId == ac.AcctId ? "Checked" : "") @(CheckStatus3 ? "" : "disabled") />
+                                                                    <input type="radio" id="radio_bankaccount" value="@ac.AcctId" class="SendToDepartment" name="radio_bankaccount" @(Model.AcctReceiveId == null || Model.AcctReceiveId == 0 ? "Checked" : Model.AcctReceiveId == ac.AcctId ? "Checked" : "") @(CheckStatus3 ? "" : "disabled") />
                                                                     <label class="col-sm-12" for="radio_bankaccount">@ac.Bank @ac.Branch <br /> ชื่อบัญชี : @ac.AcctName  เลขบัญชี : @ac.AcctNo</label>
                                                                 }
                                                                 else if (ac.Type.ToLower() == "cheque")
@@ -445,7 +488,7 @@
 
                                                         foreach (TblEmployee it in optEmployee)
                                                         {
-                                                            bool selected = it.EmpId == (Model.CreatedBy == 0 ? (sysAccount.TblEmployee != null ? sysAccount.TblEmployee.EmpId : 0) : Model.CreatedBy);
+                                                            bool selected = it.AccountId == (Model.CreatedBy == 0 ? (sysAccount.TblEmployee != null ? sysAccount.TblEmployee.AccountId : 0) : Model.CreatedBy);
                                                             if (selected)
                                                             {
                                                                 createName = it.EmpNameTh;

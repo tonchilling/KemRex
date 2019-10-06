@@ -744,17 +744,14 @@ optEmployee = (List<TblEmployee>
                                 <div class="row">
                                     <div class="col-12">
                                         <div class="form-group">
-                                       
-
                                             <a href="@Url.Action("PDFQualityCheck", new { controller = "export", area = "", id = Model.JobOrderId  })"
-                                               class="btn btn-warning" style="float:right;margin-left:10px;">
+                                               class="btn btn-warning" style="float:right;margin-left:10px;" target="_blank">
                                                 <i class="fa fa-file-pdf-o" aria-hidden="true"></i>&nbsp;พิมพ์แบบประเมิน
                                             </a>
                                             <a href="@Url.Action("PDFJobOrder", new { controller = "export", area = "", id = Model.JobOrderId  })"
-                                               class="btn btn-warning" style="float:right;">
+                                               class="btn btn-warning" style="float:right;" target="_blank">
                                                 <i class="fa fa-file-pdf-o" aria-hidden="true"></i>&nbsp;พิมพ์ใบสั่งงาน
                                             </a>
-
                                         </div>
                                     </div>
                                 </div>

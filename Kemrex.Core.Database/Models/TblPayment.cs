@@ -13,6 +13,8 @@ namespace Kemrex.Core.Database.Models
         public string StrPaymentDate { get; set; }
         public int? InvoiceId { get; set; }
         public string InvoiceNo { get; set; }
+        [NotMapped]
+        public virtual TblInvoice Invoice { get; set; }
         public int CustomerId { get; set; }
         public string CustomerName { get; set; }
         public decimal PaymentAmount { get; set; }

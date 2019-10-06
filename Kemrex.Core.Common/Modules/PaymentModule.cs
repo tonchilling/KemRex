@@ -13,7 +13,7 @@ using System.Data;
 
 namespace Kemrex.Core.Common.Modules
 {
-    public class PaymentModule : IModule<TblPayment, int>
+    public class PaymentModule
     {
         private readonly mainContext db;
         private WebDB webdb = new WebDB();

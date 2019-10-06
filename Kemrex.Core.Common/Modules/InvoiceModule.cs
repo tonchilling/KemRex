@@ -112,9 +112,10 @@ namespace Kemrex.Core.Common.Modules
                             UpdatedBy = i.UpdatedBy,
                             UpdatedDate = i.UpdatedDate,
                             DueDate = i.DueDate,
+                            StrDueDate = i.DueDate != null ? Converting.ToDDMMYYYY(i.DueDate) : "",
                             DepositAmount = i.DepositAmount,
                             IsDeposit = i.IsDeposit,
-                            SaleOrder = null,
+                            SaleOrder = (from sa in db.TblSaleOrder.Where(x => x.SaleOrderId == i.SaleOrderId) select sa).FirstOrDefault(),
                             ConditionId = i.ConditionId,
                             CreatedByName = (from emp in db.SysAccount.Where(acc => acc.AccountId == i.CreatedBy) select emp.AccountName).FirstOrDefault()
                         });
@@ -138,9 +139,10 @@ namespace Kemrex.Core.Common.Modules
                             UpdatedBy = i.UpdatedBy,
                             UpdatedDate = i.UpdatedDate,
                             DueDate = i.DueDate,
+                            StrDueDate = i.DueDate != null ? Converting.ToDDMMYYYY(i.DueDate) : "",
                             DepositAmount = i.DepositAmount,
                             IsDeposit = i.IsDeposit,
-                            SaleOrder = null,
+                            SaleOrder = (from sa in db.TblSaleOrder.Where(x => x.SaleOrderId == i.SaleOrderId) select sa).FirstOrDefault(),
                             ConditionId = i.ConditionId,
                             CreatedByName = (from emp in db.SysAccount.Where(acc => acc.AccountId == i.CreatedBy) select emp.AccountName).FirstOrDefault()
                         });
@@ -211,6 +213,12 @@ namespace Kemrex.Core.Common.Modules
             return (from q in db.TblInvoice
                     .Where(n => n.InvoiceNo.Contains(pre))
                     select q.InvoiceId).Max();
+        }
+        public int GetStatus(int id)
+        {
+            return (from q in db.TblInvoice
+                    .Where(i => i.InvoiceId == id)
+                    select q.StatusId.HasValue?q.StatusId.Value:0).Max();
         }
 
         public bool IsExist(int id)

@@ -1390,7 +1390,8 @@ namespace Kemrex.Web.Main.Controllers
                     pr.Product.Unit = uow.Modules.Unit.Get(pr.Product.UnitId);
                 }
                 EnmPaymentCondition epc = new EnmPaymentCondition();
-                epc = uow.Modules.PaymentCondition.Get(invoice.SaleOrder.ConditionId.Value);
+                //epc = uow.Modules.PaymentCondition.Get(invoice.SaleOrder.ConditionId.Value);
+                epc = uow.Modules.PaymentCondition.Get(invoice.ConditionId.HasValue?invoice.ConditionId.Value:0);
                 invoice.SaleOrder.JobOrder = uow.Modules.SaleOrder.GetJobOrder(invoice.SaleOrderId);
 
                 String html = string.Empty;
@@ -1532,7 +1533,7 @@ namespace Kemrex.Web.Main.Controllers
                 decimal DiscountNet = 0;
                 decimal DiscountCash = 0;
                 decimal Deposit = invoice.DepositAmount;
-                switch (invoice.SaleOrder.ConditionId)
+                switch (invoice.ConditionId.HasValue ? invoice.ConditionId.Value : 0)
                 {
                     case 1:
                     case 2: 
@@ -1621,7 +1622,8 @@ namespace Kemrex.Web.Main.Controllers
                 pr.Product = uow.Modules.Product.Get(pr.ProductId);
             }
             EnmPaymentCondition epc = new EnmPaymentCondition();
-            epc = uow.Modules.PaymentCondition.Get(invoice.SaleOrder.ConditionId.Value);
+            //epc = uow.Modules.PaymentCondition.Get(invoice.SaleOrder.ConditionId.Value);
+            epc = uow.Modules.PaymentCondition.Get(invoice.ConditionId.HasValue? invoice.ConditionId.Value:0);
             invoice.SaleOrder.JobOrder = uow.Modules.SaleOrder.GetJobOrder(invoice.SaleOrderId);
 
             String html = string.Empty;

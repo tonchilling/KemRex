@@ -29,6 +29,8 @@ namespace Kemrex.Core.Database.Models
         public long? UpdatedBy { get; set; }
         public int ApprovedBy { get; set; }
         public DateTime DueDate { get; set; }
+        [NotMapped]
+        public string StrDueDate { get; set; }
         public decimal DepositAmount { get; set; }
         public int IsDeposit { get; set; }
         public virtual TblSaleOrder SaleOrder { get; set; }
