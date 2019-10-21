@@ -136,8 +136,7 @@ namespace Kemrex.Web.Main.Controllers
             if (Request.Form["PaymentDate"].ToString().Count() > 0)
             {
                 var dd = Request.Form["PaymentDate"].Split(' ')[0];
-                DateTime dateEng = Convert.ToDateTime(string.Format("{0}{1}{2}",dd.Split('/')[2], dd.Split('/')[1], dd.Split('/')[0]), _cultureEngInfo);
-                obj.PaymentDate = dateEng;
+
                 obj.StrPaymentDate = dd;
             }
             var AcctReceiveId = Request.Form["radio_bankaccount"];
