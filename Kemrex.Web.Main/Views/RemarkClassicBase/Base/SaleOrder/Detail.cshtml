@@ -610,7 +610,7 @@ optWareHouse = (List<TblWareHouse>
             $(".selCalType").val($(this).closest("tr").find('.CalType').val());
             $("#selWareHose").val($(this).closest("tr").attr("Whid"));
             CalProductPrice(true);
-           
+            $.scrollTo('#SelQSaleOrderProductId', 1500).scrollTo(0, 1500);
             return false;
 
         })
@@ -937,7 +937,7 @@ optWareHouse = (List<TblWareHouse>
                     }
                 </ul>
                 <div id="tab-1" class="tab-content current">
-                    <div class="card-block" data-tab-page="navInfo">
+                    <div class="" data-tab-page="navInfo">
                         <div class="col-12">
                             <table width="100%" style="margin:-10px 0 0 0;">
                                 <tr>
@@ -964,9 +964,8 @@ optWareHouse = (List<TblWareHouse>
 
                                             <div class="col-md-6">
                                                 <div class="form-group">
-                                                    <label for="SaleOrderNo" class="col-
-                                                       sm-10 col-form-label">เลขที่ใบสั่งขาย</label>
-                                                    <div class="col-sm-10">
+                                                    <label for="SaleOrderNo" class="col-sm-10 col-form-label">เลขที่ใบสั่งขาย</label>
+                                                    <div class="col-lg-10 col-md-10 col-sm-12">
                                                         <div class="input-group mb-3">
                                                             @if (Model.SaleOrderId == 0)
                                                             {
@@ -983,7 +982,7 @@ optWareHouse = (List<TblWareHouse>
                                                 </div>
                                                 <div class="form-group">
                                                     <label for="QuotationNo" class="col-sm-10 col-form-label">เลขที่ใบเสนอราคา</label>
-                                                    <div class="col-sm-10">
+                                                    <div class="col-lg-10 col-md-10 col-sm-12">
                                                         <div class="input-group mb-3">
                                                             <input type="text" class="form-control" id="QuotationNo" name="QuotationNo"
                                                                    placeholder="Quotation" value="@Model.QuotationNo" readonly />
@@ -1017,7 +1016,7 @@ optWareHouse = (List<TblWareHouse>
 
                                                 <div class="form-group">
                                                     <label for="CustomerId" class="col-sm-10 col-form-label">*ชื่อลูกค้า</label>
-                                                    <div class="col-sm-10">
+                                                    <div class="col-lg-10 col-md-10 col-sm-12">
                                                         <select class="form-control" id="CustomerId" data-live-search="true"
                                                                 name="CustomerId" @(!isCanEdit ? "disabled" : "")>
                                                             <option value="">กรุณาเลือก</option>
@@ -1032,7 +1031,7 @@ optWareHouse = (List<TblWareHouse>
                                                 </div>
                                                 <div class="form-group">
                                                     <label for="ContractName" class="col-sm-10 col-form-label">ชื่อผู้ติดต่อ</label>
-                                                    <div class="col-sm-10">
+                                                    <div class="col-lg-10 col-md-10 col-sm-12">
                                                         <div class="input-group mb-3">
                                                             <input type="text" class="form-control" id="ContractName" name="ContractName"
                                                                    placeholder="ชื่อ" value="@Model.ContractName" @(!isCanEdit ? "disabled" : "") />
@@ -1052,7 +1051,7 @@ optWareHouse = (List<TblWareHouse>
 
                                                 <div class="form-group">
                                                     <label for="BillingAddress" class="col-sm-10 col-form-label">ที่อยู่ออกบิล</label>
-                                                    <div class="col-sm-10">
+                                                    <div class="col-lg-10 col-md-10 col-sm-12">
                                                         <div class="input-group mb-3">
                                                             <input type="text" class="form-control" id="BillingAddress" name="BillingAddress" value="@Model.BillingAddress" />
                                                             @if (isCanEdit)
@@ -1070,7 +1069,7 @@ optWareHouse = (List<TblWareHouse>
                                                 </div>
                                                 <div class="form-group">
                                                     <label for="ShippingAddress" class="col-sm-10 col-form-label">ที่อยู่จัดส่ง</label>
-                                                    <div class="col-sm-10">
+                                                    <div class="col-lg-10 col-md-10 col-sm-12">
                                                         <div class="input-group mb-3">
                                                             <input type="text" class="form-control" id="ShippingAddress" name="ShippingAddress" value="@Model.ShippingAddress" />
 
@@ -1090,7 +1089,7 @@ optWareHouse = (List<TblWareHouse>
 
                                                 <div class="form-group">
                                                     <label for="Remark" class="col-sm-10 col-form-label">หมายเหตุ</label>
-                                                    <div class="col-sm-10">
+                                                    <div class="col-lg-10 col-md-10 col-sm-12">
                                                         <textarea rows="4" cols="47" class="form-control" name="SaleOrderRemark">@(Model ==null ? null : Model.SaleOrderRemark)</textarea>
                                                     </div>
                                                 </div>
@@ -1098,10 +1097,10 @@ optWareHouse = (List<TblWareHouse>
 
                                             @*Right panel*@
 
-                                            <div class="col-md-5 col-sm-8">
+                                            <div class="col-md-5 col-sm-12">
                                                 <div class="form-group">
                                                     <label for="CreateDate" class="col-sm-10 col-form-label">วันที่ออกเอกสาร</label>
-                                                    <div class="input-group col-sm-6">
+                                                    <div class="input-group col-lg-6 col-md-6 col-sm-12">
 
                                                         <input type="text" class="form-control" name="CreatedDate" value="@(Model.CreatedDate!=null? Model.CreatedDate.Value.ToString("dd/MM/yyyy"):DateTime.Now.ToString("dd/MM/yyyy"))" readonly autocomplete="off" />
                                                         <span class="input-group-addon">
@@ -1113,13 +1112,13 @@ optWareHouse = (List<TblWareHouse>
 
                                                 <div class="form-group">
                                                     <label for="CustomerTaxId" class="col-sm-10 col-form-label">เลขประจำตัวผู้เสียภาษี</label>
-                                                    <div class="col-sm-6">
+                                                    <div class="col-lg-6 col-md-6 col-sm-12">
                                                         <input type="text" class="form-control" name="CustomerTaxId" value="@(Model.Customer ==null ?  null : Model.Customer.CustomerTaxId)" readonly />
                                                     </div>
                                                 </div>
                                                 <div class="form-group">
                                                     <label for="SendDate" class="col-sm-10 col-form-label">วันที่สั่งขาย</label>
-                                                    <div class="input-group col-sm-6 date" data-provide="datepicker" data-date-format="dd/mm/yyyy">
+                                                    <div class="input-group col-lg-6 col-md-6 col-sm-12 date" data-provide="datepicker" data-date-format="dd/mm/yyyy">
 
                                                         <input type="text" class="form-control" placeholder="dd/MM/yyyy ค.ศ." name="DeliveryDate"
                                                                value="@(Model.DeliveryDate ==null ? DateTime.Now.ToString("dd/MM/yyyy") : Model.DeliveryDate.Value.ToString("dd/MM/yyyy"))" autocomplete="off" required />
@@ -1133,7 +1132,7 @@ optWareHouse = (List<TblWareHouse>
 
                                                 <div class="form-group">
                                                     <label for="SaleName" class="col-sm-10 col-form-label">*พนักงานขาย</label>
-                                                    <div class="col-sm-6">
+                                                    <div class="col-lg-6 col-md-6 col-sm-12">
                                                         <select class="form-control" id="SaleId" data-live-search="true" @(!isCanEdit ? "disabled" : "")
                                                                 name="SaleId">
                                                             <option value="">กรุณาเลือก</option>
@@ -1150,7 +1149,7 @@ optWareHouse = (List<TblWareHouse>
                                                 @*Payment*@
                                                 <div class="form-group">
                                                     <label for="PriceValidity" class="col-sm-10 col-form-label">เงื่อนไขการชำระเงิน</label>
-                                                    <div class="col-sm-7">
+                                                    <div class="col-lg-6 col-md-6 col-sm-12">
                                                         <select name="ConditionId" id="ConditionId" class="form-control">
                                                             @foreach (EnmPaymentCondition it in optPayment)
                                                             {
@@ -1168,14 +1167,14 @@ optWareHouse = (List<TblWareHouse>
 
                                                 <div class="form-group">
                                                     <label for="CreditDate" class="col-sm-10 col-form-label">จำนวนวันเครดิต</label>
-                                                    <div class="col-sm-6">
+                                                    <div class="col-lg-6 col-md-6 col-sm-12">
                                                         <input type="number" class="form-control" name="SaleOrderCreditDay" value="@Model.SaleOrderCreditDay" />
                                                     </div>
                                                 </div>
                                                 @*QT Status*@
                                                 <div class="form-group">
                                                     <label for="PriceValidity" class="col-sm-5 col-form-label">สถานะเอกสาร</label>
-                                                    <div class="col-sm-6">
+                                                    <div class="col-lg-6 col-md-6 col-sm-12">
                                                         <select name="StatusId" id="StatusId" class="form-control">
                                                             <option class="text-primary" value="1" @(Model.StatusId == 1 ? " selected=\" selected\"" : "" )>เปิด</option>
                                                             <option class="text-success" value="2" @(Model.StatusId == 2 ? " selected=\" selected\"" : "" )>ปิด</option>
@@ -1284,7 +1283,7 @@ optWareHouse = (List<TblWareHouse>
 
                                                         </div>
                                                         <div class="col-lg-1 col-md-6  col-sm-12 form-group">
-                                                            <label for="Qty" class="form-control-label">จำนวนคงเหลือ</label>
+                                                            <label for="Qty" class="form-control-label">คงเหลือ</label>
                                                             <input type="number" class="form-control" id="ProductOnhandQty" name="ProductOnhandQty" readonly value="" />
                                                         </div>
                                                         <div class="col-lg-1 col-md-6 col-sm-12 form-group">
@@ -1333,53 +1332,154 @@ optWareHouse = (List<TblWareHouse>
                                                 <table class="table table-hover table-striped">
                                                     <thead>
                                                         <tr>
-                                                            <th>สินค้า</th>
-                                                            <th>คลังสินค้า</th>
-                                                            <th>จำนวน</th>
-                                                            <th>ราคา</th>
-                                                            <th>ส่วนลด</th>
-                                                            <th>รวม</th>
-                                                            <th>รวม VAT(7%)</th>
-                                                            <th>เครื่องมือ</th>
-                                                            <th>หมายเหตุ</th>
+                                                            @if (!kemrex.IsMobileBrowser())
+                                                            {
+                                                                <th>สินค้า</th>
+                                                                <th>คลังสินค้า</th>
+                                                                <th>จำนวน</th>
+                                                                <th>ราคา</th>
+                                                                <th>ส่วนลด</th>
+                                                                <th>รวม</th>
+                                                                <th>รวม VAT(7%)</th>
+                                                                <th>เครื่องมือ</th>
+                                                                <th>หมายเหตุ</th>
+                                                            }
+                                                            else
+                                                            {
+                                                                <th>รายการ</th>
+
+                                                            }
                                                         </tr>
                                                     </thead>
                                                     <tbody>
-                                                        @if (optSoDetail.Count() <= 0)
+
+                                                        @if (!kemrex.IsMobileBrowser())
                                                         {
-                                                            <tr>
-                                                                <td colspan="7">ไม่พบข้อมูล</td>
-                                                            </tr>
+
+                                                            if (optSoDetail.Count() <= 0)
+                                                            {
+                                                                <tr>
+                                                                    <td colspan="7">ไม่พบข้อมูล</td>
+                                                                </tr>
+                                                            }
+                                                            foreach (var ob in optSoDetail)
+                                                            {
+                                                                string calType = (ob.CalType == 1 ? string.Format("({0}%)", ob.Discount.ToString("#,#0.0")) : "(บาท)");
+                                                                <tr data="@ob.Id" ProductId="@ob.ProductId" Whid="@ob.WHId">
+                                                                    <td>@ob.Product.ProductCode @ob.Product.ProductName</td>
+                                                                    <td>@ob.WareHouse.Whname</td>
+                                                                    <td>@ob.Quantity</td>
+                                                                    <td>@ob.PriceUnit.ToString("#,#0.00")</td>
+                                                                    <td>@ob.DiscountNet.ToString("#,#0.00") @calType</td>
+                                                                    <td>@ob.TotalNet.Value.ToString("#,#0.00")</td>
+                                                                    <td>@ob.TotalTot.Value.ToString("#,#0.00")</td>
+                                                                    <td>
+                                                                        <input type="hidden" class="Discount" name="Discount" value="@ob.Discount" />
+
+                                                                        <input type="hidden" class="CalType" name="CalType" value="@ob.CalType" />
+                                                                        <input type="hidden" name="SaleOrderId" value="@Model.SaleOrderId" />
+                                                                        <input type="hidden" name="Id" id="Id" value="@ob.Id" />
+
+                                                                        @if (isCanEdit && optPermission.IsEdit)
+                                                                        {
+
+                                                                            @* @Html.AntiForgeryToken()*@
+                                                                            <button type="submit" class="btn btn-primary btn-xs btnEditProduct" id="btnEditProduct"><i class="fa fa-pencil" aria-hidden="true"></i>&nbsp;แก้ไข</button>
+                                                                            <button type="submit" class="btn btn-danger btn-xs btnDelete"><i class="fa fa-trash" aria-hidden="true"></i>&nbsp;ลบ</button>
+
+                                                                        }
+                                                                    </td>
+                                                                    <td>@ob.Remark</td>
+                                                                </tr>
+                                                            }
                                                         }
-                                                        @foreach (var ob in optSoDetail)
+                                                        else
                                                         {
-                                                            string calType = (ob.CalType == 1 ? string.Format("({0}%)", ob.Discount.ToString("#,#0.0")) : "(บาท)");
-                                                            <tr data="@ob.Id" ProductId="@ob.ProductId" Whid="@ob.WHId">
-                                                                <td>@ob.Product.ProductCode @ob.Product.ProductName</td>
-                                                                <td>@ob.WareHouse.Whname</td>
-                                                                <td>@ob.Quantity</td>
-                                                                <td>@ob.PriceUnit.ToString("#,#0.00")</td>
-                                                                <td>@ob.DiscountNet.ToString("#,#0.00") @calType</td>
-                                                                <td>@ob.TotalNet.Value.ToString("#,#0.00")</td>
-                                                                <td>@ob.TotalTot.Value.ToString("#,#0.00")</td>
-                                                                <td>
-                                                                    <input type="hidden" class="Discount" name="Discount" value="@ob.Discount" />
+                                                            if (optSoDetail.Count() <= 0)
+                                                            {
+                                                        <tr>
+                                                            <td colspan="1">ไม่พบข้อมูล</td>
+                                                        </tr>
+                                                            }
+                                                            foreach (var ob in optSoDetail)
+                                                            {
+                                                                string calType = (ob.CalType == 1 ? string.Format("({0}%)", ob.Discount.ToString("#,#0.0")) : "(บาท)");
+                                                        <tr data = "@ob.Id" ProductId = "@ob.ProductId" Whid = "@ob.WHId">
+                                                            <td>
+                                                                <div class="content">
+                                                                    <div class="row">
+                                                                        <div class="col-sm-5">
+                                                                            <div class="icon-big text-center"></div>
+                                                                        </div>
+                                                                        <div class="col-sm-10">
+                                                                            <div>
+                                                                                <div class="col-sm-12">
+                                                                                    <div class="textrow">
+                                                                                        <div class="text-primary"><b>สินค้า</b></div> : <div class="text-default">@ob.Product.ProductCode @ob.Product.ProductName</div>
+                                                                                    </div>
+                                                                                </div><div class="col-sm-12">
+                                                                                    <div class="textrow">
+                                                                                        <div class="text-primary"><b>คลัง</b></div>  : @ob.WareHouse.Whname
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="col-sm-12">
+                                                                                    <div class="textrow">
+                                                                                        <div class="text-primary"><b>จำนวน</b></div> : @ob.Quantity
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="col-sm-12">
+                                                                                    <div class="textrow">
+                                                                                        <div class="text-primary"><b>ราคา</b></div> : @ob.PriceUnit.ToString("#,#0.00")
+                                                                                    </div>
+                                                                                </div>
 
-                                                                    <input type="hidden" class="CalType" name="CalType" value="@ob.CalType" />
-                                                                    <input type="hidden" name="SaleOrderId" value="@Model.SaleOrderId" />
-                                                                    <input type="hidden" name="Id" id="Id" value="@ob.Id" />
+                                                                                <div class="col-sm-12">
+                                                                                    <div class="textrow">
+                                                                                        <div class="text-primary"><b>ส่วนลด</b></div> : @ob.DiscountNet.ToString("#,#0.00")
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="col-sm-12">
+                                                                                    <div class="textrow">
+                                                                                        <div class="text-primary"><b>รวม</b></div> : @ob.TotalNet.Value.ToString("#,#0.00")
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="col-sm-12">
+                                                                                    <div class="textrow">
+                                                                                        <div class="text-primary"><b>รวม VAT(7%)</b></div> : @ob.TotalTot.Value.ToString("#,#0.00")
+                                                                                    </div>
+                                                                                </div>
 
-                                                                   @if (isCanEdit && optPermission.IsEdit)
-                                                {
+                                                                                <div class="col-sm-12">
+                                                                                    <div class="textrow">
+                                                                                        <div class="text-primary"><b>หมายเหตุ</b></div> :@ob.Remark
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div>
 
-                                                                        @* @Html.AntiForgeryToken()*@
-                                                                        <button type="submit" class="btn btn-primary btn-xs btnEditProduct" id="btnEditProduct"><i class="fa fa-pencil" aria-hidden="true"></i>&nbsp;แก้ไข</button>
-                                                                        <button type="submit" class="btn btn-danger btn-xs btnDelete"><i class="fa fa-trash" aria-hidden="true"></i>&nbsp;ลบ</button>
+                                                                                    @if (isCanEdit && optPermission.IsEdit)
+                                                                                    {
+                                                                                        <button type="submit" class="btn btn-primary btn-md btn-floating btnEditProduct" id="btnEditProduct">
+                                                                                            <i class="fa fa-pencil" aria-hidden="true"></i>
+                                                                                        </button>
 
-                                                                    }
-                                                                </td>
-                                                                <td>@ob.Remark</td>
-                                                            </tr>
+
+                                                                                        <button type="submit" name="btnDelete" class="btn btn-danger btn-floating btn-md btnDelete">
+                                                                                            <i class="fa fa-trash" aria-hidden="true"></i>
+                                                                                        </button>
+                                                                                    }
+
+
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+
+                                                            </td>
+
+                                                        </tr>
+                                                            }
+
                                                         }
                                                     </tbody>
                                                 </table>

@@ -24,9 +24,9 @@
 
     <!-- Stylesheets -->
 
-    <link rel="stylesheet" href="~/themes/@kemrex.GetCurrentTheme()/css/bootstrap.min.css?ver=xx46" />
-    <link rel="stylesheet" href="~/themes/@kemrex.GetCurrentTheme()/css/bootstrap-extend.min.css?ver=xx43" />
-    <link rel="stylesheet" href="~/themes/@kemrex.GetCurrentTheme()/css/site.css?ver=x7" />
+    <link rel="stylesheet" href="~/themes/@kemrex.GetCurrentTheme()/css/bootstrap.min.css?ver=xx47" />
+    <link rel="stylesheet" href="~/themes/@kemrex.GetCurrentTheme()/css/bootstrap-extend.min.css?ver=1.1" />
+    <link rel="stylesheet" href="~/themes/@kemrex.GetCurrentTheme()/css/site.css?ver=x17" />
     <link href="~/themes/@kemrex.GetCurrentTheme()/css/datatable.boostrap.css" rel="stylesheet" />
 
     <!-- Plugins-->
@@ -74,7 +74,7 @@
         var CalendarMenu = '#2700'
         var SystemMenu = '#2900'
         var AccountMenu = '#2700'
-        
+        var PaymentMenu = '#2700'
     </script>
 </head>
 <body class="animsition dashboard">
@@ -291,6 +291,8 @@
     <script src="~/themes/@kemrex.GetCurrentTheme()/js/waiting.js?33"></script>
     <script src="~/themes/@kemrex.GetCurrentTheme()/js/sweetalert.js"></script>
     <script src="~/themes/@kemrex.GetCurrentTheme()/js/numeral2.6.min.js"></script>
+    <script src="~/themes/@kemrex.GetCurrentTheme()/js/scrollTo.js"></script>
+
     @RenderSection("Plugins", false)
 
     <!-- Page -->
@@ -358,6 +360,22 @@
 
 
 
+
+        function IsMobile() {
+            if (navigator.userAgent.match(/Android/i)
+                || navigator.userAgent.match(/webOS/i)
+                || navigator.userAgent.match(/iPhone/i)
+                || navigator.userAgent.match(/iPad/i)
+                || navigator.userAgent.match(/iPod/i)
+                || navigator.userAgent.match(/BlackBerry/i)
+                || navigator.userAgent.match(/Windows Phone/i)
+            ) {
+                return true;
+            }
+            else {
+                return false;
+            }
+        }
     </script>
     @RenderSection("Scripts", false)
 </body>
