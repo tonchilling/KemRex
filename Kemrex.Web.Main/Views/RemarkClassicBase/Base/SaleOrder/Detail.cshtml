@@ -601,14 +601,23 @@ optWareHouse = (List<TblWareHouse>
 
 
 
-            $("#SelQSaleOrderProductId").val($(this).closest("tr").attr("data"));
+            $("#SelQuotationProductId").val($(this).closest("tr").attr("data"));
+            $("#selProduct").val($(this).closest("tr").attr("ProductId"));
+            $("#ProductQty").val($(this).closest("tr").attr("Qty"));
+            $("#ProductPrice").val($(this).closest("tr").attr("PriceUnit"));
+            $("#ProductDiscount").val($(this).closest("tr").attr("Discount"));
+            $("#Remark").val($(this).closest("tr").attr("Remark"));
+            $(".selCalType").val($(this).closest("tr").attr("CalType"));
+            $("#selWareHose").val($(this).closest("tr").attr("Whid"));
+
+           /* $("#SelQSaleOrderProductId").val($(this).closest("tr").attr("data"));
             $("#selProduct").val($(this).closest("tr").attr("ProductId"));
             $("#ProductQty").val($(this).closest("tr").find('td:eq(2)').text());
             $("#ProductPrice").val($(this).closest("tr").find('td:eq(3)').text());
             $("#ProductDiscount").val($(this).closest("tr").find('.Discount').val());
             $("#Remark").val($(this).closest("tr").find('td:eq(8)').text());
             $(".selCalType").val($(this).closest("tr").find('.CalType').val());
-            $("#selWareHose").val($(this).closest("tr").attr("Whid"));
+            $("#selWareHose").val($(this).closest("tr").attr("Whid"));*/
             CalProductPrice(true);
             $.scrollTo('#SelQSaleOrderProductId', 1500).scrollTo(0, 1500);
             return false;
@@ -1097,10 +1106,10 @@ optWareHouse = (List<TblWareHouse>
 
                                             @*Right panel*@
 
-                                            <div class="col-md-5 col-sm-12">
+                                            <div class="col-md-6 ">
                                                 <div class="form-group">
                                                     <label for="CreateDate" class="col-sm-10 col-form-label">วันที่ออกเอกสาร</label>
-                                                    <div class="input-group col-lg-6 col-md-6 col-sm-12">
+                                                    <div class="input-group col-lg-6 col-md-10 col-sm-12">
 
                                                         <input type="text" class="form-control" name="CreatedDate" value="@(Model.CreatedDate!=null? Model.CreatedDate.Value.ToString("dd/MM/yyyy"):DateTime.Now.ToString("dd/MM/yyyy"))" readonly autocomplete="off" />
                                                         <span class="input-group-addon">
@@ -1112,13 +1121,13 @@ optWareHouse = (List<TblWareHouse>
 
                                                 <div class="form-group">
                                                     <label for="CustomerTaxId" class="col-sm-10 col-form-label">เลขประจำตัวผู้เสียภาษี</label>
-                                                    <div class="col-lg-6 col-md-6 col-sm-12">
+                                                    <div class="col-lg-6 col-md-10 col-sm-12">
                                                         <input type="text" class="form-control" name="CustomerTaxId" value="@(Model.Customer ==null ?  null : Model.Customer.CustomerTaxId)" readonly />
                                                     </div>
                                                 </div>
                                                 <div class="form-group">
                                                     <label for="SendDate" class="col-sm-10 col-form-label">วันที่สั่งขาย</label>
-                                                    <div class="input-group col-lg-6 col-md-6 col-sm-12 date" data-provide="datepicker" data-date-format="dd/mm/yyyy">
+                                                    <div class="input-group col-lg-6 col-md-10 col-sm-12 date" data-provide="datepicker" data-date-format="dd/mm/yyyy">
 
                                                         <input type="text" class="form-control" placeholder="dd/MM/yyyy ค.ศ." name="DeliveryDate"
                                                                value="@(Model.DeliveryDate ==null ? DateTime.Now.ToString("dd/MM/yyyy") : Model.DeliveryDate.Value.ToString("dd/MM/yyyy"))" autocomplete="off" required />
@@ -1132,7 +1141,7 @@ optWareHouse = (List<TblWareHouse>
 
                                                 <div class="form-group">
                                                     <label for="SaleName" class="col-sm-10 col-form-label">*พนักงานขาย</label>
-                                                    <div class="col-lg-6 col-md-6 col-sm-12">
+                                                    <div class="col-lg-6 col-md-10 col-sm-12">
                                                         <select class="form-control" id="SaleId" data-live-search="true" @(!isCanEdit ? "disabled" : "")
                                                                 name="SaleId">
                                                             <option value="">กรุณาเลือก</option>
@@ -1149,7 +1158,7 @@ optWareHouse = (List<TblWareHouse>
                                                 @*Payment*@
                                                 <div class="form-group">
                                                     <label for="PriceValidity" class="col-sm-10 col-form-label">เงื่อนไขการชำระเงิน</label>
-                                                    <div class="col-lg-6 col-md-6 col-sm-12">
+                                                    <div class="col-lg-6 col-md-10 col-sm-12">
                                                         <select name="ConditionId" id="ConditionId" class="form-control">
                                                             @foreach (EnmPaymentCondition it in optPayment)
                                                             {
@@ -1167,14 +1176,14 @@ optWareHouse = (List<TblWareHouse>
 
                                                 <div class="form-group">
                                                     <label for="CreditDate" class="col-sm-10 col-form-label">จำนวนวันเครดิต</label>
-                                                    <div class="col-lg-6 col-md-6 col-sm-12">
+                                                    <div class="col-lg-6 col-md-10 col-sm-12">
                                                         <input type="number" class="form-control" name="SaleOrderCreditDay" value="@Model.SaleOrderCreditDay" />
                                                     </div>
                                                 </div>
                                                 @*QT Status*@
                                                 <div class="form-group">
                                                     <label for="PriceValidity" class="col-sm-5 col-form-label">สถานะเอกสาร</label>
-                                                    <div class="col-lg-6 col-md-6 col-sm-12">
+                                                    <div class="col-lg-6 col-md-10 col-sm-12">
                                                         <select name="StatusId" id="StatusId" class="form-control">
                                                             <option class="text-primary" value="1" @(Model.StatusId == 1 ? " selected=\" selected\"" : "" )>เปิด</option>
                                                             <option class="text-success" value="2" @(Model.StatusId == 2 ? " selected=\" selected\"" : "" )>ปิด</option>
@@ -1365,7 +1374,15 @@ optWareHouse = (List<TblWareHouse>
                                                             foreach (var ob in optSoDetail)
                                                             {
                                                                 string calType = (ob.CalType == 1 ? string.Format("({0}%)", ob.Discount.ToString("#,#0.0")) : "(บาท)");
-                                                                <tr data="@ob.Id" ProductId="@ob.ProductId" Whid="@ob.WHId">
+                                                                <tr data="@ob.Id"
+                                                                    ProductId="@ob.ProductId"
+                                                                    Whid="@ob.WHId"
+                                                                    Qty="@ob.Quantity"
+                                                                    PriceUnit="@ob.PriceUnit"
+                                                                    DiscountNet="@ob.DiscountNet"
+                                                                    CalType="@ob.CalType"
+                                                                    Discount="@ob.Discount"
+                                                                    Remark="@ob.Remark">
                                                                     <td>@ob.Product.ProductCode @ob.Product.ProductName</td>
                                                                     <td>@ob.WareHouse.Whname</td>
                                                                     <td>@ob.Quantity</td>
@@ -1397,87 +1414,95 @@ optWareHouse = (List<TblWareHouse>
                                                         {
                                                             if (optSoDetail.Count() <= 0)
                                                             {
-                                                        <tr>
-                                                            <td colspan="1">ไม่พบข้อมูล</td>
-                                                        </tr>
+                                                                <tr>
+                                                                    <td colspan="1">ไม่พบข้อมูล</td>
+                                                                </tr>
                                                             }
                                                             foreach (var ob in optSoDetail)
                                                             {
                                                                 string calType = (ob.CalType == 1 ? string.Format("({0}%)", ob.Discount.ToString("#,#0.0")) : "(บาท)");
-                                                        <tr data = "@ob.Id" ProductId = "@ob.ProductId" Whid = "@ob.WHId">
-                                                            <td>
-                                                                <div class="content">
-                                                                    <div class="row">
-                                                                        <div class="col-sm-5">
-                                                                            <div class="icon-big text-center"></div>
-                                                                        </div>
-                                                                        <div class="col-sm-10">
-                                                                            <div>
-                                                                                <div class="col-sm-12">
-                                                                                    <div class="textrow">
-                                                                                        <div class="text-primary"><b>สินค้า</b></div> : <div class="text-default">@ob.Product.ProductCode @ob.Product.ProductName</div>
-                                                                                    </div>
-                                                                                </div><div class="col-sm-12">
-                                                                                    <div class="textrow">
-                                                                                        <div class="text-primary"><b>คลัง</b></div>  : @ob.WareHouse.Whname
-                                                                                    </div>
+                                                                <tr data="@ob.Id"
+                                                                    ProductId="@ob.ProductId"
+                                                                    Whid="@ob.WHId"
+                                                                    Qty="@ob.Quantity"
+                                                                    PriceUnit="@ob.PriceUnit"
+                                                                    DiscountNet="@ob.DiscountNet"
+                                                                    CalType="@ob.CalType"
+                                                                    Discount="@ob.Discount"
+                                                                    Remark="@ob.Remark">
+                                                                    <td>
+                                                                        <div class="content">
+                                                                            <div class="row">
+                                                                                <div class="col-sm-5">
+                                                                                    <div class="icon-big text-center"></div>
                                                                                 </div>
-                                                                                <div class="col-sm-12">
-                                                                                    <div class="textrow">
-                                                                                        <div class="text-primary"><b>จำนวน</b></div> : @ob.Quantity
+                                                                                <div class="col-sm-10">
+                                                                                    <div>
+                                                                                        <div class="col-sm-12">
+                                                                                            <div class="textrow">
+                                                                                                <div class="text-primary"><b>สินค้า</b></div> : <div class="text-default">@ob.Product.ProductCode @ob.Product.ProductName</div>
+                                                                                            </div>
+                                                                                        </div><div class="col-sm-12">
+                                                                                            <div class="textrow">
+                                                                                                <div class="text-primary"><b>คลัง</b></div>  : @ob.WareHouse.Whname
+                                                                                            </div>
+                                                                                        </div>
+                                                                                        <div class="col-sm-12">
+                                                                                            <div class="textrow">
+                                                                                                <div class="text-primary"><b>จำนวน</b></div> : @ob.Quantity
+                                                                                            </div>
+                                                                                        </div>
+                                                                                        <div class="col-sm-12">
+                                                                                            <div class="textrow">
+                                                                                                <div class="text-primary"><b>ราคา</b></div> : @ob.PriceUnit.ToString("#,#0.00")
+                                                                                            </div>
+                                                                                        </div>
+
+                                                                                        <div class="col-sm-12">
+                                                                                            <div class="textrow">
+                                                                                                <div class="text-primary"><b>ส่วนลด</b></div> : @ob.DiscountNet.ToString("#,#0.00")
+                                                                                            </div>
+                                                                                        </div>
+                                                                                        <div class="col-sm-12">
+                                                                                            <div class="textrow">
+                                                                                                <div class="text-primary"><b>รวม</b></div> : @ob.TotalNet.Value.ToString("#,#0.00")
+                                                                                            </div>
+                                                                                        </div>
+                                                                                        <div class="col-sm-12">
+                                                                                            <div class="textrow">
+                                                                                                <div class="text-primary"><b>รวม VAT(7%)</b></div> : @ob.TotalTot.Value.ToString("#,#0.00")
+                                                                                            </div>
+                                                                                        </div>
+
+                                                                                        <div class="col-sm-12">
+                                                                                            <div class="textrow">
+                                                                                                <div class="text-primary"><b>หมายเหตุ</b></div> :@ob.Remark
+                                                                                            </div>
+                                                                                        </div>
+                                                                                        <div>
+
+                                                                                            @if (isCanEdit && optPermission.IsEdit)
+                                                                                            {
+                                                                                                <button type="submit" class="btn btn-primary btn-md btn-floating btnEditProduct" id="btnEditProduct">
+                                                                                                    <i class="fa fa-pencil" aria-hidden="true"></i>
+                                                                                                </button>
+
+
+                                                                                                <button type="submit" name="btnDelete" class="btn btn-danger btn-floating btn-md btnDelete">
+                                                                                                    <i class="fa fa-trash" aria-hidden="true"></i>
+                                                                                                </button>
+                                                                                            }
+
+
+                                                                                        </div>
                                                                                     </div>
-                                                                                </div>
-                                                                                <div class="col-sm-12">
-                                                                                    <div class="textrow">
-                                                                                        <div class="text-primary"><b>ราคา</b></div> : @ob.PriceUnit.ToString("#,#0.00")
-                                                                                    </div>
-                                                                                </div>
-
-                                                                                <div class="col-sm-12">
-                                                                                    <div class="textrow">
-                                                                                        <div class="text-primary"><b>ส่วนลด</b></div> : @ob.DiscountNet.ToString("#,#0.00")
-                                                                                    </div>
-                                                                                </div>
-                                                                                <div class="col-sm-12">
-                                                                                    <div class="textrow">
-                                                                                        <div class="text-primary"><b>รวม</b></div> : @ob.TotalNet.Value.ToString("#,#0.00")
-                                                                                    </div>
-                                                                                </div>
-                                                                                <div class="col-sm-12">
-                                                                                    <div class="textrow">
-                                                                                        <div class="text-primary"><b>รวม VAT(7%)</b></div> : @ob.TotalTot.Value.ToString("#,#0.00")
-                                                                                    </div>
-                                                                                </div>
-
-                                                                                <div class="col-sm-12">
-                                                                                    <div class="textrow">
-                                                                                        <div class="text-primary"><b>หมายเหตุ</b></div> :@ob.Remark
-                                                                                    </div>
-                                                                                </div>
-                                                                                <div>
-
-                                                                                    @if (isCanEdit && optPermission.IsEdit)
-                                                                                    {
-                                                                                        <button type="submit" class="btn btn-primary btn-md btn-floating btnEditProduct" id="btnEditProduct">
-                                                                                            <i class="fa fa-pencil" aria-hidden="true"></i>
-                                                                                        </button>
-
-
-                                                                                        <button type="submit" name="btnDelete" class="btn btn-danger btn-floating btn-md btnDelete">
-                                                                                            <i class="fa fa-trash" aria-hidden="true"></i>
-                                                                                        </button>
-                                                                                    }
-
-
                                                                                 </div>
                                                                             </div>
                                                                         </div>
-                                                                    </div>
-                                                                </div>
 
-                                                            </td>
+                                                                    </td>
 
-                                                        </tr>
+                                                                </tr>
                                                             }
 
                                                         }

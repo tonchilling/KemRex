@@ -23,6 +23,8 @@
                 });
             }, 5000);
 
+            $(StockMenu).slideToggle();
+
             $("input[name=PriceNet]").change(function () {
                 var net = $(this).val();
                 net = net === NaN || net === null || net === undefined ? 0 : parseFloat(net).toFixed(2);
@@ -55,7 +57,7 @@
         $('.btnEditProductOfWareHouse').click(function () {
 
             $(".WHId").val($(this).closest("tr").attr("whid"));
-            $(".QtyOfWareHouse").val($(this).closest("tr").find("td:eq(2)").text())
+            $(".QtyOfWareHouse").val($(this).closest("tr").attr("Qty"))
 
             return false;
 
@@ -249,34 +251,55 @@
                                             <div class="table-responsive">
                                                 <table class="table table-bordered  table-hover tblWarehouse">
                                                     <thead>
-                                                        <tr  class="table-primary">
+                                                        <tr class="table-primary">
                                                             <th class="text-center">คลังสินค้า</th>
-                                                            <th class="text-center">ชื่อสินค้า</th>
-                                                            <th class="text-center">จำนวนคงเหลือ</th>
-                                                            <th class="text-center">เครื่องมือ</th>
-                                                        </tr>
+                                                            @if (!kemrex.IsMobileBrowser())
+                                                            {
+                                                                <th class="text-center">ชื่อสินค้า</th>
+                                                            }
+                                                                <th class="text-center">จำนวนคงเหลือ</th>
+                                                                <th class="text-center">เครื่องมือ</th>
+                                                            </tr>
                                                     </thead>
                                                     <tbody>
                                                         @if (optProductOfWareHouse == null)
                                                         {
-                                                            <tr>
+                                                        <tr>
+                                                            @if (!kemrex.IsMobileBrowser())
+                                                            {
                                                                 <td colspan="4">ไม่พบข้อมูล</td>
-                                                            </tr>
+                                                            }
+                                                            else
+                                                            {
+                                                                <td colspan="3">ไม่พบข้อมูล</td>
+                                                            }
+                                                        </tr>
                                                         }
                                                         else if (optProductOfWareHouse != null && optProductOfWareHouse.Count>0)
                                                         {
                                                             foreach (var ob in optProductOfWareHouse)
                                                             {
-                                                                <tr whid="@ob.Whid">
+                                                            <tr whid="@ob.Whid" Qty="@ob.QtyStock">
 
-                                                                    <td>@ob.WareHouseName</td>
+                                                                <td>@ob.WareHouseName</td>
+                                                                @if (!kemrex.IsMobileBrowser())
+                                                                {
                                                                     <td>@ob.ProductName</td>
+                                                                }
                                                                     <td>@ob.QtyStock</td>
-                                                                    <td>
-                                                                        <button  class="btn btn-primary btn-xs btnEditProductOfWareHouse" id="btnEditProductOfWareHouse"><i class="fa fa-pencil" aria-hidden="true"></i>&nbsp;แก้ไข</button>
-                                                                        <button  class="btn btn-danger btn-xs btnDelete"><i class="fa fa-trash" aria-hidden="true"></i>&nbsp;ลบ</button>
+                                                                    <td class="textrow">
+                                                                        @if (!kemrex.IsMobileBrowser())
+                                                                        {
+                                                                            <button class="btn btn-primary btn-xs btnEditProductOfWareHouse" id="btnEditProductOfWareHouse"><i class="fa fa-pencil" aria-hidden="true"></i>&nbsp;แก้ไข</button>
+                                                                            <button class="btn btn-danger btn-xs btnDelete"><i class="fa fa-trash" aria-hidden="true"></i>&nbsp;ลบ</button>
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <button class="btn btn-primary btn-xs btn-floating btnEditProductOfWareHouse" id="btnEditProductOfWareHouse"><i class="fa fa-pencil" aria-hidden="true"></i></button>
+                                                                            <button class="btn btn-danger btn-xs btn-floating btnDelete"><i class="fa fa-trash" aria-hidden="true"></i></button>
+                                                                        }
                                                                     </td>
-                                                                   
+
 
                                                                 </tr>
                                                             }

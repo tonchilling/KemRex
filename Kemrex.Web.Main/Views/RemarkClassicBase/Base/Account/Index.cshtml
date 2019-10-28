@@ -17,6 +17,8 @@
                     $(this).remove();
                 });
             }, 5000);
+
+            $(SystemMenu).slideToggle();
             waitingDialog.show('Waiting for loading data', { dialogSize: 'md', progressType: 'primary' });
             LoadTable();
         });

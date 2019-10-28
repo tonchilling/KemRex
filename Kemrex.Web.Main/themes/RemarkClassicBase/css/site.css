@@ -46,7 +46,7 @@ body {
   z-index: 1400;
   height: 100%;
   height: calc(100% - 66.01px);
-  font-family: "Roboto", sans-serif;
+  font-family: "kanit","Roboto", sans-serif;
   color: rgba(163, 175, 183, 0.9);
   background: #263238;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08); }
@@ -5308,8 +5308,9 @@ body.site-navbar-small {
     color: inherit; }
 
 .panel-body {
-  position: relative;
-  padding: 30px 30px; }
+    position: relative;
+    padding: 5px 5px;
+}
   .panel-body::after {
     display: block;
     clear: both;
@@ -8044,4 +8045,66 @@ h3.example-title {
 .card>.content {
 
 padding:8px;
+}
+
+.card {
+    position: relative;
+    display: -ms-flexbox;
+    display: flex;
+    -ms-flex-direction: column;
+    flex-direction: column;
+    min-width: 0;
+    word-wrap: break-word;
+    background-color: #fff;
+    background-clip: border-box;
+    border: 1px solid rgba(0,0,0,.125);
+    border-radius: .25rem;
+    margin-bottom: 0.05rem;
+}
+
+
+.btn-floating {
+    box-shadow: 0 5px 11px 0 rgba(0,0,0,.18), 0 4px 15px 0 rgba(0,0,0,.15);
+    position: relative;
+    z-index: 1;
+    vertical-align: middle;
+    display: inline-block;
+    overflow: hidden;
+    transition: all .2s ease-in-out;
+    margin: 10px;
+    border-radius: 50%;
+    padding: 0;
+    cursor: pointer;
+    width: 47px;
+    height: 47px;
+}
+
+.textrow {
+
+    display:flex;
+     padding-bottom:0.5rem;
+}
+
+.borderless td, .borderless th {
+    border: none;
+}
+
+.alert-warning {
+    color: #856404;
+    background-color: #fff3cd;
+    border-color: #ffeeba;
+}
+
+.alert-info {
+    color: #0c5460;
+    background-color: #d1ecf1;
+    border-color: #bee5eb;
+}
+
+.pull-right {
+    float: right
+}
+
+.pull-left {
+    float: left
 }

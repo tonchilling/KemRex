@@ -193,7 +193,22 @@
             KeepData();
             var isConfirm = AddInvoiceValidation();
             if (isConfirm) {
-                $('#frmMain').submit();
+
+                 swal({
+                    title: "Save",
+                    text: "Do you want to Save this payment?",
+                    type: "info",
+                    showCancelButton: true,
+                    closeOnConfirm: false,
+                    showLoaderOnConfirm: true
+                },
+                    function (isConfirm) {
+                        if (isConfirm) {
+                           $('#frmMain').submit();
+
+                        }
+                    });
+               
 
             }
             return false;
@@ -317,16 +332,57 @@
                                 <input type="hidden" id="hdApprove" name="hdApprove" />
                                 <div class="panel-body">
                                     <div class="row">
+                                        <div class="col-sm-12">
+                                            @if (Model.InvoiceId <= 0 || Model.InvoiceId == null)
+                                            {
+                                                <a class="btn btn-xs btn-warning btnexpinvoice  pull-right" style="color:#FFF;padding-top:10px;" target="_blank">
+                                                    <i class="fa fa-file-pdf-o" aria-hidden="true"></i>&nbsp;PDF
+                                                </a>
+                                            }
+                                            else
+                                            {
+                                                if (Model.Invoice.ConditionId == 3 || Model.Invoice.ConditionId == 4 || Model.Invoice.ConditionId == 5)
+                                                {
+                                                    if (Model.Invoice.InvoiceTerm == 1)
+                                                    {
+                                                        <a href="@Url.Action("PDFDepositInvoice", new { controller = "export", area = "", id = Model.InvoiceId })"
+                                                           class="btn btn-xs btn-warning btnexpinvoice pull-right" style="color:#FFF;padding-top:10px;" target="_blank">
+                                                            <i class="fa fa-file-pdf-o" aria-hidden="true"></i>&nbsp;PDF
+                                                        </a>
+
+                                                    }
+                                                    else
+                                                    {
+                                                        <a href="@Url.Action("PDFInvoice", new { controller = "export", area = "", id = Model.InvoiceId })"
+                                                           class="btn btn-xs btn-warning btnexpinvoice pull-right" style="color:#FFF;padding-top:10px;" target="_blank">
+                                                            <i class="fa fa-file-pdf-o" aria-hidden="true"></i>&nbsp;PDF
+                                                        </a>
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    <a href="@Url.Action("PDFInvoice", new { controller = "export", area = "", id = Model.InvoiceId })"
+                                                       class="btn btn-xs btn-warning  pull-right" style="color:#FFF;padding-top:10px;" target="_blank">
+                                                        <i class="fa fa-file-pdf-o" aria-hidden="true"></i>>&nbsp;PDF
+                                                    </a>
+
+                                                }
+                                            }
+
+                                        </div>
+
+                                    </div>
+                                    <div class="row">
                                         @*Left panel*@
                                         <div class="col-md-6">
                                             <div class="form-group">
-                                                <label for="InvNo" class="col-sm-8 col-form-label">เลขที่การชำระเงิน</label>
+                                                <label for="InvNo" class="col-md-8 col-sm-12 col-form-label">เลขที่การชำระเงิน</label>
                                                 <div class="col-sm-8">
                                                     <input type="text" placeholder="บันทึกเพื่อสร้าง" class="form-control" value="@Model.PaymentNo" readonly />
                                                 </div>
                                             </div>
                                             <div class="form-group">
-                                                <label for="QuotationNo" class="col-sm-8 col-form-label">เลขที่ใบแจ้งหนี้</label>
+                                                <label for="QuotationNo" class="col-md-8 col-sm-12 col-form-label">เลขที่ใบแจ้งหนี้</label>
                                                 <div class="col-sm-8">
                                                     <div class="input-group">
 
@@ -352,41 +408,7 @@
                                                                     @(CheckStatus3 ? "" : "disabled")>
                                                                 ...
                                                             </button>
-                                                            @if (Model.InvoiceId <= 0 || Model.InvoiceId == null)
-                                                                {
-                                                                    <a class="btn btn-xs btn-warning btnexpinvoice" style="color:#FFF;padding-top:10px;" target="_blank">
-                                                                        <i class="fa fa-file-pdf-o" aria-hidden="true"></i>&nbsp;PDF
-                                                                    </a>
-                                                                }
-                                                                else
-                                                                {
-                                                                    if (Model.Invoice.ConditionId == 3 || Model.Invoice.ConditionId == 4 || Model.Invoice.ConditionId == 5)
-                                                                    {
-                                                                        if (Model.Invoice.InvoiceTerm == 1)
-                                                                        {
-                                                                            <a href="@Url.Action("PDFDepositInvoice", new { controller = "export", area = "", id = Model.InvoiceId })"
-                                                                               class="btn btn-xs btn-warning btnexpinvoice" style="color:#FFF;padding-top:10px;" target="_blank">
-                                                                                <i class="fa fa-file-pdf-o" aria-hidden="true"></i>&nbsp;PDF
-                                                                            </a>
-
-                                                                        }
-                                                                        else
-                                                                        {
-                                                                            <a href="@Url.Action("PDFInvoice", new { controller = "export", area = "", id = Model.InvoiceId })"
-                                                                               class="btn btn-xs btn-warning btnexpinvoice"  style="color:#FFF;padding-top:10px;"  target="_blank">
-                                                                                <i class="fa fa-file-pdf-o" aria-hidden="true"></i>&nbsp;PDF
-                                                                            </a>
-                                                                        }
-                                                                    }
-                                                                    else
-                                                                    {
-                                                                        <a href="@Url.Action("PDFInvoice", new { controller = "export", area = "", id = Model.InvoiceId })"
-                                                                            class="btn btn-xs btn-warning"   style="color:#FFF;padding-top:10px;"  target="_blank">
-                                                                            <i class="fa fa-file-pdf-o" aria-hidden="true"></i>>&nbsp;PDF
-                                                                        </a>
-                                                                        
-                                                                    }
-                                                                }
+                                                          
                                                         </div>
                                                     </div>
 
@@ -394,7 +416,7 @@
                                             </div>
 
                                             <div class="form-group">
-                                                <label class="col-sm-8 col-form-label">ชื่อผู้โอน</label>
+                                                <label class="col-md-8 col-sm-12 col-form-label">ชื่อผู้โอน</label>
                                                 <div class="input-group col-sm-8">
                                                     <input type="text" class="form-control text-right" value="@Model.CustomerName" id="CustomerName" name="CustomerName" @(CheckStatus3 ? "" : "readonly") />
                                                 </div>
@@ -410,7 +432,7 @@
                                                 </div>
                                             </div>
                                             <div class="form-group">
-                                                <label class="col-sm-8 col-form-label">ธนาคารต้นทาง</label>
+                                                <label class="col-md-8 col-sm-12 col-form-label">ธนาคารต้นทาง</label>
                                                 <div class="input-group col-sm-8">
                                                     <input type="text" class="form-control" value="@Model.BankPayFrom" id="BankPayFrom" name="BankPayFrom" @(CheckStatus3 ? "" : "readonly") />
                                                 </div>
@@ -448,7 +470,7 @@
 
                                             <div class="form-group">
                                                 <label for="PaySlipPath" class="col-sm-8 col-form-label">หลักฐานการโอน</label>
-                                                <div class="col-sm-8">
+                                                <div class="col-md-8 col-sm-12">
                                                     <input type="file" class="form-control" name="PaySlipPath" @(CheckStatus3 ? "" : "disabled") />
                                                     @if (!string.IsNullOrWhiteSpace(Model.StrPaySlipPath))
                                                     {
@@ -459,10 +481,10 @@
 
                                         </div>
                                         @*Right panel*@
-                                        <div class="col-md-5 col-sm-8">
+                                        <div class="col-md-6 col-sm-8">
                                             <div class="form-group">
                                                 <label for="CreateDate" class="col-sm-5 col-form-label">วันที่สร้าง</label>
-                                                <div class="input-group col-sm-6">
+                                                <div class="input-group col-md-8 col-sm-12">
                                                     <input type="text" class="form-control" name="CreatedDate" value="@Model.StrCreatedDate" readonly />
                                                     <span class="input-group-addon">
                                                         <i class="icon wb-calendar icon-2-5x text-success" aria-hidden="true"></i>
@@ -472,7 +494,7 @@
                                             </div>
                                             <div class="form-group">
                                                 <label for="UpdatedDate" class="col-sm-5 col-form-label">วันที่ปรับปรุงล่าสุด</label>
-                                                <div class="input-group col-sm-6">
+                                                <div class="input-group col-md-8 col-sm-12">
                                                     <input type="text" class="form-control" name="UpdatedDate" value="@Model.StrUpdatedDate" readonly />
                                                     <span class="input-group-addon">
                                                         <i class="icon wb-calendar icon-2-5x text-success" aria-hidden="true"></i>
@@ -482,7 +504,7 @@
                                             </div>
                                             <div class="form-group">
                                                 <label for="SaleName" class="col-sm-5 col-form-label">สร้างโดย</label>
-                                                <div class="input-group col-sm-6">
+                                                <div class="input-group col-md-8 col-sm-12">
                                                     @{
                                                         string createName = "";
 
@@ -500,7 +522,7 @@
                                             </div>
                                             <div class="form-group">
                                                 <label for="PaymentDate" class="col-sm-5 col-form-label">วันที่โอน</label>
-                                                <div class="input-group col-sm-6 date" data-provide="@(CheckStatus3 ? "datepicker" : "")" data-date-format="dd/mm/yyyy">
+                                                <div class="input-group col-md-8 col-sm-12 date" data-provide="@(CheckStatus3 ? "datepicker" : "")" data-date-format="dd/mm/yyyy">
                                                     <input id="PaymentDate" type="text" class="form-control" placeholder="dd/MM/yyyy ค.ศ." name="PaymentDate"
                                                            value="@Model.StrPaymentDate" readonly />
                                                     <span class="input-group-addon">
@@ -510,13 +532,13 @@
                                             </div>
                                             <div class="form-group">
                                                 <label class="col-sm-5 col-form-label">สาขาธนาคารต้นทาง</label>
-                                                <div class="input-group col-sm-6">
+                                                <div class="input-group col-md-8 col-sm-12">
                                                     <input type="text" class="form-control" value="@Model.BankPayFromBranch" id="BankPayFromBranch" name="BankPayFromBranch" @(CheckStatus3 ? "" : "readonly")/>
                                                 </div>
                                             </div>
                                             <div class="form-group">
                                                 <label for="Remark" class="col-sm-6 col-form-label">สถานะ</label>
-                                                <div class="col-sm-6">
+                                                <div class="col-md-8 col-sm-12">
                                                     <select name="StatusId" id="StatusId" class="form-control" @(CheckStatus3 ? "" : "disabled")>
                                                         <option class="text-muted" value="1" @(Model.StatusId == 1 ? " selected=\" selected\"" : "" )>สร้าง</option>
                                                         <option class="text-primary" value="2" @(Model.StatusId == 2 ? " selected=\" selected\"" : "" )>รอการอนุมัติ</option>
@@ -539,7 +561,7 @@
                                                 {
                                                     if (optPermission.IsEdit)
                                                     {
-                                                    <button type="submit" class="btn btn-primary" id="btnSubmit" name="btnSubmit">บันทึก</button>
+                                                    <button type="submit" class="btn btn-primary btnSubmit" id="btnSubmit" name="btnSubmit">บันทึก</button>
                                                     }
                                                 }
                                                 &nbsp;<a href="@Url.Action("Index", "Payment" )" class="btn btn-default">ยกเลิก</a>

@@ -392,16 +392,16 @@
                                     <input type="hidden" name="InvoiceId" value="@Model.InvoiceId" />
                                     <div class="panel-body">
                                         <div class="row">
-                                            <div class="col-md-6">
+                                            <div class="col-md-6 col-sm-12">
                                                 <div class="form-group">
-                                                    <label for="InvNo" class="col-sm-4 col-form-label">เลขที่ใบแจ้งหนี้</label>
-                                                    <div class="col-sm-7">
+                                                    <label for="InvNo" class="col-lg-6 col-sm-12 col-form-label">เลขที่ใบแจ้งหนี้</label>
+                                                    <div class="col-lg-8 col-md-10 col-sm-12">
                                                         <input type="text" placeholder="บันทึกเพื่อสร้าง" class="form-control" value="@Model.InvoiceNo" readonly />
                                                     </div>
                                                 </div>
                                                 <div class="form-group">
-                                                    <label for="QuotationNo" class="col-sm-6 col-form-label">เลขที่ใบเสนอราคา / ใบสั่งขาย</label>
-                                                    <div class="col-sm-7">
+                                                    <label for="QuotationNo" class="col-lg-6 col-sm-12 col-form-label">เลขที่ใบเสนอราคา / ใบสั่งขาย</label>
+                                                    <div class="col-lg-8 col-md-10 col-sm-12">
                                                         <div class="input-group">
                                                             @*<select class="form-control" id="selSaleOrder" data-live-search="true" readonly
                                                                     name="selSaleOrder" >
@@ -451,8 +451,8 @@
                                                 </div>
 
                                                 <div class="form-group">
-                                                    <label class="col-sm-4 col-form-label">ยอดจากใบสั่งขาย</label>
-                                                    <div class="input-group col-sm-6">
+                                                    <label class="col-lg-6 col-sm-12 col-form-label">ยอดจากใบสั่งขาย</label>
+                                                    <div class="input-group col-lg-8 col-md-10 col-sm-12">
                                                         @{
                                                             //var total = (Model.SaleOrder != null ? Model.SaleOrder.SummaryTot - Model.SaleOrder.DiscountCash : decimal.Zero);
                                                             var total = (Model.SaleOrder != null ? Model.SaleOrder.SummaryNet : decimal.Zero);
@@ -461,8 +461,8 @@
                                                     </div>
                                                 </div>
                                                 <div class="form-group">
-                                                    <label for="InvoiceAmount" class="col-sm-2 col-form-label">ยอดเรียกเก็บ</label><label for="InvoiceAmount" id="InvoiceRemain" name="InvoiceRemain" class="col-sm-4 col-form-label"> (ยังไม่ได้เรียกเก็บ @RemainAmt)</label>
-                                                    <div class="input-group col-sm-6">
+                                                    <label for="InvoiceAmount" class="col-lg-2 col-sm-12 col-form-label">ยอดเรียกเก็บ</label><label for="InvoiceAmount" id="InvoiceRemain" name="InvoiceRemain" class="col-lg-4 col-sm-12 col-form-label"> (ยังไม่ได้เรียกเก็บ @RemainAmt)</label>
+                                                    <div class="input-group col-lg-8 col-md-10 col-sm-12">
                                                         <span class="input-group-addon">
                                                             <i class="icon wb-payment  icon-2-5x text-danger" aria-hidden="true"></i>
                                                         </span>
@@ -517,24 +517,24 @@
                                                     </div>
                                                 </div>*@
                                                 <div class="form-group">
-                                                    <label for="InvoiceTerm" class="col-sm-5 col-form-label">งวดที่</label>
-                                                    <div class="input-group col-sm-6">
+                                                    <label for="InvoiceTerm" class="col-lg-6 col-sm-12  col-form-label">งวดที่</label>
+                                                    <div class="input-group col-lg-8 col-md-10 col-sm-12">
                                                         <input type="number" class="form-control text-right" name="InvoiceTerm" id="InvoiceTerm" value="@Model.InvoiceTerm" @(canedit ? "" : "readonly") />
                                                     </div>
                                                 </div>
                                                 <div class="form-group">
-                                                    <label for="Remark" class="col-sm-4 col-form-label">หมายเหตุ</label>
-                                                    <div class="col-sm-10">
+                                                    <label for="Remark" class="col-lg-6 col-sm-12 col-form-label">หมายเหตุ</label>
+                                                    <div class="col-lg-8 col-md-10 col-sm-12">
                                                         <textarea rows="4" cols="47" class="form-control" name="InvoiceRemark" @(canedit ? "" : "readonly")>@Model.InvoiceRemark</textarea>
                                                     </div>
                                                 </div>
                                             </div>
                                             @*Right panel*@
 
-                                            <div class="col-md-5 col-sm-8">
+                                            <div class="col-md-6 col-sm-12">
                                                 <div class="form-group">
-                                                    <label for="CreateDate" class="col-sm-5 col-form-label">วันที่ออกเอกสาร</label>
-                                                    <div class="input-group col-sm-6">
+                                                    <label for="CreateDate" class="col-lg-6 col-sm-12 col-form-label">วันที่ออกเอกสาร</label>
+                                                    <div class="input-group col-lg-8 col-md-10 col-sm-12">
                                                         <span class="input-group-addon">
                                                             <i class="icon wb-calendar  icon-2-5x text-success" aria-hidden="true"></i>
                                                         </span>
@@ -542,8 +542,8 @@
                                                     </div>
                                                 </div>
                                                 <div class="form-group">
-                                                    <label for="DueDate" class="col-sm-5 col-form-label">วันที่ครบกำหนด</label>
-                                                    <div class="input-group col-sm-6 date" data-provide="@(checkInvoice ? "datepicker" : "")" data-date-format="dd/mm/yyyy">
+                                                    <label for="DueDate" class="col-lg-6 col-sm-12 col-form-label">วันที่ครบกำหนด</label>
+                                                    <div class="input-group col-lg-8 col-md-10 col-sm-12 date" data-provide="@(checkInvoice ? "datepicker" : "")" data-date-format="dd/mm/yyyy">
                                                         <span class="input-group-addon">
                                                             <i class="icon wb-calendar  icon-2-5x text-success" aria-hidden="true"></i>
                                                         </span>
@@ -552,8 +552,8 @@
                                                 </div>
                                                 @*Invoice Status*@
                                                 <div class="form-group">
-                                                    <label for="PriceValidity" class="col-sm-5 col-form-label">สถานะเอกสาร</label>
-                                                    <div class="col-sm-6">
+                                                    <label for="PriceValidity" class="col-lg-6 col-sm-12 col-form-label">สถานะเอกสาร</label>
+                                                    <div class="col-lg-8 col-md-10 col-sm-12">
                                                         <select name="StatusId" id="StatusId" class="form-control">
                                                             @if (Model.StatusId == 1 || Model.StatusId == null)
                                                             {
@@ -583,8 +583,8 @@
                                                     </div>
                                                 </div>*@
                                                 <div class="form-group">
-                                                    <label class="col-sm-5 col-form-label">เงื่อนไขการชำระเงิน</label>
-                                                    <div class="input-group col-sm-6">
+                                                    <label class="col-lg-6 col-sm-12 col-form-label">เงื่อนไขการชำระเงิน</label>
+                                                    <div class="input-group col-lg-8 col-md-10 col-sm-12">
                                                         @*@{
                                                             string con = "";
                                                             int conid = 0;
@@ -608,10 +608,10 @@
                                                     </div>
                                                 </div>
                                                 <div class="form-group">
-                                                    <label class="col-sm-5 col-form-label">ประวัติรายงวด</label>
-                                                    <div class="input-group col-sm-6">
-                                                        <table class="table table-borderless table-hover">
-                                                            <thead>
+                                                    <label class="col-lg-6 col-sm-12 col-form-label">ประวัติรายงวด</label>
+                                                    <div class="input-group col-lg-8 col-md-12 col-sm-12">
+                                                        <table class="table table-borderless  table-hover">
+                                                            <thead class="thead-info">
                                                                 <tr align="center">
                                                                     <th align="center">งวดที่</th>
                                                                     <th align="center">ยอดเรียกเก็บ</th>

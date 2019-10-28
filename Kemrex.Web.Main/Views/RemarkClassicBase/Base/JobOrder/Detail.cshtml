@@ -28,20 +28,20 @@
     TeamOperationList = (List<TeamOperation>
     )ViewData["TeamOperation"];
     List<TblProduct>
- optProduct = (List<TblProduct>
+    optProduct = (List<TblProduct>
      )ViewData["optProduct"];
     List<TblSaleOrderAttachment> optAttachment = (List<TblSaleOrderAttachment>
       )ViewData["optAttachment"];
     SysAccount sysAccount = (SysAccount
-)ViewData["userAccount"];
+    )ViewData["userAccount"];
     List<TblEmployee>
-optEmployee = (List<TblEmployee>
-)ViewData["optEmployee"];
+    optEmployee = (List<TblEmployee>
+    )ViewData["optEmployee"];
 
 
     List<SysSurveyHeaderTemplate>
-  SurveyTemplate = (List<SysSurveyHeaderTemplate>
-)ViewData["SurveyTemplate"];
+    SurveyTemplate = (List<SysSurveyHeaderTemplate>
+    )ViewData["SurveyTemplate"];
 
     AccountPermission optPermission = (AccountPermission
     )ViewData["optPermission"];
@@ -640,8 +640,7 @@ optEmployee = (List<TblEmployee>
 
     .form-comment {
         /*display: block;*/
-        width: 400px;
-  
+        /* width: 400px;*/
         height: 2.573rem;
         padding: .429rem 1rem;
         font-size: 1rem;
@@ -662,7 +661,7 @@ optEmployee = (List<TblEmployee>
         <input type="hidden" id="hdApprove" name="hdApprove" />
         <input type="hidden" id="StatusId" name="StatusId" value="@Model.StatusId" />
         <input type="hidden" id="CreatedBy" name="CreatedBy" value="@Model.CreatedBy" />
-        <input type="hidden" id="CreatedDate" name="CreatedDate" value="@(Model.CreatedDate.HasValue ? Model.CreatedDate.Value.ToString("dd/MM/yyyy hh:mm:ss"):"")" />
+        <input type="hidden" id="CreatedDate" name="CreatedDate" value="@(Model.CreatedDate.HasValue ? Model.CreatedDate.Value.ToString("dd/MM/yyyy hh:mm:ss") : "")" />
         <div class="page">
             <div class="page-header">
                 <ol class="breadcrumb">
@@ -744,11 +743,11 @@ optEmployee = (List<TblEmployee>
                                 <div class="row">
                                     <div class="col-12">
                                         <div class="form-group">
-                                            <a href="@Url.Action("PDFQualityCheck", new { controller = "export", area = "", id = Model.JobOrderId  })"
+                                            <a href="@Url.Action("PDFQualityCheck", new { controller = "export", area = "", id = Model.JobOrderId })"
                                                class="btn btn-warning" style="float:right;margin-left:10px;" target="_blank">
                                                 <i class="fa fa-file-pdf-o" aria-hidden="true"></i>&nbsp;พิมพ์แบบประเมิน
                                             </a>
-                                            <a href="@Url.Action("PDFJobOrder", new { controller = "export", area = "", id = Model.JobOrderId  })"
+                                            <a href="@Url.Action("PDFJobOrder", new { controller = "export", area = "", id = Model.JobOrderId })"
                                                class="btn btn-warning" style="float:right;" target="_blank">
                                                 <i class="fa fa-file-pdf-o" aria-hidden="true"></i>&nbsp;พิมพ์ใบสั่งงาน
                                             </a>
@@ -764,17 +763,33 @@ optEmployee = (List<TblEmployee>
                 <div data-tabs="myTabPage">
                     <ul class="tabs">
 
-
-
-                        <li class="tab-link current" data-tab="tab-1">1.รายละเอียดโครงการ</li>
-                        <li class="tab-link" data-tab="tab-2">2.ลักษณะโครงการ</li>
-                        <li class="tab-link" data-tab="tab-3">3.รายละเอียดเข็มเหล็กและอุปกรณ์เพิ่มเติม</li>
-                        <li class="tab-link" data-tab="tab-4">4.รายละเอียดพื้นที่ติดตั้งหน้างาน</li>
-                        @if (Model.SaleOrder != null)
+                        @if (kemrex.IsMobileBrowser())
                         {
-                            <li class="tab-link" data-tab="tab-5">5.รายการสินค้า</li>
-                            <li class="tab-link" data-tab="tab-6">6.เอกสารแนบ</li>
-                            <li class="tab-link" data-tab="tab-7">7.แบบประเมิน</li>
+                            <li class=" tab-link  col-sm-12 current" data-tab="tab-1">1.รายละเอียดโครงการ</li>
+                            <li class=" tab-link col-sm-12  " data-tab="tab-2">2.ลักษณะโครงการ</li>
+                            <li class=" tab-link col-sm-12 " data-tab="tab-3">3.รายละเอียดเข็มเหล็กและอุปกรณ์เพิ่มเติม</li>
+                            <li class=" tab-link  col-sm-12 " data-tab="tab-4">4.รายละเอียดพื้นที่ติดตั้งหน้างาน</li>
+                            if (Model.SaleOrder != null)
+                            {
+                                <li class="tab-link col-sm-12 " data-tab="tab-5">5.รายการสินค้า</li>
+                                <li class=" tab-link col-sm-12 " data-tab="tab-6">6.เอกสารแนบ</li>
+                                <li class=" tab-link col-sm-12 " data-tab="tab-7">7.แบบประเมิน</li>
+                            }
+                        }
+
+                        else
+                        {
+
+                        <li class=" tab-link  current" data-tab="tab-1">1.รายละเอียดโครงการ</li>
+                        <li class="tab-link  " data-tab="tab-2">2.ลักษณะโครงการ</li>
+                        <li class=" tab-link " data-tab="tab-3">3.รายละเอียดเข็มเหล็กและอุปกรณ์เพิ่มเติม</li>
+                        <li class=" tab-link  " data-tab="tab-4">4.รายละเอียดพื้นที่ติดตั้งหน้างาน</li>
+                        if (Model.SaleOrder != null)
+                        {
+                            <li class="tab-link  " data-tab="tab-5">5.รายการสินค้า</li>
+                            <li class=" tab-link  " data-tab="tab-6">6.เอกสารแนบ</li>
+                            <li class=" tab-link  " data-tab="tab-7">7.แบบประเมิน</li>
+                        }
                         }
                     </ul>
 
@@ -968,21 +983,25 @@ optEmployee = (List<TblEmployee>
                                     <div class="panel-heading">
 
                                     </div>
-                                    <div class="panel-body">
-                                        @foreach (var obj in SysCategoryDetail.Where(o => o.CategoryTypeId == 6))
-                                        {
-                                            bool selected = (Model.ProjectType != null && Model.ProjectType.Find(o => o.ProjectTypeId == obj.CategoryId) != null ? true : false);
-                                            <div class="checkbox">
-                                                <label>
-                                                    <input data-toggle="toggle" data-onstyle="success"
-                                                           type="checkbox" @(selected ? "Checked" : "") class="selProject" value="@obj.CategoryId">@obj.CategoryName
-                                                    </label>
-                                                </div>
-                                            }
-                                        <input type="hidden" id="hddProject" name="hddProject" />
+                                    <div class="panel-body" style="padding-left:20px">
+                                        <div class="row">
+                                            <div class="col-12">
+                                                @foreach (var obj in SysCategoryDetail.Where(o => o.CategoryTypeId == 6))
+                                                {
+                                                    bool selected = (Model.ProjectType != null && Model.ProjectType.Find(o => o.ProjectTypeId == obj.CategoryId) != null ? true : false);
+                                                    <div class="checkbox">
+                                                        <label>
+                                                            <input data-toggle="toggle" data-onstyle="success"
+                                                                   type="checkbox" @(selected ? "Checked" : "") class="selProject" value="@obj.CategoryId">@obj.CategoryName
+                                                            </label>
+                                                        </div>
+                                                    }
+                                            </div>
+                                        </div>
+                                                <input type="hidden" id="hddProject" name="hddProject" />
+                                            </div>
+                                        </div>
                                     </div>
-                                </div>
-                            </div>
                         </div>
                         <div class="row">
                             <div class="col-md-5">
@@ -1002,7 +1021,7 @@ optEmployee = (List<TblEmployee>
                                     <div class="panel-heading">
                                         <h3 class="panel-title"></h3>
                                     </div>
-                                    <div class="panel-body">
+                                    <div class="panel-body" style="padding-left:20px">
                                         <div class="row">
                                             <div class="col-12">
                                                 <div class="panel">
@@ -1011,7 +1030,7 @@ optEmployee = (List<TblEmployee>
                                                             3.1 เข็มเหล็กรุ่น (Model)&nbsp;
                                                         </h3>
                                                     </div>
-                                                    <div class="panel-body">
+                                                    <div class="panel-body" style="padding-left:20px">
                                                         <div class="row">
                                                             <div class="col-12">
                                                                 <div class="table-responsive">
@@ -1082,7 +1101,7 @@ optEmployee = (List<TblEmployee>
 
 
                                                                     <div class="row">
-                                                                        <div class="col-4 col-md-4 form-group">
+                                                                        <div class="col-md-4 col-sm-12 form-group">
                                                                             <label for="PileId" class="form-control-label">รหัสเข็มเหล็ก</label>
                                                                             <select class="form-control" id="selProduct" data-live-search="true"
                                                                                     name="selProduct">
@@ -1096,12 +1115,12 @@ optEmployee = (List<TblEmployee>
 
 
                                                                             </select>
-                                                                        </div><div class="col-2 col-md-2 form-group">
+                                                                        </div><div class="col-md-2 col-sm-12 form-group">
                                                                             <label for="Qty" class="form-control-label">จำนวน</label>
                                                                             <input type="number" class="form-control" id="Quantity" name="Quantity" value="1" />
 
                                                                         </div>
-                                                                        <div class="col-2 col-md-2 form-group">
+                                                                        <div class="col-md-2 col-sm-12 form-group">
                                                                             @if (Model.StatusId == 2 && optPermission.IsManager && optPermission.IsEdit)
                                                                             {
                                                                                 <button type="submit" id="btnAddProduct" style="margin-top:40px" class="btn btn-primary">เพิ่ม</button>
@@ -1200,7 +1219,7 @@ optEmployee = (List<TblEmployee>
 
 
                                                                     <div class="row">
-                                                                        <div class="col-4 col-md-4 form-group">
+                                                                        <div class="col-md-4 col-sm-12 form-group">
                                                                             <label for="PileId" class="form-control-label">รหัสอุปกรณ์</label>
                                                                             <select class="form-control" id="selProductP" data-live-search="true"
                                                                                     name="selProductP">
@@ -1214,7 +1233,7 @@ optEmployee = (List<TblEmployee>
 
 
                                                                             </select>
-                                                                        </div><div class="col-2 col-md-2 form-group">
+                                                                        </div><div class="col-md-2 col-sm-12 form-group">
                                                                             <label for="Qty" class="form-control-label">จำนวน</label>
                                                                             <input type="number" class="form-control" id="QuantityP" name="QuantityP" value="1" />
 
@@ -1329,7 +1348,7 @@ optEmployee = (List<TblEmployee>
                                     <div class="panel-heading">
                                         <h3 class="panel-title"></h3>
                                     </div>
-                                    <div class="panel-body">
+                                    <div class="panel-body" style="padding-left:20px">
                                         <div class="row">
                                             <div class="col-md-2">
                                                 <div class="form-group">
@@ -1487,7 +1506,7 @@ optEmployee = (List<TblEmployee>
                                         <div class="panel-heading">
                                             <h3 class="panel-title"></h3>
                                         </div>
-                                        <div class="panel-body">
+                                        <div class="panel-body" style="padding-left:20px">
                                             <div class="row">
                                                 <div class="col-12">
                                                     <div class="panel">
@@ -1626,7 +1645,7 @@ optEmployee = (List<TblEmployee>
                                                 รายการเอกสาร&nbsp;
                                             </h3>
                                         </div>
-                                        <div class="panel-body">
+                                        <div class="panel-body" style="padding-left:20px">
                                             <div class="row">
                                                 <div class="col-12">
                                                     <div class="table-responsive">
@@ -1697,7 +1716,7 @@ optEmployee = (List<TblEmployee>
                                         <div class="panel-heading">
                                             <h2>ประเมินคุณภาพและข้อมูลเพิ่มเติม(Quality check)</h2>
                                         </div>
-                                        <div class="panel-body">
+                                        <div class="panel-body" style="padding-left:20px">
                                             <div class="row">
                                                 <div class="col-md-6">
                                                     <div class="form-group">
@@ -1762,7 +1781,7 @@ optEmployee = (List<TblEmployee>
                                                                                 {
                                                                                     <div class="col-md-12">
                                                                                         <div class="checkbox">
-                                                                                            <label>
+                                                                                            <label class="col-sm-12">
                                                                                                 @{bool selected = (Model.SurveyDetail != null && Model.SurveyDetail.Find(o => o.SurveyDetailId == detail.SurveyDetailID) != null ? true : false);}
                                                                                                 <input data-toggle="toggle" data-onstyle="success"
                                                                                                        type="checkbox" @(selected ? "Checked" : "") class="selSurvey" value="@detail.SurveyDetailID" />@detail.Title

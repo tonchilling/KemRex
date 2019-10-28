@@ -19,7 +19,101 @@
                     $(this).remove();
                 });
             }, 5000);
+
+
+            $(BasicMenu).slideToggle();
         });
+
+        $('.btnSave').click(function () {
+
+
+            var isConfirm = true;
+
+
+
+
+            if (isConfirm) {
+
+                swal({
+                    title: "SAVE",
+                    text: "Do you want to save?",
+                    type: "info",
+                    showCancelButton: true,
+                    closeOnConfirm: false,
+                    showLoaderOnConfirm: true
+                },
+                    function (isConfirm) {
+                        if (isConfirm) {
+                            $('#frmMain').submit();
+
+                        }
+                    });
+            }
+
+            return false;
+
+        });
+
+        $('.btnDeleteContract').click(function () {
+
+
+            var isConfirm = true;
+            var frm = $(this).closest("Form")
+
+
+
+            if (isConfirm) {
+
+                swal({
+                    title: "Delete",
+                    text: "Do you want to delete?",
+                    type: "warning",
+                    showCancelButton: true,
+                    closeOnConfirm: false,
+                    showLoaderOnConfirm: true
+                },
+                    function (isConfirm) {
+                        if (isConfirm) {
+                            frm.submit();
+
+                        }
+                    });
+            }
+
+            return false;
+
+        });
+
+        $('.btnDeleteAddress').click(function () {
+
+
+            var isConfirm = true;
+
+            var frm = $(this).closest("Form")
+
+
+            if (isConfirm) {
+
+                swal({
+                    title: "Delete",
+                    text: "Do you want to delete?",
+                    type: "warning",
+                    showCancelButton: true,
+                    closeOnConfirm: false,
+                    showLoaderOnConfirm: true
+                },
+                    function (isConfirm) {
+                        if (isConfirm) {
+                            frm.submit();
+
+                        }
+                    });
+            }
+
+            return false;
+
+        });
+
     </script>
 }
 
@@ -42,7 +136,7 @@
                             <span class="panel-desc">รายละเอียดลูกค้า</span>
                         </h3>
                     </div>
-                    <form method="post" action="@Url.Action("Detail", "Customer")" enctype="multipart/form-data">
+                    <form method="post" id="frmMain" action="@Url.Action("Detail", "Customer")" enctype="multipart/form-data">
                         @Html.AntiForgeryToken()
                         <input type="hidden" name="CustomerId" value="@Model.CustomerId" />
                         <div class="panel-body">
@@ -119,7 +213,7 @@
                             <div class="row">
                                 <div class="col-12">
                                     <div class="form-group">
-                                        <button type="submit" class="btn btn-primary">บันทึก</button>&nbsp;
+                                        <button type="submit" class="btn btn-primary btnSave">บันทึก</button>&nbsp;
                                         <a href="@Url.Action("Index", "Customer")" class="btn btn-default">ยกเลิก</a>
                                     </div>
                                 </div>
@@ -176,8 +270,9 @@
                                                             <form method="post" action="@Url.Action("Delete", new { controller = "CustomerAddress", cusId = ob.CustomerId })"
                                                                   class="fnc-delete inline-block">
                                                                 <input type="hidden" name="CustomerId" value="@ob.CustomerId" />
+                                                                <input type="hidden" name="AddressId" value="@ob.AddressId" />
                                                                 @Html.AntiForgeryToken()
-                                                                <button type="submit" class="btn btn-danger btn-xs"><i class="fa fa-trash" aria-hidden="true"></i>&nbsp;ลบ</button>
+                                                                <button type="submit" class="btn btn-danger btn-xs btnDeleteAddress"><i class="fa fa-trash" aria-hidden="true"></i>&nbsp;ลบ</button>
                                                             </form>
                                                         </td>
                                                     </tr>
@@ -235,8 +330,9 @@
                                                             <form method="post" action="@Url.Action("Delete", new { controller = "CustomerContact", cusId = ob.CustomerId })"
                                                                   class="fnc-delete inline-block">
                                                                 <input type="hidden" name="CustomerId" value="@ob.CustomerId" />
+                                                                <input type="hidden" name="ContactId" value="@ob.ContactId" />
                                                                 @Html.AntiForgeryToken()
-                                                                <button type="submit" class="btn btn-danger btn-xs"><i class="fa fa-trash" aria-hidden="true"></i>&nbsp;ลบ</button>
+                                                                <button type="submit" class="btn btn-danger btn-xs btnDeleteContract"><i class="fa fa-trash" aria-hidden="true"></i>&nbsp;ลบ</button>
                                                             </form>
                                                         </td>
                                                     </tr>

@@ -76,7 +76,7 @@
                                  html += '<div class="col-sm-12"><div class="textrow"><div class="text-primary"><b>ลูกค้า</b></div>  : ' + item.CustomerName + '</div></div>';
                                  html += '<div class="col-sm-12"><div class="textrow"><div class="text-primary"><b>ยอดเงิน</b></div> : ' + numeral(item.SummaryTot - item.DiscountCash).format('0,0.00') + '</div></div>';
                                  html += '<div div class="col-sm-12"><div class="textrow"><div class="text-primary"><b>วันที่</b></div> : ' + item.SaleOrderDate + '</div></div>';
-                                 html += '<div> <a href="' + urlDetail + '/' + item.SaleOrderId + '" class="btn btn-md btn-floating' + (item.StatusId <= 1 ? " btn-default" : " btn-success") + '">';
+                                 html += '<div> <a href="' + urlDetail + '/' + item.SaleOrderId + '" class="btn btn-md btn-floating' + (item.StatusId <= 1 ? " btn-primary" : " btn-success") + '">';
                                  html += '<i class=" ' + (item.StatusId <= 1 ? "fa fa-pencil" : "fa fa-search") + '" aria-hidden="true"></i></a>';
 
                                 

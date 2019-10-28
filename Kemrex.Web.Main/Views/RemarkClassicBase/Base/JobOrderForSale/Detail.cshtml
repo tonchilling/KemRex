@@ -96,7 +96,13 @@
 
                 $(this).addClass('current');
                 $("#" + tab_id).addClass('current');
-                })
+            })
+
+
+            if ($("#StatusId").val() >= 2) {
+
+                $("#frmmain :input").prop("disabled", true);
+            }
 
 
         });
@@ -573,6 +579,7 @@
             padding: 10px 15px;
             cursor: pointer;
             background: #ededed;
+            border-bottom: solid 0.5px #fff;
         }
 
             ul.tabs li.current {
@@ -602,7 +609,7 @@
         <div class="page">
             <div class="page-header">
                 <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="@Url.Action("Index", new { controller = "JobOrderForSale", area = "" })" })">ย้อนกลับ</a></li>
+                    <li class="breadcrumb-item"><a target="_blank" href="@Url.Action("Index", new { controller = "JobOrderForSale", area = "" })" })">ย้อนกลับ</a></li>
                 </ol>
             </div>
             <div class="page-content container-fluid">
@@ -696,14 +703,14 @@
 
 
 
-                        <li class="tab-link current" data-tab="tab-1">1.รายละเอียดโครงการ</li>
-                        <li class="tab-link" data-tab="tab-2">2.ลักษณะโครงการ</li>
-                        <li class="tab-link" data-tab="tab-3">3.รายละเอียดพื้นที่ติดตั้งหน้างาน</li>
+                        <li class="col-sm-2 tab-link current" data-tab="tab-1">1.รายละเอียดโครงการ</li>
+                        <li class="col-sm-2 tab-link" data-tab="tab-2">2.ลักษณะโครงการ</li>
+                        <li class="col-sm-3 tab-link" data-tab="tab-3">3.รายละเอียดพื้นที่ติดตั้งหน้างาน</li>
 
                         @if (Model.SaleOrder != null)
                         {
-                            <li class="tab-link" data-tab="tab-4">4.รายการสินค้า</li>
-                            <li class="tab-link" data-tab="tab-5">5.เอกสารแนบ</li>
+                            <li class="col-sm-2 tab-link" data-tab="tab-4">4.รายการสินค้า</li>
+                            <li class="col-sm-2 tab-link" data-tab="tab-5">5.เอกสารแนบ</li>
                         }
                     </ul>
 
@@ -1517,12 +1524,7 @@
 
                 <script type="text/javascript">
 
-                    $(document).ready(function () {
-                        if ($("#StatusId").val() >= 2) {
-
-                            $("#frmmain :input").prop("disabled", true);
-                        }
-                    }
+                 
 
                 </script>
 

@@ -644,11 +644,18 @@
                                                 <table class="table table-hover table-striped">
                                                     <thead>
                                                         <tr>
-                                                            <th>ลำดับที่</th>
-                                                            <th>สินค้า</th>
-                                                            <th>คลังสินค้า</th>
-                                                            <th>จำนวน</th>
-                                                            <th>เครื่องมือ</th>
+                                                            @if (kemrex.IsMobileBrowser())
+                                                            {
+                                                                <th></th>
+                                                            }
+                                                            else
+                                                            {
+
+                                                                <th>ลำดับที่</th>
+                                                                <th>สินค้า</th>
+                                                                <th>จำนวนที่ขาย</th>
+                                                                <th>จำนวนที่เบิก</th>
+                                                            }
                                                         </tr>
                                                     </thead>
                                                     <tbody>
@@ -656,35 +663,112 @@
                                                         @if (Model.TransferStockDetail.Count() <= 0)
                                                         {
                                                             <tr>
-                                                                <td colspan="7">ไม่พบข้อมูล</td>
+                                                                @if (!kemrex.IsMobileBrowser())
+                                                                {
+                                                                    <td colspan="7">ไม่พบข้อมูล</td>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <td>ไม่พบข้อมูล</td>
+                                                                }
                                                             </tr>
                                                         }
                                                         @{int row = 1;
 
-                                                            foreach (var ob in Model.TransferStockDetail)
+                                                            if (!kemrex.IsMobileBrowser())
                                                             {
-                                                                <tr>
-                                                                    <td>@row</td>
-                                                                    <td>@ob.Product.ProductCode @ob.Product.ProductName</td>
-                                                                    <td>@ob.WareHouse.Whname</td>
-                                                                    <td>@ob.RequestQty</td>
+                                                                foreach (var ob in Model.TransferStockDetail)
+                                                                {
+                                                                    <tr>
+                                                                        <td>@row</td>
+                                                                        <td>@ob.Product.ProductCode @ob.Product.ProductName</td>
+                                                                        <td>@ob.WareHouse.Whname</td>
+                                                                        <td>@ob.RequestQty</td>
 
 
-                                                                    <td>
-                                                                        <form method="post" action="@Url.Action("DetailDelete", new { controller = "TransferStockOut" })"
-                                                                              class="fnc-delete inline-block">
+                                                                        <td>
+                                                                            <form method="post" action="@Url.Action("DetailDelete", new { controller = "TransferStockOut" })"
+                                                                                  class="fnc-delete inline-block">
 
-                                                                            <input type="hidden" id="TransferStockId" name="TransferStockId" value="@Model.TransferStockId" />
-                                                                            <input type="hidden" id="Seq" name="Seq" value="@ob.Seq" />
-                                                                            @* @Html.AntiForgeryToken()*@
-                                                                            @if (canedit)
-                                                                            {
-                                                                                <button type="submit" class="btn btn-danger btn-xs"><i class="fa fa-trash" aria-hidden="true"></i>&nbsp;ลบ</button>
-                                                                            }
-                                                                        </form>
-                                                                    </td>
-                                                                </tr>
-                                                                row++;
+                                                                                <input type="hidden" id="TransferStockId" name="TransferStockId" value="@Model.TransferStockId" />
+                                                                                <input type="hidden" id="Seq" name="Seq" value="@ob.Seq" />
+                                                                                @* @Html.AntiForgeryToken()*@
+                                                                                @if (canedit)
+                                                                                {
+                                                                                    <button type="submit" class="btn btn-danger btn-xs"><i class="fa fa-trash" aria-hidden="true"></i>&nbsp;ลบ</button>
+                                                                                }
+                                                                            </form>
+                                                                        </td>
+                                                                    </tr>
+                                                                    row++;
+                                                                }
+                                                            }
+                                                            else
+                                                            {
+                                                                foreach (var ob in Model.TransferStockDetail)
+                                                                {
+                                                                    <tr>
+                                                                        <td>
+
+                                                                            <div class="content">
+                                                                                <div class="row">
+                                                                                    <div class="col-sm-5">
+                                                                                        <div class="icon-big text-center"></div>
+                                                                                    </div>
+                                                                                    <div class="col-sm-10">
+                                                                                        <div>
+                                                                                            <div class="col-sm-12">
+                                                                                                <div class="textrow">
+                                                                                                    <div class="text-primary"><b>ลำดับที่</b></div> : <div class="text-default">@row</div>
+                                                                                                </div>
+                                                                                            </div><div class="col-sm-12">
+                                                                                                <div class="textrow">
+                                                                                                    <div class="text-primary"><b>สินค้า</b></div>  : @ob.Product.ProductCode @ob.Product.ProductName
+                                                                                                </div>
+                                                                                            </div>
+                                                                                            <div class="col-sm-12">
+                                                                                                <div class="textrow">
+                                                                                                    <div class="text-primary"><b>คลัง</b></div> : @ob.WareHouse.Whname
+                                                                                                </div>
+                                                                                            </div>
+                                                                                            <div class="col-sm-12">
+                                                                                                <div class="textrow">
+                                                                                                    <div class="text-primary"><b>จำนวน</b></div> : @ob.RequestQty
+                                                                                                </div>
+                                                                                            </div>
+
+                                                                                            <div class="col-sm-12">
+                                                                                                <div class="textrow">
+
+                                                                                                    <form method="post" action="@Url.Action("DetailDelete", new { controller = "TransferStockIn" })"
+                                                                                                          class="fnc-delete inline-block">
+
+                                                                                                        <input type="hidden" id="TransferStockId" name="TransferStockId" value="@Model.TransferStockId" />
+                                                                                                        <input type="hidden" id="Seq" name="Seq" value="@ob.Seq" />
+                                                                                                        @* @Html.AntiForgeryToken()*@
+                                                                                                        @if (canedit)
+                                                                                                        {
+                                                                                                            <button type="submit" class="btn btn-danger btn-md btn-floating"><i class="fa fa-trash" aria-hidden="true"></i></button>
+                                                                                                        }
+                                                                                                    </form>
+
+                                                                                                </div>
+                                                                                            </div>
+
+                                                                                            <div>
+
+
+
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+
+                                                                        </td>
+                                                                    </tr>
+                                                                }
+
                                                             }
                                                         }
                                                     </tbody>
@@ -699,7 +783,7 @@
                                             <form method="post" id="frmftr" action="@Url.Action("AddProduct", "TransferStockOut")" enctype="multipart/form-data">
                                                 <input type="hidden" name="TransferStockId" value="@Model.TransferStockId" />
                                                 <div class="row">
-                                                    <div class="col-4 col-md-4 form-group">
+                                                    <div class="col-md-4 col-sm-12 form-group">
                                                         <label for="PileId" class="form-control-label">รหัสสินค้า</label>
                                                         <div class="input-group">
                                                             <select class="form-control" id="selProduct" data-live-search="true" @(canedit ? "" : "readonly")
@@ -718,7 +802,7 @@
                                                             </div>
                                                         </div>
                                                     </div>
-                                                    <div class="col-2 col-md-2">
+                                                    <div class="col-md-2 col-sm-12">
                                                         <div class="form-group">
                                                             <label for="Qty" class="form-control-label">คลัง</label>
                                                             <select class="form-control" id="selWareHose" data-live-search="true"
@@ -737,15 +821,15 @@
                                                         </div>
 
                                                     </div>
-                                                    <div class="col-1 col-md-1 form-group">
+                                                    <div class="col-md-1 col-sm-12 form-group">
                                                         <label for="Qty" class="form-control-label">คงเหลือ</label>
                                                         <input type="number" class="form-control" id="ProductOnhandQty" name="ProductOnhandQty" readonly value="" />
                                                     </div>
-                                                    <div class="col-2 col-md-2 form-group">
+                                                    <div class="col-md-2 col-sm-12 form-group">
                                                         <label for="Qty" class="form-control-label">จำนวน</label>
                                                         <input type="number" class="form-control" id="RequestQty" name="RequestQty" value="1" @(canedit ? "" : "readonly") />
                                                     </div>
-                                                    <div class="col-2 col-md-2 form-group">
+                                                    <div class="col-md-2 col-sm-12 form-group">
                                                         <label for="Price" class="form-control-label">ราคา</label>
                                                         <input type="text" class="form-control Number" readonly id="ProductPrice" name="ProductPrice" />
                                                     </div>

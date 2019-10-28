@@ -21,7 +21,33 @@
                     $(this).remove();
                 });
             }, 5000);
+
+            $(SaleMenu).slideToggle();
         });
+
+
+        $(document).on("click", ".btnDelete", function () {
+            var isConfirm = false;
+            swal({
+                title: "Delete",
+                text: "Do you want to delete?",
+                type: "warning",
+                showCancelButton: true,
+                closeOnConfirm: false,
+                showLoaderOnConfirm: true
+            },
+                function (isConfirm) {
+                    if (isConfirm) {
+
+                        $('#frmMain').submit();
+
+                    }
+                });
+
+            return false;
+        });
+
+        
     </script>
 }
 
@@ -52,15 +78,17 @@
 
                                 @if (optPermission.IsAdminTeam || optPermission.IsManager)
                                 {
+                                <div class="form-group">
                                     <a href="@kemrex.UrlAction(PathHelper.SaleTeamDetail)" class="btn btn-sm btn-primary">
                                         <i class="icon wb-plus" aria-hidden="true"></i>
                                         <span class="text hidden-sm-down">เพิ่มข้อมูล</span>
 
                                     </a>
+                                </div>
                                 }
                                 </div>
                             <div class="col-12 col-sm-6">
-                                <div class="pull-right">
+                                <div class="">
                                     @Html.Partial(kemrex.PathViewShared("_wgPagination"), Pagination)
                                 </div>
                                 <div class="clear"></div>
@@ -96,7 +124,7 @@
                                                             <a href="@(kemrex.UrlAction<int>(PathHelper.SaleTeamDetail, ob.TeamId))"
                                                                class="btn btn-xs btn-primary">
 
-                                                                <i class="fa fa-pencil" aria-hidden="true"></i>&nbsp;แก้ไข
+                                                                <i class="fa fa-pencil " aria-hidden="true"></i>&nbsp;แก้ไข
                                                             </a>
                                                         }
                                                         else
@@ -107,14 +135,14 @@
 
                                                         <i class="glyphicon glyphicon-zoom-in" aria-hidden="true"></i>&nbsp;เรียกดู
                                                     </a>
-                                                }<form method="post" action="@kemrex.UrlAction(PathHelper.SaleTeamDelete)"
+                                                }<form method="post" id="frmMain" action="@kemrex.UrlAction(PathHelper.SaleTeamDelete)"
                                                        class="fnc-delete inline-block">
                                                             <input type="hidden" name="TeamId" value="@ob.TeamId" />
                                                             @Html.AntiForgeryToken()
 
                                                             @if (optPermission.IsAdminTeam || optPermission.IsManager)
                                                             {
-                                                                <button type="submit" class="btn btn-danger btn-xs"><i class="fa fa-trash" aria-hidden="true"></i>&nbsp;ลบ</button>
+                                                                <button type="submit" class="btn btn-danger btn-xs btnDelete"><i class="fa fa-trash" aria-hidden="true"></i>&nbsp;ลบ</button>
                                                             }
                                                         </form>
                                                     </td>

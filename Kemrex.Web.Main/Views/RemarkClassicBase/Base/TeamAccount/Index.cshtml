@@ -55,21 +55,23 @@
 
                                 @if (optPermission.IsAdminTeam || optPermission.IsManager)
                                 {
-                                    <a href="@kemrex.UrlAction(PathHelper.AccountTeamDetail)" class="btn btn-sm btn-primary">
-                                        <i class="icon wb-plus" aria-hidden="true"></i>
-                                        <span class="text hidden-sm-down">เพิ่มข้อมูล</span>
+                                    <div class="form-group">
+                                        <a href="@kemrex.UrlAction(PathHelper.AccountTeamDetail)" class="btn btn-sm btn-primary">
+                                            <i class="icon wb-plus" aria-hidden="true"></i>
+                                            <span class="text hidden-sm-down">เพิ่มข้อมูล</span>
 
-                                    </a>
-                                }
-                            </div>
-                            <div class="col-12 col-sm-6">
-                                <div class="pull-right">
-                                    @Html.Partial(kemrex.PathViewShared("_wgPagination"), Pagination)
+                                        </a>
+                                        </div>
+                                        }
+                                    </div>
+                                    <div class="col-12 col-sm-6">
+                                        <div class="pull-right">
+                                            @Html.Partial(kemrex.PathViewShared("_wgPagination"), Pagination)
+                                        </div>
+                                        <div class="clear"></div>
+                                    </div>
+                                    <br /><br />
                                 </div>
-                                <div class="clear"></div>
-                            </div>
-                            <br /><br />
-                        </div>
                         <div class="row">
                             <div class="col-12">
                                 <div class="table-responsive">

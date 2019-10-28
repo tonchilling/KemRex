@@ -619,6 +619,11 @@
         float: left;
         width: 50%;
     }
+
+    ul li {
+    
+    list-style:none;
+    }
 </style>
 
 <body data-spy="scroll" data-target="#myTap" data-offset="300">
@@ -677,9 +682,9 @@
                                         <div class="col-md-9">
                                             <div class="input-group">
                                                 <input type="hidden" id="JobOrderId" name="JobOrderId" value="@Model.JobOrderId" />
-                                                <input type="text" class="form-control" id="JobOrderNo" name="JobOrderNo" value="@(Model.JobOrder!=null ? Model.JobOrder.JobOrderNo:"")" required readonly />
+                                                <input type="text" class="form-control" id="JobOrderNo" name="JobOrderNo" value="@(Model.JobOrder != null ? Model.JobOrder.JobOrderNo : "")" required readonly />
 
-                                                @if (canEdit && Model.TransferId <=0)
+                                                @if (canEdit && Model.TransferId <= 0)
                                                 {
                                                     <div class="input-group-append">
                                                         <button class="btn btn-outline-secondary btn-primary"
@@ -761,7 +766,7 @@
                                                                                class="form-control datepair-date datepair-start"
                                                                                id="TransferDate" autocomplete="off"
                                                                                name="TransferDate" @(canEdit ? "" : "readonly")
-                                                                               value="@(Model.TransferDate ==null ? Converting.ToDDMMYYYY(DateTime.Now) :Converting.ToDDMMYYYY(Model.TransferDate)) "
+                                                                               value="@(Model.TransferDate == null ? Converting.ToDDMMYYYY(DateTime.Now) : Converting.ToDDMMYYYY(Model.TransferDate)) "
                                                                                data-plugin="datepicker">
                                                                         <span class="input-group-addon">
                                                                             <i class="icon wb-calendar icon-2-5x text-success" style="padding-left:2px" aria-hidden="true"></i>
@@ -1001,10 +1006,20 @@
                                                     <table class="table table-hover table-striped tblProduct">
                                                         <thead>
                                                             <tr>
-                                                                <th>ลำดับที่</th>
-                                                                <th>สินค้า</th>
-                                                                <th>จำนวนที่ขาย</th>
-                                                                <th>จำนวนที่เบิก</th>
+
+                                                                @if (kemrex.IsMobileBrowser())
+                                                                {
+                                                                    <th></th>
+                                                                }
+                                                                else
+                                                                {
+
+                                                                    <th>ลำดับที่</th>
+                                                                    <th>สินค้า</th>
+                                                                    <th>จำนวนที่ขาย</th>
+                                                                    <th>จำนวนที่เบิก</th>
+                                                                }
+
 
 
                                                             </tr>
@@ -1014,63 +1029,200 @@
                                                             @if (Model.JobOrder == null)
                                                             {
                                                                 <tr>
-                                                                    <td colspan="7">ไม่พบข้อมูล</td>
+
+                                                                    @if (kemrex.IsMobileBrowser())
+                                                                    {
+                                                                        <td>ไม่พบข้อมูล</td>
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <td colspan="7">ไม่พบข้อมูล</td>
+                                                                    }
                                                                 </tr>
                                                             }
                                                             @{int row = 1;
 
-                                                                if (Model.TransferDetail != null && Model.TransferDetail.Count > 0)
+
+                                                                if (kemrex.IsMobileBrowser())
                                                                 {
 
-                                                                    foreach (var ob in Model.TransferDetail)
+
+                                                                    if (Model.TransferDetail != null && Model.TransferDetail.Count > 0)
                                                                     {
-                                                                        <tr>
-                                                                            <td>@row</td>
-                                                                            <td width="50%">@ob.Product.ProductCode @ob.Product.ProductName</td>
-                                                                            <td width="30%">
-                                                                                <input type="hidden" name="currentQty" class="currentQty" value="@ob.CurrentQty" />
-                                                                                @ob.CurrentQty
-                                                                            </td>
-                                                                            <td>
-                                                                                <input type="hidden" name="ProductIds" class="ProductIds" value="@ob.Product.ProductId" />
-                                                                                <input type="text" name="RequestQtys" class="form-control RequestQtys"
-                                                                                       value="@ob.RequestQty" @(canEdit ? "" : "readonly")
-                                                                                       placeholder="">
-                                                                            </td>
+
+                                                                        foreach (var ob in Model.TransferDetail)
+                                                                        {
+                                                                            <tr>
+                                                                                <td>
+                                                                                    <div class="content">
+                                                                                        <div class="row">
+                                                                                            <div class="col-sm-5">
+                                                                                                <div class="icon-big text-center"></div>
+                                                                                            </div>
+                                                                                            <div class="col-sm-10">
+                                                                                                <div>
+                                                                                                    <div class="col-sm-12">
+                                                                                                        <div class="textrow">
+                                                                                                            <div class="text-primary"><b>ลำดับที่</b></div> : <div class="text-default">@row</div>
+                                                                                                        </div>
+                                                                                                    </div><div class="col-sm-12">
+                                                                                                        <div class="textrow">
+                                                                                                            <div class="text-primary"><b>สินค้า</b></div>  : @ob.Product.ProductCode @ob.Product.ProductName
+                                                                                                        </div>
+                                                                                                    </div>
+                                                                                                    <div class="col-sm-12">
+                                                                                                        <div class="textrow">
+                                                                                                            <div class="text-primary"><b>จำนวน</b></div> :    <input type="text" name="RequestQtys" class="form-control RequestQtys"
+                                                                                                                                                                     value="@ob.RequestQty" @(canEdit ? "" : "readonly")
+                                                                                                                                                                     placeholder="">
+                                                                                                        </div>
+                                                                                                    </div>
+
+                                                                                                    <div>
+
+                                                                                                        <input type="hidden" name="ProductIds" class="ProductIds" value="@ob.Product.ProductId" />
+                                                                                                        <input type="hidden" name="currentQty" class="currentQty" value="@ob.CurrentQty" />
+
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>
 
 
-                                                                        </tr>
-                                                                        row++;
+
+
+
+                                                                                </td>
+
+
+
+                                                                            </tr>
+                                                                            row++;
+                                                                        }
+
+                                                                    }
+                                                                    else if (Model.JobOrder != null
+                                                                           && Model.JobOrder.JobOrderDetail != null
+                                                                           && Model.JobOrder.JobOrderDetail.Count > 0)
+                                                                    {
+                                                                        foreach (var ob in Model.JobOrder.JobOrderDetail)
+                                                                        {
+
+                                                                            <tr>
+                                                                                <td>
+                                                                                    <div class="content">
+                                                                                        <div class="row">
+                                                                                            <div class="col-sm-5">
+                                                                                                <div class="icon-big text-center"></div>
+                                                                                            </div>
+                                                                                            <div class="col-sm-10">
+                                                                                                <div>
+                                                                                                    <div class="col-sm-12">
+                                                                                                        <div class="textrow">
+                                                                                                            <div class="text-primary"><b>ลำดับที่</b></div> : <div class="text-default">@row</div>
+                                                                                                        </div>
+                                                                                                    </div><div class="col-sm-12">
+                                                                                                        <div class="textrow">
+                                                                                                            <div class="text-primary"><b>สินค้า</b></div>  :  @ob.Product.ProductCode @ob.Product.ProductName
+                                                                                                        </div>
+                                                                                                    </div>
+                                                                                                    <div class="col-sm-12">
+                                                                                                        <div class="textrow">
+                                                                                                            <div class="text-primary"><b>จำนวน</b></div> :  @ob.Quantity
+                                                                                                        </div>
+                                                                                                    </div>
+
+                                                                                                    <div>
+                                                                                                        <input type="hidden" name="currentQty" class="currentQty" value="@ob.Quantity" />
+                                                                                                        <input type="text" name="RequestQtys" class="form-control RequestQtys"
+                                                                                                               value="" @(canEdit ? "" : "readonly")
+                                                                                                               placeholder="">
+
+
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>
+
+
+
+
+
+                                                                                </td>
+
+
+
+                                                                            </tr>
+
+
+                                                                            row++;
+                                                                        }
                                                                     }
 
-
                                                                 }
-                                                                else if (Model.JobOrder != null
-&& Model.JobOrder.JobOrderDetail != null
-&& Model.JobOrder.JobOrderDetail.Count > 0)
+                                                                else
                                                                 {
-                                                                    foreach (var ob in Model.JobOrder.JobOrderDetail)
+
+
+
+                                                                    if (Model.TransferDetail != null && Model.TransferDetail.Count > 0)
                                                                     {
-                                                                        <tr>
-                                                                            <td>@row</td>
-                                                                            <td width="50%">@ob.Product.ProductCode @ob.Product.ProductName</td>
-                                                                            <td width="30%">
-                                                                                <input type="hidden" name="currentQty" class="currentQty" value="@ob.Quantity" />
-                                                                                @ob.Quantity
-                                                                            </td>
-                                                                            <td>
-                                                                                <input type="hidden" name="ProductIds" class="ProductIds" value="@ob.Product.ProductId" />
-                                                                                <input type="text" name="RequestQtys" class="form-control RequestQtys"
-                                                                                       value="" @(canEdit ? "" : "readonly")
-                                                                                       placeholder="">
-                                                                            </td>
+
+                                                                        foreach (var ob in Model.TransferDetail)
+                                                                        {
+                                                                                                                                <tr>
+                                                                                                                                    <td> @row </td>
+                                                                                                                                    <td width = "50%"> @ob.Product.ProductCode @ob.Product.ProductName </td>
+
+                                                                                                                                         <td width = "30%" >
+
+                                                                                                                                              <input type = "hidden" name = "currentQty" class="currentQty" value="@ob.CurrentQty" />
+                                                                                                                                        @ob.CurrentQty
+                                                                                                                                    </td>
+                                                                                                                                    <td>
+                                                                                                                                        <input type = "hidden" name="ProductIds" class="ProductIds" value="@ob.Product.ProductId" />
+                                                                                                                                        <input type = "text" name="RequestQtys" class="form-control RequestQtys"
+                                                                                                                                               value="@ob.RequestQty" @(canEdit ? "" : "readonly")
+                                                                                                                                               placeholder="">
+                                                                                                                                    </td>
 
 
-                                                                        </tr>
-                                                                        row++;
+                                                                                                                                </tr>
+                                                                            row++;
+                                                                        }
+
+
                                                                     }
+                                                                    else if (Model.JobOrder != null
+                                                          && Model.JobOrder.JobOrderDetail != null
+                                                           && Model.JobOrder.JobOrderDetail.Count > 0)
+                                                                    {
+                                                                        foreach (var ob in Model.JobOrder.JobOrderDetail)
+                                                                        {
+                                                                                                                                <tr>
+                                                                                                                                    <td>@row</td>
+                                                                                                                                    <td width = "50%" > @ob.Product.ProductCode @ob.Product.ProductName</td>
+                                                                                                                                    <td width = "30%" >
+                                                                                                                                        < input type="hidden" name="currentQty" class="currentQty" value="@ob.Quantity" />
+                                                                                                                                        @ob.Quantity
+                                                                                                                                    </td>
+                                                                                                                                    <td>
+                                                                                                                                        <input type = "hidden" name="ProductIds" class="ProductIds" value="@ob.Product.ProductId" />
+                                                                                                                                        <input type = "text" name="RequestQtys" class="form-control RequestQtys"
+                                                                                                                                               value="" @(canEdit ? "" : "readonly")
+                                                                                                                                               placeholder="">
+                                                                                                                                    </td>
+
+
+                                                                                                                                </tr>
+                                                                                row++;
+                                                                            }
+                                                                        }
+                                                                    }
+
                                                                 }
-                                                            }
                                                         </tbody>
                                                     </table>
                                                 </div>
