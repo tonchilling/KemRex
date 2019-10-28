@@ -797,7 +797,7 @@
                                                                 <option value="">กรุณาเลือก</option>
                                                                 @foreach (var it in optProduct)
                                                                 {
-                                                                    <option value="@it.ProductId" title="@it.PriceNet">@it.ProductCode @it.ProductName [@it.PriceNet]</option>
+                                                                    <option value="@it.ProductId" title="@it.PriceNet">@it.ProductCode @it.ProductName</option>
                                                                 }
                                                             </select>
                                                             <div class="input-group-append">
@@ -827,11 +827,13 @@
                                                         </div>
 
                                                     </div>
+
                                                     <div class="col-md-1 col-sm-12 form-group">
                                                         <label for="Qty" class="form-control-label">คงเหลือ</label>
                                                         <input type="number" class="form-control" id="ProductOnhandQty" name="ProductOnhandQty" readonly value="" />
                                                     </div>
-                                                    <div class="col-md-1  col-sm-12form-group">
+                                                    <div class="col-md-1 col-sm-12 form-group">
+
                                                         <label for="Qty" class="form-control-label">จำนวน</label>
                                                         <input type="number" class="form-control" id="RequestQty" name="RequestQty" value="1" @(canedit ? "" : "readonly") />
                                                     </div>
