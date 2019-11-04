@@ -112,7 +112,7 @@
                             <div class="row">
                                 <div class="col-lg-4 col-md-6 col-sm-12">
                                     <div class="form-group">
-                                        <label for="DepartmentId" class="form-control-label">แผนก</label>
+                                        <label for="DepartmentId" class="form-control-label"><a href="@Url.Action("Detail", new { are = "", controller = "Department" })">แผนก</a></label>
                                         <select class="form-control" name="DepartmentId">
                                             <option value="-1" @(!Model.DepartmentId.HasValue ? " selected=\"selected\"" : "")>ไม่ระบุ</option>
                                             @foreach (TblDepartment it in optDepartment)
@@ -125,7 +125,7 @@
                                 </div>
                                 <div class="col-lg-4 col-md-6 col-sm-12">
                                     <div class="form-group">
-                                        <label for="PositionId" class="form-control-label">ตำแหน่ง</label>
+                                        <label for="PositionId" class="form-control-label"><a href="@Url.Action("Detail", new { are = "", controller = "Position" })">ตำแหน่ง</a></label>
                                         <select class="form-control" name="PositionId">
                                             <option value="-1" @(!Model.PositionId.HasValue ? " selected=\"selected\"" : "")>ไม่ระบุ</option>
                                             @foreach (TblPosition it in optPosition)
@@ -144,7 +144,7 @@
                                         </select>
                                     </div>
                                 </div>
-                                <div class="col-lg-4 col-md-6 col-sm-12">
+                                <div class="col-lg-4 col-md-6 col-sm-12" hidden="hidden">
                                     <div class="form-group">
                                         <label for="EmpTypeId" class="form-control-label">ประเภทพนักงาน</label>
                                         <select class="form-control" name="EmpTypeId">
@@ -152,7 +152,7 @@
                                         </select>
                                     </div>
                                 </div>
-                                <div class="col-lg-4 col-md-6 col-sm-12">
+                                <div class="col-lg-4 col-md-6 col-sm-12" hidden="hidden">
                                     <div class="form-group">
                                         <label for="LeadId" class="form-control-label">หัวหน้าทีม</label>
                                         <select class="form-control" name="LeadId">
