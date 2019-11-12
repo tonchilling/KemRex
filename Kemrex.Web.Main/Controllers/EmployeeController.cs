@@ -127,13 +127,13 @@ namespace Kemrex.Web.Main.Controllers
                 ob.CreatedDate = CurrentDate;
             }
 
-            if (Request.Form["ddlPerQuotation"]!=null && Request.Form["ddlPerQuotation"]!="" && ob.EmpId>0)
+            if (Request.Form["ddlPerQuotation"]!=null && Request.Form["ddlPerQuotation"]!="" && ob.AccountId>0)
             {
 
                 foreach (string viewEmpId in Request.Form["ddlPerQuotation"].ToString().Split(','))
                 {
                     perList.Add(new TblEmployeeUserPermission() {
-                        AccountId = ob.AccountId.Value.ToInt(),
+                        AccountId = (int)ob.AccountId.Value,
                         FunId = 1,
                         ViewAccountId = viewEmpId.ParseInt(),
                         CreatedBy = CurrentUID,
@@ -142,14 +142,14 @@ namespace Kemrex.Web.Main.Controllers
                 }
             }
 
-            if (Request.Form["ddlPerSaleOrder"] !=null && Request.Form["ddlPerSaleOrder"] != "" && ob.EmpId > 0)
+            if (Request.Form["ddlPerSaleOrder"] !=null && Request.Form["ddlPerSaleOrder"] != "" && ob.AccountId > 0)
             {
 
                 foreach (string viewEmpId in Request.Form["ddlPerSaleOrder"].ToString().Split(','))
                 {
                     perList.Add(new TblEmployeeUserPermission()
                     {
-                        AccountId = ob.AccountId.Value.ToInt(),
+                        AccountId = (int)ob.AccountId.Value,
                         FunId = 2,
                         ViewAccountId = viewEmpId.ParseInt(),
                         CreatedBy = CurrentUID,
@@ -158,14 +158,14 @@ namespace Kemrex.Web.Main.Controllers
                 }
             }
 
-            if (Request.Form["ddlPerInvoice"]!=null && Request.Form["ddlPerInvoice"] != "" && ob.EmpId > 0)
+            if (Request.Form["ddlPerInvoice"]!=null && Request.Form["ddlPerInvoice"] != "" && ob.AccountId > 0)
             {
 
                 foreach (string viewEmpId in Request.Form["ddlPerInvoice"].ToString().Split(','))
                 {
                     perList.Add(new TblEmployeeUserPermission()
                     {
-                        AccountId = ob.AccountId.Value.ToInt(),
+                        AccountId = (int)ob.AccountId.Value,
                         FunId = 3,
                         ViewAccountId = viewEmpId.ParseInt(),
                         CreatedBy = CurrentUID,
@@ -174,14 +174,14 @@ namespace Kemrex.Web.Main.Controllers
                 }
             }
 
-            if (Request.Form["ddlPerJobOrder"]!=null && Request.Form["ddlPerJobOrder"] != "" && ob.EmpId > 0)
+            if (Request.Form["ddlPerJobOrder"]!=null && Request.Form["ddlPerJobOrder"] != "" && ob.AccountId > 0)
             {
 
                 foreach (string viewEmpId in Request.Form["ddlPerJobOrder"].ToString().Split(','))
                 {
                     perList.Add(new TblEmployeeUserPermission()
                     {
-                        AccountId = ob.AccountId.Value.ToInt(),
+                        AccountId = (int)ob.AccountId.Value,
                         FunId = 4,
                         ViewAccountId = viewEmpId.ParseInt(),
                         CreatedBy = CurrentUID,
