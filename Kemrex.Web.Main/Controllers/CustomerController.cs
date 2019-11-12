@@ -187,6 +187,20 @@ namespace Kemrex.Web.Main.Controllers
             return Json(objCustomer, JsonRequestBehavior.AllowGet);
         }
 
+
+        [HttpPost]
+
+        public JsonResult GetList()
+        {
+
+
+            List<TblCustomer> objCustomer = uow.Modules.Customer.GetByList();
+
+
+
+            return Json(objCustomer);
+        }
+
         #endregion
     }
 }

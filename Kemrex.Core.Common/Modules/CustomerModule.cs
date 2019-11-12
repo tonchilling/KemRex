@@ -59,7 +59,19 @@ namespace Kemrex.Core.Common.Modules
                 };
         }
 
-        public List<TblCustomer> GetByCondition(string customerId,string customerName,string contracName)
+
+        public List<TblCustomer> GetByList()
+        {
+            return db.TblCustomer.Select(o => new TblCustomer
+            {
+                CustomerId = o.CustomerId,
+                CustomerName = o.CustomerName,
+                CustomerPhone = o.CustomerPhone,
+                CustomerEmail = o.CustomerEmail
+            }).ToList();
+
+        }
+            public List<TblCustomer> GetByCondition(string customerId,string customerName,string contracName)
         {
 
 

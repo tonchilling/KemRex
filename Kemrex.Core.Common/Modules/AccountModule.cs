@@ -7,16 +7,20 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Data;
+using System.Data.SqlClient;
 
 namespace Kemrex.Core.Common.Modules
 {
     public class AccountModule : IModule<SysAccount, long>
     {
         private readonly mainContext db;
+        private WebDB webdb;
 
         public AccountModule(mainContext context)
         {
             db = context;
+            webdb = new WebDB();
         }
 
         public int Counts(int siteId = 0, string src = "", string username = "", string email = "")
@@ -30,6 +34,39 @@ namespace Kemrex.Core.Common.Modules
         {
             if (IsExist(ob.AccountId))
             { db.SysAccount.Remove(ob); }
+        }
+
+        public void DeleteBySQL(SysAccount acc)
+        {
+            bool result = false;
+            string sql = "sp_SysAccount_Delete";
+
+
+            List<SqlParameter> paramList = new List<SqlParameter>();
+
+
+
+            try
+            {
+
+
+                paramList = new List<SqlParameter>();
+ 
+                paramList.Add(new SqlParameter("@AccountId", acc.AccountId));
+                
+                webdb.ExcecuteNonQuery(sql, paramList);
+               
+            
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("SysAccount.DeleteBySQL::" + ex.ToString());
+            }
+            finally
+            { }
+
+
+            
         }
 
         public SysAccount Get(long id)
@@ -119,6 +156,46 @@ namespace Kemrex.Core.Common.Modules
 
             return data;
         }
+
+        public List<SysAccount> GetNewList()
+        {
+            var data = (from ac in db.SysAccount
+                          .Include(a => a.AccountName)
+                          .Include(b => b.TblEmployee)
+                          .Include(c => c.SysAccountRole)
+                        select new SysAccount
+                        {
+                            AccountId = ac.AccountId,
+                            AccountUsername = ac.AccountUsername,
+                            AccountFirstName = ac.AccountFirstName,
+                            AccountLastName = ac.AccountLastName,
+                           
+                            SysAccountRole = (from acc in db.SysAccountRole where acc.AccountId==ac.AccountId select new SysAccountRole {
+                                AccountId=acc.AccountId,
+                                 RoleId=acc.RoleId
+                            }).FirstOrDefault()
+                        }).ToList();
+            foreach (SysAccount obj in data)
+            {
+                if (obj.SysAccountRole != null)
+                {
+                    obj.SysAccountRole.Role = (from r in db.SysRole
+                                               where r.RoleId == obj.SysAccountRole.RoleId
+                                               select new SysRole
+                                               {
+                                                   RoleName = r.RoleName,
+                                                   RoleDescription = r.RoleDescription
+
+
+                                               }).FirstOrDefault();
+                }
+
+            }
+
+
+            return data;
+        }
+
         private IQueryable<SysAccount> Filter(IQueryable<SysAccount> data, int siteId
             , string src, string username, string email)
         {

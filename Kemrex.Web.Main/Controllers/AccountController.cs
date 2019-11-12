@@ -20,7 +20,7 @@ namespace Kemrex.Web.Main.Controllers
     public class AccountController : KemrexController
     {
 
-        [Authorized]
+
         public ActionResult Index(int? page, int? size, string msg, AlertMsgType? msgType,
             string src = "", string username = "")
         {
@@ -61,7 +61,7 @@ namespace Kemrex.Web.Main.Controllers
             return View(lst);
         }
 
-        [Authorized]
+       
         public ActionResult Detail(int? id, string msg, AlertMsgType? msgType)
         {
             SysAccount ob = uow.Modules.Account.Get(id ?? 0);
@@ -72,7 +72,7 @@ namespace Kemrex.Web.Main.Controllers
             return ViewDetail(ob, msg, msgType);
         }
 
-        [Authorized]
+       
         [ActionName("Profile")]
         public ActionResult ProfileMe(string msg, AlertMsgType? msgType)
         {
@@ -110,7 +110,7 @@ namespace Kemrex.Web.Main.Controllers
         //    });
         //}
 
-        [Authorized]
+       
         [ValidateAntiForgeryToken]
         [HttpPost, ActionName("Profile")]
         public ActionResult SetProfile()
@@ -168,7 +168,7 @@ namespace Kemrex.Web.Main.Controllers
             }
         }
 
-        [Authorized]
+       
         [ValidateAntiForgeryToken]
         [HttpPost, ActionName("Detail")]
         public ActionResult SetDetail()
@@ -266,31 +266,30 @@ namespace Kemrex.Web.Main.Controllers
         }
 
         [HttpPost]
-        [Authorized]
+    
         public ActionResult Delete()
         {
             try
             {
-                long id = Request.Form["account_id"].ParseLong();
+                long id = Request.Form["AccountId"].ParseLong();
                 SysAccount ob = uow.Modules.Account.Get(id);
               
                 if (ob == null)
                 { return RedirectToAction("Index", "Account", new { msg = "ไม่พบข้อมูลที่ต้องการ", msgType = AlertMsgType.Warning }); }
 
-                uow.Modules.Account.Delete(ob);
-                uow.SaveChanges();
+                uow.Modules.Account.DeleteBySQL(ob);
+               // uow.SaveChanges();
                 return RedirectToAction("Index", "Account", new { msg = "ลบข้อมูลเรียบร้อยแล้ว", msgType = AlertMsgType.Success });
             }
             catch (Exception ex)
             { return RedirectToAction("Index", "Account", new { msg = ex.GetMessage(), msgType = AlertMsgType.Danger }); }
         }
 
-        [HttpPost]
-        [Authorized]
+        [HttpPost, ActionName("GetAccountList")]
         public JsonResult GetAccountList()
         {
 
-            List<SysAccount> AccountList = uow.Modules.Account.GetList();
+            List<SysAccount> AccountList = uow.Modules.Account.GetNewList();
             // ob.TblSaleOrderDetail = uow.Modules.SaleOrderDetail.Gets(id ?? 0);
             // TblCustomer objCustomer = uow.Modules.Customer.Get(Convert.ToInt32(ob.CustomerId));
 

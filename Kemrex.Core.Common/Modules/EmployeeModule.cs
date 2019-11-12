@@ -72,7 +72,9 @@ namespace Kemrex.Core.Common.Modules
                                EmpNameEn = emp.EmpNameEn,
                                EmpEmail = emp.EmpEmail,
                                EmpMobile = emp.EmpMobile,
-                               Status = emp.Status
+                               Status = emp.Status,
+                               IsQuotationApprove=emp.IsQuotationApprove,
+                               IsJobOrderApprove=emp.IsJobOrderApprove
                            }).ToList();
 
 
@@ -95,13 +97,17 @@ namespace Kemrex.Core.Common.Modules
                                EmpMobile = emp.EmpMobile,
                                Status = emp.Status,
                                Department = emp.Department,
-                               Position = emp.Position
-                               
+                               Position = emp.Position,
+                               IsQuotationApprove = emp.IsQuotationApprove,
+                               IsJobOrderApprove = emp.IsJobOrderApprove
+
                            }).ToList();
 
 
             return empList;
         }
+
+     
         public TblEmployee GetEmployeeByEmpCode(string id)
         {
             return db.TblEmployee

@@ -1,0 +1,234 @@
+﻿@using Kemrex.Core.Database.Models
+@using Kemrex.Web.Common.Controllers
+@using Kemrex.Web.Common.Models
+@model List<TblProduct>
+@{
+    ViewBag.Title = "Index";
+    KemrexController kemrex = ((KemrexController)this.ViewContext.Controller);
+    Layout = kemrex.PathViewShared("_lyDefault");
+    WidgetAlertModel Alert = (WidgetAlertModel)ViewBag.Alert;
+    WidgetPaginationModel Pagination = (WidgetPaginationModel)ViewBag.Pagination;
+}
+
+@section Scripts {
+<script type="text/javascript">
+       var url = '@Url.Action("GetList", "Product2")';
+    var isMobile = IsMobile();
+        $(document).ready(function () {
+
+            if (!isMobile)
+                waitingDialog.show('Waiting for loading data', { dialogSize: 'md', progressType: 'primary' });
+            LoadTable();
+            window.setTimeout(function () {
+                $(".alert").fadeTo(1000, 0).slideUp(1000, function () {
+                    $(this).remove();
+                });
+            }, 5000);
+            $(BasicMenu).slideToggle();
+        });
+
+
+
+          function LoadTable() {
+
+            var html = '';
+            var criteria = "";
+           var urlDetail='@Url.Action("Detail", new { controller = "Product2", area = ""})';
+              $(".divDetail").empty();
+
+              if (isMobile) {
+
+                  html += '<table class="table table-hover" >';
+                  html += '<thead>';
+                  html += '<tr class="">';
+                  html += '<th></th>';
+                  html += '</tr>';
+                  html += '</thead>';
+
+                  $.ajax({
+                      url: url,
+                      type: "POST",
+                      // data: JSON.stringify(criteria),
+                      dataType: "json",
+                      contentType: "application/json; charset=utf-8",
+                      success: function (data) {
+                          html += '<tbody>';
+                          if (data != null && data.length > 0) {
+
+                              $.each(data, function (index, item) {
+                                  html += '<tr>';
+                                  html += '<td>'
+                                  html += '<div class="">'
+                                  html += '<div class="content">'
+                                  html += '<div class="row" >';
+                                  html += '<div class="col-sm-5">';
+                                  html += '<div class="icon-big text-center">';
+
+                                  html += '</div>';
+                                  html += '</div>';
+                                  html += '<div class="col-sm-10">';
+                                  html += '<div>';
+                                  html += '<div class="col-sm-12"><div class="textrow"><div class="text-primary"><b>หมวดหมู่</b></div> : <div class="text-default">' + item.Category.CategoryName + '</div></div></div>';
+                                  html += '<div class="col-sm-12"><div class="textrow"><div class="text-primary"><b>ชื่อสินค้า</b></div>  : ' + item.ProductName + '</div></div>';
+                                  html += '<div class="col-sm-12"><div class="textrow"><div class="text-primary"><b>ราคา (Inc.Vat)</b></div> : ' + item.PriceTot + '</div></div>';
+                                  html += '<div class="col-sm-12"><div class="textrow"><div class="text-primary"><b>คงเหลือ</b></div> : ' + item.QtyStock  + '</div></div>';
+               
+                                  html += '<div> <a href="' + urlDetail + '/' + item.ProductId + '" class="btn btn-md btn-floating btn-primary">';
+                                  html += '<i class=" fa fa-pencil " aria-hidden="true"></i></a></div>';
+                                  html += '</div>';
+                                  html += '</div>';
+                                  html += '</div>';
+
+                                  html += '</div>';
+                                  html += '</td>'
+                                  html += '</tr>';
+                              });
+                          }
+                          html += '</tbody>';
+
+                          html += ' </table>';
+
+                          $(".divDetail").append(html);
+                          $(".divDetail table").DataTable();
+
+
+                      }
+                  });
+
+              } else {
+                  html += '<table class="table  table-striped table-hover "  >';
+                  html += '<thead>';
+                  html += '<tr class="table-primary" >';
+                  html += ' <th>หมวดหมู่</th>';
+                  html += '<th>ชื่อสินค้า</th>';
+                  html += '<th>ราคา (Inc.Vat)</th>';
+                  html += '<th>คงเหลือ</th>';
+                  html += '<th>เครื่องมือ</th>';
+                  html += '</tr>';
+                  html += '</thead>';
+                  html += '<tbody>';
+
+
+
+                  $.ajax({
+                      url: url,
+                      type: "POST",
+                      // data: JSON.stringify(criteria),
+                      dataType: "json",
+                      contentType: "application/json; charset=utf-8",
+                      success: function (data) {
+
+
+                          if (data != null) {
+
+                              $.each(data, function (index, item) {
+                                  html += '<tr>';
+                                  html += '<td>' + item.Category.CategoryName + '</td>';
+                                  html += '<td>' + item.ProductName + '</td>';
+                                  html += '<td>' + item.PriceTot + '</td>';
+                                  html += '<td>' + item.QtyStock + '</td>';
+
+                                  html += '<td> <a href="' + urlDetail + '/' + item.ProductId + '" class="btn btn-xs  btn-primary">';
+                                  html += '<i class=" fa fa-pencil" aria-hidden="true"></i>&nbsp;แก้ไข </a>&nbsp;';
+                                  // html += '<a href="' + urlExport + '/' + item.JobOrderId + '" class="btn btn-xs btn-warning">';
+                                  html += '</tr>';
+                              });
+                          }
+
+
+
+                          html += '</tbody>';
+                          html += ' </table>';
+
+                          $(".divDetail").append(html);
+                          var table = $(".divDetail table").DataTable(
+                              {
+                                  columnDefs: [
+
+                                  ],
+                                  order: [[2, 'asc']]
+                              }
+                          );
+
+
+                          window.setTimeout(function () {
+                              waitingDialog.hide();
+                          }, 2000);
+
+                      },
+                      error: function (error) {
+                          alert(error);
+                          window.setTimeout(function () {
+                              waitingDialog.hide();
+                          }, 2000);
+                          //  waitingDialog.hide();
+                      }
+                  });
+
+              }
+
+
+
+
+        }
+
+       
+</script>
+
+}
+
+<div class="page">
+    <div class="page-header">
+        <h1 class="page-title">สินค้า</h1>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="@Url.Action("Index", new { controller = "Home", area = "" })" })">หน้าแรก</a></li>
+            <li class="breadcrumb-item"><a href="javascript:void(0)">ตั้งค่าหลัก</a></li>
+            <li class="breadcrumb-item active">สินค้า</li>
+        </ol>
+    </div>
+
+    <div class="page-content container-fluid">
+        <div class="row">
+            <div class="col-12">
+                @if (ViewBag.Alert != null)
+                {
+                    @Html.Partial(kemrex.PathViewShared("_wgAlert"), Alert)
+                }
+                <div class="panel">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">สินค้า&nbsp;<a href="@Url.Action("Detail", new { area = "", controller = "Product2" })" class="btn btn-xs btn-primary" style="color:white;">เพิ่มข้อมูล</a></h3>
+                    </div>
+                    <!-- /.box-header -->
+                    <div class="panel-body">
+                        <div class="row">
+                           
+                            <br /><br />
+                        </div>
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="table-responsive divDetail">
+                                    <table class="table table-bordered table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th>หมวดหมู่</th>
+                                                <th>ชื่อสินค้า</th>
+                                                <th>ราคา (Inc.Vat)</th>
+                                                <th>คงเหลือ</th>
+                                                <th>เครื่องมือ</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                          
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                      
+                    </div>
+                    <!-- /.box-body -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

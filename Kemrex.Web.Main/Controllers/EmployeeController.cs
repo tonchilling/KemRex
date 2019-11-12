@@ -98,10 +98,26 @@ namespace Kemrex.Web.Main.Controllers
         }
 
 
+        [HttpPost, ActionName("GetAccountList")]
+        public JsonResult GetAccountList()
+        {
+           // List <SysAccount>
+            List<SysAccount> AccountList = uow.Modules.Account.GetList();
+            // ob.TblSaleOrderDetail = uow.Modules.SaleOrderDetail.Gets(id ?? 0);
+            // TblCustomer objCustomer = uow.Modules.Customer.Get(Convert.ToInt32(ob.CustomerId));
+
+
+
+            return Json(null, JsonRequestBehavior.AllowGet);
+        }
+
+
+
         [ValidateAntiForgeryToken]
         [HttpPost, ActionName("Detail")]
         public ActionResult SetDetail()
         {
+            List<TblEmployeeUserPermission> perList = new List<TblEmployeeUserPermission>();
             int id = Request.Form["EmpId"].ParseInt();
             TblEmployee ob = uow.Modules.Employee.Get(id);
             if (ob.EmpId <= 0)
@@ -110,7 +126,71 @@ namespace Kemrex.Web.Main.Controllers
                 ob.CreatedBy = CurrentUID;
                 ob.CreatedDate = CurrentDate;
             }
-           
+
+            if (Request.Form["ddlPerQuotation"]!=null && Request.Form["ddlPerQuotation"]!="" && ob.EmpId>0)
+            {
+
+                foreach (string viewEmpId in Request.Form["ddlPerQuotation"].ToString().Split(','))
+                {
+                    perList.Add(new TblEmployeeUserPermission() {
+                        EmpId = ob.EmpId,
+                        FunId = 1,
+                        ViewEmpId = viewEmpId.ParseInt(),
+                        CreatedBy = CurrentUID,
+                    CreatedDate = CurrentDate
+                });
+                }
+            }
+
+            if (Request.Form["ddlPerSaleOrder"] !=null && Request.Form["ddlPerSaleOrder"] != "" && ob.EmpId > 0)
+            {
+
+                foreach (string viewEmpId in Request.Form["ddlPerSaleOrder"].ToString().Split(','))
+                {
+                    perList.Add(new TblEmployeeUserPermission()
+                    {
+                        EmpId = ob.EmpId,
+                        FunId = 2,
+                        ViewEmpId = viewEmpId.ParseInt(),
+                        CreatedBy = CurrentUID,
+                        CreatedDate = CurrentDate
+                    });
+                }
+            }
+
+            if (Request.Form["ddlPerInvoice"]!=null && Request.Form["ddlPerInvoice"] != "" && ob.EmpId > 0)
+            {
+
+                foreach (string viewEmpId in Request.Form["ddlPerInvoice"].ToString().Split(','))
+                {
+                    perList.Add(new TblEmployeeUserPermission()
+                    {
+                        EmpId = ob.EmpId,
+                        FunId = 3,
+                        ViewEmpId = viewEmpId.ParseInt(),
+                        CreatedBy = CurrentUID,
+                        CreatedDate = CurrentDate
+                    });
+                }
+            }
+
+            if (Request.Form["ddlPerJobOrder"]!=null && Request.Form["ddlPerJobOrder"] != "" && ob.EmpId > 0)
+            {
+
+                foreach (string viewEmpId in Request.Form["ddlPerJobOrder"].ToString().Split(','))
+                {
+                    perList.Add(new TblEmployeeUserPermission()
+                    {
+                        EmpId = ob.EmpId,
+                        FunId = 4,
+                        ViewEmpId = viewEmpId.ParseInt(),
+                        CreatedBy = CurrentUID,
+                        CreatedDate = CurrentDate
+                    });
+                }
+            }
+
+
 
             if (Request.Form["AccountId"].ParseInt() <= 0)
             {
@@ -166,6 +246,8 @@ namespace Kemrex.Web.Main.Controllers
             ob.EmpPostcode = Request.Form["EmpPostcode"];
             ob.EmpMobile = Request.Form["EmpMobile"];
             ob.EmpEmail = Request.Form["EmpEmail"];
+            ob.IsQuotationApprove = Request.Form["hddIsQuotationApprove"] == "on" ? 1 : 0;
+            ob.IsJobOrderApprove = Request.Form["hddIsJobOrderApprove"] == "on" ? 1 : 0;
             ob.UpdatedBy = CurrentUID;
             ob.UpdatedDate = CurrentDate;
             try
@@ -190,6 +272,13 @@ namespace Kemrex.Web.Main.Controllers
                 uow.Modules.Employee.Set(ob);
                 uow.SaveChanges();
 
+                
+                    uow.Modules.EmployeeUserPermission.Set(perList.FindAll(o=>o.FunId==1));
+                uow.Modules.EmployeeUserPermission.Set(perList.FindAll(o => o.FunId == 2));
+                uow.Modules.EmployeeUserPermission.Set(perList.FindAll(o => o.FunId == 3));
+                uow.Modules.EmployeeUserPermission.Set(perList.FindAll(o => o.FunId == 4));
+
+                uow.SaveChanges();
                 return RedirectToAction("Index", new
                 {
                     area = "",
@@ -228,7 +317,7 @@ namespace Kemrex.Web.Main.Controllers
 
 
         [HttpPost]
-        [Authorized]
+       
         public ActionResult Delete(int EmpId)
         {
             try
@@ -244,6 +333,26 @@ namespace Kemrex.Web.Main.Controllers
             catch (Exception ex)
             { return RedirectToAction("Index", MVCController, new { msg = ex.GetMessage(), msgType = AlertMsgType.Danger }); }
         }
+
+        [HttpPost]
+
+        public ActionResult DeleteNew()
+        {
+            try
+            {
+                int EmpId = Request.Form["EmpId"].ParseInt();
+                TblEmployee ob = uow.Modules.Employee.Get(EmpId);
+                if (ob == null)
+                { return RedirectToAction("Index", MVCController, new { msg = "ไม่พบข้อมูลที่ต้องการ", msgType = AlertMsgType.Warning }); }
+
+                uow.Modules.Employee.Delete(ob);
+                uow.SaveChanges();
+                return RedirectToAction("Index", MVCController, new { msg = "ลบข้อมูลเรียบร้อยแล้ว", msgType = AlertMsgType.Success });
+            }
+            catch (Exception ex)
+            { return RedirectToAction("Index", MVCController, new { msg = ex.GetMessage(), msgType = AlertMsgType.Danger }); }
+        }
+
 
         #region Private Action
         private ActionResult ViewDetail(TblEmployee ob, string msg, AlertMsgType? msgType)
@@ -263,6 +372,9 @@ namespace Kemrex.Web.Main.Controllers
                 ViewData["optDepartment"] = uow.Modules.Department.Gets();
                 ViewData["optPosition"] = uow.Modules.Position.Gets(1, 0);
                 ViewData["optLead"] = uow.Modules.Employee.Gets();
+                ViewData["optAccount"] = uow.Modules.Account.Gets();
+
+                ViewData["optEmpPermission"] = uow.Modules.EmployeeUserPermission.Gets(src:ob.AccountId.ToString());
                 return View(ob);
             }
             catch (Exception ex)

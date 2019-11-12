@@ -101,7 +101,7 @@ namespace Kemrex.Web.Main.Controllers
                 List<TeamSaleDetail> obTeamDetail = uow.Modules.TeamSaleDetail.Gets(teamId);
 
 
-                if (obTeamDetail != null && obTeamDetail.Count > 0)
+                if (obTeamDetail != null && obTeamDetail.Count > 0 && teamSaleIds!="")
                 {
                     foreach (string accountId in teamSaleIds.Split(','))
                     {
@@ -202,7 +202,14 @@ namespace Kemrex.Web.Main.Controllers
             }
             catch (Exception ex)
             {
-                rs["msg"] = ex.GetMessage();
+                string error = ex.GetMessage();
+
+                if (error.Contains("association"))
+                {
+                    error = "ไม่สามารถลบข้อมูลได้เนื่องจากมีการใช้งานแล้ว!";
+                }
+
+                rs["msg"] = error;
                 rs["msgType"] = AlertMsgType.Danger;
                 return UrlRedirect(PathHelper.SaleTeam, rs);
             }
@@ -230,8 +237,17 @@ namespace Kemrex.Web.Main.Controllers
             }
             catch (Exception ex)
             {
+                string error = ex.GetMessage();
+
+                if (error.Contains("association"))
+                {
+                    error = "ไม่สามารถลบข้อมูลได้เนื่องจากมีการใช้งานแล้ว!";
+                }
+
+                
+
                 int TeamId = Request.Form["TeamId"].ParseInt();
-                return RedirectToAction("Detail", "TeamSale", new { id = TeamId, msg = ex.GetMessage(), msgType = AlertMsgType.Danger });
+                return RedirectToAction("Detail", "TeamSale", new { id = TeamId, msg = error, msgType = AlertMsgType.Danger });
             }
         }
         #region Private Action

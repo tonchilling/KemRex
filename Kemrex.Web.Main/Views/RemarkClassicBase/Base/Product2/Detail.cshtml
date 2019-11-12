@@ -1,0 +1,322 @@
+﻿@using Kemrex.Core.Database.Models
+@using Kemrex.Web.Common.Controllers
+@using Kemrex.Web.Common.Models
+@model TblProduct
+@{
+    ViewBag.Title = "Index";
+    KemrexController kemrex = ((KemrexController)this.ViewContext.Controller);
+    Layout = kemrex.PathViewShared("_lyDefault");
+    WidgetAlertModel Alert = (WidgetAlertModel)ViewBag.Alert;
+    List<TblUnit> optUnit = (List<TblUnit>)ViewData["optUnit"];
+    List<TblProductModel> optModel = (List<TblProductModel>)ViewData["optModel"];
+    List<TblProductCategory> optCategory = (List<TblProductCategory>)ViewData["optCategory"];
+    List<TblWareHouse> optWareHouse = (List<TblWareHouse>)ViewData["optWareHouse"];
+    List<TblProductOfWareHouse> optProductOfWareHouse= (List<TblProductOfWareHouse>)ViewData["optProductOfWareHouse"];
+}
+
+@section Scripts {
+    <script type="text/javascript">
+        $(document).ready(function () {
+            window.setTimeout(function () {
+                $(".alert").fadeTo(1000, 0).slideUp(1000, function () {
+                    $(this).remove();
+                });
+            }, 5000);
+
+            $(BasicMenu).slideToggle();
+
+            $("input[name=PriceNet]").change(function () {
+                var net = $(this).val();
+                net = net === NaN || net === null || net === undefined ? 0 : parseFloat(net).toFixed(2);
+                var vat = parseFloat((parseFloat(net) * 7) / 100).toFixed(2);
+                var tot = parseFloat(net) + parseFloat(vat);
+                $("input[name=PriceVat]").val(vat);
+                $("input[name=PriceTot]").val(tot);
+            });
+
+
+            $("input[name=PriceTot]").change(function () {
+                var tot = $(this).val();
+                tot = tot === NaN || tot === null || tot === undefined ? 0 : parseFloat(tot).toFixed(2);
+                var net = parseFloat((parseFloat(tot) * 100) / 107).toFixed(2);
+                var vat = parseFloat(parseFloat(tot) - parseFloat(net)).toFixed(2);
+                $("input[name=PriceVat]").val(vat);
+                $("input[name=PriceNet]").val(net);
+            });
+        });
+
+
+        $('.btnAddProductOfWareHouse').click(function () {
+
+
+            $('#frmmain').attr('action', '@Url.Action("AddProductOfWareHouse", "Product2")');
+            $('#frmmain').submit();
+        });
+
+
+        $('.btnEditProductOfWareHouse').click(function () {
+
+            $(".WHId").val($(this).closest("tr").attr("whid"));
+            $(".QtyOfWareHouse").val($(this).closest("tr").attr("Qty"))
+
+            return false;
+
+        });
+        
+    </script>
+}
+
+<div class="page">
+    <div class="page-content container-fluid">
+        @if (ViewBag.Alert != null)
+        {
+            <div class="row">
+                <div class="col-12">
+                    @Html.Partial(kemrex.PathViewShared("_wgAlert"), Alert)
+                </div>
+            </div>
+        }
+            <form method="post" id="frmmain" action="@Url.Action("Detail", "Product2")" enctype="multipart/form-data">
+                @Html.AntiForgeryToken()
+                <div class="row">
+                    <div class="col-12">
+                        <div class="panel">
+                            <div class="panel-heading">
+                                <h3 class="panel-title">
+                                    @(Model.ProductId > 0 ? "แก้ไข" : "เพิ่ม")สินค้า
+                                    <span class="panel-desc">รายละเอียดสินค้า</span>
+                                </h3>
+                            </div>
+
+                            <input type="hidden" name="ProductId" value="@Model.ProductId" />
+                            <div class="panel-body">
+                                <div class="row">
+                                    <div class="col-md-6 col-sm-12">
+                                        <div class="form-group">
+                                            <label for="ProductCode" class="form-control-label">รหัสสินค้า</label>
+                                            <input type="text" class="form-control" name="ProductCode" value="@Model.ProductCode" />
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 col-sm-12">
+                                        <div class="form-group">
+                                            <label for="ProductCode" class="form-control-label">หมวดหมู่</label>
+                                            <select name="CategoryId" class="form-control">
+                                                @foreach (TblProductCategory it in optCategory)
+                                                {
+                                                    bool selected = it.CategoryId == Model.CategoryId;
+                                                    <option value="@it.CategoryId" @(selected ? " selected=\"selected\"" : "")>@it.CategoryName</option>
+                                                }
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6 col-sm-12">
+                                        <div class="form-group">
+                                            <label for="ProductName" class="form-control-label">ชื่อสินค้า</label>
+                                            <input type="text" class="form-control" name="ProductName" value="@Model.ProductName" />
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 col-sm-12">
+                                        <div class="form-group">
+                                            <label for="ProductNameTrade" class="form-control-label">ชื่อทางการค้า</label>
+                                            <input type="text" class="form-control" name="ProductNameTrade" value="@Model.ProductNameTrade" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6 col-sm-12">
+                                        <div class="form-group">
+                                            <label for="ProductNameBilling" class="form-control-label">ชื่อสำหรับพิมพ์บิล</label>
+                                            <input type="text" class="form-control" name="ProductNameBilling" value="@Model.ProductNameBilling" />
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 col-sm-12">
+                                        <div class="form-group">
+                                            <label for="ModelId" class="form-control-label">รุ่น</label>
+                                            <select class="form-control" name="ModelId">
+                                                <option value="-1" @(!Model.ModelId.HasValue ? " selected=\"selected\"" : "")>ไม่ระบุ</option>
+                                                @foreach (TblProductModel it in optModel)
+                                                {
+                                                    bool selected = Model.ModelId.HasValue && it.ModelId == Model.ModelId;
+                                                    <option value="@it.ModelId" @(selected ? " selected=\"selected\"" : "")>@it.ModelName</option>
+                                                }
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6 col-sm-12">
+                                        <div class="form-group">
+                                            <label for="QtyStock" class="form-control-label">จำนวนคงเหลือ</label>
+                                            <input type="text" class="form-control" name="QtyStock" value="@Model.QtyStock" />
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 col-sm-12">
+                                        <div class="form-group">
+                                            <label for="UnitId" class="form-control-label">หน่วยนับ</label>
+                                            <select class="form-control" name="UnitId">
+                                                @foreach (TblUnit it in optUnit)
+                                                {
+                                                    bool selected = it.UnitId == Model.UnitId;
+                                                    <option value="@it.UnitId" @(selected ? " selected=\"selected\"" : "")>@it.UnitName</option>
+                                                }
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                               
+                                <div class="row">
+                                    <div class="col-md-4 col-sm-4">
+                                        <div class="form-group">
+                                            <label for="PriceNet" class="form-control-label">ราคา (Exc.Vat)</label>
+                                            <input type="text" class="form-control" name="PriceNet" value="@Model.PriceNet" />
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 col-sm-4">
+                                        <div class="form-group">
+                                            <label for="PriceVat" class="form-control-label">ภาษีมูลค่าเพิ่ม</label>
+                                            <input type="text" class="form-control" name="PriceVat" value="@Model.PriceVat" readonly="readonly" />
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 col-sm-4">
+                                        <div class="form-group">
+                                            <label for="PriceTot" class="form-control-label">ราคา (Inc.Vat)</label>
+                                            <input type="text" class="form-control" name="PriceTot" value="@Model.PriceTot" />
+                                        </div>
+                                    </div>
+                                </div>
+                              
+                                <div class="panel-footer">
+                                    <div class="row">
+                                        <div class="col-12">
+                                            <div class="form-group">
+                                                <button type="submit" class="btn btn-primary">บันทึก</button>&nbsp;
+                                                <a href="@Url.Action("Index", "Product2")" class="btn btn-default">ยกเลิก</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-12">
+                        <div class="panel">
+                            <div class="panel-body">
+                                <div class="row">
+
+                                    <div class="col-md-3 col-sm-3">
+                                        <label for="WHId" class="form-control-label">คลังสินค้า</label>
+                                        <div class="form-group">
+
+                                            <select class="form-control WHId" name="WHId" id="WHId">
+                                                @foreach (TblWareHouse it in optWareHouse)
+                                                {
+                                                    bool selected = it.Whid == Model.Whid;
+                                                    <option value="@it.Whid" @(selected ? " selected=\"selected\"" : "")>@it.Whname</option>
+                                                }
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3 col-sm-3">
+                                        <label for="QtyStock" class="form-control-label">จำนวนคงเหลือ</label>
+                                        <div class="form-group">
+
+                                            <input type="text" class="form-control QtyOfWareHouse" name="QtyOfWareHouse" value="" />
+                                           
+
+                                        </div>
+
+
+
+                                    </div>
+                                    <div class="col-md-3 col-sm-3">
+                                        <div class="form-group" style="padding-top:28px;">
+                                            <button type="submit" class="btn btn-primary btnAddProductOfWareHouse">เพิ่ม</button>&nbsp;
+                                            <a href="@Url.Action("Index", "Product2")" class="btn btn-default">ยกเลิก</a>
+
+                                        </div>
+
+                                    </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-12 col-sm-12">
+
+                                            <div class="table-responsive">
+                                                <table class="table table-bordered  table-hover tblWarehouse">
+                                                    <thead>
+                                                        <tr class="table-primary">
+                                                            <th class="text-center">คลังสินค้า</th>
+                                                            @if (!kemrex.IsMobileBrowser())
+                                                            {
+                                                                <th class="text-center">ชื่อสินค้า</th>
+                                                            }
+                                                                <th class="text-center">จำนวนคงเหลือ</th>
+                                                                <th class="text-center">เครื่องมือ</th>
+                                                            </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        @if (optProductOfWareHouse == null)
+                                                        {
+                                                        <tr>
+                                                            @if (!kemrex.IsMobileBrowser())
+                                                            {
+                                                                <td colspan="4">ไม่พบข้อมูล</td>
+                                                            }
+                                                            else
+                                                            {
+                                                                <td colspan="3">ไม่พบข้อมูล</td>
+                                                            }
+                                                        </tr>
+                                                        }
+                                                        else if (optProductOfWareHouse != null && optProductOfWareHouse.Count>0)
+                                                        {
+                                                            foreach (var ob in optProductOfWareHouse)
+                                                            {
+                                                            <tr whid="@ob.Whid" Qty="@ob.QtyStock">
+
+                                                                <td>@ob.WareHouseName</td>
+                                                                @if (!kemrex.IsMobileBrowser())
+                                                                {
+                                                                    <td>@ob.ProductName</td>
+                                                                }
+                                                                    <td>@ob.QtyStock</td>
+                                                                    <td class="textrow">
+                                                                        @if (!kemrex.IsMobileBrowser())
+                                                                        {
+                                                                            <button class="btn btn-primary btn-xs btnEditProductOfWareHouse" id="btnEditProductOfWareHouse"><i class="fa fa-pencil" aria-hidden="true"></i>&nbsp;แก้ไข</button>
+                                                                            <button class="btn btn-danger btn-xs btnDelete"><i class="fa fa-trash" aria-hidden="true"></i>&nbsp;ลบ</button>
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <button class="btn btn-primary btn-xs btn-floating btnEditProductOfWareHouse" id="btnEditProductOfWareHouse"><i class="fa fa-pencil" aria-hidden="true"></i></button>
+                                                                            <button class="btn btn-danger btn-xs btn-floating btnDelete"><i class="fa fa-trash" aria-hidden="true"></i></button>
+                                                                        }
+                                                                    </td>
+
+
+                                                                </tr>
+                                                            }
+                                                        }
+
+
+                                                    </tbody>
+                                                </table>
+
+                                            </div>
+
+                                        </div>
+                                    </div>
+
+                                </div>
+                                </div>
+                            </div>
+                    </div>
+            </form>
+</div>

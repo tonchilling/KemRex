@@ -94,7 +94,7 @@ namespace Kemrex.Web.Main.Controllers
                 uow.SaveChanges();
 
                 List<TeamOperationDetail> obTeamDetail = uow.Modules.TeamOperationDetail.Gets(teamId);
-                if (obTeamDetail != null && obTeamDetail.Count > 0)
+                if (obTeamDetail != null && obTeamDetail.Count > 0 && teamSaleIds!="")
                 {
                     foreach (string accountId in teamSaleIds.Split(','))
                     {

@@ -1026,6 +1026,7 @@
     <Content Include="themes\RemarkClassicBase\js\Plugin\toastr.js" />
     <Content Include="themes\RemarkClassicBase\js\Plugin\toolbar.js" />
     <Content Include="themes\RemarkClassicBase\js\Plugin\webui-popover.js" />
+    <Content Include="themes\RemarkClassicBase\js\scrollTo.js" />
     <Content Include="themes\RemarkClassicBase\js\Section\bundle.js" />
     <Content Include="themes\RemarkClassicBase\js\Section\bundle.min.js">
       <DependentUpon>bundle.js</DependentUpon>
@@ -1195,9 +1196,11 @@
     <Compile Include="Controllers\InvoiceController.cs" />
     <Compile Include="Controllers\JobOrderController.cs" />
     <Compile Include="Controllers\JobOrderForSaleController.cs" />
+    <Compile Include="Controllers\PaymentController.cs" />
     <Compile Include="Controllers\PileController.cs" />
     <Compile Include="Controllers\PileSeriesController.cs" />
     <Compile Include="Controllers\PositionController.cs" />
+    <Compile Include="Controllers\Product2Controller.cs" />
     <Compile Include="Controllers\ProductCategoryController.cs" />
     <Compile Include="Controllers\ProductController.cs" />
     <Compile Include="Controllers\ProductModelController.cs" />
@@ -1208,6 +1211,7 @@
     <Compile Include="Controllers\SaleOrderController.cs" />
     <Compile Include="Controllers\StockController.cs" />
     <Compile Include="Controllers\SystemController.cs" />
+    <Compile Include="Controllers\TeamAccountController.cs" />
     <Compile Include="Controllers\TeamOperationController.cs" />
     <Compile Include="Controllers\TeamSaleController.cs" />
     <Compile Include="Controllers\TransferInController.cs" />
@@ -1385,6 +1389,12 @@
     <Content Include="Views\RemarkClassicBase\Base\JobOrderForSale\Detail.cshtml" />
     <Content Include="Views\RemarkClassicBase\Base\JobOrderForSale\Index.cshtml" />
     <Content Include="Views\RemarkClassicBase\Base\Report\Index.cshtml" />
+    <Content Include="Views\RemarkClassicBase\Base\TeamAccount\Index.cshtml" />
+    <Content Include="Views\RemarkClassicBase\Base\TeamAccount\Detail.cshtml" />
+    <Content Include="Views\RemarkClassicBase\Base\Payment\Detail.cshtml" />
+    <Content Include="Views\RemarkClassicBase\Base\Payment\Index.cshtml" />
+    <Content Include="Views\RemarkClassicBase\Base\Product2\Detail.cshtml" />
+    <Content Include="Views\RemarkClassicBase\Base\Product2\Index.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -1394,8 +1404,8 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="Views\Product2\" />
     <Folder Include="Views\RemarkClassicBase\Base\System\" />
-    <Folder Include="Views\Report\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Kemrex.Core.Common\Kemrex.Core.Common.csproj">
