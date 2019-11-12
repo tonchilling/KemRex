@@ -894,7 +894,7 @@ namespace Kemrex.Core.Database
 
             modelBuilder.Entity<TblEmployeeUserPermission>(entity =>
             {
-                entity.HasKey(e => new { e.EmpId, e.FunId, e.ViewEmpId });
+                entity.HasKey(e => new { e.AccountId, e.FunId, e.ViewAccountId });
 
                 entity.ToTable("TblEmployee_UserPermission");
 

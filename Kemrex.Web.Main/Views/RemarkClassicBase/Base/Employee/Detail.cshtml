@@ -398,7 +398,7 @@
 
                                             @foreach (SysAccount it in optAccount)
                                             {
-                                                bool selected = optEmpPermission.Where(o=>o.ViewEmpId == it.AccountId && o.FunId==1).ToList().Count > 0 ;
+                                                bool selected = optEmpPermission.Where(o=>o.ViewAccountId == it.AccountId && o.FunId==1).ToList().Count > 0 ;
                                                 <option value="@it.AccountId" @(selected ? " selected=\"selected\"" : "")>@it.AccountName</option>
                                             }
                                         </select>
@@ -411,7 +411,7 @@
 
                                             @foreach (SysAccount it in optAccount)
                                             {
-                                                bool selected = optEmpPermission.Where(o => o.ViewEmpId == it.AccountId && o.FunId == 2).ToList().Count > 0;
+                                                bool selected = optEmpPermission.Where(o => o.ViewAccountId == it.AccountId && o.FunId == 2).ToList().Count > 0;
                                                 <option value="@it.AccountId" @(selected ? " selected=\"selected\"" : "")>@it.AccountName</option>
                                             }
                                         </select>
@@ -424,7 +424,7 @@
 
                                             @foreach (SysAccount it in optAccount)
                                             {
-                                                bool selected = optEmpPermission.Where(o => o.ViewEmpId == it.AccountId && o.FunId == 3).ToList().Count > 0;
+                                                bool selected = optEmpPermission.Where(o => o.ViewAccountId == it.AccountId && o.FunId == 3).ToList().Count > 0;
                                                 <option value="@it.AccountId" @(selected ? " selected=\"selected\"" : "")>@it.AccountName</option>
                                             }
                                         </select>
@@ -438,7 +438,7 @@
 
                                             @foreach (SysAccount it in optAccount)
                                             {
-                                                bool selected = optEmpPermission.Where(o => o.ViewEmpId == it.AccountId && o.FunId == 4).ToList().Count > 0;
+                                                bool selected = optEmpPermission.Where(o => o.ViewAccountId == it.AccountId && o.FunId == 4).ToList().Count > 0;
                                                 <option value="@it.AccountId" @(selected ? " selected=\"selected\"" : "")>@it.AccountName</option>
                                             }
                                         </select>

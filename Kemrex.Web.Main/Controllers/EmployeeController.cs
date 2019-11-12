@@ -133,9 +133,9 @@ namespace Kemrex.Web.Main.Controllers
                 foreach (string viewEmpId in Request.Form["ddlPerQuotation"].ToString().Split(','))
                 {
                     perList.Add(new TblEmployeeUserPermission() {
-                        EmpId = ob.EmpId,
+                        AccountId = ob.AccountId.Value.ToInt(),
                         FunId = 1,
-                        ViewEmpId = viewEmpId.ParseInt(),
+                        ViewAccountId = viewEmpId.ParseInt(),
                         CreatedBy = CurrentUID,
                     CreatedDate = CurrentDate
                 });
@@ -149,9 +149,9 @@ namespace Kemrex.Web.Main.Controllers
                 {
                     perList.Add(new TblEmployeeUserPermission()
                     {
-                        EmpId = ob.EmpId,
+                        AccountId = ob.AccountId.Value.ToInt(),
                         FunId = 2,
-                        ViewEmpId = viewEmpId.ParseInt(),
+                        ViewAccountId = viewEmpId.ParseInt(),
                         CreatedBy = CurrentUID,
                         CreatedDate = CurrentDate
                     });
@@ -165,9 +165,9 @@ namespace Kemrex.Web.Main.Controllers
                 {
                     perList.Add(new TblEmployeeUserPermission()
                     {
-                        EmpId = ob.EmpId,
+                        AccountId = ob.AccountId.Value.ToInt(),
                         FunId = 3,
-                        ViewEmpId = viewEmpId.ParseInt(),
+                        ViewAccountId = viewEmpId.ParseInt(),
                         CreatedBy = CurrentUID,
                         CreatedDate = CurrentDate
                     });
@@ -181,9 +181,9 @@ namespace Kemrex.Web.Main.Controllers
                 {
                     perList.Add(new TblEmployeeUserPermission()
                     {
-                        EmpId = ob.EmpId,
+                        AccountId = ob.AccountId.Value.ToInt(),
                         FunId = 4,
-                        ViewEmpId = viewEmpId.ParseInt(),
+                        ViewAccountId = viewEmpId.ParseInt(),
                         CreatedBy = CurrentUID,
                         CreatedDate = CurrentDate
                     });

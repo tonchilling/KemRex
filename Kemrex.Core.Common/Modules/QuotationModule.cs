@@ -233,8 +233,8 @@ namespace Kemrex.Core.Common.Modules
 
         public List<TblQuotation> GetList2(long userId)
         {
-            var permissionList = db.TblEmployeeUserPermission.Where(o=> (o.ViewEmpId== userId && o.FunId==1) ).Count()>0 
-                ? db.TblEmployeeUserPermission.Where(o => o.ViewEmpId == userId && o.FunId == 1).Select(o=>o.EmpId).ToList():null;
+            var permissionList = db.TblEmployeeUserPermission.Where(o=> (o.ViewAccountId == userId && o.FunId==1) ).Count()>0 
+                ? db.TblEmployeeUserPermission.Where(o => o.ViewAccountId == userId && o.FunId == 1).Select(o=>o.AccountId).ToList():null;
 
 
             if (permissionList != null)
