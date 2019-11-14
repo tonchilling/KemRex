@@ -1208,10 +1208,12 @@
     <Compile Include="Controllers\SaleOrderController.cs" />
     <Compile Include="Controllers\StockController.cs" />
     <Compile Include="Controllers\SystemController.cs" />
+    <Compile Include="Controllers\TeamAccountController.cs" />
     <Compile Include="Controllers\TeamOperationController.cs" />
     <Compile Include="Controllers\TeamSaleController.cs" />
     <Compile Include="Controllers\TransferInController.cs" />
     <Compile Include="Controllers\TransferOutController.cs" />
+    <Compile Include="Controllers\PaymentController.cs" />
     <Compile Include="Controllers\TransferStockOutController.cs" />
     <Compile Include="Controllers\TransferStockInController.cs" />
     <Compile Include="Controllers\UnitController.cs" />
@@ -1385,6 +1387,10 @@
     <Content Include="Views\RemarkClassicBase\Base\JobOrderForSale\Detail.cshtml" />
     <Content Include="Views\RemarkClassicBase\Base\JobOrderForSale\Index.cshtml" />
     <Content Include="Views\RemarkClassicBase\Base\Report\Index.cshtml" />
+    <Content Include="Views\RemarkClassicBase\Base\Payment\Detail.cshtml" />
+    <Content Include="Views\RemarkClassicBase\Base\Payment\Index.cshtml" />
+    <Content Include="Views\RemarkClassicBase\Base\TeamAccount\Detail.cshtml" />
+    <Content Include="Views\RemarkClassicBase\Base\TeamAccount\Index.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
