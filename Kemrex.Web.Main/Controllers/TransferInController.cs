@@ -121,7 +121,7 @@ namespace Kemrex.Web.Main.Controllers
             {
                 var dd = Request.Form["TransferDate"];
 
-                obj.TransferDate = dd.ParseDate(DateFormat.ddMMyyyy, culInfo: _cultureTHInfo);
+                obj.TransferDate = Convert.ToDateTime(dd, _cultureTHInfo); //dd.ParseDate(DateFormat.ddMMyyyy, culInfo: _cultureTHInfo);
             }
 
         //    obj.EmpId = "1";

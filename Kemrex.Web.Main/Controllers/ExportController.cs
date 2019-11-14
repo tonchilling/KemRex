@@ -624,6 +624,24 @@ namespace Kemrex.Web.Main.Controllers
                 return File(stream.ToArray(), "application/pdf", "Quotation_" + quo.QuotationNo + ".pdf");
                 }
         }
+
+        public FileStreamResult PDFQuotationPreview(int id)
+        {
+            MemoryStream workStream = new MemoryStream();
+            Document document = new Document();
+            PdfWriter.GetInstance(document, workStream).CloseStream = false;
+
+            document.Open();
+            document.Add(new Paragraph("Hello World"));
+            document.Add(new Paragraph(DateTime.Now.ToString()));
+            document.Close();
+
+            byte[] byteInfo = workStream.ToArray();
+            workStream.Write(byteInfo, 0, byteInfo.Length);
+            workStream.Position = 0;
+
+            return new FileStreamResult(workStream, "application/pdf");
+        }
         public FileResult PDFSaleOrderxx(int id)
         {
             TblSaleOrder tblS = uow.Modules.SaleOrder.Get(id);

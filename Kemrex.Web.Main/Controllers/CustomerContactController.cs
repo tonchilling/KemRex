@@ -81,11 +81,11 @@ namespace Kemrex.Web.Main.Controllers
             try
             {
                 int id = Request.Form["ContactId"].ParseInt();
-                TblProductCategory ob = uow.Modules.ProductCategory.Get(id);
+                TblCustomerContact ob = uow.Modules.CustomerContact.Get(id);
                 if (ob == null)
                 { return RedirectToAction("Detail", "Customer", new { msg = "ไม่พบข้อมูลที่ต้องการ", msgType = AlertMsgType.Warning, id = cusId }); }
 
-                uow.Modules.ProductCategory.Delete(ob);
+                uow.Modules.CustomerContact.Delete(ob);
                 uow.SaveChanges();
                 return RedirectToAction("Detail", "Customer", new { msg = "ลบข้อมูลเรียบร้อยแล้ว", msgType = AlertMsgType.Success, id = cusId });
             }

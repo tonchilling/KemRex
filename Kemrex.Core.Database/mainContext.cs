@@ -70,6 +70,7 @@ namespace Kemrex.Core.Database
         public virtual DbSet<TblJobOrderProperties> TblJobOrderProperties { get; set; }
         public virtual DbSet<TblJobOrderUndergroundType> TblJobOrderUndergroundType { get; set; }
         public virtual DbSet<TblJobOrderSurveyDetail> TblJobOrderSurveyDetail { get; set; }
+        public virtual DbSet<TblEmployeeUserPermission> TblEmployeeUserPermission { get; set; }
 
         public virtual DbSet<TblKpt> TblKpt { get; set; }
         public virtual DbSet<TblKptAttachment> TblKptAttachment { get; set; }
@@ -890,6 +891,18 @@ namespace Kemrex.Core.Database
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK__TblJobOrd__Equip__392E6792");
             });
+
+            modelBuilder.Entity<TblEmployeeUserPermission>(entity =>
+            {
+                entity.HasKey(e => new { e.AccountId, e.FunId, e.ViewAccountId });
+
+                entity.ToTable("TblEmployee_UserPermission");
+
+                entity.Property(e => e.CreatedDate).HasColumnType("datetime");
+
+                entity.Property(e => e.UpdatedDate).HasColumnType("datetime");
+            });
+
 
             modelBuilder.Entity<TblJobOrderLandType>(entity =>
             {

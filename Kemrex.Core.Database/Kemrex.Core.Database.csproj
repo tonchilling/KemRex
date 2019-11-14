@@ -193,6 +193,7 @@
     <Compile Include="Models\TblDepartment.cs" />
     <Compile Include="Models\TblDepartmentPosition.cs" />
     <Compile Include="Models\TblEmployee.cs" />
+    <Compile Include="Models\TblEmployeeUserPermission.cs" />
     <Compile Include="Models\TblInvoice.cs" />
     <Compile Include="Models\TblJobOrder.cs" />
     <Compile Include="Models\TblJobOrderAttachmentType.cs" />

@@ -71,7 +71,7 @@ namespace Kemrex.Web.Main.Controllers
         public ActionResult GetList()
         {
             AccountPermission permission = GetPermission(CurrentUID);
-            List<TblQuotation> obList = uow.Modules.Quotation.GetList((permission.IsAdminTeam || permission.IsManager) ?0 : CurrentUID);
+            List<TblQuotation> obList = uow.Modules.Quotation.GetList2((permission.IsAdminTeam || permission.IsManager) ?0 : CurrentUID);
          
             return Json(obList);
         }

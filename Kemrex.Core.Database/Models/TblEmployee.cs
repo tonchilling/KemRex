@@ -25,6 +25,8 @@ namespace Kemrex.Core.Database.Models
         public int? DepartmentId { get; set; }
         public int? PositionId { get; set; }
         public int? LeadId { get; set; }
+        public int? IsQuotationApprove { get; set; }
+        public int? IsJobOrderApprove { get; set; }
         public DateTime? EmpApplyDate { get; set; }
         public DateTime? EmpPromoteDate { get; set; }
         public string EmpAddress { get; set; }

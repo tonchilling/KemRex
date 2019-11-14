@@ -66,6 +66,7 @@ namespace Kemrex.Core.Common
             private CustomerContactModule _CustomerContact;
             private DepartmentModule _Department;
             private EmployeeModule _Employee;
+            private EmployeeUserPermissionModule _EmployeeUserPermission;
             private EnumModule _Enum;
             private InvoiceModule _Invoice;
             private PaymentConditionMudule _PaymentCondition;
@@ -110,6 +111,7 @@ namespace Kemrex.Core.Common
             public CustomerContactModule CustomerContact => _CustomerContact ?? (_CustomerContact = new CustomerContactModule(db));
             public DepartmentModule Department => _Department ?? (_Department = new DepartmentModule(db));
             public EmployeeModule Employee => _Employee ?? (_Employee = new EmployeeModule(db));
+            public EmployeeUserPermissionModule EmployeeUserPermission => _EmployeeUserPermission ?? (_EmployeeUserPermission = new EmployeeUserPermissionModule(db));
             public EnumModule Enum => _Enum ?? (_Enum = new EnumModule(db));
             public InvoiceModule Invoice => _Invoice ?? (_Invoice = new InvoiceModule(db));
             public PaymentConditionMudule PaymentCondition => _PaymentCondition ?? (_PaymentCondition = new PaymentConditionMudule(db));

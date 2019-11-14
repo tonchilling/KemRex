@@ -59,7 +59,7 @@ namespace Kemrex.Core.Common.Modules
         }
 
         public bool IsExist(int id)
-        { return db.TblCustomerContact.Where(x => x.CustomerId == id).Count() > 0 ? true : false; }
+        { return db.TblCustomerContact.Where(x => x.ContactId == id).Count() > 0 ? true : false; }
 
         public void Set(TblCustomerContact ob)
         {

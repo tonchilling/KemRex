@@ -11,9 +11,15 @@
     List<TblEmployee> optLead = (List<TblEmployee>)ViewData["optLead"];
     List<TblDepartment> optDepartment = (List<TblDepartment>)ViewData["optDepartment"];
     List<TblPosition> optPosition = (List<TblPosition>)ViewData["optPosition"];
+    List<SysAccount> optAccount = (List<SysAccount>)ViewData["optAccount"];
+    List<TblEmployeeUserPermission> optEmpPermission = (List<TblEmployeeUserPermission>)ViewData["optEmpPermission"];
+
 }
 
 @section Scripts {
+
+    <script src="~/themes/RemarkClassicBase/js/Plugin/select2.min.js?44d"></script>
+
     <script type="text/javascript">
         $(document).ready(function () {
             window.setTimeout(function () {
@@ -22,10 +28,87 @@
                 });
             }, 5000);
 
+
+            $('#ddlPerQuotation').select2({
+                closeOnSelect: false
+                , placeholder: "เลือกพนักงาน"
+                , allowClear: true
+            });
+            $('#ddlPerSaleOrder').select2({
+                closeOnSelect: false
+                , placeholder: "เลือกพนักงาน"
+                , allowClear: true
+            });
+            $('#ddlPerInvoice').select2({
+                closeOnSelect: false
+                , placeholder: "เลือกพนักงาน"
+                , allowClear: true
+            });
+            $('#ddlPerJobOrder').select2({
+                closeOnSelect: false
+                , placeholder: "เลือกพนักงาน"
+                , allowClear: true
+            });
+
+
+            $('.btnSave').click(function () {
+                $('#hddIsQuotationApprove').val($('.IsQuotationApprove:checked').val());
+                $('#hddIsJobOrderApprove').val($('.IsJobOrderApprove:checked').val());
+                console.log($('#hddIsQuotationApprove').val());
+                swal({
+                    title: "Save",
+                    text: "Do you want to save data?",
+                    type: "success",
+                    showCancelButton: true,
+                    closeOnConfirm: false,
+                    showLoaderOnConfirm: true
+                },
+                    function (isConfirm) {
+                        if (isConfirm) {
+
+
+
+
+
+                            $('#frmmain').submit();
+
+                        }
+                    });
+
+                return false;
+
+            });
+
             $(BasicMenu).slideToggle();
         });
     </script>
 }
+    <link href="~/libs/select2/css/select2.min.css" rel="stylesheet" />
+
+    <style>
+
+        .checkbox label .toggle, .checkbox-inline .toggle {
+            margin-left: 0px;
+            margin-right: 5px;
+        }
+
+        .select2-container--default .select2-selection--multiple .select2-selection__choice {
+            background-color: #B2FFB2;
+            border: 1px solid #aaa;
+            border-radius: 4px;
+            cursor: default;
+            float: left;
+            margin-right: 5px;
+            margin-top: 5px;
+            padding: 0 5px;
+        }
+
+        .select2-container--default .select2-results__option[aria-selected=true] {
+            background-color: #B2FFB2;
+        }
+    </style>
+
+
 
 <div class="page">
     <div class="page-content container-fluid">
@@ -39,7 +122,7 @@
         }
         <div class="row">
             <div class="col-12">
-                <form method="post" action="@Url.Action("Detail", "Employee")" enctype="multipart/form-data">
+                <form method="post" id="frmmain" action="@Url.Action("Detail", "Employee")" enctype="multipart/form-data">
                     @Html.AntiForgeryToken()
                     <input type="hidden" name="EmpId" value="@Model.EmpId" />
                     <div class="panel">
@@ -52,21 +135,33 @@
                         </div>
                         <div class="panel-body">
                             <div class="row">
-                                <div class="col-md-6 col-sm-12">
+                                <div class="col-md-4 col-sm-12">
                                     <div class="form-group">
                                         <label for="EmpCode" class="form-control-label">รหัสพนักงาน</label>
                                         <input type="text" class="form-control" name="EmpCode" value="@Model.EmpCode" />
                                     </div>
                                 </div>
-                                <div class="col-md-6 col-sm-12">
+                                <div class="col-md-3 col-sm-12">
                                     <div class="form-group">
                                         <label for="AccountId" class="form-control-label">ผู้ใช้งาน</label>
                                         <select class="form-control" name="AccountId">
                                             <option value="-1" @(!Model.AccountId.HasValue ? " selected=\"selected\"" : "")>ไม่ระบุ</option>
+                                            @foreach (SysAccount it in optAccount)
+                                            {
+                                                bool selected = Model.AccountId.HasValue && it.AccountId == Model.AccountId;
+                                                <option value="@it.AccountId" @(selected ? " selected=\"selected\"" : "")>@it.AccountName</option>
+                                            }
+
+
+
                                         </select>
                                     </div>
                                 </div>
+
                             </div>
+
+
+
                             <div class="row">
                                 <div class="col-md-3 col-sm-4">
                                     <div class="form-group">
@@ -168,6 +263,9 @@
                             </div>
                         </div>
                     </div>
+
+
+
                     <div class="panel">
                         <div class="panel-heading">
                             <h3 class="panel-title"><span class="panel-desc">ข้อมูลส่วนบุคคล</span></h3>
@@ -187,7 +285,7 @@
                                         <label for="EmpApplyDate" class="form-control-label">วันที่เข้าทำงาน</label>
                                         <div class="input-group">
                                             <span class="input-group-addon">
-                                                <i class="icon wb-calendar" aria-hidden="true"></i>
+                                                <i class="icon wb-calendar icon-2x text-primary" aria-hidden="true"></i>
                                             </span>
                                             <input type="text" name="EmpApplyDate" class="form-control" data-plugin="datepicker">
                                         </div>
@@ -198,7 +296,7 @@
                                         <label for="EmpPromoteDate" class="form-control-label">วันที่ปรับเงินเดือน</label>
                                         <div class="input-group">
                                             <span class="input-group-addon">
-                                                <i class="icon wb-calendar" aria-hidden="true"></i>
+                                                <i class="icon wb-calendar icon-2x text-primary" aria-hidden="true"></i>
                                             </span>
                                             <input type="text" name="EmpPromoteDate" class="form-control" data-plugin="datepicker">
                                         </div>
@@ -255,18 +353,116 @@
                             </div>
                         </div>
                     </div>
+
+                    <div class="panel">
+                        <div class="panel-heading">
+                            <h3 class="panel-title"><span class="panel-desc">สิทธิการใช้งาน</span></h3>
+                        </div>
+                        <div class="panel-body">
+                            <div class="row">
+                                <div class="col-md-2 col-sm-4">
+
+                                    <div class="form-group">
+                                        <label for="AccountId" class="form-control-label">สิทธิอนุมัติ (ใบเสนอราคา)</label>
+
+                                        <div class="checkbox">
+                                            <label>
+                                                <input data-toggle="toggle" data-onstyle="success"
+                                                       type="checkbox" @(Model.IsQuotationApprove.HasValue && Model.IsQuotationApprove.Value == 1 ? "Checked" : "") class="IsQuotationApprove" id="IsQuotationApprove">
+                                            </label>
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                                <div class="col-md-2 col-sm-4">
+
+                                    <div class="form-group">
+                                        <label for="AccountId" class="form-control-label">สิทธิอนุมัติ (ใบสั่งงานฝ่ายขาย)</label>
+
+                                        <div class="checkbox">
+                                            <label>
+                                                <input data-toggle="toggle" data-onstyle="success"
+                                                       type="checkbox" @(Model.IsJobOrderApprove.HasValue && Model.IsJobOrderApprove.Value == 1 ? "Checked" : "") class="IsJobOrderApprove" id="IsJobOrderApprove">
+                                            </label>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-3 col-md-6 col-sm-12">
+                                    <div class="form-group">
+                                        <label for="ddlPerQuotation" class="form-control-label">สิทธิ์การมองเห็น(ใบเสนอราคา)</label>
+                                        <select class="form-control" multiple="multiple" name="ddlPerQuotation" id="ddlPerQuotation">
+
+                                            @foreach (SysAccount it in optAccount)
+                                            {
+                                                bool selected = optEmpPermission.Where(o=>o.ViewAccountId == it.AccountId && o.FunId==1).ToList().Count > 0 ;
+                                                <option value="@it.AccountId" @(selected ? " selected=\"selected\"" : "")>@it.AccountName</option>
+                                            }
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-lg-3 col-md-6 col-sm-12">
+                                    <div class="form-group">
+                                        <label for="LeadId" class="form-control-label">สิทธิ์การมองเห็น(ใบสั่งขาย)</label>
+                                        <select class="form-control" multiple="multiple" name="ddlPerSaleOrder" id="ddlPerSaleOrder">
+
+                                            @foreach (SysAccount it in optAccount)
+                                            {
+                                                bool selected = optEmpPermission.Where(o => o.ViewAccountId == it.AccountId && o.FunId == 2).ToList().Count > 0;
+                                                <option value="@it.AccountId" @(selected ? " selected=\"selected\"" : "")>@it.AccountName</option>
+                                            }
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-lg-3 col-md-6 col-sm-12">
+                                    <div class="form-group">
+                                        <label for="LeadId" class="form-control-label">สิทธิ์การมองเห็น(ใบแจ้งหนี้)</label>
+                                        <select class="form-control" multiple="multiple" name="ddlPerInvoice" id="ddlPerInvoice">
+
+                                            @foreach (SysAccount it in optAccount)
+                                            {
+                                                bool selected = optEmpPermission.Where(o => o.ViewAccountId == it.AccountId && o.FunId == 3).ToList().Count > 0;
+                                                <option value="@it.AccountId" @(selected ? " selected=\"selected\"" : "")>@it.AccountName</option>
+                                            }
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-lg-3 col-md-6 col-sm-12">
+                                    <div class="form-group">
+                                        <label for="LeadId" class="form-control-label">สิทธิ์การมองเห็น(ใบสั่งงาน)</label>
+
+                                        <select class="form-control" multiple="multiple" name="ddlPerJobOrder" id="ddlPerJobOrder">
+
+                                            @foreach (SysAccount it in optAccount)
+                                            {
+                                                bool selected = optEmpPermission.Where(o => o.ViewAccountId == it.AccountId && o.FunId == 4).ToList().Count > 0;
+                                                <option value="@it.AccountId" @(selected ? " selected=\"selected\"" : "")>@it.AccountName</option>
+                                            }
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                     <div class="panel">
                         <div class="panel-body">
                             <div class="row">
                                 <div class="col-12">
                                     <div class="form-group">
-                                        <button type="submit" class="btn btn-primary">บันทึก</button>&nbsp;
+                                        <button type="submit" class="btn btn-primary btnSave">บันทึก</button>&nbsp;
                                         <a href="@Url.Action("Index", "Employee")" class="btn btn-default">ยกเลิก</a>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
+
+                    <input type="hidden" name="hddIsQuotationApprove" id="hddIsQuotationApprove" />
+                    <input type="hidden" name="hddIsJobOrderApprove" id="hddIsJobOrderApprove" />
                 </form>
             </div>
         </div>

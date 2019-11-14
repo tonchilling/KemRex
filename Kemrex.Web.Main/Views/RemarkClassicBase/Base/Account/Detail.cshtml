@@ -94,6 +94,36 @@
                    });
         });
 
+        
+
+
+        $(document).on("click", ".btnSave", function () {
+
+
+            var AccountId = $(this).closest("tr").attr('accountid');
+            swal({
+                title: "Save",
+                text: "Do you want to save?",
+                type: "success",
+                showCancelButton: true,
+                closeOnConfirm: false,
+                showLoaderOnConfirm: true
+            },
+                function (isConfirm) {
+                    if (isConfirm) {
+
+
+                     
+
+                        $('#frmMain').submit();
+
+                    }
+                });
+
+            return false;
+
+        });
+
         $(document).on("click", ".btnSellectEmployee", function () {
             $('#EmployeeCode').val($(this).closest('tr').attr('data'));
             $('#EmpId').val($(this).closest('tr').attr('empid'));
@@ -152,7 +182,7 @@
                         <div class="panel-heading">
                             <h3 class="panel-title">บัญชีผู้ใช้งาน</h3>
                         </div>
-                        <form role="form" method="post" action="@Url.Action("Detail", new { are = "", controller = "Account" })" enctype="multipart/form-data">
+                        <form role="form" method="post" id="frmMain" action="@Url.Action("Detail", new { are = "", controller = "Account" })" enctype="multipart/form-data">
                             @Html.AntiForgeryToken()
                             <input type="hidden" name="account_id" value="@Model.AccountId" />
                             <input type="hidden" name="EmpId" id="EmpId" value="@(Model.TblEmployee!=null?Model.TblEmployee.EmpId:0)" />
@@ -291,7 +321,7 @@
             </div>*@
                             </div>
                             <div class="box-footer">
-                                <button type="submit" class="btn btn-primary">บันทึก</button>
+                                <button type="submit" class="btn btn-primary btnSave">บันทึก</button>
                                 <a href="@Url.Action("Index", new { controller = "Account", are = "" })" class="btn btn-default">ยกเลิก</a>
                             </div>
                         </form>

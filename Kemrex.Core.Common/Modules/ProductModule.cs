@@ -112,21 +112,41 @@ namespace Kemrex.Core.Common.Modules
         }
         public List<TblProduct> GetList()
         {
-            var data = (from i in db.TblProduct
-                        select new TblProduct
-                        {
-                            CategoryId = i.CategoryId,
-                            Category = i.Category,
-                            ProductId = i.ProductId,
-                            ProductCode = i.ProductCode,
-                            ProductName = i.ProductName,
-                            PriceNet = i.PriceNet,
-                            PriceTot = i.PriceTot,
-                            PriceVat = i.PriceVat,
-                            QtyStock = db.TblProductOfWareHouse.Where(o=>o.ProductId==i.ProductId).Select(x=>x.QtyStock).Sum().Value
+            List<TblProduct> result = new List<TblProduct>();
+            result = (from i in db.TblProduct
+                      select new TblProduct
+                      {
+                          CategoryId = i.CategoryId,
+                          Category = i.Category,
+                          ProductId = i.ProductId,
+                          ProductCode = i.ProductCode,
+                          ProductName = i.ProductName,
+                          PriceNet = i.PriceNet,
+                          PriceTot = i.PriceTot,
+                          PriceVat = i.PriceVat,
+                          QtyStock = 0
 
-                        });
-            return data.ToList();
+                        }).ToList();
+
+            foreach (TblProduct tblProduct in result)
+            {
+                tblProduct.QtyStock = GetTblProductOfWareHouse(tblProduct.ProductId);
+            }
+            return result;
+        }
+
+        int GetTblProductOfWareHouse(int productid)
+        {
+            int value = 0;
+            var whereHouse = db.TblProductOfWareHouse.Where(o => o.ProductId == productid);
+
+            if (whereHouse.Select(o => o.QtyStock).Count()>0)
+            {
+                value = whereHouse.Select(o=>o.QtyStock).Sum().Value;
+            }
+
+            return value;
+
         }
         public bool IsExist(int id)
         {

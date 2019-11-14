@@ -725,30 +725,6 @@ namespace Kemrex.Core.Common.Modules
             try
             {
 
-             /*    [TransferId]
-      ,[TransferNo]
-      ,[TransferType]
-      ,[TransferDate]
-      ,[TransferTime]
-      ,[JobOrderId]
-      ,[RefTransferId]
-      ,[ReceiveTo]
-      ,[Reason]
-      ,[CarType]
-      ,[Company]
-      ,[CarNo]
-      ,[CarBrand]
-      ,[SendToDepartment]
-      ,[Remark]
-      ,[EmpId]
-      ,[BillNo]
-      ,[TransferStatus]
-      ,[Note1]
-      ,[CreatedDate]
-      ,[CreatedBy]
-      ,[UpdatedDate]
-      ,[UpdatedBy]
-      ,[ApprovedBy]*/
 
         paramList = new List<SqlParameter>();
                 SqlParameter pvNewId = new SqlParameter("@TransferId", SqlDbType.NVarChar,20);
@@ -777,9 +753,9 @@ namespace Kemrex.Core.Common.Modules
                 paramList.Add(new SqlParameter("@Note1", header.Note1));
                 paramList.Add(new SqlParameter("@CreatedBy", header.CreatedBy));
                 paramList.Add(new SqlParameter("@UpdatedBy", header.UpdatedBy));
-                webdb.ExcecuteWitTranNonQuery(sql, paramList);
+                webdb.ExcecuteNonQuery(sql, paramList);
                 header.TransferId = Convert.ToInt32(pvNewId.Value.ToString());
-                if (header.RefTransferIds != "")
+                if (header.RefTransferIds != "" && header.RefTransferIds!="0")
                 {
                     sql = "sp_TransferHeaderReference_Add";
                     string[] refTransferId = header.RefTransferIds.Split(',');
@@ -789,7 +765,7 @@ namespace Kemrex.Core.Common.Modules
                         paramList = new List<SqlParameter>();
                         paramList.Add(new SqlParameter("@TransferId", header.TransferId));
                         paramList.Add(new SqlParameter("@RefTransferId", refId));
-                        webdb.ExcecuteWitTranNonQuery(sql, paramList);
+                        webdb.ExcecuteNonQuery(sql, paramList);
                     }
                 }
                // header.TransferId = Convert.ToInt32(webdb.ExcecuteNonScalar(sql, paramList));

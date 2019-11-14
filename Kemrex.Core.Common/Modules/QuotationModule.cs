@@ -231,6 +231,66 @@ namespace Kemrex.Core.Common.Modules
             return data.OrderByDescending(o=>o.QuotationDate).ToList();
         }
 
+        public List<TblQuotation> GetList2(long userId)
+        {
+            var permissionList = db.TblEmployeeUserPermission.Where(o=> (o.ViewAccountId == userId && o.FunId==1) ).Count()>0 
+                ? db.TblEmployeeUserPermission.Where(o => o.ViewAccountId == userId && o.FunId == 1).Select(o=>o.AccountId).ToList():null;
+
+
+            if (permissionList != null)
+            {
+                permissionList.Add((int)userId);
+            }
+            else {
+                permissionList = new List<int>();
+
+                permissionList.Add((int)userId);
+            }
+            var data = (from order in db.TblQuotation.Where(o => (permissionList.Contains((int)o.CreatedBy) || userId==0) && o.StatusId != 9)
+                        select new TblQuotation
+                        {
+                            QuotationId = order.QuotationId,
+                            QuotationNo = order.QuotationNo,
+                            QuotationDate = order.QuotationDate,
+                            strQuotationDate = string.Format("{0}/{1}/{2}", order.QuotationDate.Day.ToString("##00"), order.QuotationDate.Month.ToString("##00"), order.QuotationDate.Year.ToString()),
+                            SubTotalNet = order.SubTotalNet,
+                            SubTotalVat = order.SubTotalVat,
+                            SubTotalTot = order.SubTotalTot,
+                            DiscountNet = order.DiscountNet,
+                            DiscountVat = order.DiscountVat,
+                            DiscountTot = order.DiscountTot,
+                            DiscountCash = order.DiscountCash,
+                            SummaryNet = order.SummaryNet,
+                            SummaryVat = order.SummaryVat,
+                            SummaryTot = order.SummaryTot,
+                            StatusId = order.StatusId,
+                            CreatedByName = (from emp in db.SysAccount.Where(o => o.AccountId == order.CreatedBy) select emp.AccountName).FirstOrDefault(),
+                            Status = (from emp in db.EnmStatusQuotation.Where(o => o.StatusId == order.StatusId)
+                                      select new EnmStatusQuotation
+                                      {
+                                          StatusId = emp.StatusId,
+                                          StatusName = emp.StatusName,
+                                      }).FirstOrDefault(),
+                            Customer = (from emp in db.TblCustomer.Where(o => o.CustomerId == order.CustomerId)
+                                        select new TblCustomer
+                                        {
+                                            CustomerId = emp.CustomerId,
+                                            CustomerName = emp.CustomerName
+                                        }).FirstOrDefault(),
+                            Sale = (from emp in db.TblEmployee.Where(o => o.EmpId == order.SaleId)
+                                    select new TblEmployee
+                                    {
+                                        EmpId = emp.EmpId,
+                                        EmpCode = emp.EmpCode,
+                                        EmpNameTh = emp.EmpNameTh
+                                    }).FirstOrDefault(),
+
+                            RefQuotationId = order.RefQuotationId,
+                            OrgQuotationId = order.OrgQuotationId
+
+                        });
+            return data.OrderByDescending(o => o.QuotationDate).ToList();
+        }
 
 
         public string GetStatus(int id)

@@ -530,11 +530,11 @@
                                     <div class="panel-body">
                                         <div class="row">
                                             @*Left panel*@
-                                            <div class="col-md-6">
+                                            <div class="col-md-6 col-sm-12">
 
                                                 <div class="form-group">
-                                                    <label for="TransferNo" class="col-sm-4 col-form-label">เลขที่นำเข้าสินค้า</label>
-                                                    <div class="col-sm-6">
+                                                    <label for="TransferNo" class="col-sm-12 col-form-label">เลขที่นำเข้าสินค้า</label>
+                                                    <div class="col-sm-12">
                                                         <input type="text" class="form-control" name="TransferNo" id="TransferNo"
                                                                placeholder="บันทึกเพื่อสร้าง" value="@Model.TransferNo" readonly />
                                                     </div>
@@ -543,8 +543,8 @@
 
                                                 <div class="form-group">
 
-                                                    <label for="BillNo" class="col-sm-4 col-form-label">Ref No./Bill No.</label>
-                                                    <div class="col-sm-6">
+                                                    <label for="BillNo" class="col-sm-12 col-form-label">Ref No./Bill No.</label>
+                                                    <div class="col-sm-12">
                                                         <div class="input-group mb-3">
                                                             <input type="text" class="form-control" id="BillNo" name="BillNo"
                                                                    placeholder="" value="@Model.BillNo" />
@@ -552,14 +552,14 @@
                                                     </div>
                                                 </div>
                                                 <div class="form-group">
-                                                    <label for="ReceiveTo" class="col-sm-5 col-form-label">รับสินค้าจาก</label>
-                                                    <div class="col-sm-9">
+                                                    <label for="ReceiveTo" class="col-sm-12 col-form-label">รับสินค้าจาก</label>
+                                                    <div class="col-sm-12">
                                                         <input type="text" class="form-control" name="ReceiveTo" id="ReceiveTo" value="@Model.ReceiveTo" />
                                                     </div>
                                                 </div>
                                                 <div class="form-group">
-                                                    <label for="Note1" class="col-sm-4 col-form-label">Note</label>
-                                                    <div class="col-sm-9">
+                                                    <label for="Note1" class="col-sm-12 col-form-label">Note</label>
+                                                    <div class="col-sm-12">
                                                         <textarea rows="4" cols="47" class="form-control" name="Note1" id="Note1">@Model.Note1</textarea>
                                                     </div>
                                                 </div>
@@ -567,10 +567,10 @@
 
                                             @*Right panel*@
 
-                                            <div class="col-md-5 col-sm-8">
+                                            <div class="col-md-5 col-sm-12">
                                                 <div class="form-group">
-                                                    <label for="CreateDate" class="col-sm-5 col-form-label">วันที่สร้างรายการ</label>
-                                                    <div class="input-group col-sm-6">
+                                                    <label for="CreateDate" class="col-sm-12 col-form-label">วันที่สร้างรายการ</label>
+                                                    <div class="input-group col-sm-12">
                                                         <input type="text" class="form-control" name="CreatedDate" value="@(Model.CreateDate.HasValue ? Model.CreateDate.Value.ToString("dd/MM/yyyy"):"")" readonly />
                                                         <span class="input-group-addon">
                                                             <i class="icon wb-calendar icon-2-5x text-success" aria-hidden="true"></i>
@@ -579,8 +579,8 @@
 
                                                 </div>
                                                 <div class="form-group">
-                                                    <label for="TransferDate" class="col-sm-5 col-form-label">วันที่นำสินค้าเข้าคลัง</label>
-                                                    <div class="input-group col-sm-6 date" data-provide="datepicker" data-date-format="dd/mm/yyyy">
+                                                    <label for="TransferDate" class="col-sm-12 col-form-label">วันที่นำสินค้าเข้าคลัง</label>
+                                                    <div class="input-group col-sm-12 date" data-provide="datepicker" data-date-format="dd/mm/yyyy">
                                                         <input id="TransferDate" type="text" class="form-control" placeholder="dd/MM/yyyy ค.ศ." name="TransferDate"
                                                                value="@(Model.TransferDate.HasValue ? Model.TransferDate.Value.ToString("dd/MM/yyyy"):"")" />
                                                         <span class="input-group-addon">
@@ -590,11 +590,11 @@
 
                                                 </div>
                                                 <div class="form-group">
-                                                    <label for="EmpId" class="col-sm-5 col-form-label">ผู้นำสินค้าเข้า</label>
+                                                    <label for="EmpId" class="col-sm-12 col-form-label">ผู้นำสินค้าเข้า</label>
                                                     @*<div class="col-sm-6">
                                                             <input type="text" class="form-control" name="EmpId" value="@Model.EmpId" />
                                                         </div>*@
-                                                    <div class="col-sm-6">
+                                                    <div class="col-sm-12">
                                                         <select class="form-control" id="EmpId" data-live-search="true"
                                                                 name="EmpId">
                                                             <option value="-1" )></option>
@@ -789,7 +789,7 @@
                                             <form method="post" id="frmftr" action="@Url.Action("AddProduct", "TransferStockIn")" enctype="multipart/form-data">
                                                 <input type="hidden" name="TransferStockId" value="@Model.TransferStockId" />
                                                 <div class="row">
-                                                    <div class="col-md-4 col-sm-12 form-group">
+                                                    <div class="col-md-6 col-lg-4  col-sm-12 form-group">
                                                         <label for="PileId" class="form-control-label">รหัสสินค้า</label>
                                                         <div class="input-group">
                                                             <select class="form-control" id="selProduct" data-live-search="true" @(canedit ? "" : "readonly")
@@ -808,7 +808,7 @@
                                                             </div>
                                                         </div>
                                                     </div>
-                                                    <div class="col-md-2 col-sm-12">
+                                                    <div class=" col-md-6 col-lg-2 col-sm-12">
                                                         <div class="form-group">
                                                             <label for="Qty" class="form-control-label">คลัง</label>
                                                             <select class="form-control" id="selWareHose" data-live-search="true"
@@ -828,16 +828,16 @@
 
                                                     </div>
 
-                                                    <div class="col-md-1 col-sm-12 form-group">
+                                                    <div class="col-md-6 col-lg-2  col-sm-12 form-group">
                                                         <label for="Qty" class="form-control-label">คงเหลือ</label>
                                                         <input type="number" class="form-control" id="ProductOnhandQty" name="ProductOnhandQty" readonly value="" />
                                                     </div>
-                                                    <div class="col-md-1 col-sm-12 form-group">
+                                                    <div class=" col-md-6 col-lg-2 col-sm-12 form-group">
 
                                                         <label for="Qty" class="form-control-label">จำนวน</label>
                                                         <input type="number" class="form-control" id="RequestQty" name="RequestQty" value="1" @(canedit ? "" : "readonly") />
                                                     </div>
-                                                    <div class="col-md-2 col-sm-12 form-group">
+                                                    <div class="col-lg-2 col-md-6 col-sm-12 form-group">
                                                         <label for="Price" class="form-control-label">ราคา</label>
                                                         <input type="text" class="form-control Number" readonly id="ProductPrice" name="ProductPrice" />
                                                     </div>
