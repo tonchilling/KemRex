@@ -34,333 +34,6 @@ namespace Kemrex.Web.Main.Controllers
             return View();
         }
         ///id=QuatationId or OrderId
-        public FileResult PDFQuotationxx(int id)
-        {
-            TblQuotation tblQ = uow.Modules.Quotation.Get(id);
-            tblQ.TblQuotationDetail = uow.Modules.QuotationDetail.Gets(id);
-            foreach (var pr in tblQ.TblQuotationDetail.ToList())
-            {
-                pr.Product = uow.Modules.Product.Get(pr.ProductId);
-            }
-
-                //List<TblQuotationDetail> tblDetail = uow.Modules.QuotationDetail.Gets(id);
-
-
-
-                //f_cb = BaseFont.CreateFont(Server.MapPath("~/fonts/browa.ttf"), BaseFont.CP1252, BaseFont.NOT_EMBEDDED);
-                //f_cn = BaseFont.CreateFont(Server.MapPath("~/fonts/browa.ttf"), BaseFont.CP1252, BaseFont.NOT_EMBEDDED);
-                f_cb = BaseFont.CreateFont(Server.MapPath("~/fonts/browa.ttf"), BaseFont.IDENTITY_H, BaseFont.NOT_EMBEDDED, true);
-            f_cn = BaseFont.CreateFont(Server.MapPath("~/fonts/browa.ttf"), BaseFont.IDENTITY_H, BaseFont.NOT_EMBEDDED, true);
-
-            using (System.IO.MemoryStream fs = new System.IO.MemoryStream())
-            {
-                Document document = new Document(PageSize.A4, 25, 25, 40, 1);
-                PdfWriter writer = PdfWriter.GetInstance(document, fs);
-
-                // Add meta information to the document
-                document.AddAuthor("");
-                document.AddCreator("KemRex");
-                document.AddKeywords("PDF Quotation");
-                document.AddSubject("PDF For Print to Customer");
-                document.AddTitle("PDF Quotation");
-
-                // Open the document to enable you to write to the document
-                document.Open();
-
-                // Makes it possible to add text to a specific place in the document using 
-                // a X & Y placement syntax.
-                PdfContentByte cb = writer.DirectContent;
-                // Add a footer template to the document
-                //cb.AddTemplate(PdfFooter(cb, ""), 30, 1);
-                // First we must activate writing
-                cb.BeginText();
-
-
-                // Add a logo to the invoice
-                iTextSharp.text.Image png = iTextSharp.text.Image.GetInstance(Server.MapPath("~/images/logo-banner.png"));
-                png.ScaleAbsolute(200, 55);
-                png.SetAbsolutePosition(40, 750);
-                cb.AddImage(png);
-                int top_margin = 800;
-                // Start with the invoice type header
-                writeText(cb, "ใบเสนอราคา", 350, 820, f_cb, 14);
-                // HEader details; invoice number, invoice date, due date and customer Id
-                writeText(cb, "เลขที่ใบ", 350, top_margin, f_cb, 12);
-                writeText(cb, tblQ.QuotationNo, 420, top_margin, f_cn, 12);
-                writeText(cb, "วันที่", 350, top_margin - 20, f_cb, 12);
-                writeText(cb, tblQ.QuotationDate.Day.ToString("00") + "/" + tblQ.QuotationDate.Month.ToString("00") + "/" + tblQ.QuotationDate.Year, 420, top_margin - 20, f_cn, 12);
-                writeText(cb, "วันครบกำหนด", 350, top_margin - 40, f_cb, 12);
-                writeText(cb, tblQ.DueDate != null? tblQ.DueDate.Value.Day.ToString("00") + "/" + tblQ.DueDate.Value.Month.ToString("00") + "/" + tblQ.DueDate.Value.Year : "", 420, top_margin - 40, f_cn, 12);
-                writeText(cb, "ผู้ให้บริการ", 350, top_margin - 60, f_cb, 12);
-                writeText(cb, "" + tblQ.SaleName, 420, top_margin - 60, f_cn, 12);
-                //writeText(cb, "รหัสลูกค้า", 350, 752, f_cb, 12);
-                //writeText(cb, tblQ.CustomerId.Value.ToString("0000000000") ,420, 752, f_cn, 12); 
-
-
-                // Delivery address details
-                int left_margin = 40;
-                top_margin = 720;
-                writeText(cb, "ที่อยู่ออกบิล", left_margin, top_margin, f_cb, 12);
-                writeText(cb, "ชื่อลูกค้า", left_margin, top_margin - 20, f_cn, 12);
-                writeText(cb, "ที่อยู่จัดส่ง", left_margin, top_margin - 40, f_cn, 12);
-                writeText(cb, "ชื่อผู้ติดต่อ", left_margin, top_margin - 60, f_cn, 12);
-                writeText(cb, "เบอร์โทร.", left_margin, top_margin - 80, f_cn, 12);
-                writeText(cb, "Email", left_margin, top_margin - 100, f_cn, 12);
-                writeText(cb, "", left_margin + 65, top_margin - 120, f_cn, 12);
-
-                // Invoice address
-                left_margin = 150;
-                writeText(cb, tblQ.BillingAddress, left_margin, top_margin, f_cb, 12);
-                writeText(cb, tblQ.CustomerName, left_margin, top_margin - 20, f_cn, 12);
-                writeText(cb, tblQ.ShippingAddress, left_margin, top_margin - 40, f_cn, 12);
-                writeText(cb, "คุณ" + tblQ.ContractName, left_margin, top_margin - 60, f_cn, 12);
-                writeText(cb, tblQ.ContractPhone, left_margin, top_margin - 80, f_cn, 12);
-                writeText(cb, tblQ.ContractEmail, left_margin, top_margin - 100, f_cn, 12);
-                writeText(cb, "", left_margin + 65, top_margin - 120, f_cn, 90);
-
-                // Write out invoice terms details
-                //left_margin = 40;
-                //top_margin = 620;
-                //writeText(cb, "Payment terms", left_margin, top_margin, f_cb, 12);
-                //writeText(cb, "payTerms", left_margin, top_margin - 12, f_cn, 12);
-                //writeText(cb, "Delivery terms", left_margin + 200, top_margin, f_cb, 12);
-                //writeText(cb, "delTerms", left_margin + 200, top_margin - 12, f_cn, 12);
-                //writeText(cb, "Transport terms", left_margin + 350, top_margin, f_cb, 12);
-                //writeText(cb, "delTransportTerms", left_margin + 350, top_margin - 12, f_cn, 12);
-                //// Move down
-                //left_margin = 40;
-                //top_margin = 590;
-                //writeText(cb, "Order reference", left_margin, top_margin, f_cb, 12);
-                //writeText(cb, "orderReference", left_margin, top_margin - 12, f_cn, 12);
-                //writeText(cb, "Customer marking", left_margin + 200, top_margin, f_cb, 12);
-                //writeText(cb, "customerMarking", left_margin + 200, top_margin - 12, f_cn, 12);
-                //writeText(cb, "Salesman", left_margin + 350, top_margin, f_cb, 12);
-                //writeText(cb, "salesman", left_margin + 350, top_margin - 12, f_cn, 12);
-
-                // NOTE! You need to call the EndText() method before we can write graphics to the document!
-                cb.EndText();
-                // Separate the header from the rows with a line
-                // Draw a line by setting the line width and position
-                cb.SetLineWidth(0f);
-                cb.MoveTo(40, 600);
-                cb.LineTo(560, 600);
-                cb.Stroke();
-                // Don't forget to call the BeginText() method when done doing graphics!
-                cb.BeginText();
-
-                // Before we write the lines, it's good to assign a "last position to write"
-                // variable to validate against if we need to make a page break while outputting.
-                // Change it to 510 to write to test a page break; the fourth line on a new page
-                int lastwriteposition = 100;
-
-                // Loop thru the rows in the rows table
-                // Start by writing out the line headers
-                top_margin = 580;
-                left_margin = 40;
-                // Line headers
-                writeText(cb, "ลำดับ", left_margin, top_margin, f_cb, 12);
-                writeText(cb, "รายการสินค้า", left_margin + 30, top_margin, f_cb, 12);
-                cb.ShowTextAligned(PdfContentByte.ALIGN_RIGHT, "ราคา/หน่วย", left_margin + 310, top_margin, 0);
-                cb.ShowTextAligned(PdfContentByte.ALIGN_RIGHT, "จำนวน", left_margin + 360, top_margin, 0);
-                cb.ShowTextAligned(PdfContentByte.ALIGN_RIGHT, "รวม", left_margin + 410, top_margin, 0);
-                cb.ShowTextAligned(PdfContentByte.ALIGN_RIGHT, "ส่วนลด", left_margin + 460, top_margin, 0);
-                cb.ShowTextAligned(PdfContentByte.ALIGN_RIGHT, "ราคาสุทธิ", left_margin + 510, top_margin, 0);
-                //cb.ShowTextAligned(PdfContentByte.ALIGN_RIGHT, "รวม VAT(7 %)", left_margin + 500, top_margin, 0);
-
-                // First item line position starts here
-                top_margin = 560;
-
-                // Loop thru the table of items and set the linespacing to 12 points.
-                // Note that we use the -= operator, the coordinates goes from the bottom of the page!
-                //for (var row = 1; row <= 5; row++)
-                int row = 0;
-                foreach(var ob in tblQ.TblQuotationDetail.ToList())           //tblDetail
-                {
-                    row++;
-                    writeText(cb, row.ToString(), left_margin, top_margin, f_cn, 12);
-                    writeText(cb, ob.Product.ProductName.ToString(), left_margin + 30, top_margin, f_cn, 12);
-                    cb.ShowTextAligned(PdfContentByte.ALIGN_RIGHT, ob.Product.PriceNet.ToString(), left_margin + 310, top_margin, 0);
-                    cb.ShowTextAligned(PdfContentByte.ALIGN_RIGHT, ob.Quantity.ToString(), left_margin + 360, top_margin, 0);
-                    cb.ShowTextAligned(PdfContentByte.ALIGN_RIGHT, ob.PriceNet.ToString(), left_margin + 410, top_margin, 0);
-                    cb.ShowTextAligned(PdfContentByte.ALIGN_RIGHT, ob.DiscountNet.ToString(), left_margin + 460, top_margin, 0);
-                    cb.ShowTextAligned(PdfContentByte.ALIGN_RIGHT, ob.TotalNet.Value.ToString(), left_margin + 510, top_margin, 0);
-                    //cb.ShowTextAligned(PdfContentByte.ALIGN_RIGHT, ob.TotalTot.Value.ToString(), left_margin + 500, top_margin, 0);
-                    // This is the line spacing, if you change the font size, you might want to change this as well.
-                    top_margin -= 12;
-
-                    // Implement a page break function, checking if the write position has reached the lastwriteposition
-                    if (top_margin <= lastwriteposition)
-                    {
-                        // We need to end the writing before we change the page
-                        cb.EndText();
-                        // Make the page break
-                        document.NewPage();
-                        // Start the writing again
-                        cb.BeginText();
-                        // Assign the new write location on page two!
-                        // Here you might want to implement a new header function for the new page
-                        top_margin = 780;
-                    }
-                }
-
-                // Okay, write out the totals table
-                // Here you might want to do some page break scenarios, as well:
-                // Example:
-                // Calculate how many rows you are about to print and see if they fit before the lastwriteposition, 
-                // then decide how to do; write some on first page, then the rest on second page or perhaps all the 
-                // total lines after the page break.
-                // We are not doing this here, we just write them out 80 points below the last writed item row
-
-                top_margin -= 40;
-                left_margin = 350;
-
-                // First the headers
-                writeText(cb, "ยอดรวมก่อนหักส่วนลด", left_margin, top_margin, f_cb, 12);
-                writeText(cb, "รวมส่วนลด", left_margin, top_margin - 15, f_cb, 12);
-                writeText(cb, "รวมทั้งสิ้น", left_margin, top_margin - 30, f_cb, 12);
-                writeText(cb, "Vat 7%", left_margin, top_margin - 45, f_cb, 12);
-                writeText(cb, "ยอดเงินรวม", left_margin, top_margin - 65, f_cb, 12);
-                // Move right to write out the values
-                left_margin = 540;
-                // Write out the invoice currency and values in regular text
-                cb.SetFontAndSize(f_cn, 12);
-                string curr = "บาท";
-                cb.ShowTextAligned(PdfContentByte.ALIGN_LEFT, curr, left_margin, top_margin, 0);
-                cb.ShowTextAligned(PdfContentByte.ALIGN_LEFT, curr, left_margin, top_margin - 15, 0);
-                cb.ShowTextAligned(PdfContentByte.ALIGN_LEFT, curr, left_margin, top_margin - 30, 0);
-                cb.ShowTextAligned(PdfContentByte.ALIGN_LEFT, curr, left_margin, top_margin - 45, 0);
-                cb.ShowTextAligned(PdfContentByte.ALIGN_LEFT, curr, left_margin, top_margin - 65, 0);
-                left_margin = 535;
-                cb.ShowTextAligned(PdfContentByte.ALIGN_RIGHT, tblQ.SubTotalNet.Value.ToString(), left_margin, top_margin, 0);
-                cb.ShowTextAligned(PdfContentByte.ALIGN_RIGHT, tblQ.DiscountNet.Value.ToString(), left_margin, top_margin - 15, 0);
-                cb.ShowTextAligned(PdfContentByte.ALIGN_RIGHT, tblQ.SummaryNet.Value.ToString(), left_margin, top_margin - 30, 0);
-                cb.ShowTextAligned(PdfContentByte.ALIGN_RIGHT, tblQ.SummaryVat.Value.ToString(), left_margin, top_margin - 45, 0);
-                cb.ShowTextAligned(PdfContentByte.ALIGN_RIGHT, tblQ.SummaryTot.Value.ToString(), left_margin, top_margin - 65, 0);
-
-                // End the writing of text
-                cb.EndText();
-
-                // Close the document, the writer and the filestream!
-                document.Close();
-                writer.Close();
-                fs.Close();
-
-                return File(fs.ToArray(), "application/pdf", "Quotation.pdf");
-            }
-
-        }
-        public FileResult PDFQuotationx(int id)
-        {
-            TblQuotation quo = uow.Modules.Quotation.Get(id);
-            quo.TblQuotationDetail = uow.Modules.QuotationDetail.Gets(id);
-            foreach (var pr in quo.TblQuotationDetail.ToList())
-            {
-                pr.Product = uow.Modules.Product.Get(pr.ProductId);
-                pr.Product.Unit = uow.Modules.Unit.Get(pr.Product.UnitId);
-            }
-            int cusid = quo.CustomerId.HasValue ? quo.CustomerId.Value : 0;
-            int GroupID = uow.Modules.Customer.GetByCondition(cusid).GroupId.HasValue ? uow.Modules.Customer.GetByCondition(cusid).GroupId.Value:0;
-            string SaleTel = uow.Modules.Employee.GetByCondition(quo.SaleId).EmpMobile;
-            TblEmployee emp = uow.Modules.Employee.GetByCondition(quo.SaleId);
-            emp.Prefix = uow.Modules.Enum.PrefixGet(emp.PrefixId.HasValue ? emp.PrefixId.Value : 0);
-            //string TitleSale = emp.Prefix.PrefixNameTh;
-            string TitleSale = emp.Prefix.PrefixNameTh;
-
-            String html = string.Empty;
-            html = System.IO.File.ReadAllText(HttpContext.Server.MapPath("~/html/" + "QuotationHTML.html"));
-            using (MemoryStream stream = new System.IO.MemoryStream())
-            {
-                html = html.Replace("@@ImageBanner@@", HttpContext.Server.MapPath("~/images/logo-banner.png"));
-                html = html.Replace("@@Logo2@@", HttpContext.Server.MapPath("~/images/logo2.png"));
-                html = html.Replace("@@ImageCheckbox@@", HttpContext.Server.MapPath("~/html/img/checkbox_0.gif"));
-                html = html.Replace("@@QuotationNo@@", quo.QuotationNo);
-                string StrQuotationDate = quo.QuotationDate.Day.ToString("00") + "/" + quo.QuotationDate.Month.ToString("00") + "/" + quo.QuotationDate.Year;
-                html = html.Replace("@@QuotationDateStr@@", StrQuotationDate);
-                if (GroupID == 1) //นิติบุคคล
-                {
-                    html = html.Replace("@@ContactName@@", quo.ContractName);
-                    html = html.Replace("@@CompanyName@@", quo.CustomerName);
-                }
-                else //ไม่ใช่นิติบุคคล
-                {
-                    html = html.Replace("@@ContactName@@", quo.CustomerName);
-                    html = html.Replace("@@CompanyName@@", "");
-                }
-                html = html.Replace("@@Address@@", quo.BillingAddress);
-                html = html.Replace("@@Tel@@", quo.ContractPhone);
-                html = html.Replace("@@Fax@@", "");
-                html = html.Replace("@@ProjectName@@", "");
-
-                string DeliveryDate = quo.DeliveryDate.HasValue ? quo.DeliveryDate.Value.Day.ToString("00") + "/" + quo.DeliveryDate.Value.Month.ToString("00") + "/" + quo.DeliveryDate.Value.Year:"";
-                string DueDate = quo.DueDate.HasValue ? quo.DueDate.Value.Day.ToString("00") + "/" + quo.DueDate.Value.Month.ToString("00") + "/" + quo.DueDate.Value.Year:"";
-
-                html = html.Replace("@@DeliveryDate@@", DeliveryDate);
-                html = html.Replace("@@ValidDay@@", quo.QuotationValidDay.ToString());
-                html = html.Replace("@@DueDate@@", DueDate);
-                html = html.Replace("@@CreditDay@@", quo.QuotationCreditDay.ToString());
-                html = html.Replace("@@SaleTel@@", SaleTel);
-
-
-
-                string tagItem = "";
-                int num = 0;
-                foreach (var d in quo.TblQuotationDetail.ToList())
-                {
-                    num++;
-                    tagItem += "<tr>";
-                    tagItem += "<td align='left' style='border-right:1px;'> " + num + "</td>";
-                    tagItem += "<td align='left' style='border-right:1px;'> " + d.Product.ProductCode + "</td>";
-                    tagItem += "<td align='left' style='border-right:1px;' >" + d.Product.ProductName + "</td>";
-                    tagItem += "<td align='right' style='border-right:1px;' >" + (d.Quantity != 0 ? d.Quantity.ToString("###,###") : "") + "</td>";
-                    tagItem += "<td align='center' style='border-right:1px;' >" + d.Product.Unit.UnitName + "</td>";
-                    tagItem += "<td align='right' style='border-right:1px;' >" + (d.Product.PriceNet != 0 ? d.Product.PriceNet.ToString("###,###,###.00") : "") + "</td>";
-                    tagItem += "<td align='right' style='border-right:1px;' >" + (d.DiscountNet != 0 ? d.DiscountNet.ToString("###,###,###.00") : "") + "</td>";
-                    tagItem += "<td align='right' >" + (d.TotalNet.HasValue ? d.TotalNet.Value.ToString("###,###,###.00") : "") + "</td>";
-                    tagItem += "</tr>";
-                }
-
-                for (int i = 0; i <= 20 - num; i++)
-                {
-                    tagItem += "<tr><td style='border-right:1px;'>&nbsp;</td>" +
-                        "<td style='border-right:1px;'>&nbsp;</td>" +
-                        "<td style='border-right:1px;'>&nbsp;</td>" +
-                        "<td style='border-right:1px;'>&nbsp;</td>" +
-                        "<td style='border-right:1px;'>&nbsp;</td>" +
-                        "<td style='border-right:1px;'>&nbsp;</td>" +
-                        "<td style='border-right:1px;'>&nbsp;</td>" +
-                        "<td>&nbsp;</td></tr>";
-                }
-                html = html.Replace("@@item@@", tagItem);
-                html = html.Replace("@@Remark@@", quo.QuotationRemark);
-                decimal SubTotalNet = 0;
-                decimal DiscountNet = 0;
-                SubTotalNet = quo.SubTotalNet.HasValue ? quo.SubTotalNet.Value : 0;
-                DiscountNet = quo.DiscountNet.HasValue ? quo.DiscountNet.Value != 0 ? quo.DiscountNet.Value : 0 : 0;
-               
-                decimal SummaryNet = 0;
-                SummaryNet = SubTotalNet - DiscountNet;
-                decimal SummaryVat = (SummaryNet * 7) / 100;
-                decimal SummaryTot = SummaryNet + SummaryVat;
-                html = html.Replace("@@SubTotalNet@@", SubTotalNet.ToString("###,###,##0.00"));
-                html = html.Replace("@@DiscountNet@@", DiscountNet.ToString("###,###,##0.00"));
-                html = html.Replace("@@SummaryNet@@", SummaryNet.ToString("###,###,##0.00"));
-                html = html.Replace("@@SummaryVat@@", SummaryVat.ToString("###,###,##0.00"));
-                html = html.Replace("@@SummaryTot@@", SummaryTot.ToString("###,###,##0.00"));
-                //string textFinalAmount = ThaiBahtText(invoice.SaleOrder.SummaryTot.HasValue ? invoice.SaleOrder.SummaryTot.Value.ToString():"");
-                string textFinalAmount = ThaiBahtText(SummaryTot.ToString());
-                html = html.Replace("@@TextfinalAmount@@", textFinalAmount);
-                html = html.Replace("@@SaleName@@", TitleSale + quo.SaleName);
-
-
-                StringReader sr = new StringReader(html);
-                Document pdfDoc = new Document(PageSize.A4, 10f, 10f, 10f, 0f);
-                PdfWriter writer = PdfWriter.GetInstance(pdfDoc, stream);
-                pdfDoc.Open();
-                XMLWorkerHelper.GetInstance().ParseXHtml(writer, pdfDoc, sr);
-                pdfDoc.Close();
-                return File(stream.ToArray(), "application/pdf", "Quotation_" + quo.QuotationNo + ".pdf");
-            }
-        }
         public FileResult PDFQuotation(int id)
         {
             using (MemoryStream stream = new System.IO.MemoryStream())
@@ -624,7 +297,286 @@ namespace Kemrex.Web.Main.Controllers
                 return File(stream.ToArray(), "application/pdf", "Quotation_" + quo.QuotationNo + ".pdf");
                 }
         }
+        public string PDFQuotationSave(int id, string qno)
+        {
+            using (MemoryStream stream = new System.IO.MemoryStream())
+            {
+                if (id <= 0) return "";
+                TblQuotation quo = uow.Modules.Quotation.Get(id);
+                quo.TblQuotationDetail = uow.Modules.QuotationDetail.Gets(id);
+                foreach (var pr in quo.TblQuotationDetail.ToList())
+                {
+                    pr.Product = uow.Modules.Product.Get(pr.ProductId);
+                    pr.Product.Unit = uow.Modules.Unit.Get(pr.Product.UnitId);
+                }
+                int cusid = quo.CustomerId.HasValue ? quo.CustomerId.Value : 0;
+                int GroupID = uow.Modules.Customer.GetByCondition(cusid).GroupId.HasValue ? uow.Modules.Customer.GetByCondition(cusid).GroupId.Value : 0;
+                string SaleTel = uow.Modules.Employee.GetByCondition(quo.SaleId).EmpMobile;
+                TblEmployee emp = uow.Modules.Employee.GetByCondition(quo.SaleId);
+                emp.Prefix = uow.Modules.Enum.PrefixGet(emp.PrefixId.HasValue ? emp.PrefixId.Value : 0);
+                //string TitleSale = emp.Prefix.PrefixNameTh;
+                string TitleSale = emp.Prefix.PrefixNameTh;
 
+                String html = string.Empty;
+                html = System.IO.File.ReadAllText(HttpContext.Server.MapPath("~/html/" + "QuotationHTML.html"));
+                string Header = System.IO.File.ReadAllText(HttpContext.Server.MapPath("~/html/" + "QuotationHeader.html"));
+                string Body = System.IO.File.ReadAllText(HttpContext.Server.MapPath("~/html/" + "QuotationBody.html"));
+
+
+                string tagItem = "";
+                string tagBody = "";
+                int num = 0;
+                int line = 0;
+                tagItem += Header;
+                tagItem += Body;
+                TblProductOfWareHouse pow = new TblProductOfWareHouse();
+                foreach (var d in quo.TblQuotationDetail.ToList())
+                {
+
+                    num++;
+                    line++;
+                    tagBody += "<tr>";
+                    tagBody += "<td align='left' style='border-right:1px;'> " + d.Product.ProductCode + "</td>";
+                    tagBody += "<td align='left' style='border-right:1px;' >" + d.Product.ProductName + "</td>";
+                    tagBody += "<td align='right' style='border-right:1px;' >" + (d.Quantity != 0 ? d.Quantity.ToString("###,###") : "") + "</td>";
+                    tagBody += "<td align='center' style='border-right:1px;' >" + d.Product.Unit.UnitName + "</td>";
+                    tagBody += "<td align='right' style='border-right:1px;' >" + d.PriceUnit.ToString("###,###,###.00") + "</td>";
+                    tagBody += "<td align='right' style='border-right:1px;' >" + (d.DiscountNet != 0 ? d.DiscountNet.ToString("###,###,###.00") : "") + "</td>";
+                    tagBody += "<td align='right' >" + (d.TotalNet.HasValue ? d.TotalNet.Value.ToString("###,###,###.00") : "") + "</td>";
+                    tagBody += "</tr>";
+
+                    if (d.Remark != null && d.Remark.ToString() != "")
+                    {
+                        string[] lines = Regex.Split(d.Remark, "\r\n");
+                        foreach (string re in lines)
+                        {
+                            num++;
+                            line++;
+                            tagBody += "<tr>";
+                            tagBody += "<td align='left' style='border-right:1px;'> " + "" + "</td>";
+                            tagBody += "<td align='left' style='border-right:1px;' >" + re + "</td>";
+                            tagBody += "<td align='right' style='border-right:1px;' >" + "" + "</td>";
+                            tagBody += "<td align='center' style='border-right:1px;' >" + "" + "</td>";
+                            tagBody += "<td align='right' style='border-right:1px;' >" + "" + "</td>";
+                            tagBody += "<td align='right' style='border-right:1px;' >" + "" + "</td>";
+                            tagBody += "<td align='right' >" + "" + "</td>";
+                            tagBody += "</tr>";
+                            if (line % 31 == 0)
+                            {
+                                num = 0;
+                                tagItem = tagItem.Replace("@@body@@", tagBody);
+                                tagItem += "<br/>";
+                                tagItem += "<br/>";
+                                tagItem += "<br/>";
+
+                                tagItem += Header;
+                                tagItem += Body;
+                                tagBody = "";
+                            }
+                        }
+                    }
+
+                }
+
+
+                for (int i = 0; i <= 19 - num; i++)
+                {
+                    tagBody += "<tr><td style='border-right:1px;'>&nbsp;</td>" +
+                        "<td style='border-right:1px;'>&nbsp;</td>" +
+                        "<td style='border-right:1px;'>&nbsp;</td>" +
+                        "<td style='border-right:1px;'>&nbsp;</td>" +
+                        "<td style='border-right:1px;'>&nbsp;</td>" +
+                        "<td style='border-right:1px;'>&nbsp;</td>" +
+                        "<td>&nbsp;</td></tr>";
+                }
+                tagItem = tagItem.Replace("@@body@@", tagBody);
+                if (num > 25 && num <= 30)
+                {
+                    for (int k = num + 1; k <= 31; k++)
+                    {
+                        tagItem += "<br/>";
+                    }
+                    tagItem += "<br/>";
+                    tagItem += Header;
+                    tagItem += Body;
+                    tagBody = "";
+                    for (int i = 0; i <= 20; i++)
+                    {
+                        tagBody += "<tr><td style='border-right:1px;'>&nbsp;</td>" +
+                            "<td style='border-right:1px;'>&nbsp;</td>" +
+                            "<td style='border-right:1px;'>&nbsp;</td>" +
+                            "<td style='border-right:1px;'>&nbsp;</td>" +
+                            "<td style='border-right:1px;'>&nbsp;</td>" +
+                            "<td style='border-right:1px;'>&nbsp;</td>" +
+                            "<td>&nbsp;</td></tr>";
+                    }
+                    tagItem = tagItem.Replace("@@body@@", tagBody);
+                }
+
+                html = html.Replace("@@item@@", tagItem);
+                string[] RemarkLine = Regex.Split(quo.QuotationRemark, "\r\n");
+                string remarkx = "";
+                int countline = 1;
+                foreach (string re in RemarkLine)
+                {
+                    if (countline == RemarkLine.Count())
+                    {
+                        remarkx += re;
+                    }
+                    else
+                    {
+                        remarkx += re + "<br/>";
+                    }
+                    countline++;
+                }
+
+                html = html.Replace("@@ImageBanner@@", HttpContext.Server.MapPath("~/images/logo-banner.png"));
+                html = html.Replace("@@Logo2@@", HttpContext.Server.MapPath("~/images/logo2.png"));
+                html = html.Replace("@@ImageCheckbox@@", HttpContext.Server.MapPath("~/html/img/checkbox_0.gif"));
+                html = html.Replace("@@QuotationNo@@", quo.QuotationNo);
+                string StrQuotationDate = quo.QuotationDate.Day.ToString("00") + "/" + quo.QuotationDate.Month.ToString("00") + "/" + quo.QuotationDate.Year;
+                html = html.Replace("@@QuotationDateStr@@", StrQuotationDate);
+                if (GroupID == 1) //นิติบุคคล
+                {
+                    html = html.Replace("@@ContactName@@", quo.ContractName);
+                    html = html.Replace("@@CompanyName@@", quo.CustomerName);
+                }
+                else //ไม่ใช่นิติบุคคล
+                {
+                    html = html.Replace("@@ContactName@@", quo.CustomerName);
+                    html = html.Replace("@@CompanyName@@", "");
+                }
+                html = html.Replace("@@Address@@", quo.BillingAddress);
+                html = html.Replace("@@Tel@@", quo.ContractPhone);
+                html = html.Replace("@@Fax@@", "");
+                html = html.Replace("@@ProjectName@@", "");
+
+                string DeliveryDate = quo.DeliveryDate.HasValue ? quo.DeliveryDate.Value.Day.ToString("00") + "/" + quo.DeliveryDate.Value.Month.ToString("00") + "/" + quo.DeliveryDate.Value.Year : "";
+                string DueDate = quo.DueDate.HasValue ? quo.DueDate.Value.Day.ToString("00") + "/" + quo.DueDate.Value.Month.ToString("00") + "/" + quo.DueDate.Value.Year : "";
+
+                html = html.Replace("@@DeliveryDate@@", DeliveryDate);
+                html = html.Replace("@@ValidDay@@", quo.QuotationValidDay.ToString());
+                html = html.Replace("@@DueDate@@", DueDate);
+                html = html.Replace("@@CreditDay@@", quo.QuotationCreditDay.ToString());
+                html = html.Replace("@@SaleTel@@", SaleTel);
+
+                html = html.Replace("@@Remark@@", quo.QuotationRemark);
+                decimal SubTotalNet = 0;
+                decimal DiscountNet = 0;
+                decimal DiscountCash = 0;
+                SubTotalNet = quo.SubTotalNet.HasValue ? quo.SubTotalNet.Value : 0;
+                DiscountNet = quo.DiscountNet.HasValue ? quo.DiscountNet.Value != 0 ? quo.DiscountNet.Value : 0 : 0;
+                DiscountCash = quo.DiscountCash != 0 ? quo.DiscountCash : 0;
+
+                decimal SummaryNet = 0;
+                if (SubTotalNet == 0)
+                {
+                    SummaryNet = SubTotalNet;
+                }
+                else
+                {
+                    SummaryNet = SubTotalNet - DiscountNet;
+                }
+
+                decimal SummaryVat = (SummaryNet * 7) / 100;
+                decimal SummaryTot = 0;
+                if (SummaryNet == 0)
+                {
+                    SummaryTot = SummaryNet;
+                }
+                else
+                {
+                    SummaryTot = SummaryNet + SummaryVat - DiscountCash;
+                }
+
+                html = html.Replace("@@SubTotalNet@@", SubTotalNet.ToString("###,###,##0.00"));
+                html = html.Replace("@@DiscountNet@@", DiscountNet.ToString("###,###,##0.00"));
+                html = html.Replace("@@SummaryNet@@", SummaryNet.ToString("###,###,##0.00"));
+                html = html.Replace("@@SummaryVat@@", SummaryVat.ToString("###,###,##0.00"));
+                html = html.Replace("@@DiscountCash@@", DiscountCash.ToString("###,###,##0.00"));
+                html = html.Replace("@@SummaryTot@@", SummaryTot.ToString("###,###,##0.00"));
+                //string textFinalAmount = ThaiBahtText(invoice.SaleOrder.SummaryTot.HasValue ? invoice.SaleOrder.SummaryTot.Value.ToString():"");
+                string textFinalAmount = ThaiBahtText(SummaryTot.ToString());
+                html = html.Replace("@@TextfinalAmount@@", textFinalAmount);
+
+                //get employee sale for accountid
+                if (quo.SaleId == 0)
+                {
+                    html = html.Replace("@@Signature@@", "<br /><br />____________________<br />");
+                    html = html.Replace("@@ManagerName@@", "");
+                }
+                else
+                {
+                    if (quo.StatusId == 3 || quo.StatusId == 4) //Approved from manager
+                    {
+                        Team team = uow.Modules.TeamSale.GetManager(quo.SaleId);
+                        if (team != null) //เช็คว่าหัวหน้าใคร
+                        {
+                            TblEmployee manager = uow.Modules.Employee.GetEmployeeByAccount(team.ManagerId);
+                            html = html.Replace("@@Signature@@", "<img src='" + HttpContext.Server.MapPath("~/" + manager.EmpSignature) + "' height='50' />");
+                            html = html.Replace("@@ManagerName@@", "( " + manager.EmpNameTh + " )");
+                        }
+                        else
+                        {
+                            TblEmployee manager2 = uow.Modules.TeamSale.IsManager(quo.SaleId);
+                            if (manager2 != null) //หรือเป็นหัวหน้าเอง
+                            {
+                                html = html.Replace("@@Signature@@", "<img src='" + HttpContext.Server.MapPath("~/" + manager2.EmpSignature) + "' height='50' />");
+                                html = html.Replace("@@ManagerName@@", "( " + manager2.EmpNameTh + " )");
+                            }
+                            else //ถ้าไม่ใช่ ให้ Default
+                            {
+                                TblEmployee manager3 = uow.Modules.TeamSale.defaultManager();
+                                if (manager3 == null)
+                                {
+                                    html = html.Replace("@@Signature@@", "<br /><br />____________________<br />");
+                                }
+                                else
+                                {
+
+                                    html = html.Replace("@@Signature@@", "<img src='" + HttpContext.Server.MapPath("~/" + manager3.EmpSignature) + "' height='50' />");
+                                    html = html.Replace("@@ManagerName@@", "( " + manager3.EmpNameTh + " )");
+                                }
+                            }
+                        }
+                    }
+                    else
+                    {
+                        html = html.Replace("@@Signature@@", "<br /><br />____________________<br />");
+                    }
+
+                }
+                html = html.Replace("@@Signature@@", "<br /><br />____________________<br />");
+                html = html.Replace("@@ManagerName@@", "");
+                html = html.Replace("@@SaleName@@", TitleSale + quo.SaleName);
+
+
+                StringReader sr = new StringReader(html);
+                Document pdfDoc = new Document(PageSize.A4, 10f, 10f, 10f, 0f);
+                string path = "";
+                string pathUpload = "~/upload";
+                if (!Directory.Exists(Server.MapPath(pathUpload)))
+                {
+                    Directory.CreateDirectory(Server.MapPath(pathUpload));
+                }
+                string pathQ = pathUpload + "/Q";
+                if (!Directory.Exists(Server.MapPath(pathQ)))
+                {
+                    Directory.CreateDirectory(Server.MapPath(pathQ));
+                }
+                string pathYYMM = pathQ + "/" + qno.Substring(2,4);
+                if (!Directory.Exists(Server.MapPath(pathYYMM)))
+                {
+                    Directory.CreateDirectory(Server.MapPath(pathYYMM));
+                }
+                path = pathYYMM + "/" + "Quotation_" + quo.QuotationNo + ".pdf";
+                PdfWriter writer = PdfWriter.GetInstance(pdfDoc, new FileStream(Server.MapPath(path), FileMode.Create));
+                pdfDoc.Open();
+                XMLWorkerHelper.GetInstance().ParseXHtml(writer, pdfDoc, sr);
+                pdfDoc.Close();
+                return path;
+            }
+        }
         public FileStreamResult PDFQuotationPreview(int id)
         {
             MemoryStream workStream = new MemoryStream();
