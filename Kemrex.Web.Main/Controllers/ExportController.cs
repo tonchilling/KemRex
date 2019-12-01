@@ -570,6 +570,10 @@ namespace Kemrex.Web.Main.Controllers
                     Directory.CreateDirectory(Server.MapPath(pathYYMM));
                 }
                 path = pathYYMM + "/" + "Quotation_" + quo.QuotationNo + ".pdf";
+                if (System.IO.File.Exists(Server.MapPath(path)))
+                {
+                    System.IO.File.Delete(Server.MapPath(path));
+                }
                 PdfWriter writer = PdfWriter.GetInstance(pdfDoc, new FileStream(Server.MapPath(path), FileMode.Create));
                 pdfDoc.Open();
                 XMLWorkerHelper.GetInstance().ParseXHtml(writer, pdfDoc, sr);
